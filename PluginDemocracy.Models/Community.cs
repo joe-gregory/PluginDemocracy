@@ -12,6 +12,9 @@ namespace PluginDemocracy.Models
         public string Address { get; set; }
         //Figure out geo location borders
         //Figure out home/house classes
+        //Figure out how the voting schemas will work. It needs to work dependency-injection style (being able to swap different kinds). (I am referring to VotinUnit). 
+        //History
+
 
 
     }
