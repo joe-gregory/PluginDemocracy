@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    internal class Community
+    public class Community
     {
-        string Name { get; set; }
-        string Address { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        //Figure out geo location borders
+        //Figure out home/house classes
+
 
     }
 }
