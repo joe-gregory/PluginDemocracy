@@ -14,6 +14,9 @@ namespace PluginDemocracy.Models
         //Figure out home/house classes
         //Figure out how the voting schemas will work. It needs to work dependency-injection style (being able to swap different kinds). (I am referring to VotinUnit). 
         //History
+        public List<Proposal> Proposals { get; set; }
+        public List<IDictamen> Dictamens { get; set; }
+
 
 
 

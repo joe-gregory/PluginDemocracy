@@ -3,29 +3,46 @@ using System.Collections.Generic;
 
 namespace PluginDemocracy.Models
 {
-    internal class Proposal
+    public class Proposal
     {
         public Guid Guid { get; }
-        public ICommunity Community { get; } 
+        public ICommunity Community { get; }
         public ProposalDraft Origin { get; }
         public string Title { get; }
         public string Description { get; }
         public DateTime PublishedDate { get; }
         public IDictamen Dictamen { get; }
-        
+
         //Schemas
         public IProposalOpenStatusSchema ProposalOpenStatusSchema { get; }
         public IProposalPassingSchema ProposalPassingSchema { get; }
-        
+
         public IVotingEligibilitySchema VotingEligibilitySchema { get; }
         public IVotingChangeSchema VotingChangeSchema { get; }
 
         //Properties
-        public bool OpenStatus { public get; private set; }
-        public bool PassedStatus { public get; private set; }
+        public bool OpenStatus
+        {
+            public get
+            {
+                return ProposalOpenStatusSchema.IsOpen(this)
+            }
+        }
+        public bool PassedStatus { 
+            public get
+            {
+                return ProposalPassingSchema.DidPass(this);
+            }
+        }
 
         public List<Vote> Votes { public get; private set; }
-        public Dictionary<Citizen, int> WeightedVotes {public get;}
+        public Dictionary<Citizen, int> WeightedVotes
+        {
+            public get
+            {
+                return ProposalPassingSchema.WeightedVotes(this);
+            }
+        }
 
         public Proposal(ProposalDraft origin)
         {
@@ -45,26 +62,18 @@ namespace PluginDemocracy.Models
         }
 
         //Methods
-        public void Vote(Citizen citizen, bool voteValue)
+        public bool Vote(Citizen citizen, bool voteValue)
         {
-            if (VotingEligibilitySchema.CanVote(citizen)) Votes.Add(new Vote(citizen.Guid, voteValue));
-            else throw new Exception;
-        }
-
-        private void ProposalOpenStatusChecker()
-        {
-            OpenStatus = ProposalOpenStatusSchema.IsOpen(this);
-        }
-
-        private void ProposalPassedStatusChecker()
-        {
-            PassedStatus = ProposalPassingSchema.DidPass(this);
-        }
-
-        private void IDictamenUpdater()
-        {
-            //Publish if Proposal passes. Publishing means adding to Community.Dictamens
-            //Make status inactive if proposal status has dropped to not passed
+            if (VotingEligibilitySchema.CanVote(citizen) && OpenStatus)
+            {
+                Votes.Add(new Vote(citizen.Guid, voteValue));
+                //run a method to check if anything has changed? 
+                return true
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
