@@ -11,11 +11,11 @@ namespace PluginDemocracy.Models
         public string Title { get; }
         public string Description { get; }
         public DateTime PublishedDate { get; }
-        public IDictamen Dictamen { get; }
+        public Dictamen Dictamen { get; }
 
         //Schemas
-        public IProposalOpenStatusSchema ProposalOpenStatusSchema { get; }
-        public IProposalPassingSchema ProposalPassingSchema { get; }
+        public IProposalOpenStatusSchema OpenStatusSchema { get; }
+        public IProposalPassingSchema PassingSchema { get; }
 
         public IVotingEligibilitySchema VotingEligibilitySchema { get; }
         public IVotingChangeSchema VotingChangeSchema { get; }
@@ -25,13 +25,13 @@ namespace PluginDemocracy.Models
         {
             public get
             {
-                return ProposalOpenStatusSchema.IsOpen(this)
+                return OpenStatusSchema.IsOpen(this)
             }
         }
-        public bool PassedStatus { 
+        public bool Passed { 
             public get
             {
-                return ProposalPassingSchema.DidPass(this);
+                return PassingSchema.DidPass(this);
             }
         }
 
@@ -40,11 +40,11 @@ namespace PluginDemocracy.Models
         {
             public get
             {
-                return ProposalPassingSchema.WeightedVotes(this);
+                return PassingSchema.WeightedVotes(this);
             }
         }
 
-        public Proposal(ProposalDraft origin)
+        internal Proposal(ProposalDraft origin)
         {
             Guid = Guid.NewGuid();
             Origin = origin;
@@ -52,8 +52,8 @@ namespace PluginDemocracy.Models
             Description = origin.Description;
             PublishedDate = DateTime.UtcNow;
             Dictamen = origin.Dictamen;
-            ProposalOpenStatusSchema = origin.OpenStatusSchema;
-            ProposalPassingSchema = origin.PassingSchema;
+            OpenStatusSchema = origin.OpenStatusSchema;
+            PassingSchema = origin.PassingSchema;
             VotingEligibilitySchema = origin.VotingEligibilitySchema;
             VotingChangeSchema = origin.VotingChangeSchema;
             ProposalOpenStatusChecker();
@@ -67,7 +67,6 @@ namespace PluginDemocracy.Models
             if (VotingEligibilitySchema.CanVote(citizen) && OpenStatus)
             {
                 Votes.Add(new Vote(citizen.Guid, voteValue));
-                //run a method to check if anything has changed? 
                 return true
             }
             else
