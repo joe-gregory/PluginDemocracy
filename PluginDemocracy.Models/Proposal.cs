@@ -36,11 +36,11 @@ namespace PluginDemocracy.Models
         }
 
         public List<Vote> Votes { public get; private set; }
-        public Dictionary<Citizen, int> WeightedVotes
+        public Dictionary<Citizen, int> VotesWeights
         {
             public get
             {
-                return PassingSchema.WeightedVotes(this);
+                return PassingSchema.VotesWeights(this);
             }
         }
 
