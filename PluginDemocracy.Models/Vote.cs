@@ -7,7 +7,7 @@ internal class Vote
 {
 	readonly Guid CitizenGuid;
 	readonly DateTime When;
-	readonly bool? Vote;
+	readonly bool Vote;
 
 	public Vote(Guid citizenGuid, bool vote)
 	{

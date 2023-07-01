@@ -4,6 +4,6 @@ namespace PluginDemocracy.Models
     {
         bool DidPass(Proposal proposal);
 
-        Dictionary<Citizen, int> VotesWeights(Proposal proposal);
+        Dictionary<Member, int> VotesWeights(Proposal proposal);
     }
 }

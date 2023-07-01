@@ -5,5 +5,5 @@
 /// </summary>
 public interface IVotingEligibilitySchema
 {
-	bool CanVote(Citizen citizen);
+	bool CanVote(Member member);
 }

@@ -4,41 +4,44 @@ using System.ComponentModel;
 /// <summary>
 /// Summary description for Class1
 /// </summary>
-public class Dictamen
+namespace PluginDemocracy.Models
 {
-    public Guid Guid { get; }
-    public Proposal Proposal { get; }
-    public DateTime CreationDate { get; }
-    virtual public string Type
+    public class Dictamen
     {
-        get
+        public Guid Guid { get; }
+        public Proposal Proposal { get; }
+        public DateTime CreationDate { get; }
+        virtual public string Type
         {
-            return "Dictamen"
-        }
-    }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public bool Valid
-    {
-        get
-        {
-            if (ValidityModifierDictamen == null)
+            get
             {
-                return Proposal.Passed && ValiditySchema.IsValid()
-            }
-            else
-            {
-                return Proposal.Passed && ValiditySchema.IsValid() && !ValidityModifierDictamen.Valid
+                return "Dictamen";
             }
         }
-    }
-    public IDictamenValiditySchema ValiditySchema { get; set; }
-    public Dictamen ValidityModifierDictamen { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public bool Valid
+        {
+            get
+            {
+                if (ValidityModifierDictamen == null)
+                {
+                    return Proposal.Passed && ValiditySchema.IsValid();
+                }
+                else
+                {
+                    return Proposal.Passed && ValiditySchema.IsValid() && !ValidityModifierDictamen.Valid;
+                }
+            }
+        }
+        public IDictamenValiditySchema ValiditySchema { get; set; }
+        public Dictamen ValidityModifierDictamen { get; set; }
 
-    public Dictamen(Proposal proposal)
-    {
-        Guid = Guid.NewGuid();
-        Proposal = proposal;
-        CreationDate = DateTime.UtcNow;
+        public Dictamen(Proposal proposal)
+        {
+            Guid = Guid.NewGuid();
+            Proposal = proposal;
+            CreationDate = DateTime.UtcNow;
+        }
     }
 }

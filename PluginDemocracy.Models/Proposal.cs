@@ -25,7 +25,7 @@ namespace PluginDemocracy.Models
         {
             public get
             {
-                return OpenStatusSchema.IsOpen(this)
+                return OpenStatusSchema.IsOpen(this);
             }
         }
         public bool Passed { 
@@ -36,7 +36,7 @@ namespace PluginDemocracy.Models
         }
 
         public List<Vote> Votes { public get; private set; }
-        public Dictionary<Citizen, int> VotesWeights
+        public Dictionary<Citizen, int, bool> VotesWeights
         {
             public get
             {
@@ -62,12 +62,12 @@ namespace PluginDemocracy.Models
         }
 
         //Methods
-        public bool Vote(Citizen citizen, bool voteValue)
+        public bool RecordVote(Member member, bool vote)
         {
-            if (VotingEligibilitySchema.CanVote(citizen) && OpenStatus)
+            if (OpenStatus && VotingEligibilitySchema.CanVote(member) && VotingChangeSchema.CanVote(member, this.Votes))
             {
-                Votes.Add(new Vote(citizen.Guid, voteValue));
-                return true
+                Votes.Add(new Vote(citizen.Guid, vote));
+                return true;
             }
             else
             {
