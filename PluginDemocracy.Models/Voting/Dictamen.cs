@@ -34,7 +34,7 @@ namespace PluginDemocracy.Models
                 }
             }
         }
-        public IDictamenValiditySchema ValiditySchema { get; set; }
+        public IDictamenValidityStrategy ValiditySchema { get; set; }
         public Dictamen ValidityModifierDictamen { get; set; }
 
         public Dictamen(Proposal proposal)

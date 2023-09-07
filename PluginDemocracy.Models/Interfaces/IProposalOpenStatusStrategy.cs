@@ -3,7 +3,7 @@
 /// </summary>
 namespace PluginDemocracy.Models
 {
-    internal interface IProposalOpenStatusSchema
+    public interface IProposalOpenStatusStrategy
     {
         bool IsOpen(Proposal proposal);
     }

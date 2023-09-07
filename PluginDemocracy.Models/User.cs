@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class Community: Member, ICommunity
+    public class User
     {
-
     }
 }

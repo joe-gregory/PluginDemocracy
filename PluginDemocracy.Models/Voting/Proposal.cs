@@ -14,11 +14,11 @@ namespace PluginDemocracy.Models
         public Dictamen Dictamen { get; }
 
         //Schemas
-        public IProposalOpenStatusSchema OpenStatusSchema { get; }
-        public IProposalPassingSchema PassingSchema { get; }
+        public IProposalOpenStatusStrategy OpenStatusSchema { get; }
+        public IProposalPassingStrategy PassingSchema { get; }
 
-        public IVotingEligibilitySchema VotingEligibilitySchema { get; }
-        public IVotingChangeSchema VotingChangeSchema { get; }
+        public IVotingEligibilityStrategy VotingEligibilitySchema { get; }
+        public IVotingChangeStrategy VotingChangeSchema { get; }
 
         //Properties
         public bool OpenStatus
@@ -28,6 +28,7 @@ namespace PluginDemocracy.Models
                 return OpenStatusSchema.IsOpen(this);
             }
         }
+
         public bool Passed { 
             public get
             {
@@ -36,7 +37,8 @@ namespace PluginDemocracy.Models
         }
 
         public List<Vote> Votes { public get; private set; }
-        public Dictionary<Citizen, int, bool> VotesWeights
+
+        public Dictionary<Member, int, bool> VotesWeights
         {
             public get
             {

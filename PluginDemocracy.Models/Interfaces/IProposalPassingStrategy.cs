@@ -1,6 +1,6 @@
 namespace PluginDemocracy.Models
 {
-    internal interface IProposalPassingSchema
+    public interface IProposalPassingStrategy
     {
         bool DidPass(Proposal proposal);
 

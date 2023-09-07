@@ -12,6 +12,6 @@ namespace PluginDemocracy.Models
         /// </summary>
         /// <param name="dictamen">The IDictamen instance to validate.</param>
         /// <returns>true if the instance is valid; otherwise, false.</returns>
-        bool IsValid(IDictamen dictamen);
+        bool IsValid(Dictamen dictamen);
     }
 }
