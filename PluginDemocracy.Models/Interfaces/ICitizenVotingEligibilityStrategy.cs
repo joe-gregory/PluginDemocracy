@@ -4,7 +4,7 @@ using System;
 /// <summary>
 /// Summary description for Class1
 /// </summary>
-public interface IVotingEligibilityStrategy
+public interface ICitizenVotingEligibilityStrategy
 {
-	bool CanVote(AbstractCitizen citizen);
+	bool CanVote(Citizen citizen, Proposal proposal);
 }
