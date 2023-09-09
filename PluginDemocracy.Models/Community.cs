@@ -18,6 +18,7 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Citizen> Citizens { get { return _citizens.AsReadOnly(); } }
         private List<Citizen> _citizens;
         public IReadOnlyDictionary<Citizen, decimal> CitizensVotingWeights { get { return CommunitysCitizensVotingWeightsStrategy.ReturnCitizensVotingWeights(this); } }
+        public Constitution Constitution { get; set; }
         //Strategies that define how the community operates, like who has the right to vote, how the voting weights are calculated, etc.
         public IProposalPassStrategy ProposalPassStrategy { get; set; }
         public IProposalOpenStatusStrategy ProposalOpenStatusStrategy { get; set; }
