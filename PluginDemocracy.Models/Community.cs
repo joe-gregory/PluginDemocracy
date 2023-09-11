@@ -18,8 +18,12 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Citizen> Citizens { get { return _citizens.AsReadOnly(); } }
         private List<Citizen> _citizens;
         public IReadOnlyDictionary<Citizen, decimal> CitizensVotingWeights { get { return CommunitysCitizensVotingWeightsStrategy.ReturnCitizensVotingWeights(this); } }
-        public Constitution Constitution { get; set; }
-        //Strategies that define how the community operates, like who has the right to vote, how the voting weights are calculated, etc.
+        public Constitution Constitution { get; private set; }
+        public List<Proposal> Proposals { get; private set; }
+        public List<Role> Roles { get; private set; }
+        /// <summary>
+        /// Strategies for the community
+        /// </summary>
         public IProposalPassStrategy ProposalPassStrategy { get; set; }
         public IProposalOpenStatusStrategy ProposalOpenStatusStrategy { get; set; }
         public ICitizenVotingEligibilityStrategy CitizenVotingEligibilityStrategy { get; set; }
@@ -38,6 +42,12 @@ namespace PluginDemocracy.Models
         {
             _citizens.Remove(citizen);
             citizen.RemoveCommunity(this);
+        }
+        public void Update()
+        {
+            Constitution.Update();
+            foreach (var proposal in Proposals) proposal.Update();
+            foreach (var role in Roles) role.Update();
         }
     }
 }

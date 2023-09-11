@@ -8,12 +8,26 @@ namespace PluginDemocracy.Models
 {
     public class Role
     {
-        string Title;
+        public string Title;
         /// <summary>
         /// Description of responsabilities
         /// </summary>
-        string Description;
-        User Who;
-
+        public string Description;
+        public User Who;
+        public Community Community;
+        DateTime? ExpirationDate;
+        public bool Active; 
+        public Role(string title, string description, User who, Community community, DateTime expirationDate)
+        {
+            Title = title;
+            Description = description;
+            Who = who;
+            Community = community;
+            ExpirationDate = expirationDate;
+        }
+        public void Update()
+        {
+            if (ExpirationDate >= DateTime.Now) Active = false;
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                UpdateConstitution();
+                Update();
                 return _articles.AsReadOnly();
             }
         }
@@ -88,7 +88,7 @@ namespace PluginDemocracy.Models
                 _articles[i].Number = i + 1;
             }
         }
-        public void UpdateConstitution()
+        public void Update()
         {
             _articles.RemoveAll(articles => articles.ExpirationDate <= DateTime.Now);
             RenumberArticles();
