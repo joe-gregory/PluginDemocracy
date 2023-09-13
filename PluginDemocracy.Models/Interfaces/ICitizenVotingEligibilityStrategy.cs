@@ -6,5 +6,5 @@ using System;
 /// </summary>
 public interface ICitizenVotingEligibilityStrategy
 {
-	bool CanVote(Citizen citizen, Proposal proposal);
+	bool CanVote(ICitizen citizen, Proposal proposal);
 }

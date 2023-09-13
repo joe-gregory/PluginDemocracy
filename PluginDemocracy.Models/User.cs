@@ -7,40 +7,61 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class User: Citizen
+    public class User: ICitizen, IProposalAuthor
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public Guid Guid { get; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? SecondLastName { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public bool EmailConfirmed { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
-        public string Address { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string? Address { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public bool Admin { get; set; }
-        public IReadOnlyDictionary<Community, List<Role>> Roles => _roles.AsReadOnly();
-        private Dictionary<Community, List<Role>> _roles;
-        public User(string firstName, string lastName, string secondLastName, string email, string phoneNumber, string address, DateTime dateOfBirth, bool admin)
+        public bool SuperAdmin { get; set; }
+        public IReadOnlyList<BaseCommunity> Communities => _communities.AsReadOnly();
+        private List<BaseCommunity> _communities;
+        public IReadOnlyDictionary<BaseCommunity, List<Role>> Roles => _roles.AsReadOnly();
+
+        public Proposal? Proposal => throw new NotImplementedException();
+
+        private Dictionary<BaseCommunity, List<Role>> _roles;
+        public User(bool admin, bool superAdmin)
         {
-            FirstName = firstName;
-            LastName = lastName;
-            SecondLastName = secondLastName;
-            Email = email;
-            PhoneNumber = phoneNumber;
-            Address = address;
-            DateOfBirth = dateOfBirth;
+            Guid = new();
             Admin = admin;
+            SuperAdmin = superAdmin;
+            _communities = new();
             _roles = new();
+        }
+        public void AddCommunity(BaseCommunity community)
+        {
+            throw new NotImplementedException();
+        }
+        public void RemoveCommunity(BaseCommunity community)
+        {
+            throw new NotImplementedException();
         }
         public void AddRole(Role role)
         {
             if (!_roles.ContainsKey(role.Community)) _roles.Add(role.Community, new List<Role> { role });
             else _roles[role.Community].Add(role);
         }
-        public void RemoveRole(Community community, Role role)
+        public void RemoveRole(Role role)
         {
-            _roles.[role.Community].Remove(role);
+            _roles[role.Community].Remove(role);
+        }
+
+        public void CreateProposal()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveProposal()
+        {
+            throw new NotImplementedException();
         }
     }
 }

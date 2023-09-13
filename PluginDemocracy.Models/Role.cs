@@ -8,22 +8,21 @@ namespace PluginDemocracy.Models
 {
     public class Role
     {
-        public string Title;
+        public string? Title { get; set; }
         /// <summary>
         /// Description of responsabilities
         /// </summary>
-        public string Description;
-        public User Who;
-        public Community Community;
-        DateTime? ExpirationDate;
-        public bool Active; 
-        public Role(string title, string description, User who, Community community, DateTime expirationDate)
+        public string? Description { get; set; }
+        /// <summary>
+        /// Person who has this role assigned to them
+        /// </summary>
+        public User? Assignee;
+        public BaseCommunity Community { get; }
+        DateTime? ExpirationDate { get; set; }
+        public bool Active { get; set; } 
+        public Role(BaseCommunity community)
         {
-            Title = title;
-            Description = description;
-            Who = who;
             Community = community;
-            ExpirationDate = expirationDate;
         }
         public void Update()
         {

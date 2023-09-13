@@ -4,5 +4,5 @@ using System.Collections.Generic;
 
 public interface ICitizenVotingChangeStrategy
 {
-	public bool CanVote(Citizen citizen, Proposal proposal);
+	public bool CanVote(ICitizen citizen, Proposal proposal);
 }

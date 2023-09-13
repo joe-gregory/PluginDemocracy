@@ -14,6 +14,6 @@ namespace PluginDemocracy.Models.Interfaces
     /// </summary>
     public interface ICommunitysCitizensVotingWeightsStrategy
     {
-        public IReadOnlyDictionary<Citizen, decimal> ReturnCitizensVotingWeights(Community abstractCommunity);
+        public IReadOnlyDictionary<ICitizen, decimal> ReturnCitizensVotingWeights(BaseCommunity abstractCommunity);
     }
 }
