@@ -6,10 +6,10 @@ using System;
 /// </summary>
 public class Vote
 {
-	readonly ICitizen Citizen;
+	readonly BaseCitizen Citizen;
 	readonly bool Value;
     readonly DateTime Date;
-    public Vote(ICitizen citizen, bool value)
+    public Vote(BaseCitizen citizen, bool value)
     {
         Citizen = citizen;
         Value = value;

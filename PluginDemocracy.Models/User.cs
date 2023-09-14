@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class User: ICitizen, IProposalAuthor
+    public class User: BaseCitizen, IProposalAuthor
     {
         public Guid Guid { get; }
         public string? FirstName { get; set; }

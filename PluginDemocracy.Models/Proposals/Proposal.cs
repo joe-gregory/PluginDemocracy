@@ -4,13 +4,12 @@ using System.Collections.Generic;
 
 namespace PluginDemocracy.Models
 {
-    public class Proposal
+    public class Proposal : Dictamen.DictamenIssuer
     {
         /// <summary>
         /// Basic information about the proposal
         /// </summary>
         public Guid Guid { get; }
-        public BaseCommunity Community { get; }
         public string? Title { get; }
         public string? Description { get; }
         public IProposalAuthor Author { get; }
@@ -50,10 +49,9 @@ namespace PluginDemocracy.Models
         /// </summary>
         /// <param name="community"></param>
         /// <param name="user"></param>
-        public Proposal(BaseCommunity community, User user)
+        public Proposal(BaseCommunity community, User user) : base (community)
         {
             Guid = Guid.NewGuid();
-            Community = community;
             Author = user;
             ProposalPassStrategy = community.ProposalPassStrategy;
             ProposalOpenStatusStrategy = community.ProposalOpenStatusStrategy;
@@ -63,11 +61,10 @@ namespace PluginDemocracy.Models
             _votes = new();
             Passed = false;
         }
-        public Proposal(DictamenProposalCreator dictamen)
+        public Proposal(Dictamen dictamen) : base(dictamen.Community) 
         {
             if (dictamen.ProposalPassStrategy == null || dictamen.ProposalOpenStatusStrategy == null || dictamen.CitizenVotingEligibilityStrategy == null || dictamen.CitizenVotingChangeStrategy == null || dictamen.CommunitysCitizensVotingWeightsStrategy == null) throw new ArgumentException("Dictamen is missing IProposalStrategies parameters");
             Guid = Guid.NewGuid();
-            Community = dictamen.Community;
             Author = dictamen;
             ProposalPassStrategy = dictamen.ProposalPassStrategy;
             ProposalOpenStatusStrategy = dictamen.ProposalOpenStatusStrategy;
@@ -77,7 +74,7 @@ namespace PluginDemocracy.Models
             _votes = new();
             Passed = false;
         }
-        public void Vote(ICitizen citizen, bool voteValue)
+        public void Vote(BaseCitizen citizen, bool voteValue)
         {
             //Checking if proposal can be voted on
             if (Open)

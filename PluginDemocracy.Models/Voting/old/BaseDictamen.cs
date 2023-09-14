@@ -13,9 +13,9 @@ namespace PluginDemocracy.Models
         public string? Description { get; private set; }
         public BaseCommunity Community { get; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
-        public BaseDictamenOrigin Origin { get; }
+        public DictamenIssuer_old Origin { get; }
         public DateTime? IssueDate { get; private set; }
-        public BaseDictamen(BaseDictamenOrigin origin)
+        public BaseDictamen(DictamenIssuer_old origin)
         {
             Guid = Guid.NewGuid();
             Community = origin.Community;

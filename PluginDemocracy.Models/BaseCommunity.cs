@@ -7,66 +7,48 @@ namespace PluginDemocracy.Models
     /// 
     /// </summary>
     /// 
-    public abstract class BaseCommunity : ICitizen, IProposalStrategies
+    public abstract class BaseCommunity : BaseCitizen
     {
         //Basic information
-        public Guid Guid { get; }
         public string? Name { get; set; }
         public string? Address { get; set; }
         public string? Description { get; set; }
-        public IReadOnlyDictionary<ICitizen, decimal>? Owners => _owners?.AsReadOnly();
-        protected Dictionary<ICitizen, decimal>? _owners;
         /// <summary>
-        /// Those who can vote
+        /// This is part of the ICitizen interface
         /// </summary>
-        public IReadOnlyList<ICitizen> Citizens { get { return _citizens.AsReadOnly(); } }
-        private List<ICitizen> _citizens;
-        public IReadOnlyDictionary<ICitizen, decimal> CitizensVotingWeights { get { return CommunitysCitizensVotingWeightsStrategy.ReturnCitizensVotingWeights(this); } }
+        /// <summary>
+        /// Represents 
+        /// </summary>
+        public List<User> Residents { get; set; }
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
-        /// <summary>
-        /// Strategies for the community
-        /// </summary>
-        public IProposalPassStrategy ProposalPassStrategy { get; set; }
-        public IProposalOpenStatusStrategy ProposalOpenStatusStrategy { get; set; }
-        public ICitizenVotingEligibilityStrategy CitizenVotingEligibilityStrategy { get; set; }
-        public ICitizenVotingChangeStrategy CitizenVotingChangeStrategy { get; set; }
-        public ICommunitysCitizensVotingWeightsStrategy CommunitysCitizensVotingWeightsStrategy { get; set; }
-
-
-
-        public IReadOnlyList<BaseCommunity> Communities { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public BaseCommunity()
         {
-            Guid = new Guid();
+            MemberOfCommunities = new();
+            Residents = new();
+            Constitution = new();
+            Proposals = new();
+            Dictamens = new();
+            Roles = new();
         }
-        public void AddCommunity(BaseCommunity community)
+        public void AddResident(User user)
         {
-            throw new NotImplementedException();
-        }
-        public void RemoveCommunity(BaseCommunity community)
-        {
-            throw new NotImplementedException();
-        }
-        public void JoinCitizen(ICitizen citizen)
-        {
-            if (!Citizens.Contains(citizen))
+            if (user != null && !Residents.Contains(user))
             {
-                _citizens.Add(citizen);
-                citizen.AddCommunity(this);
+                Residents.Add(user);
+                user.AddMembership(this);
             }
         }
-        public void RemoveCitizen(ICitizen citizen)
+        public void RemoveResident(User user)
         {
-            _citizens.Remove(citizen);
-            citizen.RemoveCommunity(this);
-        }
-        public void ReturnProposal()
-        {
-            //return a proposal with the default strategies... cannot undo those. 
+            if(Residents.Contains(user))
+            {
+                Residents.Remove(user);
+                user.RemoveMembership(this);
+            }
         }
         public bool PublishProposal(Proposal proposal)
         {
@@ -107,11 +89,11 @@ namespace PluginDemocracy.Models
             //if author is empty, throw exception
             if (dictamen.Origin == null) throw new ArgumentException("Dictamen.Author is null");
             //if the author is either not a Role or a current Proposal, do not allow to run
-            if(dictamen.Origin is Role role)
+            if (dictamen.Origin is Role role)
             {
                 if (!Roles.Contains(role)) throw new ArgumentException("Dictamen.Author is not in Roles.");
             }
-            if(dictamen.Origin is Proposal proposal)
+            if (dictamen.Origin is Proposal proposal)
             {
                 if (!Proposals.Contains(proposal)) throw new ArgumentException("Dictamen.Author is not in Proposals");
                 //Does this author have the right powers to do this?

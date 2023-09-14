@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public abstract class BaseDictamenOrigin
+    public abstract class DictamenIssuer_old
     {
         public BaseCommunity Community { get; }
-        public BaseDictamen Dictamen { get; private set; }
+        public Dictamen? DictamenToIssue { get; private set; }
         public void CreateDictamen()
         {
-            Dictamen = new(Community);
+            DictamenToIssue = new Dictamen(this);
         }
         public void IssueDictamen()
         {
 
         }
+
     }
 }
