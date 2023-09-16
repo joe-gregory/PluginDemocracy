@@ -17,12 +17,10 @@ namespace PluginDemocracy.Models
         /// Communities this Citizen belongs to. 
         /// </summary>
         public List<BaseCommunity> MemberOfCommunities { get; set; }
-        public List<BaseCommunity> CitizenOfCommunities { get; set; }
         public BaseCitizen()
         {
             Guid = new();
             MemberOfCommunities = new();
-            CitizenOfCommunities = new();
         }
         public void AddMembership(BaseCommunity community)
         {
@@ -31,14 +29,6 @@ namespace PluginDemocracy.Models
         public void RemoveMembership(BaseCommunity community)
         {
             MemberOfCommunities.Remove(community);
-        }
-        public void AddCitizenship(BaseCommunity community)
-        {
-            if(!CitizenOfCommunities.Contains(community)) CitizenOfCommunities.Add(community);
-        }
-        public void RemoveCitizenship(BaseCommunity community)
-        {
-            CitizenOfCommunities.Remove(community);
         }
     }
 }

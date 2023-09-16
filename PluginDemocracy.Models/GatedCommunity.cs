@@ -8,34 +8,33 @@ namespace PluginDemocracy.Models
 {
     public class GatedCommunity : BaseCommunity
     {
-        public List<Home> Homes { get; set; }      
+        public List<Home> Homes { get; set; }
+        override public List<User> Members
+        {
+            get => Homes.SelectMany(home => home.Members)
+                        .Distinct()  // Remove duplicates
+                        .ToList();  // Convert to List
+            set { throw new InvalidOperationException("Cannot set Members directly in GatedCommunity class."); }
+        }
         public GatedCommunity()
         {
             Homes = new();
         }
         public void AddResidentToHome(Home home, User user)
         {
-            Home house = GetHome(home);
-            house.AddResident(user);
+            home.AddResident(user);
         }
         public void RemoveResidentFromHome(Home home, User user)
         {
-            Home house = GetHome(home);
-            house.RemoveResident(user);
+            home.RemoveResident(user);
         }
         public void AddOwnerToHome(Home home, User user, double percentage)
         {
-            Home house = GetHome(home);
-            house.AddOwnerToHome(user, percentage);
+            home.AddOwnerToHome(user, percentage);
         }
         public void RemoveOwnerFromHome(Home home, User user)
         {
-            Home house = GetHome(home);
-            house.RemoveOwnerFromHome(user);
-        }
-        public Home GetHome(Home home)
-        {
-             return Homes.Find(h => h == home) ?? throw new ArgumentException("Did not find matching home");
+            home.RemoveOwnerFromHome(user);
         }
     }
 }

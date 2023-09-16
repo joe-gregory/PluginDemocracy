@@ -19,7 +19,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Represents 
         /// </summary>
-        public List<User> Residents { get; set; }
+        virtual public List<User> Members { get; set; }
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
         public List<BaseDictamen> Dictamens { get; private set; }
@@ -28,25 +28,25 @@ namespace PluginDemocracy.Models
         public BaseCommunity()
         {
             MemberOfCommunities = new();
-            Residents = new();
+            Members = new();
             Constitution = new();
             Proposals = new();
             Dictamens = new();
             Roles = new();
         }
-        public void AddResident(User user)
+        public void AddMember(User user)
         {
-            if (user != null && !Residents.Contains(user))
+            if (user != null && !Members.Contains(user))
             {
-                Residents.Add(user);
+                Members.Add(user);
                 user.AddMembership(this);
             }
         }
-        public void RemoveResident(User user)
+        public void RemoveMember(User user)
         {
-            if(Residents.Contains(user))
+            if(Members.Contains(user) && user != null)
             {
-                Residents.Remove(user);
+                Members.Remove(user);
                 user.RemoveMembership(this);
             }
         }

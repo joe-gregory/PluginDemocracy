@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class User: BaseCitizen, IProposalAuthor
+    public class User : BaseCitizen, IProposalAuthor
     {
         public Guid Guid { get; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? SecondLastName { get; set; }
+        public string Name
+        {
+            get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
+                                   .Where(s => !string.IsNullOrEmpty(s)));
+        }
         public string? Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public string? PhoneNumber { get; set; }
