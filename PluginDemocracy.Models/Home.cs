@@ -8,7 +8,7 @@ namespace PluginDemocracy.Models
 {
     public class Home : BaseCommunity
     {
-        public Dictionary<User, double> Owners { get; set; }
+        public Dictionary<User, int> Owners { get; set; }
         public List<User> Residents { get; set; }
         /// <summary>
         /// You are a Member of this home if you are either an owner or a resident of Home
@@ -23,7 +23,7 @@ namespace PluginDemocracy.Models
             Residents = new();
             Members = new();
         }
-        public void AddOwnerToHome(User user, double percentage)
+        public void AddOwnerToHome(User user, int percentage)
         {
             if (user == null || percentage <= 0 || percentage > 100) throw new ArgumentException("Invalid user or percentage");
             double currentTotalPercentage = Owners.Values.Sum();

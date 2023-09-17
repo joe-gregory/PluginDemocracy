@@ -14,12 +14,15 @@ namespace PluginDemocracy.Models
         public string? Address { get; set; }
         public string? Description { get; set; }
         /// <summary>
-        /// This is part of the ICitizen interface
-        /// </summary>
-        /// <summary>
-        /// Represents 
+        /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
         virtual public List<User> Members { get; set; }
+        /// <summary>
+        /// Member's voting power is an int to protect against rounding errors.
+        /// Each inheriting class can override how the vote powers are calculated. 
+        /// </summary>
+        virtual public Dictionary<User, int> MembersVotingValue { get; set; }
+        virtual public int TotalVotes => MembersVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
         public List<BaseDictamen> Dictamens { get; private set; }
@@ -29,6 +32,7 @@ namespace PluginDemocracy.Models
         {
             MemberOfCommunities = new();
             Members = new();
+            MembersVotingValue = new();
             Constitution = new();
             Proposals = new();
             Dictamens = new();
