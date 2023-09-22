@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// A Citizen is a member of a community. A community can be compromised of users or other sub-communities. For this reason, 

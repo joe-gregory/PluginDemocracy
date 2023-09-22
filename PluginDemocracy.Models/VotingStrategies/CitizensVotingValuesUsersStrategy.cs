@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// This class represents a voting schema where everybody who is a User class of this Community gets a vote. 

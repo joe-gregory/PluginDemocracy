@@ -8,8 +8,8 @@ namespace PluginDemocracy.Models
         public Guid Guid { get; }
         public string? Title { get; }
         public string? Description { get; }
-        public User? Author { get; }
-        public Community? Community { get; set; }
+        public User Author { get; }
+        public Community Community { get; set; }
         public bool Published { get { return DateTime.Now > PublishedDate; } }
         /// <summary>
         /// When a proposal is Published(), a PublishedDate is set and Open status is set to true.
@@ -46,9 +46,11 @@ namespace PluginDemocracy.Models
         /// Indicates if the proposal has passed (majority of votes are true).
         /// </summary>
         public bool Passed { get; set; }
-        public Proposal()
+        public Proposal(Community community, User user)
         {
             Guid = Guid.NewGuid();
+            Author = user;
+            Community = community;
             _votes = new();
             //initialize tally
             foreach(BaseCitizen citizen in CitizensVotingValue.Keys)

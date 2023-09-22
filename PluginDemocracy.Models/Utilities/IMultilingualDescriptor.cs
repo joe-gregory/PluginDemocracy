@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
+    /// <summary>
+    /// This interface forces implementing classes to have a Multilingual Title and Description. 
+    /// </summary>
     public interface IMultilingualDescriptor
     {
         public MultilingualString Title { get; set; }

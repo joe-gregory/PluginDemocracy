@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// Articles in _articles should be in numbering order starting with 1 (so +1 from the list's index).
@@ -105,9 +98,10 @@ namespace PluginDemocracy.Models
         public int? Number { get; set; }
         public DateTime CreationDate { get; }
         public DateTime? ExpirationDate { get; set; }
-        BaseDictamen_old Dictamen;
-        public Article(string title, string body, int? number, DateTime? expirationDate)
+        BaseDictamen OriginDictamen;
+        public Article(BaseDictamen dictamen, string title, string body, int? number, DateTime? expirationDate)
         {
+            OriginDictamen = dictamen;
             Title = title;
             Body = body;
             Number = number;

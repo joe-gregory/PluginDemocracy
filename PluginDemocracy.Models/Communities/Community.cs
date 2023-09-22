@@ -93,7 +93,12 @@ namespace PluginDemocracy.Models
             if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal.Votes is not empty");
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             Proposals.Add(proposal);
+
             return true;
+        }
+        public void PropagateProposal(Proposal proposal)
+        {
+
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
