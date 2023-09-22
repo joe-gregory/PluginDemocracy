@@ -13,22 +13,24 @@ namespace PluginDemocracy.Models
     public abstract class BaseCitizen
     {
         public Guid Guid { get; }
+        virtual public string? FullName { get; set; }
+        virtual public string? Address { get; set; }
         /// <summary>
         /// Communities this Citizen belongs to. 
         /// </summary>
-        public List<BaseCommunity> MemberOfCommunities { get; set; }
+        public List<Community> Citizenships { get; set; }
         public BaseCitizen()
         {
             Guid = new();
-            MemberOfCommunities = new();
+            Citizenships = new();
         }
-        public void AddMembership(BaseCommunity community)
+        virtual public void AddCitizenship(Community community)
         {
-            if(!MemberOfCommunities.Contains(community)) MemberOfCommunities.Add(community);
+            if(!Citizenships.Contains(community)) Citizenships.Add(community);
         }
-        public void RemoveMembership(BaseCommunity community)
+        virtual public void RemoveCitizenship(Community community)
         {
-            MemberOfCommunities.Remove(community);
+            Citizenships.Remove(community);
         }
     }
 }

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class GatedCommunity : BaseCommunity
+    public class GatedCommunity : Community
     {
         public List<Home> Homes { get; set; }
-        override public List<User> Members
+        override public List<BaseCitizen> Citizens
         {
-            get => Homes.SelectMany(home => home.Members)
+            get => Homes.SelectMany(home => home.Citizens)
                         .Distinct()  // Remove duplicates
                         .ToList();  // Convert to List
-            set { throw new InvalidOperationException("Cannot set Members directly in GatedCommunity class."); }
+            set { throw new InvalidOperationException("Cannot set Members directly in GatedCommunity class. Need to add to a Home either as owner or resident."); }
         }
         /// <summary>
         /// There are 2 ways to count votes depending on how partial Home owners are treated.
@@ -26,46 +26,24 @@ namespace PluginDemocracy.Models
         /// For now fractional votes will count so a Home can vote "2 ways" but in the future might 
         /// allow different strategy implementations  
         /// </summary>
-        override public Dictionary<User, int> MembersVotingValue { 
-            get
-            {
-                Dictionary<User, int> membersVotingValue = new Dictionary<User, int>();
-                foreach (Home home in Homes)
-                {
-                    foreach (var kvp in home.Owners) // Changed to directly get key-value pair
-                    {
-                        User owner = kvp.Key;
-                        int percentage = kvp.Value;
-                        if (!membersVotingValue.ContainsKey(owner)) // Changed to use ContainsKey
-                        {
-                            membersVotingValue[owner] = percentage;
-                        }
-                        else
-                        {
-                            membersVotingValue[owner] += percentage; // sum up ownership percentages
-                        }
-                    }
-                }
-                return membersVotingValue;
-            } 
-            set => throw new InvalidOperationException("Cannot set MembersVotingValue directly in GatedCommunity class."); }
+       
         public GatedCommunity()
         {
             Homes = new();
         }
-        public void AddResidentToHome(Home home, User user)
+        public void AddResidentToHome(Home home, BaseCitizen user)
         {
             home.AddResident(user);
         }
-        public void RemoveResidentFromHome(Home home, User user)
+        public void RemoveResidentFromHome(Home home, BaseCitizen user)
         {
             home.RemoveResident(user);
         }
-        public void AddOwnerToHome(Home home, User user, int percentage)
+        public void AddOwnerToHome(Home home, BaseCitizen user, int percentage)
         {
             home.AddOwnerToHome(user, percentage);
         }
-        public void RemoveOwnerFromHome(Home home, User user)
+        public void RemoveOwnerFromHome(Home home, BaseCitizen user)
         {
             home.RemoveOwnerFromHome(user);
         }

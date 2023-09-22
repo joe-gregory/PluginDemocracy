@@ -8,8 +8,8 @@ namespace PluginDemocracy.Models
 {
     public abstract class DictamenIssuer_old
     {
-        public BaseCommunity Community { get; }
-        public Dictamen? DictamenToIssue { get; private set; }
+        public Community Community { get; }
+        public BaseDictamen? DictamenToIssue { get; private set; }
         public void CreateDictamen()
         {
             DictamenToIssue = new Dictamen(this);

@@ -105,7 +105,7 @@ namespace PluginDemocracy.Models
         public int? Number { get; set; }
         public DateTime CreationDate { get; }
         public DateTime? ExpirationDate { get; set; }
-        BaseDictamen Dictamen;
+        BaseDictamen_old Dictamen;
         public Article(string title, string body, int? number, DateTime? expirationDate)
         {
             Title = title;

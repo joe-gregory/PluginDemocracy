@@ -9,7 +9,7 @@ namespace PluginDemocracy.Models
 {
     public abstract class BaseDictamenIssuer_old
     {
-        public BaseDictamen? Dictamen { get; private set; }
+        public BaseDictamen_old? Dictamen { get; private set; }
         public void IssueDictamen()
         {
             if (Dictamen.Issuer != this) throw new Exception("Invalid: mismatch between entity trying to issue Dictamen and Dictamen.Issuer");

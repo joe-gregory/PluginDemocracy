@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class Role : Dictamen.DictamenIssuer
+    public class Role : BaseDictamen.DictamenIssuer
     {
         public string? Title { get; set; }
         /// <summary>
@@ -16,10 +16,10 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Person who has this role assigned to them
         /// </summary>
-        public User? Assignee;
+        public BaseCitizen? Assignee;
         DateTime? ExpirationDate { get; set; }
         public bool Active { get; set; } 
-        public Role(BaseCommunity community) : base(community)
+        public Role(Community community) : base(community)
         {
         }
         public void Update()

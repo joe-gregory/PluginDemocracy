@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class DictamenProposalCreator : BaseDictamen, IProposalAuthor, IProposalStrategies
+    public class DictamenProposalCreator : BaseDictamen_old, IProposalAuthor, IProposalStrategies
     {
         /// <summary>
         /// Strategies about the behavior of the proposal

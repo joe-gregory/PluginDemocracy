@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class Home : BaseCommunity
+    public class Home : Community
     {
-        public Dictionary<User, int> Owners { get; set; }
-        public List<User> Residents { get; set; }
+        public Dictionary<BaseCitizen, int> Owners { get; set; }
+        public List<BaseCitizen> Residents { get; set; }
         /// <summary>
         /// You are a Member of this home if you are either an owner or a resident of Home
         /// </summary>
-        override public List<User> Members { 
+        override public List<BaseCitizen> Citizens { 
             get => Owners.Keys.Union(Residents).ToList(); 
             set { throw new InvalidOperationException("Cannot set Members directly in Home class."); } 
         }
@@ -21,9 +21,9 @@ namespace PluginDemocracy.Models
         {
             Owners = new();
             Residents = new();
-            Members = new();
+            Citizens = new();
         }
-        public void AddOwnerToHome(User user, int percentage)
+        public void AddOwnerToHome(BaseCitizen user, int percentage)
         {
             if (user == null || percentage <= 0 || percentage > 100) throw new ArgumentException("Invalid user or percentage");
             double currentTotalPercentage = Owners.Values.Sum();
@@ -31,16 +31,16 @@ namespace PluginDemocracy.Models
             Owners[user] = percentage;
             AddResident(user);
         }
-        public void RemoveOwnerFromHome(User user)
+        public void RemoveOwnerFromHome(BaseCitizen user)
         {
             Owners.Remove(user);
-            RemoveMember(user);
+            RemoveCitizen(user);
         }
-        public void AddResident(User user)
+        public void AddResident(BaseCitizen user)
         {
             if (!Residents.Contains(user) && user != null) Residents.Add(user);
         }
-        public void RemoveResident(User user)
+        public void RemoveResident(BaseCitizen user)
         {
             if (user != null && Residents.Contains(user)) Residents.Remove(user);
         }

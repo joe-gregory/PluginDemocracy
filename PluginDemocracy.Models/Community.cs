@@ -1,61 +1,80 @@
-﻿using PluginDemocracy.Models.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PluginDemocracy.Models
 {
     /// <summary>
     /// 
     /// </summary>
-    /// 
-    public abstract class BaseCommunity : BaseCitizen
+    public class Community : BaseCitizen
     {
         //Basic information
         public string? Name { get; set; }
-        public string? Address { get; set; }
+        public override string? FullName
+        {
+            get => string.Join(" ", Name, Address);
+            set => throw new InvalidOperationException("Cannot set FullName directly in BaseCommunity class.");
+        }
+        override public string? Address { get; set; }
         public string? Description { get; set; }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
-        virtual public List<User> Members { get; set; }
+        virtual public List<BaseCitizen> Citizens { get; set; }
         /// <summary>
-        /// Member's voting power is an int to protect against rounding errors.
-        /// Each inheriting class can override how the vote powers are calculated. 
+        /// Policy for how long a proposal remains open for after it publishes
         /// </summary>
-        virtual public Dictionary<User, int> MembersVotingValue { get; set; }
-        virtual public int TotalVotes => MembersVotingValue.Values.Sum();
+        public int ProposalsExpirationDays { get; set; }
+        public IVotingStrategy? VotingStrategy { get; set; }
+        /// <summary>
+        /// CitizensVotingValue is an int to protect against rounding errors.
+        /// Each inheriting class can override who gets to vote and how much each vote counts. 
+        /// In BaseCommunity, each Citizens gets one vote. 
+        /// </summary>
+        public Dictionary<BaseCitizen, int> CitizensVotingValue {
+            get
+            {
+                if (VotingStrategy == null) return new Dictionary<BaseCitizen, int>();
+                else return VotingStrategy.ReturnCitizensVotingValue(this);
+            }
+        }
+        public int TotalVotes => CitizensVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
 
-        public BaseCommunity()
+        public Community()
         {
-            MemberOfCommunities = new();
-            Members = new();
-            MembersVotingValue = new();
+            Citizenships = new();
+            Citizens = new();
             Constitution = new();
             Proposals = new();
             Dictamens = new();
             Roles = new();
         }
-        public void AddMember(User user)
+        /// <summary>
+        /// Adding a citizen needs to ensure that no citizen is repeated
+        /// </summary>
+        /// <param name="user"></param>
+        virtual public void AddCitizen(BaseCitizen user)
         {
-            if (user != null && !Members.Contains(user))
+            if (user != null && !Citizens.Contains(user))
             {
-                Members.Add(user);
-                user.AddMembership(this);
+                Citizens.Add(user);
+                user.AddCitizenship(this);
             }
         }
-        public void RemoveMember(User user)
+        virtual public void RemoveCitizen(BaseCitizen user)
         {
-            if(Members.Contains(user) && user != null)
+            if (user != null && Citizens.Contains(user))
             {
-                Members.Remove(user);
-                user.RemoveMembership(this);
+                Citizens.Remove(user);
+                user.RemoveCitizenship(this);
             }
         }
         public bool PublishProposal(Proposal proposal)
         {
+            //TODO: make sure the Proposal has all the correct info ValidateProposal() and return messages accordingly of what you are missing.
             //Ensure this proposal is for this community
             if (proposal.Community != this) throw new ArgumentException("Proposal.Community does not point to this Community");
             //Ensure it has a title
@@ -72,37 +91,18 @@ namespace PluginDemocracy.Models
             if (proposal.Dictamen.Community != this) throw new ArgumentException("Proposal.Dictamen.Community does not point to this Community");
             //Votes should be empty
             if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal.Votes is not empty");
-            //It needs to have all the strategies
-            if (proposal.ProposalPassStrategy == null) throw new ArgumentException("Proposal.ProposalPassStrategy is null");
-            if (proposal.ProposalOpenStatusStrategy == null) throw new ArgumentException("Proposal.ProposalOpenStatusStrategy is null");
-            if (proposal.CitizenVotingEligibilityStrategy == null) throw new ArgumentException("Proposal.CitizenVotingEligibilityStrategy is null");
-            if (proposal.CitizenVotingChangeStrategy == null) throw new ArgumentException("Proposal.CitizenVotingChangeStrategy is null");
-            if (proposal.CommunitysCitizensVotingWeightsStrategy == null) throw new ArgumentException("Proposal.CommunitysCitizensVotingWeightsStrategy is null");
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             Proposals.Add(proposal);
             return true;
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
+            //TODO: Make sure everything is good to go and no info is missing
             //if title is empty, throw exception
-            if (dictamen.Title == null) throw new ArgumentException("Dictamen.Title is null");
-            //if description is empty, throw exception
-            if (dictamen.Description == null) throw new ArgumentException("Dictamen.Description is null");
-            //The Dictamen's Community should be pointing to this Community
             if (dictamen.Community != this) throw new ArgumentException("Dictamen.Community does not point to this Community");
-            //if author is empty, throw exception
-            if (dictamen.Origin == null) throw new ArgumentException("Dictamen.Author is null");
-            //if the author is either not a Role or a current Proposal, do not allow to run
-            if (dictamen.Origin is Role role)
-            {
-                if (!Roles.Contains(role)) throw new ArgumentException("Dictamen.Author is not in Roles.");
-            }
-            if (dictamen.Origin is Proposal proposal)
-            {
-                if (!Proposals.Contains(proposal)) throw new ArgumentException("Dictamen.Author is not in Proposals");
-                //Does this author have the right powers to do this?
-            }
+            //The Dictamen must either come from a Role or a Proposal. In the future ensure that the Role has the corresponding rights
             if (dictamen.IssueDate != null) throw new ArgumentException("Dictamen.IssueDate is not null");
+            dictamen.Execute();
             Dictamens.Add(dictamen);
             return true;
         }

@@ -6,16 +6,16 @@ namespace PluginDemocracy.Models
     /// <summary>
     /// A Dictamen can be Ran by a Proposal or a Role
     /// </summary>
-    public abstract class BaseDictamen
+    public abstract class BaseDictamen_old
     {
         public Guid Guid { get; }
         public string? Title { get; private set; }
         public string? Description { get; private set; }
-        public BaseCommunity Community { get; }
+        public Community Community { get; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DictamenIssuer_old Origin { get; }
         public DateTime? IssueDate { get; private set; }
-        public BaseDictamen(DictamenIssuer_old origin)
+        public BaseDictamen_old(DictamenIssuer_old origin)
         {
             Guid = Guid.NewGuid();
             Community = origin.Community;
@@ -30,7 +30,7 @@ namespace PluginDemocracy.Models
             }
         }
         /// <summary>
-        /// Execute() is the actual action the Dictamen takes
+        /// Execute() is the actual action the Dictamen takes. It should be run by the parent community. 
         /// </summary>
         public abstract void Execute();
     }
