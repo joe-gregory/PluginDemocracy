@@ -30,7 +30,8 @@ namespace PluginDemocracy.Models
         /// Each inheriting class can override who gets to vote and how much each vote counts. 
         /// In BaseCommunity, each Citizens gets one vote. 
         /// </summary>
-        public Dictionary<BaseCitizen, int> CitizensVotingValue {
+        public Dictionary<BaseCitizen, int> CitizensVotingValue
+        {
             get
             {
                 if (VotingStrategy == null) return new Dictionary<BaseCitizen, int>();
@@ -92,13 +93,37 @@ namespace PluginDemocracy.Models
             //Votes should be empty
             if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal.Votes is not empty");
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
+            proposal.Open = true;
             Proposals.Add(proposal);
+            PropagateProposal(proposal);
 
             return true;
         }
-        public void PropagateProposal(Proposal proposal)
+        public void PropagateProposal(Proposal parentProposal)
         {
 
+            foreach (var citizen in Citizens)
+            {
+                if (citizen is Community propagatedCommunity)
+                {
+                    Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
+                    {
+                        Title = parentProposal.Title + $"\nfor/para: {parentProposal.Community.Name}",
+                        Description = parentProposal.Description + $"\nfor/para: {parentProposal.Community.Name}",
+                        ExpirationDate = parentProposal.ExpirationDate,
+
+                    };
+
+                    propagatedProposal.Dictamen = new PropagatedProposalDictamen(parentProposal)
+                    {
+                        Community = propagatedCommunity,
+                        Proposal = propagatedProposal
+                    };
+
+                    //publish in its corresponding community which should call this method if there are more nested sub-communities
+                    propagatedCommunity.PublishProposal(propagatedProposal);
+                }
+            }
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
@@ -107,6 +132,7 @@ namespace PluginDemocracy.Models
             if (dictamen.Community != this) throw new ArgumentException("Dictamen.Community does not point to this Community");
             //The Dictamen must either come from a Role or a Proposal. In the future ensure that the Role has the corresponding rights
             if (dictamen.IssueDate != null) throw new ArgumentException("Dictamen.IssueDate is not null");
+
             dictamen.Execute();
             Dictamens.Add(dictamen);
             return true;
@@ -118,4 +144,6 @@ namespace PluginDemocracy.Models
             foreach (var role in Roles) role.Update();
         }
     }
+
 }
+

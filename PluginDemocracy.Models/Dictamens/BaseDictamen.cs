@@ -5,18 +5,17 @@
         public Guid Guid { get; }
         public MultilingualString Title { get; set; }
         public MultilingualString Description { get; set; }
-        public Community? Community { get; }
+        public Community? Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
-        public Proposal? OriginProposal { get; set; }
+        public Proposal? Proposal { get; set; }
         /// <summary>
         /// Strategies:
         /// </summary>
-        public User? OriginUser { get; set; }
-        private BaseDictamen()
+        public BaseDictamen()
         {
             Guid = Guid.NewGuid();
             Title = new();

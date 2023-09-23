@@ -6,8 +6,8 @@ namespace PluginDemocracy.Models
         /// Basic information about the proposal
         /// </summary>
         public Guid Guid { get; }
-        public string? Title { get; }
-        public string? Description { get; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         public User Author { get; }
         public Community Community { get; set; }
         public bool Published { get { return DateTime.Now > PublishedDate; } }
@@ -15,20 +15,9 @@ namespace PluginDemocracy.Models
         /// When a proposal is Published(), a PublishedDate is set and Open status is set to true.
         /// </summary>
         public DateTime? PublishedDate { get; private set; }
-        public DateTime? ExpirationDate { get; private set; }
-        public BaseDictamen? Dictamen { get; }
+        public DateTime? ExpirationDate { get; set; }
+        public BaseDictamen? Dictamen { get; set; }
         public IVotingStrategy? VotingStrategy { get; set; }
-        private readonly List<Vote> _votes;
-        public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
-        public IReadOnlyList<Vote> VotesInFavor => _votes.Where(vote => vote.InFavor == true).ToList().AsReadOnly();
-        public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
-        public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
-        public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
-        /// <summary>
-        /// Total amount of votes possible. Some citizens may have more VotingValue than others. This is the sum of all VotingValues.
-        /// A Proposal passes when VotesInFavor is more than half of TotalVotingValuesSum
-        /// </summary>
-        public int TotalVotingValuesSum => CitizensVotingValue.Values.Sum();
         public Dictionary<BaseCitizen, int> CitizensVotingValue
         {
             get
@@ -38,10 +27,21 @@ namespace PluginDemocracy.Models
             }
         }
         /// <summary>
+        /// Total amount of votes possible. Some citizens may have more VotingValue than others. This is the sum of all VotingValues.
+        /// A Proposal passes when VotesInFavor is more than half of TotalVotingValuesSum
+        /// </summary>
+        public int TotalVotingValuesSum => CitizensVotingValue.Values.Sum();
+        private readonly List<Vote> _votes;
+        public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
+        public IReadOnlyList<Vote> VotesInFavor => _votes.Where(vote => vote.InFavor == true).ToList().AsReadOnly();
+        public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
+        public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
+        public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
+        /// <summary>
         /// Gets a value indicating whether the proposal is currently open for voting.
         /// This takes into account both the community's open status strategy and whether the proposal has been published.
         /// </summary>
-        public bool Open { get; private set; }
+        public bool Open { get; set; }
         /// <summary>
         /// Indicates if the proposal has passed (majority of votes are true).
         /// </summary>
@@ -51,6 +51,7 @@ namespace PluginDemocracy.Models
             Guid = Guid.NewGuid();
             Author = user;
             Community = community;
+            VotingStrategy = community.VotingStrategy;
             _votes = new();
             //initialize tally
             foreach(BaseCitizen citizen in CitizensVotingValue.Keys)
@@ -81,23 +82,6 @@ namespace PluginDemocracy.Models
 
             // Update the state of the proposal
             Update();
-        }
-        /// <summary>
-        /// The fields are nullable so that it can exist in draft form as a user works on it. Once it is published, the fields cannot be changed. 
-        /// </summary>
-        public void Publish()
-        {
-            //Check that it has everything to pass and if so published, otherwise throw an error: 
-            if (PublishedDate == null)
-            {
-                if (Community != null && Community.PublishProposal(this))
-                {
-                    PublishedDate = DateTime.Now;
-                    ExpirationDate = DateTime.Now.AddDays(Community.ProposalsExpirationDays);
-                    Open = true;
-                }
-            }
-            else throw new Exception("Proposal had already been published");
         }
         public void UpdatePassedStatus()
         {
