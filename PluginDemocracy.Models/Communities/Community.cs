@@ -59,19 +59,29 @@ namespace PluginDemocracy.Models
         /// <param name="user"></param>
         virtual public void AddCitizen(BaseCitizen user)
         {
-            if (user != null && !Citizens.Contains(user))
+            if (user != null)
             {
-                Citizens.Add(user);
-                user.AddCitizenship(this);
+                if (!Citizens.Contains(user))
+                {
+                    Citizens.Add(user);
+                    user.AddCitizenship(this);
+                }
+                else throw new Exception("Community.Citizens already contains user");
             }
+            else throw new Exception("User cannot be null when adding to Community.Citizens");
         }
         virtual public void RemoveCitizen(BaseCitizen user)
         {
-            if (user != null && Citizens.Contains(user))
+            if (user != null)
             {
-                Citizens.Remove(user);
-                user.RemoveCitizenship(this);
+                if (Citizens.Contains(user))
+                {
+                    Citizens.Remove(user);
+                    user.RemoveCitizenship(this);
+                }
+                else throw new Exception("Community.Citizens does not contain User");
             }
+            else throw new Exception("User cannot be null when removing from Community.Citizens");
         }
         public bool PublishProposal(Proposal proposal)
         {

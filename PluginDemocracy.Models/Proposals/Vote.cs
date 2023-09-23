@@ -30,7 +30,7 @@
             }
             if (InFavor != null && InFavor == true) VoteValueInFavor = VoteWeight;
             else VoteValueAgainst = VoteWeight;
-            Date = DateTime.Now;
+            Date = DateTime.UtcNow;
         }
         public Vote(Proposal proposal, BaseCitizen citizen)
         {

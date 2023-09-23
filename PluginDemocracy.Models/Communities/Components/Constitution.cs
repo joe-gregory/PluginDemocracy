@@ -83,7 +83,7 @@
         }
         public void Update()
         {
-            _articles.RemoveAll(articles => articles.ExpirationDate <= DateTime.Now);
+            _articles.RemoveAll(articles => articles.ExpirationDate <= DateTime.UtcNow);
             RenumberArticles();
         }
         public void UpdatePreamble(string newPreamble)
@@ -105,7 +105,7 @@
             Title = title;
             Body = body;
             Number = number;
-            CreationDate = DateTime.Now;
+            CreationDate = DateTime.UtcNow;
             ExpirationDate = expirationDate;
         }
     }

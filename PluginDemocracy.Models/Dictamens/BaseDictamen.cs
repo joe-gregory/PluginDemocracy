@@ -26,10 +26,12 @@
         /// </summary>
         public void Issue()
         {
-            if (Community != null && Community.IssueDictamen(this))
+            if (Community == null) throw new Exception("This Dictamen's Community property is null.");
+            if (Community.IssueDictamen(this))
             {
-                IssueDate = DateTime.Now;
+                IssueDate = DateTime.UtcNow;
             }
+            else throw new Exception("Community.IssueDictamen did not return true.");
         }
         /// <summary>
         /// Execute() is the actual action the Dictamen takes and it is invoked by the Community running this Dictamne.

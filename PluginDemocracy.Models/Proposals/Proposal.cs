@@ -10,7 +10,7 @@ namespace PluginDemocracy.Models
         public string? Description { get; set; }
         public User Author { get; }
         public Community Community { get; set; }
-        public bool Published { get { return DateTime.Now > PublishedDate; } }
+        public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
         /// <summary>
         /// When a proposal is Published(), a PublishedDate is set and Open status is set to true.
         /// </summary>
@@ -92,7 +92,7 @@ namespace PluginDemocracy.Models
 
         public void Update()
         {
-            Open = Published && DateTime.Now < ExpirationDate;
+            Open = Published && DateTime.UtcNow < ExpirationDate;
             bool prevPassedValue = Passed;
             UpdatePassedStatus();
             if(prevPassedValue == false && Passed == true)
