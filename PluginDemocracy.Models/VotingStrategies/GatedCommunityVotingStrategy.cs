@@ -1,20 +1,17 @@
 ﻿namespace PluginDemocracy.Models
 {
     /// <summary>
-    /// This voting strategy represents a Gated Community where each owner(s) has a vote.
+    /// This voting strategy represents a Gated Community where each Home 1 vote and a home can only vote way one or another.
     /// There are 2 ways to count votes depending on how partial Home owners are treated.
     /// In one scenario, Homes can only represent a whole vote. For example, if 60% of owners
     /// of that home vote in favor of a Proposal, then that entire Home's vote is in favor. 
     /// The second alternative is that fractional votes of homes are counted as fractional votes
     /// meaning that in the previous example, 60% of the Home vote would be in favor and the 
     /// other 40% against would count against. 
-    /// For now Homes vote as a unit because it is the most straighforward implementation given 
+    /// This strategy represents Homes vote as a whole unit because it is the most straighforward implementation given 
     /// that Home is a subclass of Community and how Proposals propagate down. 
     /// allow different strategy implementations  
     /// </summary>
-    /// <remarks>
-    /// In the future would like to implement a voting strategy that allows for fractional votes for home owners.
-    /// </remarks>
     public class GatedCommunityVotingStrategy : IVotingStrategy
     {
         public Type AppliesTo => typeof(GatedCommunity);
@@ -55,7 +52,7 @@
             if (community is GatedCommunity gatedCommunity)
             {
                 var homesVotingValue = new Dictionary<BaseCitizen, int>();
-                foreach (Home home in gatedCommunity.Homes) homesVotingValue[home] = 100;
+                foreach (Home home in gatedCommunity.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
             }
             else throw new Exception("community argument is not of type GatedCommunity.");

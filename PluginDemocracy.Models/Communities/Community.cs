@@ -124,7 +124,7 @@ namespace PluginDemocracy.Models
 
                     };
 
-                    propagatedProposal.Dictamen = new PropagatedProposalDictamen(parentProposal)
+                    propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
                     {
                         Community = propagatedCommunity,
                         Proposal = propagatedProposal

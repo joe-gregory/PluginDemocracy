@@ -64,24 +64,46 @@ namespace PluginDemocracy.Models
         /// If the Proposal is Open, anybody can vote. If someone already voted and they vote again, remove old vote and add new one. 
         /// </summary>
         /// <param name="citizen">The citizen voting</param>
-        /// <param name="voteValue">False is against (proposal failing). True is in favor of proposal passing.</param>
+        /// <param name="inFavor">False is against (proposal failing). True is in favor of proposal passing.</param>
         /// <exception cref="Exception"></exception>
-        public void Vote(BaseCitizen citizen, bool voteValue)
+        public void Vote(BaseCitizen citizen, bool inFavor)
         {
             // Check if the proposal is open for voting
-            if (!Open)
-            {
-                throw new Exception("Unable to vote: Proposal is not open for voting.");
-            }
+            if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
 
             // Remove the existing vote by the same citizen, if any
             _votes.RemoveAll(vote => vote.Citizen == citizen);
 
             // Add the new or updated vote
-            _votes.Add(new Vote(this, citizen, voteValue));
+            _votes.Add(new Vote(this, citizen, inFavor));
 
             // Update the state of the proposal
             Update();
+        }
+        /// <summary>
+        /// This is for the case where SubProposals are voting on a ParentProposal via PropagatedVoteDictamen
+        /// </summary>
+        /// <param name="vote">This is the vote being passed by the Dictamen if the ParentProposal is expecting a vote from this SubCitizen</param>
+        /// <exception cref="Exception"></exception>
+        public void Vote(Vote vote)
+        {
+            if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
+            //Find an existing vote by the same citizen, if any
+            Vote? existingVote = _votes.FirstOrDefault(v => v.Citizen == vote.Citizen);
+
+            if (existingVote != null)
+            {
+                //if the new vote is newer, replace the existing vote
+                if (vote.Date > existingVote.Date)
+                {
+                    _votes.Remove(existingVote);
+                    _votes.Add(vote);
+                }
+            }
+            else
+            {
+                _votes.Add(vote);
+            }
         }
         public void UpdatePassedStatus()
         {

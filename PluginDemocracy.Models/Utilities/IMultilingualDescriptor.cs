@@ -5,7 +5,7 @@
     /// </summary>
     public interface IMultilingualDescriptor
     {
-        public MultilingualString Title { get; set; }
-        public MultilingualString Description { get; set; }
+        MultilingualString Title { get; set; }
+        MultilingualString Description { get; set; }
     }
 }

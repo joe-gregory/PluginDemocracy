@@ -3,8 +3,8 @@
     public abstract class BaseDictamen : IMultilingualDescriptor
     {
         public Guid Guid { get; }
-        public MultilingualString Title { get; set; }
-        public MultilingualString Description { get; set; }
+        public abstract MultilingualString Title { get; set; }
+        public abstract MultilingualString Description { get; set; }
         public Community? Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }
@@ -14,7 +14,7 @@
         public Proposal? Proposal { get; set; }
         /// <summary>
         /// Strategies:
-        /// </summary>
+        /// </summary> 
         public BaseDictamen()
         {
             Guid = Guid.NewGuid();
