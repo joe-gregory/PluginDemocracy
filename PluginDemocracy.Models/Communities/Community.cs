@@ -5,23 +5,23 @@ namespace PluginDemocracy.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Community : BaseCitizen
+    public class Community : Citizen
     {
         //Basic information
         public string? Name { get; set; }
         public override string? FullName
         {
             get => string.Join(" ", Name, Address);
-            set => throw new InvalidOperationException("Cannot set FullName directly in BaseCommunity class.");
+            set => throw new InvalidOperationException("Cannot set FullName directly in Community class.");
         }
         override public string? Address { get; set; }
         public string? Description { get; set; }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
-        virtual public List<BaseCitizen> Citizens { get; set; }
+        virtual public List<Citizen> Citizens { get; private set; }
         /// <summary>
-        /// Policy for how long a proposal remains open for after it publishes
+        /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
         public int ProposalsExpirationDays { get; set; }
         public IVotingStrategy? VotingStrategy { get; set; }
@@ -30,11 +30,11 @@ namespace PluginDemocracy.Models
         /// Each inheriting class can override who gets to vote and how much each vote counts. 
         /// In BaseCommunity, each Citizens gets one vote. 
         /// </summary>
-        public Dictionary<BaseCitizen, int> CitizensVotingValue
+        public Dictionary<Citizen, int> CitizensVotingValue
         {
             get
             {
-                if (VotingStrategy == null) return new Dictionary<BaseCitizen, int>();
+                if (VotingStrategy == null) return new Dictionary<Citizen, int>();
                 else return VotingStrategy.ReturnCitizensVotingValue(this);
             }
         }
@@ -50,6 +50,7 @@ namespace PluginDemocracy.Models
             Citizens = new();
             Constitution = new();
             Proposals = new();
+            ProposalsExpirationDays = 30;
             Dictamens = new();
             Roles = new();
         }
@@ -57,7 +58,7 @@ namespace PluginDemocracy.Models
         /// Adding a citizen needs to ensure that no citizen is repeated
         /// </summary>
         /// <param name="user"></param>
-        virtual public void AddCitizen(BaseCitizen user)
+        virtual public void AddCitizen(Citizen user)
         {
             if (user != null)
             {
@@ -70,7 +71,7 @@ namespace PluginDemocracy.Models
             }
             else throw new Exception("User cannot be null when adding to Community.Citizens");
         }
-        virtual public void RemoveCitizen(BaseCitizen user)
+        virtual public void RemoveCitizen(Citizen user)
         {
             if (user != null)
             {
@@ -104,6 +105,8 @@ namespace PluginDemocracy.Models
             if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal.Votes is not empty");
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
+            proposal.PublishedDate = DateTime.Now;
+            proposal.ExpirationDate = proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             PropagateProposal(proposal);
 

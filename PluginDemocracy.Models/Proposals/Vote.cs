@@ -6,14 +6,14 @@
     public class Vote
     {
         public Proposal Proposal { get; }
-        public BaseCitizen Citizen { get; }
+        public Citizen Citizen { get; }
         public bool? InFavor { get; }
         public int VoteWeight { get; }
         public int VoteValueInFavor { get; }
         public int VoteValueAgainst { get; }
         public DateTime? Date { get; }
 
-        public Vote(Proposal proposal, BaseCitizen citizen, bool inFavor)
+        public Vote(Proposal proposal, Citizen citizen, bool inFavor)
         {
             Proposal = proposal;
             Citizen = citizen;
@@ -32,7 +32,7 @@
             else VoteValueAgainst = VoteWeight;
             Date = DateTime.UtcNow;
         }
-        public Vote(Proposal proposal, BaseCitizen citizen)
+        public Vote(Proposal proposal, Citizen citizen)
         {
             Proposal = proposal;
             Citizen = citizen;

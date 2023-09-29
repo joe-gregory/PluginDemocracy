@@ -1,6 +1,6 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class User : BaseCitizen
+    public class User : Citizen
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -28,10 +28,14 @@
         public bool Admin { get; set; }
         
         private List<Role> Roles { get; set; }
-        public User(bool admin, bool superAdmin)
+        public User()
+        {
+            Roles = new();
+            Admin = false;
+        }
+        public User(bool admin) : this()
         {
             Admin = admin;
-            Roles = new();
         }
         public void AddRole(Role role)
         {

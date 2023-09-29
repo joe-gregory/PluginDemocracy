@@ -3,6 +3,6 @@
     public interface IVotingStrategy : IMultilingualDescriptor
     {
         public Type AppliesTo { get; }
-        public Dictionary<BaseCitizen, int> ReturnCitizensVotingValue(Community community);
+        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community);
     }
 }

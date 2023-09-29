@@ -10,19 +10,20 @@ namespace PluginDemocracy.Models
         public string? Description { get; set; }
         public User Author { get; }
         public Community Community { get; set; }
-        public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
+       
         /// <summary>
-        /// When a proposal is Published(), a PublishedDate is set and Open status is set to true.
+        /// PublisedDate is set by the Community when Community.PublishProposal() is invoked.
         /// </summary>
-        public DateTime? PublishedDate { get; private set; }
+        public DateTime? PublishedDate { get; set; }
+        public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
         public DateTime? ExpirationDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public IVotingStrategy? VotingStrategy { get; set; }
-        public Dictionary<BaseCitizen, int> CitizensVotingValue
+        public Dictionary<Citizen, int> CitizensVotingValue
         {
             get
             {
-                if (VotingStrategy == null) return new Dictionary<BaseCitizen, int>();
+                if (VotingStrategy == null) return new Dictionary<Citizen, int>();
                 else return VotingStrategy.ReturnCitizensVotingValue(Community);
             }
         }
@@ -53,11 +54,6 @@ namespace PluginDemocracy.Models
             Community = community;
             VotingStrategy = community.VotingStrategy;
             _votes = new();
-            //initialize tally
-            foreach(BaseCitizen citizen in CitizensVotingValue.Keys)
-            {
-                _votes.Add(new Vote(this, citizen));
-            }
             Passed = false;
         }
         /// <summary>
@@ -66,8 +62,9 @@ namespace PluginDemocracy.Models
         /// <param name="citizen">The citizen voting</param>
         /// <param name="inFavor">False is against (proposal failing). True is in favor of proposal passing.</param>
         /// <exception cref="Exception"></exception>
-        public void Vote(BaseCitizen citizen, bool inFavor)
+        public void Vote(Citizen citizen, bool inFavor)
         {
+            Update();
             // Check if the proposal is open for voting
             if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
 
@@ -87,6 +84,7 @@ namespace PluginDemocracy.Models
         /// <exception cref="Exception"></exception>
         public void Vote(Vote vote)
         {
+            Update();
             if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
             //Find an existing vote by the same citizen, if any
             Vote? existingVote = _votes.FirstOrDefault(v => v.Citizen == vote.Citizen);
@@ -104,6 +102,7 @@ namespace PluginDemocracy.Models
             {
                 _votes.Add(vote);
             }
+            Update();
         }
         public void UpdatePassedStatus()
         {

@@ -36,7 +36,7 @@
             }
         }
 
-        public Dictionary<BaseCitizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
         {
             if (community is Home home)
             {

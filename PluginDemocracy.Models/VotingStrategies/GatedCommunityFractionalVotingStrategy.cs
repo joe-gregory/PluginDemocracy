@@ -54,14 +54,14 @@ namespace PluginDemocracy.Models.VotingStrategies
             }
         }
 
-        public Dictionary<BaseCitizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
         {
             if (community is GatedCommunity gatedCommunity)
             {
-                var ownersVotingValue = new Dictionary<BaseCitizen, int>();
+                var ownersVotingValue = new Dictionary<Citizen, int>();
                 foreach(Home home in gatedCommunity.Homes)
                 {
-                    foreach(BaseCitizen owner in home.Owners.Keys)
+                    foreach(Citizen owner in home.Owners.Keys)
                     {
                         //an owner may own more than 1 home in the same gated community
                         if (ownersVotingValue.ContainsKey(owner))

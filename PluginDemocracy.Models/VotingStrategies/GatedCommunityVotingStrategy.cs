@@ -47,11 +47,11 @@
             }
         }
 
-        public Dictionary<BaseCitizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
         {
             if (community is GatedCommunity gatedCommunity)
             {
-                var homesVotingValue = new Dictionary<BaseCitizen, int>();
+                var homesVotingValue = new Dictionary<Citizen, int>();
                 foreach (Home home in gatedCommunity.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
             }
