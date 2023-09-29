@@ -8,7 +8,7 @@
             //Arrange
             Community parentCommunity = new()
             {
-                VotingStrategy = new GenericVotingStrategy(),
+                VotingStrategy = new CitizenVotingStrategy(),
                 Name = "parentCommunity"
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
@@ -109,7 +109,7 @@
             //Arrange
             Community parentCommunity = new()
             {
-                VotingStrategy = new GenericVotingStrategy(),
+                VotingStrategy = new CitizenVotingStrategy(),
                 Name = "parentCommunity"
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
