@@ -10,7 +10,7 @@ namespace PluginDemocracy.Models
         public string? Description { get; set; }
         public User Author { get; }
         public Community Community { get; set; }
-       
+
         /// <summary>
         /// PublisedDate is set by the Community when Community.PublishProposal() is invoked.
         /// </summary>
@@ -46,7 +46,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Indicates if the proposal has passed (majority of votes are true).
         /// </summary>
-        public bool Passed { get; set; }
+        public bool? Passed { get; set; }
         public Proposal(Community community, User user)
         {
             Guid = Guid.NewGuid();
@@ -54,7 +54,7 @@ namespace PluginDemocracy.Models
             Community = community;
             VotingStrategy = community.VotingStrategy;
             _votes = new();
-            Passed = false;
+            Passed = null;
         }
         /// <summary>
         /// If the Proposal is Open, anybody can vote. If someone already voted and they vote again, remove old vote and add new one. 
@@ -106,17 +106,33 @@ namespace PluginDemocracy.Models
         }
         public void UpdatePassedStatus()
         {
-            if (TotalValueVotesInFavor > TotalVotingValuesSum / 2) Passed = true;
-            else Passed = false;
+            if (Passed == null)
+            {
+                if (TotalValueVotesInFavor > TotalVotingValuesSum / 2)
+                {
+                    Passed = true;
+                    Open = false;
+                }
+                if (TotalValueVotesAgainst > TotalVotingValuesSum / 2)
+                {
+                    Passed = false;
+                    Open = false;
+                }
+            }
+
         }
-
-
+        /// <summary>
+        /// This is doing: 
+        /// 1 - Setting Open if Passed == null
+        /// 2 - Checking if Passed has changed from null to something else
+        /// 3 - issuing dictamen if Passed did change from null to something else
+        /// </summary>
         public void Update()
         {
-            Open = Published && DateTime.UtcNow < ExpirationDate;
-            bool prevPassedValue = Passed;
+            if (Passed == null) Open = Published && DateTime.UtcNow < ExpirationDate;
+            bool? prevPassedValue = Passed;
             UpdatePassedStatus();
-            if(prevPassedValue == false && Passed == true)
+            if (prevPassedValue == null && Passed != null)
             {
                 IssueDictamen();
             }

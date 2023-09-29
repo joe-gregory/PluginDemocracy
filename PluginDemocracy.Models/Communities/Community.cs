@@ -41,6 +41,9 @@ namespace PluginDemocracy.Models
         public int TotalVotes => CitizensVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
+        public List<Proposal> AcceptedProposals => Proposals.Where(proposal => proposal.Passed == true).ToList();
+        public List<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Passed == false).ToList();
+        public List<Proposal> UndecidedProposals => Proposals.Where(proposal => proposal.Open == true).ToList();
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
 
@@ -106,7 +109,7 @@ namespace PluginDemocracy.Models
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
             proposal.PublishedDate = DateTime.Now;
-            proposal.ExpirationDate = proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
+            proposal.ExpirationDate ??= proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             PropagateProposal(proposal);
 
@@ -121,10 +124,9 @@ namespace PluginDemocracy.Models
                 {
                     Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
                     {
-                        Title = parentProposal.Title + $"\nfor/para: {parentProposal.Community.Name}",
-                        Description = parentProposal.Description + $"\nfor/para: {parentProposal.Community.Name}",
+                        Title = parentProposal.Title + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
+                        Description = parentProposal.Description + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
                         ExpirationDate = parentProposal.ExpirationDate,
-
                     };
 
                     propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)

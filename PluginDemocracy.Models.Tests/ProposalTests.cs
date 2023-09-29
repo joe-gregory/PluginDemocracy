@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models.Tests
+﻿using System.Runtime.InteropServices;
+
+namespace PluginDemocracy.Models.Tests
 {
     public class ProposalTests
     {
@@ -73,7 +75,7 @@
 
             //Proposal should have the same Voting Strategy has parent
             Assert.Equal(proposal.VotingStrategy, parentCommunity.VotingStrategy);
-            Assert.False(proposal.Passed);
+            Assert.Null(proposal.Passed);
             Assert.True(proposal.Open);
             
             //Assert propagation to subcommunities& that the proposal was added to parent community
@@ -84,11 +86,20 @@
             Assert.Single(home2.Proposals);  
             Assert.Single(home3.Proposals);
 
+            Assert.Equal(proposal.Author, childGatedCommunity.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home1.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home2.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home3.Proposals[0].Author);
+            Assert.Equal(proposal.ExpirationDate, childGatedCommunity.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home1.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home2.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home3.Proposals[0].ExpirationDate);
+
             //Voting in Parent Community
             parentCommunity.Proposals[0].Vote(citizen1, true);
             parentCommunity.Proposals[0].Vote(citizen2, false);
-            //At this point, childGatedCommunity needs to vote to make the proposal true or false. Proposal should not be Passed right now
-            Assert.False(proposal.Passed);
+            //At this point, childGatedCommunity needs to vote to make the proposal true or false. Proposal should not be Passed right now (so Passed = null)
+            Assert.Null(proposal.Passed);
 
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote IN THE HOMES. 
             //It's 3 homes, so we need 2 Homes to vote yes.
@@ -97,7 +108,7 @@
             home2.Proposals[0].Vote(homeowner2_2_30, true);
             //With this the dictamen should pass that should make the Gated Community vote true in the parent proposal
             Assert.True(home1.Proposals[0].Passed);
-            Assert.True(home1.Proposals[0].Passed);
+            Assert.True(home2.Proposals[0].Passed);
             Assert.True(childGatedCommunity.Proposals[0].Passed);
             var vote = parentCommunity.Proposals[0]?.Votes?.FirstOrDefault(p => p.Citizen == childGatedCommunity);
             Assert.True(vote?.InFavor ?? false);
@@ -175,7 +186,7 @@
 
             //Proposal should have the same Voting Strategy has parent
             Assert.Equal(proposal.VotingStrategy, parentCommunity.VotingStrategy);
-            Assert.False(proposal.Passed);
+            Assert.Null(proposal.Passed);
             Assert.True(proposal.Open);
 
             //Assert propagation to subcommunities& that the proposal was added to parent community
@@ -186,16 +197,20 @@
             Assert.Single(home2.Proposals);
             Assert.Single(home3.Proposals);
 
-            //Assert.Contains(childGatedCommunity.Proposals, p => p.Title == proposal.Title && p.Description == proposal.Description);
-            //Assert.Contains(home1.Proposals, p => p.Title == proposal.Title && p.Description == proposal.Description);
-            //Assert.Contains(home2.Proposals, p => p.Title == proposal.Title && p.Description == proposal.Description);
-            //Assert.Contains(home3.Proposals, p => p.Title == proposal.Title && p.Description == proposal.Description);
+            Assert.Equal(proposal.Author, childGatedCommunity.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home1.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home2.Proposals[0].Author);
+            Assert.Equal(proposal.Author, home3.Proposals[0].Author);
+            Assert.Equal(proposal.ExpirationDate, childGatedCommunity.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home1.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home2.Proposals[0].ExpirationDate);
+            Assert.Equal(proposal.ExpirationDate, home3.Proposals[0].ExpirationDate);
 
             //Voting in Parent Community
             parentCommunity.Proposals[0].Vote(citizen1, true);
             parentCommunity.Proposals[0].Vote(citizen2, false);
             //At this point, childGatedCommunity needs to vote to make the proposal true or false. Proposal should not be Passed right now
-            Assert.False(proposal.Passed);
+            Assert.Null(proposal.Passed);
 
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
             //It's 3 homes, so 2 homes need to vote no.
@@ -204,11 +219,14 @@
             home2.Proposals[0].Vote(homeowner2_2_30, false);
             
             Assert.False(home1.Proposals[0].Passed);
-            Assert.False(home1.Proposals[0].Passed);
+            Assert.False(home2.Proposals[0].Passed);
             //With this the dictamen should pass that should make the Gated Community vote true in the parent proposal
             Assert.False(childGatedCommunity.Proposals[0].Passed);
+
             var vote = parentCommunity.Proposals[0]?.Votes?.FirstOrDefault(p => p.Citizen == childGatedCommunity);
-            Assert.False(vote?.InFavor ?? false);
+            Assert.NotNull(vote);
+            Assert.NotNull(vote.InFavor);
+            Assert.False(vote.InFavor);
             Assert.False(parentCommunity.Proposals[0].Passed);
         }
     }
