@@ -40,6 +40,19 @@ namespace PluginDemocracy.Models.Tests
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_1_60, 60);
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_2_40, 40);
 
+            User resident1_1 = new();
+            User resident1_2 = new();
+            User resident1_3 = new();
+            User resident2_1 = new();
+            User resident2_2 = new();
+            User resident2_3 = new();
+            childGatedCommunity.AddResidentToHome(home1, resident1_1);
+            childGatedCommunity.AddResidentToHome(home1, resident1_2);
+            childGatedCommunity.AddResidentToHome(home1, resident1_3);
+            childGatedCommunity.AddResidentToHome(home2, resident2_1);
+            childGatedCommunity.AddResidentToHome(home2, resident2_2);
+            childGatedCommunity.AddResidentToHome(home2, resident2_3);
+
             childGatedCommunity.AddOwnerToHome(home2, homeowner2_1_30, 30);
             childGatedCommunity.AddOwnerToHome(home2, homeowner2_2_30, 30);
             childGatedCommunity.AddOwnerToHome(home2, homeowner2_3_40, 40);
@@ -103,6 +116,12 @@ namespace PluginDemocracy.Models.Tests
 
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote IN THE HOMES. 
             //It's 3 homes, so we need 2 Homes to vote yes.
+            home1.Proposals[0].Vote(resident1_1, false);
+            home1.Proposals[0].Vote(resident1_2, false);
+            home1.Proposals[0].Vote(resident1_3, false);
+            home2.Proposals[0].Vote(resident2_1, false);
+            home2.Proposals[0].Vote(resident2_2, false);
+            home2.Proposals[0].Vote(resident2_3, false);
             home1.Proposals[0].Vote(homeowner1_1_60, true);
             home2.Proposals[0].Vote(homeowner2_1_30, true);
             home2.Proposals[0].Vote(homeowner2_2_30, true);
@@ -149,6 +168,19 @@ namespace PluginDemocracy.Models.Tests
 
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_1_60, 60);
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_2_40, 40);
+
+            User resident1_1 = new();
+            User resident1_2 = new();
+            User resident1_3 = new();
+            User resident2_1 = new();
+            User resident2_2 = new();
+            User resident2_3 = new();
+            childGatedCommunity.AddResidentToHome(home1, resident1_1);
+            childGatedCommunity.AddResidentToHome(home1, resident1_2);
+            childGatedCommunity.AddResidentToHome(home1, resident1_3);
+            childGatedCommunity.AddResidentToHome(home2, resident2_1);
+            childGatedCommunity.AddResidentToHome(home2, resident2_2);
+            childGatedCommunity.AddResidentToHome(home2, resident2_3);
 
             childGatedCommunity.AddOwnerToHome(home2, homeowner2_1_30, 30);
             childGatedCommunity.AddOwnerToHome(home2, homeowner2_2_30, 30);
@@ -214,6 +246,12 @@ namespace PluginDemocracy.Models.Tests
 
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
             //It's 3 homes, so 2 homes need to vote no.
+            home1.Proposals[0].Vote(resident1_1, true);
+            home1.Proposals[0].Vote(resident1_2, true);
+            home1.Proposals[0].Vote(resident1_3, true);
+            home2.Proposals[0].Vote(resident2_1, true);
+            home2.Proposals[0].Vote(resident2_2, true);
+            home2.Proposals[0].Vote(resident2_3, true);
             home1.Proposals[0].Vote(homeowner1_1_60, false);
             home2.Proposals[0].Vote(homeowner2_1_30, false);
             home2.Proposals[0].Vote(homeowner2_2_30, false);

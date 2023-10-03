@@ -70,7 +70,6 @@ namespace PluginDemocracy.Models
                     Citizens.Add(user);
                     user.AddCitizenship(this);
                 }
-                else throw new Exception("Community.Citizens already contains user");
             }
             else throw new Exception("User cannot be null when adding to Community.Citizens");
         }
@@ -115,7 +114,7 @@ namespace PluginDemocracy.Models
 
             return true;
         }
-        public void PropagateProposal(Proposal parentProposal)
+        private protected void PropagateProposal(Proposal parentProposal)
         {
 
             foreach (var citizen in Citizens)

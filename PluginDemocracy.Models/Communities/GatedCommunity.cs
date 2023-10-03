@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.Runtime.CompilerServices;
+
+namespace PluginDemocracy.Models
 {
     public class GatedCommunity : Community
     {
@@ -6,7 +8,7 @@
         /// <summary>
         /// This returns a list of homes in the community.
         /// </summary>
-        override public List<Citizen> Citizens { get { return Homes.Cast<Citizen>().ToList(); } }
+        override public List<Citizen> Citizens { get { return Homes.SelectMany(home => home.Citizens).Distinct().ToList(); } }
         /// <summary>
         /// Since Citizens will return a list of homes. Residents is added to GatedCommunity to return a list of all the individuals living here. 
         /// </summary>
@@ -24,18 +26,23 @@
         public void AddResidentToHome(Home home, Citizen user)
         {
             home.AddResident(user);
+            AddCitizen(user);
         }
         public void RemoveResidentFromHome(Home home, Citizen user)
         {
             home.RemoveResident(user);
+            //if after removing from home, it still shows up, it means resident might still be listed as an owner or something else somewhere, so don't remove
+            if (!Citizens.Contains(user)) RemoveCitizen(user);
         }
         public void AddOwnerToHome(Home home, Citizen user, int percentage)
         {
-            home.AddOwnerToHome(user, percentage);
+            home.AddOwner(user, percentage);
+            AddCitizen(user);
         }
         public void RemoveOwnerFromHome(Home home, Citizen user)
         {
-            home.RemoveOwnerFromHome(user);
+            home.RemoveOwner(user);
+            if (!Citizens.Contains(user)) RemoveCitizen(user);
         }
     }
 }

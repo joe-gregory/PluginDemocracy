@@ -10,7 +10,7 @@ namespace PluginDemocracy.Models.Tests
         /// Adding a citizen needs to add it to both Community.Citizens and User.Citizenships. There should be no duplicates.
         /// </summary>
         [Fact]
-        public void AddingAndRemovingCitizens()
+        public void AddingAndRemovingCitizensCommunity()
         {
             //Arrange
             Community parentCommunity = new();
@@ -100,6 +100,75 @@ namespace PluginDemocracy.Models.Tests
             Assert.Contains(parentCommunity, citizenUser.Citizenships);
             Assert.Single(citizenCommunity.Citizens);
             Assert.Empty(grandchildCitizenCommunity.Citizenships);
+        }
+        [Fact]
+        public void AddingAndRemovingCitizensGatedCommunityAndHome()
+        {
+            //Arrange
+            GatedCommunity gatedCommunity = new();
+            Home home = new();
+            User owner = new();
+            User resident = new();
+
+            //Act
+            gatedCommunity.Homes.Add(home);
+            gatedCommunity.AddOwnerToHome(home, owner, 100);
+            gatedCommunity.AddResidentToHome(home, owner);
+            gatedCommunity.AddResidentToHome(home, resident);
+
+            //Assert
+            Assert.Contains(owner, home.Owners.Keys);
+            Assert.Contains(owner, home.Citizens);
+            Assert.Contains(owner, gatedCommunity.Citizens);
+
+            Assert.Contains(resident, home.Citizens);
+            Assert.Contains(resident, gatedCommunity.Citizens);
+
+            Assert.Contains(home, owner.Citizenships); //
+            Assert.Contains(gatedCommunity, owner.Citizenships);
+            Assert.Contains(home, resident.Citizenships);
+            Assert.Contains(gatedCommunity, resident.Citizenships);
+            //Act
+            //Removing owner from owners list should still show up on citizens because it is on the list of residents
+            gatedCommunity.RemoveOwnerFromHome(home, owner);
+
+            //Assert
+            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.Contains(owner, home.Citizens);
+            Assert.Contains(owner, home.Residents);
+            Assert.Contains(owner, gatedCommunity.Citizens);
+            Assert.Contains(resident, home.Residents);
+            Assert.Contains(resident, home.Citizens);
+            Assert.Contains(resident, gatedCommunity.Citizens);
+
+            //Act
+            gatedCommunity.RemoveResidentFromHome(home,owner);
+
+            //Assert
+            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.DoesNotContain(owner, home.Residents);
+            Assert.DoesNotContain(owner, home.Citizens);
+            Assert.DoesNotContain(owner, gatedCommunity.Citizens);
+            Assert.Contains(resident, home.Residents);
+            Assert.Contains(resident, home.Citizens);
+            Assert.Contains(resident, gatedCommunity.Citizens);
+
+            //Act
+            gatedCommunity.RemoveResidentFromHome(home,resident);
+
+            //Assert
+            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.DoesNotContain(owner, home.Residents);
+            Assert.DoesNotContain(owner, home.Citizens);
+            Assert.DoesNotContain(owner, gatedCommunity.Citizens);
+            Assert.DoesNotContain(resident, home.Residents);
+            Assert.DoesNotContain(resident, home.Citizens);
+            Assert.DoesNotContain(resident, gatedCommunity.Citizens);
+
+            Assert.DoesNotContain(home, owner.Citizenships);
+            Assert.DoesNotContain(gatedCommunity, owner.Citizenships);
+            Assert.DoesNotContain(home, resident.Citizenships);
+            Assert.DoesNotContain(gatedCommunity, resident.Citizenships);
         }
     }
 }
