@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace PluginDemocracy.Models.Tests
+﻿namespace PluginDemocracy.Models.Tests
 {
     public class ProposalTests
     {
@@ -14,25 +12,25 @@ namespace PluginDemocracy.Models.Tests
                 Name = "parentCommunity"
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
-            GatedCommunity childGatedCommunity = new() 
-            { 
+            GatedCommunity childGatedCommunity = new()
+            {
                 Name = "childGatedCommunity"
             };
-            
+
             Home home1 = new();
             //whichHome_id#_percentageOwnership
             User homeowner1_1_60 = new();
             User homeowner1_2_40 = new();
-            
+
             Home home2 = new();
             User homeowner2_1_30 = new();
             User homeowner2_2_30 = new();
             User homeowner2_3_40 = new();
-            
+
             Home home3 = new();
             User homeowner3_1_50 = new();
             User homeowner3_2_50 = new();
-            
+
             childGatedCommunity.Homes.Add(home1);
             childGatedCommunity.Homes.Add(home2);
             childGatedCommunity.Homes.Add(home3);
@@ -90,13 +88,13 @@ namespace PluginDemocracy.Models.Tests
             Assert.Equal(proposal.VotingStrategy, parentCommunity.VotingStrategy);
             Assert.Null(proposal.Passed);
             Assert.True(proposal.Open);
-            
+
             //Assert propagation to subcommunities& that the proposal was added to parent community
             Assert.Contains(proposal, parentCommunity.Proposals);
             Assert.Single(parentCommunity.Proposals);
             Assert.Single(childGatedCommunity.Proposals);
             Assert.Single(home1.Proposals);
-            Assert.Single(home2.Proposals);  
+            Assert.Single(home2.Proposals);
             Assert.Single(home3.Proposals);
 
             Assert.Equal(proposal.Author, childGatedCommunity.Proposals[0].Author);
@@ -143,8 +141,8 @@ namespace PluginDemocracy.Models.Tests
                 Name = "parentCommunity"
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
-            GatedCommunity childGatedCommunity = new() 
-            { 
+            GatedCommunity childGatedCommunity = new()
+            {
                 Name = "childGatedCommunity"
             };
 
@@ -255,7 +253,7 @@ namespace PluginDemocracy.Models.Tests
             home1.Proposals[0].Vote(homeowner1_1_60, false);
             home2.Proposals[0].Vote(homeowner2_1_30, false);
             home2.Proposals[0].Vote(homeowner2_2_30, false);
-            
+
             Assert.False(home1.Proposals[0].Passed);
             Assert.False(home2.Proposals[0].Passed);
             //With this the dictamen should pass that should make the Gated Community vote true in the parent proposal

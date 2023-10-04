@@ -12,12 +12,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Since Citizens will return a list of homes. Residents is added to GatedCommunity to return a list of all the individuals living here. 
         /// </summary>
-        public List<Citizen> Residents 
-            {
-            get => Homes.SelectMany(home => home.Citizens)
-                        .Distinct()  // Remove duplicates
-                        .ToList();  // Conve
-            }
         public GatedCommunity() : base()
         {
             Homes = new();
@@ -43,6 +37,15 @@ namespace PluginDemocracy.Models
         {
             home.RemoveOwner(user);
             if (!Citizens.Contains(user)) RemoveCitizen(user);
+        }
+
+        override private protected void PropagateProposal(Proposal parentProposal)
+        {
+            foreach(Home home in Homes)
+            {
+                Proposal propagatedProposal = ReturnPropagatedProposal(home, parentProposal);
+                home.PublishProposal(propagatedProposal);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace PluginDemocracy.Models.Tests
         {
             //Arrange
             Community parentCommunity = new();
-            
+
             Community citizenCommunity = new();
             User citizenUser = new();
 
@@ -27,7 +27,7 @@ namespace PluginDemocracy.Models.Tests
 
             citizenCommunity.AddCitizen(grandchildCitizenCommunity);
             citizenCommunity.AddCitizen(grandchildCitizenUser);
-            
+
             //Assert - Adding citizens
             Assert.Contains(citizenCommunity, parentCommunity.Citizens);
             Assert.Contains(citizenUser, parentCommunity.Citizens);
@@ -105,10 +105,22 @@ namespace PluginDemocracy.Models.Tests
         public void AddingAndRemovingCitizensGatedCommunityAndHome()
         {
             //Arrange
-            GatedCommunity gatedCommunity = new();
-            Home home = new();
-            User owner = new();
-            User resident = new();
+            GatedCommunity gatedCommunity = new() 
+            {
+                Name = "Gated Community",
+            };
+            Home home = new()
+            {
+                Name = "Home"
+            };
+            User owner = new() 
+            { 
+                FirstName = "Owner",
+            };
+            User resident = new() 
+            { 
+                FirstName = "Resident",
+            };
 
             //Act
             gatedCommunity.Homes.Add(home);

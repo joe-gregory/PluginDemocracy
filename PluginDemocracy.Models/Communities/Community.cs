@@ -68,8 +68,8 @@ namespace PluginDemocracy.Models
                 if (!Citizens.Contains(user))
                 {
                     Citizens.Add(user);
-                    user.AddCitizenship(this);
                 }
+                if (Citizens.Contains(user)) user.AddCitizenship(this);
             }
             else throw new Exception("User cannot be null when adding to Community.Citizens");
         }
@@ -77,12 +77,8 @@ namespace PluginDemocracy.Models
         {
             if (user != null)
             {
-                if (Citizens.Contains(user))
-                {
-                    Citizens.Remove(user);
-                    user.RemoveCitizenship(this);
-                }
-                else throw new Exception("Community.Citizens does not contain User");
+                if (Citizens.Contains(user)) Citizens.Remove(user);
+                if (!Citizens.Contains(user)) user.RemoveCitizenship(this);
             }
             else throw new Exception("User cannot be null when removing from Community.Citizens");
         }
@@ -114,30 +110,35 @@ namespace PluginDemocracy.Models
 
             return true;
         }
-        private protected void PropagateProposal(Proposal parentProposal)
+        private protected virtual void PropagateProposal(Proposal parentProposal)
         {
 
             foreach (var citizen in Citizens)
             {
                 if (citizen is Community propagatedCommunity)
                 {
-                    Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
-                    {
-                        Title = parentProposal.Title + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
-                        Description = parentProposal.Description + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
-                        ExpirationDate = parentProposal.ExpirationDate,
-                    };
-
-                    propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
-                    {
-                        Community = propagatedCommunity,
-                        Proposal = propagatedProposal
-                    };
-
+                    Proposal propagatedProposal = ReturnPropagatedProposal(propagatedCommunity, parentProposal);
                     //publish in its corresponding community which should call this method if there are more nested sub-communities
                     propagatedCommunity.PublishProposal(propagatedProposal);
                 }
             }
+        }
+        static private protected Proposal ReturnPropagatedProposal(Community propagatedCommunity, Proposal parentProposal)
+        {
+            Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
+            {
+                Title = parentProposal.Title + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
+                Description = parentProposal.Description + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
+                ExpirationDate = parentProposal.ExpirationDate,
+            };
+
+            propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
+            {
+                Community = propagatedCommunity,
+                Proposal = propagatedProposal
+            };
+
+            return propagatedProposal;
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
