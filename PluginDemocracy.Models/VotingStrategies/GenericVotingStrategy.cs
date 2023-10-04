@@ -1,8 +1,8 @@
 ﻿namespace PluginDemocracy.Models
 {
     /// <summary>
-    /// This class represents a voting schema where everybody who is a User class of this Community gets a vote. 
-    /// Some restrictions can be applied such as age. 
+    /// This class represents a voting schema where everybody who is a User type of this Community gets a vote even if it is a member of a sub-community. 
+    /// Restrictions can be applied such as age. 
     /// </summary>
     public class GenericVotingStrategy : IVotingStrategy
     {
