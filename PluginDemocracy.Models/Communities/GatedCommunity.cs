@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     public class GatedCommunity : Community
     {
@@ -8,10 +6,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This returns a list of homes in the community.
         /// </summary>
-        override public List<Citizen> Citizens { get { return Homes.SelectMany(home => home.Citizens).Distinct().ToList(); } }
-        /// <summary>
-        /// Since Citizens will return a list of homes. Residents is added to GatedCommunity to return a list of all the individuals living here. 
-        /// </summary>
+        override public List<Citizen> Citizens { get { return Homes.Cast<Citizen>().ToList(); } }
         public GatedCommunity() : base()
         {
             Homes = new();

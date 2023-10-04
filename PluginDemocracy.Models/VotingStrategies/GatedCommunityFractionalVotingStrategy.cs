@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace PluginDemocracy.Models.VotingStrategies
 {
     /// <summary>
+    /// ON PAUSE FOR NOW. SEE CODING BIN NOTES FOR THIS.
     /// This voting strategy represents a Gated Community where each Home has 100 votes and different owners can vote in different ways.
     /// There are 2 ways to count votes depending on how partial Home owners are treated.
     /// In one scenario, Homes can only represent a whole vote. For example, if 60% of owners
