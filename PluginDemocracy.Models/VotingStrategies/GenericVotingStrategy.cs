@@ -27,10 +27,14 @@
             {
                 MultilingualString description = new MultilingualString()
                 {
-                    EN = "This voting strategy vests voting power on users. Every user gets 1 vote. Optional age restrictons can be placed (for example, Users above 18 years old)." +
-            "In Communities comprised of other sub-communities, the sub-communities are ignored and instead their respective users get representation. ",
-                    ES = "Esta estrategia de voto pone el poder en Usuarios. Cada Usuario recibe 1 voto. Restricciones de edad se pueden agregar opcionalmente (por ejemplo, solo a mayores de 18 años." +
-            "En Comunidades conformadas por otras sub-comunidades, la sub-comunidad es ignorada y en su lugar los usuarios de esa comunidad son representados. "
+                    EN = "This voting strategy vests voting power on Users. Users are human members of a Community. " +
+                    "For child communities that are citizens of this parent community, their own citizens votes are counted as 1 each as well. " +
+                    "Every User gets 1 vote regardless if they are a member of the parent community or child communities. " +
+                    ". Optional age restrictons can be placed (for example, Users above 18 years old)." 
+                    ES = "Esta estrategia de voto pone el poder en Usuarios. Usuarios son los miembros humanos de una Comunidad. " +
+                    "Para sub-comunidades que son miembros de esta comunidad, sus propios ciudadanos votos se cuentan como 1 cada uno también. " +
+                    "Cada Usuario recibe 1 voto independientemente si son miembros de la comunidad o de una sub-comunidad que pertece a esta comunidad. " +
+                    "Restricciones de edad se pueden agregar opcionalmente (por ejemplo, solo a mayores de 18 años."
                 };
                 if (MinimumAge != null)
                 {

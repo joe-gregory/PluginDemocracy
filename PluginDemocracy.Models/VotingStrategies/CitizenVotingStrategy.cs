@@ -13,8 +13,8 @@
             {
                 return new MultilingualString()
                 {
-                    EN = "Voting power in Users with optional age restriction.",
-                    ES = "Voto de poder en Usuarios con restriccion de edad opcional."
+                    EN = "1 vote per Citizen",
+                    ES = "1 voto por Ciudadano"
                 };
             }
             set
@@ -28,10 +28,12 @@
             {
                 MultilingualString description = new MultilingualString()
                 {
-                    EN = "This voting strategy vests voting power on users. Every user gets 1 vote. Optional age restrictons can be placed (for example, Users above 18 years old)." +
-            "In Communities comprised of other sub-communities, the sub-communities are ignored and instead their respective users get representation. ",
-                    ES = "Esta estrategia de voto pone el poder en Usuarios. Cada Usuario recibe 1 voto. Restricciones de edad se pueden agregar opcionalmente (por ejemplo, solo a mayores de 18 años." +
-            "En Comunidades conformadas por otras sub-comunidades, la sub-comunidad es ignorada y en su lugar los usuarios de esa comunidad son representados. "
+                    EN = "This is the simplest voting strategy. Each Citizen gets 1 vote. A Citizen can be a human User or another sub-community. " +
+                    "If a sub-community is a Citizen of this community, it counts as 1 vote. The members of the sub-community will vote according to their own voting strategy " +
+                    "and the result will be added as a single vote to this community.",
+                ES = "Esta es la estrategia de voto mas sencilla. Cada Ciudadano cuenta como 1 voto. Un Ciudadano puede ser un Usuario humano o puede ser una sub-comunidad. " +
+                    "Si una sub-comunidad es Ciudadano de esta comunidad, el voto de la sub-comunidad cuenta como 1 voto independientemente de cuantos Ciudadanos la sub-comunidad tenga." +
+                    "Los miembros de la sub-comunidad votaran de acuerdo a su propia estrategia de voto y el resultado sera pasado como un solo voto a esta comunidad." 
                 };
                 return description;
             }
