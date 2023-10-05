@@ -19,12 +19,12 @@ namespace PluginDemocracy.Models
         public DateTime? ExpirationDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public IVotingStrategy? VotingStrategy { get; set; }
-        public Dictionary<Citizen, int> CitizensVotingValue
+        public Dictionary<Citizen, int> VotingWeights
         {
             get
             {
                 if (VotingStrategy == null) return new Dictionary<Citizen, int>();
-                else return VotingStrategy.ReturnCitizensVotingValue(Community);
+                else return VotingStrategy.ReturnVotingWeights(Community);
             }
         }
         /// <summary>
@@ -35,7 +35,7 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
         public IReadOnlyList<Vote> VotesInFavor => _votes.Where(vote => vote.InFavor == true).ToList().AsReadOnly();
         public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
-        public int TotalVotingValuesSum => CitizensVotingValue.Values.Sum();
+        public int TotalVotingValuesSum => VotingWeights.Values.Sum();
         public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
         public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
         /// <summary>
@@ -73,12 +73,15 @@ namespace PluginDemocracy.Models
 
             // Add the new or updated vote
             _votes.Add(new Vote(this, citizen, inFavor));
+            VotingStrategy?.AddHomeVotes(this);
 
             // Update the state of the proposal
             Update();
         }
         /// <summary>
-        /// This is for the case where SubProposals are voting on a ParentProposal via PropagatedVoteDictamen
+        /// This is only for use by PropagatedVoteDictamen. It is for the case where SubProposals are voting on a ParentProposal via PropagatedVoteDictamen. The SubProposal will create a new vote for the 
+        /// Community using the above normal constructor but in case there is a voting strategy that also expects some of the underlying citizens, this below constructor
+        /// is added. It may or may not be useful. 
         /// </summary>
         /// <param name="vote">This is the vote being passed by the Dictamen if the ParentProposal is expecting a vote from this SubCitizen</param>
         /// <exception cref="Exception"></exception>
@@ -89,19 +92,23 @@ namespace PluginDemocracy.Models
             //Find an existing vote by the same citizen, if any
             Vote? existingVote = _votes.FirstOrDefault(v => v.Citizen == vote.Citizen);
 
+            Vote newVote = new(this, vote.Citizen, vote.InFavor, vote.Date);
+
             if (existingVote != null)
             {
                 //if the new vote is newer, replace the existing vote
                 if (vote.Date > existingVote.Date)
                 {
                     _votes.Remove(existingVote);
-                    _votes.Add(vote);
+                    
+                    _votes.Add(newVote);
                 }
             }
             else
             {
-                _votes.Add(vote);
+                _votes.Add(newVote);
             }
+            VotingStrategy?.AddHomeVotes(this);
             Update();
         }
         public void UpdatePassedStatus()

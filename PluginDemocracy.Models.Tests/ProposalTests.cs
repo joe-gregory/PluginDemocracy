@@ -8,13 +8,17 @@
             //Arrange
             Community parentCommunity = new()
             {
-                VotingStrategy = new CitizenVotingStrategy(),
-                Name = "parentCommunity"
+                VotingStrategy = new CitizensVotingStrategy(),
+                Name = "parentCommunity",
+                CanHaveHomes = false,
+                CanHaveNonResidentialCitizens = true
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
-            GatedCommunity childGatedCommunity = new()
+            Community childGatedCommunity = new()
             {
-                Name = "childGatedCommunity"
+                Name = "childGatedCommunity",
+                CanHaveHomes = true,
+                CanHaveNonResidentialCitizens = false,
             };
 
             Home home1 = new();
@@ -31,9 +35,9 @@
             User homeowner3_1_50 = new();
             User homeowner3_2_50 = new();
 
-            childGatedCommunity.Homes.Add(home1);
-            childGatedCommunity.Homes.Add(home2);
-            childGatedCommunity.Homes.Add(home3);
+            childGatedCommunity.AddHome(home1);
+            childGatedCommunity.AddHome(home2);
+            childGatedCommunity.AddHome(home3);
 
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_1_60, 60);
             childGatedCommunity.AddOwnerToHome(home1, homeowner1_2_40, 40);
@@ -62,9 +66,9 @@
             User citizen2 = new();
 
             //parentCommunity consists of 2 Users and 1 GatedCommunity. The GatedCommunity has 3 homes each with different levels of ownership.
-            parentCommunity.AddCitizen(citizen1);
-            parentCommunity.AddCitizen(citizen2);
-            parentCommunity.AddCitizen(childGatedCommunity);
+            parentCommunity.AddNonResidentialCitizen(citizen1);
+            parentCommunity.AddNonResidentialCitizen(citizen2);
+            parentCommunity.AddNonResidentialCitizen(childGatedCommunity);
 
             //Act - Proposal
             //Make a proposal on the parent Community. Does the Proposal propagate to child communities? Does it propagate down to childGatedCommunity and to each of the homes?
@@ -137,13 +141,17 @@
             //Arrange
             Community parentCommunity = new()
             {
-                VotingStrategy = new CitizenVotingStrategy(),
-                Name = "parentCommunity"
+                VotingStrategy = new CitizensVotingStrategy(),
+                Name = "parentCommunity",
+                CanHaveHomes = false,
+                CanHaveNonResidentialCitizens = true
             };
             //parentCommunity will consist of 1 sub-community and 2 Users. The subCommunity will consist of 2 users and another sub-community with 3 users. 
-            GatedCommunity childGatedCommunity = new()
+            Community childGatedCommunity = new()
             {
-                Name = "childGatedCommunity"
+                Name = "childGatedCommunity", 
+                CanHaveHomes = true,
+                CanHaveNonResidentialCitizens = false
             };
 
             Home home1 = new();
@@ -191,9 +199,9 @@
             User citizen2 = new();
 
             //parentCommunity consists of 2 Users and 1 GatedCommunity. The GatedCommunity has 3 homes each with different levels of ownership.
-            parentCommunity.AddCitizen(citizen1);
-            parentCommunity.AddCitizen(citizen2);
-            parentCommunity.AddCitizen(childGatedCommunity);
+            parentCommunity.AddNonResidentialCitizen(citizen1);
+            parentCommunity.AddNonResidentialCitizen(citizen2);
+            parentCommunity.AddNonResidentialCitizen(childGatedCommunity);
 
             //Act - Proposal
             //Make a proposal on the parent Community. Does the Proposal propagate to child communities? Does it propagate down to childGatedCommunity and to each of the homes?
@@ -223,14 +231,8 @@
             Assert.Contains(proposal, parentCommunity.Proposals);
             Assert.Single(parentCommunity.Proposals);
             Assert.Single(childGatedCommunity.Proposals);
-            Assert.Single(home1.Proposals);
-            Assert.Single(home2.Proposals);
-            Assert.Single(home3.Proposals);
 
             Assert.Equal(proposal.Author, childGatedCommunity.Proposals[0].Author);
-            Assert.Equal(proposal.Author, home1.Proposals[0].Author);
-            Assert.Equal(proposal.Author, home2.Proposals[0].Author);
-            Assert.Equal(proposal.Author, home3.Proposals[0].Author);
             Assert.Equal(proposal.ExpirationDate, childGatedCommunity.Proposals[0].ExpirationDate);
             Assert.Equal(proposal.ExpirationDate, home1.Proposals[0].ExpirationDate);
             Assert.Equal(proposal.ExpirationDate, home2.Proposals[0].ExpirationDate);

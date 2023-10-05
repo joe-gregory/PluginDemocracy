@@ -3,10 +3,8 @@
     /// <summary>
     /// This is the simplest form of a voting strategy where each Community.Citizen gets one vote. 
     /// </summary>
-    public class CitizenVotingStrategy : IVotingStrategy
+    public class CitizensVotingStrategy : IVotingStrategy
     {
-        public Type AppliesTo => typeof(Community);
-
         public MultilingualString Title
         {
             get
@@ -43,11 +41,8 @@
             }
         }
 
-        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
-            //throw an error if this doesn't apply to this type of Community
-            if (community.GetType() != AppliesTo) throw new InvalidCommunityTypeException("Wrong community type for this type of strategy.");
-
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
             Dictionary<Citizen, int> citizensVotingValue = new();
             foreach(Citizen citizen in community.Citizens)

@@ -10,104 +10,111 @@ namespace PluginDemocracy.Models.Tests
         /// Adding a citizen needs to add it to both Community.Citizens and User.Citizenships. There should be no duplicates.
         /// </summary>
         [Fact]
-        public void AddingAndRemovingCitizensCommunity()
+        public void AddingAndRemovingCitizensNoHomesCommunity()
         {
             //Arrange
-            Community parentCommunity = new();
+            Community parentCommunity = new()
+            {
+                CanHaveHomes = false,
+                CanHaveNonResidentialCitizens = true,
 
-            Community citizenCommunity = new();
-            User citizenUser = new();
+            };
 
-            Community grandchildCitizenCommunity = new();
-            User grandchildCitizenUser = new();
+            Community communityCitizen = new();
+            User userCitizen = new();
+
+            Community grandchildCommunityCitizen = new();
+            User grandchildUserCitizen = new();
 
             //Act - Adding citizens
-            parentCommunity.AddCitizen(citizenCommunity);
-            parentCommunity.AddCitizen(citizenUser);
+            parentCommunity.AddNonResidentialCitizen(communityCitizen);
+            parentCommunity.AddNonResidentialCitizen(userCitizen);
 
-            citizenCommunity.AddCitizen(grandchildCitizenCommunity);
-            citizenCommunity.AddCitizen(grandchildCitizenUser);
+            communityCitizen.AddNonResidentialCitizen(grandchildCommunityCitizen);
+            communityCitizen.AddNonResidentialCitizen(grandchildUserCitizen);
 
             //Assert - Adding citizens
-            Assert.Contains(citizenCommunity, parentCommunity.Citizens);
-            Assert.Contains(citizenUser, parentCommunity.Citizens);
-            Assert.Contains(parentCommunity, citizenCommunity.Citizenships);
-            Assert.Contains(parentCommunity, citizenUser.Citizenships);
+            Assert.Contains(communityCitizen, parentCommunity.Citizens);
+            Assert.Contains(userCitizen, parentCommunity.Citizens);
+            Assert.Contains(parentCommunity, communityCitizen.Citizenships);
+            Assert.Contains(parentCommunity, userCitizen.Citizenships);
 
-            Assert.Contains(grandchildCitizenCommunity, citizenCommunity.Citizens);
-            Assert.Contains(grandchildCitizenUser, citizenCommunity.Citizens);
-            Assert.Contains(citizenCommunity, grandchildCitizenCommunity.Citizenships);
-            Assert.Contains(citizenCommunity, grandchildCitizenUser.Citizenships);
+            Assert.Contains(grandchildCommunityCitizen, communityCitizen.Citizens);
+            Assert.Contains(grandchildUserCitizen, communityCitizen.Citizens);
+            Assert.Contains(communityCitizen, grandchildCommunityCitizen.Citizenships);
+            Assert.Contains(communityCitizen, grandchildUserCitizen.Citizenships);
 
             Assert.Equal(2, parentCommunity.Citizens.Count);
-            Assert.Single(citizenCommunity.Citizenships);
-            Assert.Single(citizenUser.Citizenships);
-            Assert.Equal(2, citizenCommunity.Citizens.Count);
-            Assert.Single(grandchildCitizenCommunity.Citizenships);
-            Assert.Single(grandchildCitizenUser.Citizenships);
+            Assert.Single(communityCitizen.Citizenships);
+            Assert.Single(userCitizen.Citizenships);
+            Assert.Equal(2, communityCitizen.Citizens.Count);
+            Assert.Single(grandchildCommunityCitizen.Citizenships);
+            Assert.Single(grandchildUserCitizen.Citizenships);
 
             //Act - Removing citizenCommunity
-            parentCommunity.RemoveCitizen(citizenCommunity);
+            parentCommunity.RemoveNonResidentialCitizen(communityCitizen);
             //Assert - Removing citizenCommunity
-            Assert.DoesNotContain(citizenCommunity, parentCommunity.Citizens);
-            Assert.DoesNotContain(parentCommunity, citizenCommunity.Citizenships);
-            Assert.Empty(citizenCommunity.Citizenships);
+            Assert.DoesNotContain(communityCitizen, parentCommunity.Citizens);
+            Assert.DoesNotContain(parentCommunity, communityCitizen.Citizenships);
+            Assert.Empty(communityCitizen.Citizenships);
             //Assert citizenUser is still part of parentCommunity
-            Assert.Contains(citizenUser, parentCommunity.Citizens);
+            Assert.Contains(userCitizen, parentCommunity.Citizens);
             Assert.Single(parentCommunity.Citizens);
             //Assert no changes have been made to the citizens of citizenCommunity
-            Assert.Contains(grandchildCitizenCommunity, citizenCommunity.Citizens);
-            Assert.Contains(grandchildCitizenUser, citizenCommunity.Citizens);
-            Assert.Contains(citizenCommunity, grandchildCitizenCommunity.Citizenships);
-            Assert.Contains(citizenCommunity, grandchildCitizenUser.Citizenships);
+            Assert.Contains(grandchildCommunityCitizen, communityCitizen.Citizens);
+            Assert.Contains(grandchildUserCitizen, communityCitizen.Citizens);
+            Assert.Contains(communityCitizen, grandchildCommunityCitizen.Citizenships);
+            Assert.Contains(communityCitizen, grandchildUserCitizen.Citizenships);
 
             //Act - removing citizenUser
-            parentCommunity.RemoveCitizen(citizenUser);
+            parentCommunity.RemoveNonResidentialCitizen(userCitizen);
             //Assert - removing citizenUser
-            Assert.DoesNotContain(citizenUser, parentCommunity.Citizens);
-            Assert.DoesNotContain(parentCommunity, citizenUser.Citizenships);
-            Assert.Empty(citizenUser.Citizenships);
+            Assert.DoesNotContain(userCitizen, parentCommunity.Citizens);
+            Assert.DoesNotContain(parentCommunity, userCitizen.Citizenships);
+            Assert.Empty(userCitizen.Citizenships);
             Assert.Empty(parentCommunity.Citizens);
             //Assert no changes have been made to the citizens of citizenCommunity
-            Assert.Contains(grandchildCitizenCommunity, citizenCommunity.Citizens);
-            Assert.Contains(grandchildCitizenUser, citizenCommunity.Citizens);
-            Assert.Contains(citizenCommunity, grandchildCitizenCommunity.Citizenships);
-            Assert.Contains(citizenCommunity, grandchildCitizenUser.Citizenships);
+            Assert.Contains(grandchildCommunityCitizen, communityCitizen.Citizens);
+            Assert.Contains(grandchildUserCitizen, communityCitizen.Citizens);
+            Assert.Contains(communityCitizen, grandchildCommunityCitizen.Citizenships);
+            Assert.Contains(communityCitizen, grandchildUserCitizen.Citizenships);
 
             //Act - removing grandchildCitizenCommunity
-            citizenCommunity.RemoveCitizen(grandchildCitizenCommunity);
+            communityCitizen.RemoveNonResidentialCitizen(grandchildCommunityCitizen);
             //Assert - removing grandchildCitizenCommunity
-            Assert.DoesNotContain(grandchildCitizenCommunity, citizenCommunity.Citizens);
-            Assert.DoesNotContain(citizenCommunity, grandchildCitizenCommunity.Citizenships);
-            Assert.Empty(grandchildCitizenCommunity.Citizenships);
-            Assert.Single(citizenCommunity.Citizens); //only grandchildCitizenUser should remain
+            Assert.DoesNotContain(grandchildCommunityCitizen, communityCitizen.Citizens);
+            Assert.DoesNotContain(communityCitizen, grandchildCommunityCitizen.Citizenships);
+            Assert.Empty(grandchildCommunityCitizen.Citizenships);
+            Assert.Single(communityCitizen.Citizens); //only grandchildCitizenUser should remain
 
             //Assert no changes have been made to the citizenship of grandchildCitizenUser
-            Assert.Contains(grandchildCitizenUser, citizenCommunity.Citizens);
-            Assert.Contains(citizenCommunity, grandchildCitizenUser.Citizenships);
+            Assert.Contains(grandchildUserCitizen, communityCitizen.Citizens);
+            Assert.Contains(communityCitizen, grandchildUserCitizen.Citizenships);
 
             //Act - Add grandchildCitizenCommunity back to citizenCommunity and citizenCommunity back to parentCommunity and remove in reverse: grandchildCitizenUser first
-            citizenCommunity.AddCitizen(grandchildCitizenCommunity);
-            parentCommunity.AddCitizen(citizenCommunity);
-            parentCommunity.AddCitizen(citizenUser);
-            citizenCommunity.RemoveCitizen(grandchildCitizenCommunity);
+            communityCitizen.AddNonResidentialCitizen(grandchildCommunityCitizen);
+            parentCommunity.AddNonResidentialCitizen(communityCitizen);
+            parentCommunity.AddNonResidentialCitizen(userCitizen);
+            communityCitizen.RemoveNonResidentialCitizen(grandchildCommunityCitizen);
 
             //Assert no other changes were made
-            Assert.Contains(grandchildCitizenUser, citizenCommunity.Citizens);
-            Assert.Contains(citizenCommunity, parentCommunity.Citizens);
-            Assert.Contains(citizenUser, parentCommunity.Citizens);
-            Assert.Contains(parentCommunity, citizenCommunity.Citizenships);
-            Assert.Contains(parentCommunity, citizenUser.Citizenships);
-            Assert.Single(citizenCommunity.Citizens);
-            Assert.Empty(grandchildCitizenCommunity.Citizenships);
+            Assert.Contains(grandchildUserCitizen, communityCitizen.Citizens);
+            Assert.Contains(communityCitizen, parentCommunity.Citizens);
+            Assert.Contains(userCitizen, parentCommunity.Citizens);
+            Assert.Contains(parentCommunity, communityCitizen.Citizenships);
+            Assert.Contains(parentCommunity, userCitizen.Citizenships);
+            Assert.Single(communityCitizen.Citizens);
+            Assert.Empty(grandchildCommunityCitizen.Citizenships);
         }
         [Fact]
         public void AddingAndRemovingCitizensGatedCommunityAndHome()
         {
             //Arrange
-            GatedCommunity gatedCommunity = new() 
+            Community gatedCommunity = new()
             {
                 Name = "Gated Community",
+                CanHaveHomes = true,
+                CanHaveNonResidentialCitizens = false
             };
             Home home = new()
             {
@@ -123,7 +130,7 @@ namespace PluginDemocracy.Models.Tests
             };
 
             //Act
-            gatedCommunity.Homes.Add(home);
+            gatedCommunity.AddHome(home);
             gatedCommunity.AddOwnerToHome(home, owner, 100);
             gatedCommunity.AddResidentToHome(home, owner);
             gatedCommunity.AddResidentToHome(home, resident);

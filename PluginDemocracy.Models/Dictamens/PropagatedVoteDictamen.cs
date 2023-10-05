@@ -25,10 +25,10 @@
         {
             if (Community == null || Proposal == null) throw new InvalidOperationException("Cannot execute Dictamen without a Community and a Proposal.");
             //Check what the parent proposal is expecting. Does it expect my community's citizens or my community?
-            if (ParentProposal.CitizensVotingValue.ContainsKey(Community) && Proposal.Passed != null) ParentProposal.Vote(Community, Proposal.Passed.Value);
+            if (ParentProposal.VotingWeights.ContainsKey(Community) && Proposal.Passed != null) ParentProposal.Vote(Community, Proposal.Passed.Value);
             foreach(Citizen citizen in Community.Citizens)
             {
-                if (ParentProposal.CitizensVotingValue.ContainsKey(citizen) && Proposal.Passed != null)
+                if (ParentProposal.VotingWeights.ContainsKey(citizen) && Proposal.Passed != null)
                 {
                     Vote? vote = Proposal.Votes.FirstOrDefault(vot => vot.Citizen == citizen);
                     if (vote != null) ParentProposal.Vote(vote);

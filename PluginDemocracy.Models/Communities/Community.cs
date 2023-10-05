@@ -19,7 +19,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
-        public List<Citizen> Citizens { get 
+        virtual public List<Citizen> Citizens { get 
             {
                 List<Citizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<Citizen>();
                 List<Citizen> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<Citizen>();
@@ -50,7 +50,7 @@ namespace PluginDemocracy.Models
             get
             {
                 if (VotingStrategy == null) return new Dictionary<Citizen, int>();
-                else return VotingStrategy.ReturnCitizensVotingValue(this);
+                else return VotingStrategy.ReturnVotingWeights(this);
             }
         }
         public int TotalVotes => CitizensVotingValue.Values.Sum();

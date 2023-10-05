@@ -4,7 +4,7 @@
     /// This class represents a voting schema where everybody who is a User type of this Community gets a vote even if it is a member of a sub-community. 
     /// Restrictions can be applied such as age. 
     /// </summary>
-    public class GenericVotingStrategy : IVotingStrategy
+    public class UsersVotingStrategy : IVotingStrategy
     {
         public MultilingualString Title 
         { 
@@ -53,7 +53,6 @@
                 throw new Exception("Cannot set IVotingStrategy.Description");
             }
         }
-        public Type AppliesTo => typeof(Community);
         public int? MinimumAge { get; set; }
         public int? MaximumAge { get; set; }
         /// <summary>
@@ -61,11 +60,8 @@
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
-            //throw an error if this doesn't apply to this type of Community
-            if (community.GetType() != AppliesTo) throw new InvalidCommunityTypeException("Wrong community type for this type of strategy."); 
-
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
             Dictionary<Citizen, int> citizensVotingValue = new();
             HashSet<User> allUsers = new();

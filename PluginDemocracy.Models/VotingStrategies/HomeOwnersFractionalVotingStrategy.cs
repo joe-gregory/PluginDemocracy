@@ -13,10 +13,8 @@
     /// that Home is a subclass of Community and how Proposals propagate down. 
     /// allow different strategy implementations  
     /// </summary>
-    public class GatedCommunityFractionalVotingStrategy : IVotingStrategy
+    public class HomeOwnersFractionalVotingStrategy : IVotingStrategy
     {
-        public Type AppliesTo => typeof(GatedCommunity);
-
         public MultilingualString Title
         {
             get
@@ -49,29 +47,28 @@
             }
         }
 
-        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
-            if (community is GatedCommunity gatedCommunity)
+            var ownersVotingValue = new Dictionary<Citizen, int>();
+            foreach (Home home in community.Homes)
             {
-                var ownersVotingValue = new Dictionary<Citizen, int>();
-                foreach(Home home in gatedCommunity.Homes)
+                foreach (Citizen owner in home.Owners.Keys)
                 {
-                    foreach(Citizen owner in home.Owners.Keys)
+                    //an owner may own more than 1 home in the same gated community
+                    if (ownersVotingValue.ContainsKey(owner))
                     {
-                        //an owner may own more than 1 home in the same gated community
-                        if (ownersVotingValue.ContainsKey(owner))
-                        {
-                            ownersVotingValue[owner] += home.Owners[owner];
-                        }
-                        else
-                        {
-                            ownersVotingValue[owner] = home.Owners[owner];
-                        }
+                        ownersVotingValue[owner] += home.Owners[owner];
+                    }
+                    else
+                    {
+                        ownersVotingValue[owner] = home.Owners[owner];
                     }
                 }
-                return ownersVotingValue;
             }
-            else throw new Exception("community argument is not of type GatedCommunity.");
+            return ownersVotingValue;
+        }
+        public void AddHomeVotes(Proposal proposal)
+        {
         }
     }
 }

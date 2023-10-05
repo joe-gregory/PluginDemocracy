@@ -13,10 +13,8 @@
     /// that Home is a subclass of Community and how Proposals propagate down. 
     /// allow different strategy implementations  
     /// </summary>
-    public class GatedCommunityVotingStrategy : IVotingStrategy
+    public class HomeOwnersNonFractionalVotingStrategy : IVotingStrategy
     {
-        public Type AppliesTo => typeof(GatedCommunity);
-
         public MultilingualString Title {
             get
             {
@@ -35,7 +33,7 @@
         {
             get
             {
-                MultilingualString description = new MultilingualString()
+                MultilingualString description = new()
                 {
                     EN = "This voting strategy vests voting power on home owners. Each home corresponds to 1 vote.",
                     ES = "Esta modo de voto pone el poder del voto en los propietarios de casas de la privada. Cada casa corresponde a 1 voto."
@@ -48,15 +46,26 @@
             }
         }
 
-        public Dictionary<Citizen, int> ReturnCitizensVotingValue(Community community)
+        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
-            if (community is GatedCommunity gatedCommunity)
-            {
                 var homesVotingValue = new Dictionary<Citizen, int>();
-                foreach (Home home in gatedCommunity.Homes) homesVotingValue[home] = 1;
+                foreach (Home home in community.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
+        }
+        public void AddHomeVotes(Proposal proposal)
+        {
+            foreach(Home home in proposal.Community.Homes)
+            {
+                // Collect votes from homeowners only
+                var homeownerVotes = proposal.Votes.Where(vote => home.Owners.ContainsKey(vote.Citizen));
+                // Sum up total value votes in favor
+                int totalValueVotesInFavor = homeownerVotes.Sum(vote => vote.VoteValueInFavor);
+                // Sum up total value votes against
+                int totalValueVotesAgainst = homeownerVotes.Sum(vote => vote.VoteValueAgainst);
+
+                if (totalValueVotesInFavor > 50) proposal.Vote(home, true);
+                if (totalValueVotesAgainst > 50) proposal.Vote(home, false);
             }
-            else throw new Exception("community argument is not of type GatedCommunity.");
         }
     }
 }

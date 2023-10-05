@@ -16,60 +16,62 @@
         {
             Owners = new();
             Residents = new();
-            VotingStrategy = new HomeVotingStrategy();
+            VotingStrategy = new CitizensVotingStrategy();
+            CanHaveNonResidentialCitizens = false;
+            CanHaveHomes = false;
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships. 
         /// Adds owner with percentage or updates owners percentage
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="citizen"></param>
         /// <param name="percentage"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AddOwner(Citizen user, int percentage)
+        public void AddOwner(Citizen citizen, int percentage)
         {
-            if (user == null || percentage <= 0 || percentage > 100) throw new ArgumentException("Invalid user or percentage");
+            if (citizen == null || percentage <= 0 || percentage > 100) throw new ArgumentException("Invalid user or percentage");
             double currentTotalPercentage = Owners.Values.Sum();
             if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100.");
-            Owners[user] = percentage;
-            AddCitizen(user);
+            Owners[citizen] = percentage;
+            citizen.AddCitizenship(this);
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
-        /// <param name="user"></param>
-        public void RemoveOwner(Citizen user)
+        /// <param name="Citizen"></param>
+        public void RemoveOwner(Citizen Citizen)
         {
-            if (user != null)
+            if (Citizen != null)
             {
-                Owners.Remove(user);
-                if (!Citizens.Contains(user)) RemoveCitizen(user);
+                Owners.Remove(Citizen);
+                if (!Citizens.Contains(Citizen)) Citizen.RemoveCitizenship(this);
             }
             else throw new ArgumentException("Citizen cannot be null");
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
-        /// <param name="user"></param>
-        public void AddResident(Citizen user)
+        /// <param name="citizen"></param>
+        public void AddResident(Citizen citizen)
         {
-            if (user != null)
+            if (citizen != null)
             {
-                if (!Residents.Contains(user)) Residents.Add(user);
-                AddCitizen(user);
+                if (!Residents.Contains(citizen)) Residents.Add(citizen);
+                if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
             }
             else throw new ArgumentException("Citizen cannot be null");
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
-        /// <param name="user"></param>
-        public void RemoveResident(Citizen user)
+        /// <param name="citizen"></param>
+        public void RemoveResident(Citizen citizen)
         {
-            if(user != null)
+            if(citizen != null)
             {
-                if (Residents.Contains(user)) Residents.Remove(user);
-                if (!Citizens.Contains(user)) RemoveCitizen(user);
+                if (Residents.Contains(citizen)) Residents.Remove(citizen);
+                if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
             }
             else throw new ArgumentException("Citizen cannot be null");
         }
