@@ -69,6 +69,7 @@
         }
         public void AddHomeVotes(Proposal proposal)
         {
+            // Intentionally left empty for this strategy, as no home votes need to be added.
         }
     }
 }
