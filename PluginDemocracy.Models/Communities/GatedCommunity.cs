@@ -6,7 +6,6 @@
         /// <summary>
         /// This returns a list of homes in the community.
         /// </summary>
-        override public List<Citizen> Citizens { get { return Homes.Cast<Citizen>().ToList(); } }
         public GatedCommunity() : base()
         {
             Homes = new();
@@ -32,15 +31,6 @@
         {
             home.RemoveOwner(user);
             if (!Citizens.Contains(user)) RemoveCitizen(user);
-        }
-
-        override private protected void PropagateProposal(Proposal parentProposal)
-        {
-            foreach(Home home in Homes)
-            {
-                Proposal propagatedProposal = ReturnPropagatedProposal(home, parentProposal);
-                home.PublishProposal(propagatedProposal);
-            }
         }
     }
 }

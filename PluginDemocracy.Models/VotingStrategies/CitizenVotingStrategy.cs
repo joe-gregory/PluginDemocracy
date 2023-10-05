@@ -26,7 +26,7 @@
         {
             get
             {
-                MultilingualString description = new MultilingualString()
+                MultilingualString description = new()
                 {
                     EN = "This is the simplest voting strategy. Each Citizen gets 1 vote. A Citizen can be a human User or another sub-community. " +
                     "If a sub-community is a Citizen of this community, it counts as 1 vote. The members of the sub-community will vote according to their own voting strategy " +

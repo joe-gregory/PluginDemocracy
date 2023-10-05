@@ -131,10 +131,9 @@ namespace PluginDemocracy.Models.Tests
             //Assert
             Assert.Contains(owner, home.Owners.Keys);
             Assert.Contains(owner, home.Citizens);
-            Assert.Contains(owner, gatedCommunity.Citizens);
+            Assert.Contains(home, gatedCommunity.Citizens);
 
             Assert.Contains(resident, home.Citizens);
-            Assert.Contains(resident, gatedCommunity.Citizens);
 
             Assert.Contains(home, owner.Citizenships); //
             Assert.Contains(gatedCommunity, owner.Citizenships);
