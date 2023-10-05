@@ -1,6 +1,7 @@
 ﻿namespace PluginDemocracy.Models
 {
     /// <summary>
+    /// NonFractional GatedCommunity Voting Strategy
     /// This voting strategy represents a Gated Community where each Home 1 vote and a home can only vote way one or another.
     /// There are 2 ways to count votes depending on how partial Home owners are treated.
     /// In one scenario, Homes can only represent a whole vote. For example, if 60% of owners

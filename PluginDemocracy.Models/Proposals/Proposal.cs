@@ -31,11 +31,11 @@ namespace PluginDemocracy.Models
         /// Total amount of votes possible. Some citizens may have more VotingValue than others. This is the sum of all VotingValues.
         /// A Proposal passes when VotesInFavor is more than half of TotalVotingValuesSum
         /// </summary>
-        public int TotalVotingValuesSum => CitizensVotingValue.Values.Sum();
         private readonly List<Vote> _votes;
         public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
         public IReadOnlyList<Vote> VotesInFavor => _votes.Where(vote => vote.InFavor == true).ToList().AsReadOnly();
         public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
+        public int TotalVotingValuesSum => CitizensVotingValue.Values.Sum();
         public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
         public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
         /// <summary>

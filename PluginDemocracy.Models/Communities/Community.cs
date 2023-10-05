@@ -19,7 +19,22 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
-        virtual public List<Citizen> Citizens { get; private set; }
+        public List<Citizen> Citizens { get 
+            {
+                List<Citizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<Citizen>();
+                List<Citizen> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<Citizen>();
+                return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
+            }
+        }
+        
+        public bool CanHaveHomes { get; set; }
+        public List<Home> Homes { get; private set; }
+       
+        /// <summary>
+        /// Can Citizens be added if they don't belong to a home
+        /// </summary>
+        public bool CanHaveNonResidentialCitizens { get; set; }
+        public List<Citizen> NonResidentialCitizens { get; private set; }
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
@@ -50,7 +65,8 @@ namespace PluginDemocracy.Models
         public Community()
         {
             Citizenships = new();
-            Citizens = new();
+            Homes = new();
+            NonResidentialCitizens = new();
             Constitution = new();
             Proposals = new();
             ProposalsExpirationDays = 30;
@@ -61,26 +77,43 @@ namespace PluginDemocracy.Models
         /// Adding a citizen needs to ensure that no citizen is repeated
         /// </summary>
         /// <param name="user"></param>
-        virtual public void AddCitizen(Citizen user)
+        public void AddNonResidentialCitizen(Citizen citizen)
         {
-            if (user != null)
+            if (citizen != null && CanHaveNonResidentialCitizens)
             {
-                if (!Citizens.Contains(user))
-                {
-                    Citizens.Add(user);
-                }
-                if (Citizens.Contains(user)) user.AddCitizenship(this);
+                NonResidentialCitizens.Add(citizen);
+                if (NonResidentialCitizens.Contains(citizen)) citizen.AddCitizenship(this);
             }
-            else throw new Exception("User cannot be null when adding to Community.Citizens");
         }
-        virtual public void RemoveCitizen(Citizen user)
+        public void RemoveNonResidentialCitizen(Citizen citizen)
         {
-            if (user != null)
+            if(citizen != null)
             {
-                if (Citizens.Contains(user)) Citizens.Remove(user);
-                if (!Citizens.Contains(user)) user.RemoveCitizenship(this);
+                if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
+                //if after this the citizen doesn't appear in Citizens, remove his/her citizenship
+                if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
             }
-            else throw new Exception("User cannot be null when removing from Community.Citizens");
+        }
+        public void AddResidentToHome(Home home, Citizen citizen)
+        {
+            home.AddResident(citizen);
+            if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
+        }
+        public void RemoveResidentFromHome(Home home, Citizen citizen)
+        {
+            home.RemoveResident(citizen);
+            //if no longer appears in Citizens, remove
+            if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
+        }
+        public void AddOwnerToHome(Home home, Citizen citizen, int percentage)
+        {
+            home.AddOwner(citizen, percentage);
+            if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
+        }
+        public void RemoveOwnerFromHome(Home home, Citizen citizen)
+        {
+            home.RemoveOwner(citizen);
+            if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
         }
         public bool PublishProposal(Proposal proposal)
         {
@@ -140,6 +173,19 @@ namespace PluginDemocracy.Models
 
             return propagatedProposal;
         }
+        public void AddHome(Home home)
+        {
+            if (CanHaveHomes && !Homes.Contains(home))
+            {
+                home.Owners = new Dictionary<Citizen, int>();
+                home.Residents = new List<Citizen>();
+                Homes.Add(home);
+            }
+        }
+        public void RemoveHome(Home home)
+        {
+            if (Homes.Contains(home)) Homes.Remove(home);
+        }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
             //TODO: Make sure everything is good to go and no info is missing
@@ -159,6 +205,5 @@ namespace PluginDemocracy.Models
             foreach (var role in Roles) role.Update();
         }
     }
-
 }
 
