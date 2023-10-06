@@ -58,11 +58,24 @@
             {
                 // Collect votes from homeowners only
                 var homeownerVotes = proposal.Votes.Where(vote => home.Owners.ContainsKey(vote.Citizen));
-                // Sum up total value votes in favor
-                int totalValueVotesInFavor = homeownerVotes.Sum(vote => vote.VoteValueInFavor);
-                // Sum up total value votes against
-                int totalValueVotesAgainst = homeownerVotes.Sum(vote => vote.VoteValueAgainst);
 
+                // Sum up total value votes in favor
+                List<Vote> homeownerVotesInFavor = homeownerVotes.Where(vote => vote.InFavor == true).ToList();
+                int totalValueVotesInFavor = 0;
+                foreach(Vote vote in homeownerVotesInFavor)
+                {
+                    totalValueVotesInFavor += home.Owners[vote.Citizen];
+                }
+                
+                //Sum votes against
+                List<Vote> homeownerVotesAgainst = homeownerVotes.Where(vote => vote.InFavor == false).ToList();
+                int totalValueVotesAgainst = 0;
+                foreach(Vote vote in homeownerVotesAgainst)
+                {
+                    totalValueVotesAgainst += home.Owners[vote.Citizen];
+                }
+                
+                //Add vote accordingly
                 if (totalValueVotesInFavor > 50) proposal.Vote(home, true);
                 if (totalValueVotesAgainst > 50) proposal.Vote(home, false);
             }

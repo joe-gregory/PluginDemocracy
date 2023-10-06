@@ -82,12 +82,13 @@
                 else if(citizen is Community nestedCommunity) GetAllNestedUsers(nestedCommunity, allUsers);                
             }
         }
+
+        public void AddHomeVotes(Proposal proposal)
+        {
+            // Intentionally left empty for this strategy, as no home votes need to be added.
+        }
     }
     /// <summary>
     /// Custom exception for invalid community types
     /// </summary>
-    public class InvalidCommunityTypeException : Exception
-    {
-        public InvalidCommunityTypeException(string message) : base(message) { }
-    }
 }

@@ -41,6 +41,8 @@
             }
         }
 
+
+
         public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
@@ -51,6 +53,10 @@
             }
 
             return citizensVotingValue;
+        }
+        public void AddHomeVotes(Proposal proposal)
+        {
+            // Intentionally left empty for this strategy, as no home votes need to be added.
         }
     }
 }

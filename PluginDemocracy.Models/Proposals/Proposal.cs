@@ -23,7 +23,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                if (VotingStrategy == null) return new Dictionary<Citizen, int>();
+                if (VotingStrategy == null) throw new FormatException("Proposal.VotingStrategy is null");
                 else return VotingStrategy.ReturnVotingWeights(Community);
             }
         }

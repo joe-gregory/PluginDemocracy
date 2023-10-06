@@ -30,9 +30,10 @@
         /// <exception cref="InvalidOperationException"></exception>
         public void AddOwner(Citizen citizen, int percentage)
         {
-            if (citizen == null || percentage <= 0 || percentage > 100) throw new ArgumentException("Invalid user or percentage");
-            double currentTotalPercentage = Owners.Values.Sum();
-            if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100.");
+            if (citizen == null) throw new ArgumentException("citizen cannot be null");
+            if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100 integer");
+            int currentTotalPercentage = Owners.Values.Sum();
+            if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
             Owners[citizen] = percentage;
             citizen.AddCitizenship(this);
         }
@@ -58,6 +59,7 @@
             if (citizen != null)
             {
                 if (!Residents.Contains(citizen)) Residents.Add(citizen);
+                else throw new InvalidOperationException("Citizen is already a resident");
                 if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
             }
             else throw new ArgumentException("Citizen cannot be null");

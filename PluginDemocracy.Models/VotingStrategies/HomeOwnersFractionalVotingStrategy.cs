@@ -1,4 +1,4 @@
-﻿namespace PluginDemocracy.Models.VotingStrategies
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// Fractional GatedCommunity Voting Strategy

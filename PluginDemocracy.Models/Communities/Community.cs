@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// 
@@ -19,17 +17,19 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
-        virtual public List<Citizen> Citizens { get 
+        virtual public List<Citizen> Citizens
+        {
+            get
             {
                 List<Citizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<Citizen>();
                 List<Citizen> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<Citizen>();
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
-        
+
         public bool CanHaveHomes { get; set; }
         public List<Home> Homes { get; private set; }
-       
+
         /// <summary>
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
@@ -81,36 +81,42 @@ namespace PluginDemocracy.Models
         {
             if (citizen != null && CanHaveNonResidentialCitizens)
             {
-                NonResidentialCitizens.Add(citizen);
-                if (NonResidentialCitizens.Contains(citizen)) citizen.AddCitizenship(this);
+                if (CanHaveNonResidentialCitizens)
+                {
+                    NonResidentialCitizens.Add(citizen);
+                    if (NonResidentialCitizens.Contains(citizen)) citizen.AddCitizenship(this);
+                }
+                else throw new InvalidOperationException("Cannot add NonResidential Citizens when CanHaveNonResidentialCitizens is set to false.");
+
             }
+            else throw new ArgumentException("Citizen cannot be null when adding to NonResidentialCitizens.");
         }
         public void RemoveNonResidentialCitizen(Citizen citizen)
         {
-            if(citizen != null)
+            if (citizen != null)
             {
                 if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
                 //if after this the citizen doesn't appear in Citizens, remove his/her citizenship
                 if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
             }
         }
-        public void AddResidentToHome(Home home, Citizen citizen)
+        public void AddResidentToHome(Citizen citizen, Home home)
         {
             home.AddResident(citizen);
             if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
         }
-        public void RemoveResidentFromHome(Home home, Citizen citizen)
+        public void RemoveResidentFromHome(Citizen citizen, Home home)
         {
             home.RemoveResident(citizen);
             //if no longer appears in Citizens, remove
             if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
         }
-        public void AddOwnerToHome(Home home, Citizen citizen, int percentage)
+        public void AddOwnerToHome(Citizen citizen, int percentage, Home home)
         {
             home.AddOwner(citizen, percentage);
             if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
         }
-        public void RemoveOwnerFromHome(Home home, Citizen citizen)
+        public void RemoveOwnerFromHome(Citizen citizen, Home home)
         {
             home.RemoveOwner(citizen);
             if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
@@ -119,24 +125,24 @@ namespace PluginDemocracy.Models
         {
             //TODO: make sure the Proposal has all the correct info ValidateProposal() and return messages accordingly of what you are missing.
             //Ensure this proposal is for this community
-            if (proposal.Community != this) throw new ArgumentException("Proposal.Community does not point to this Community");
+            proposal.Community = this;
             //Ensure it has a title
             if (proposal.Title == null) throw new ArgumentException("Proposal.Title is null");
             //Ensure it has a description
             if (proposal.Description == null) throw new ArgumentException("Proposal.Description is null");
             //I could ensure that the Author is either a Resident or a Dictamen of this Community, but perhaps in the future. 
             if (proposal.Author == null) throw new ArgumentException("Proposal.Author is null");
-            //Publish date needs to be null or overriden
-            if (proposal.PublishedDate != null) throw new ArgumentException("Proposal.PublishedDate is not null");
+            
+            proposal.PublishedDate = DateTime.Now;
             //Dictamen cannot be empty
             if (proposal.Dictamen == null) throw new ArgumentException("Proposal.Dictamen is null");
             //The Proposal's Dictamen should be pointing to this Community
-            if (proposal.Dictamen.Community != this) throw new ArgumentException("Proposal.Dictamen.Community does not point to this Community");
+            proposal.Dictamen.Community = this;
             //Votes should be empty
             if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal.Votes is not empty");
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
-            proposal.PublishedDate = DateTime.Now;
+            proposal.VotingStrategy ??= VotingStrategy;
             proposal.ExpirationDate ??= proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             PropagateProposal(proposal);
@@ -150,13 +156,13 @@ namespace PluginDemocracy.Models
             {
                 if (citizen is Community propagatedCommunity)
                 {
-                    Proposal propagatedProposal = ReturnPropagatedProposal(propagatedCommunity, parentProposal);
+                    Proposal propagatedProposal = ReturnPropagatedProposal(parentProposal, propagatedCommunity);
                     //publish in its corresponding community which should call this method if there are more nested sub-communities
                     propagatedCommunity.PublishProposal(propagatedProposal);
                 }
             }
         }
-        static private protected Proposal ReturnPropagatedProposal(Community propagatedCommunity, Proposal parentProposal)
+        static private protected Proposal ReturnPropagatedProposal(Proposal parentProposal, Community propagatedCommunity)
         {
             Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
             {
@@ -175,12 +181,18 @@ namespace PluginDemocracy.Models
         }
         public void AddHome(Home home)
         {
-            if (CanHaveHomes && !Homes.Contains(home))
+            if(home == null) throw new ArgumentException("Home cannot be null");
+            if (CanHaveHomes)
             {
-                home.Owners = new Dictionary<Citizen, int>();
-                home.Residents = new List<Citizen>();
-                Homes.Add(home);
+                if (!Homes.Contains(home))
+                {
+                    home.Owners = new Dictionary<Citizen, int>();
+                    home.Residents = new List<Citizen>();
+                    Homes.Add(home);
+                }
+                else throw new InvalidOperationException("Cannot add a home twice to the list");
             }
+            else throw new InvalidOperationException("Cannot add Homs when CanHaveHomes is set to false");
         }
         public void RemoveHome(Home home)
         {
