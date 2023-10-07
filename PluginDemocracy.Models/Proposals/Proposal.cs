@@ -73,13 +73,20 @@ namespace PluginDemocracy.Models
 
             // Add the new or updated vote
             _votes.Add(new Vote(this, citizen, inFavor));
-            VotingStrategy?.AddHomeVotes(this);
+
+            //Adding Home votes if strategy sets it
+            List<Vote>? homeVotes = VotingStrategy?.ReturnHomeVotes(this);
+            foreach(Vote vote in homeVotes ?? new List<Vote>())
+            {
+                _votes.Add(vote);
+            }
 
             // Update the state of the proposal
             Update();
         }
         /// <summary>
-        /// This is only for use by PropagatedVoteDictamen. It is for the case where SubProposals are voting on a ParentProposal via PropagatedVoteDictamen. The SubProposal will create a new vote for the 
+        /// This is only for use by PropagatedVoteDictamen. 
+        /// For PropagatedVoteDictamen, it is for the case where SubProposals are voting on a ParentProposal via PropagatedVoteDictamen. The SubProposal will create a new vote for the 
         /// Community using the above normal constructor but in case there is a voting strategy that also expects some of the underlying citizens, this below constructor
         /// is added. It may or may not be useful. 
         /// </summary>
@@ -108,7 +115,7 @@ namespace PluginDemocracy.Models
             {
                 _votes.Add(newVote);
             }
-            VotingStrategy?.AddHomeVotes(this);
+            VotingStrategy?.ReturnHomeVotes(this);
             Update();
         }
         public void UpdatePassedStatus()

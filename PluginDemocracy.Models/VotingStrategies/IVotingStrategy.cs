@@ -3,6 +3,6 @@
     public interface IVotingStrategy : IMultilingualDescriptor
     {
         public Dictionary<Citizen, int> ReturnVotingWeights(Community community);
-        public void AddHomeVotes(Proposal proposal);
+        public List<Vote> ReturnHomeVotes(Proposal proposal);
     }
 }

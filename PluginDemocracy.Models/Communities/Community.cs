@@ -149,36 +149,7 @@
 
             return true;
         }
-        private protected virtual void PropagateProposal(Proposal parentProposal)
-        {
-
-            foreach (var citizen in Citizens)
-            {
-                if (citizen is Community propagatedCommunity)
-                {
-                    Proposal propagatedProposal = ReturnPropagatedProposal(parentProposal, propagatedCommunity);
-                    //publish in its corresponding community which should call this method if there are more nested sub-communities
-                    propagatedCommunity.PublishProposal(propagatedProposal);
-                }
-            }
-        }
-        static private protected Proposal ReturnPropagatedProposal(Proposal parentProposal, Community propagatedCommunity)
-        {
-            Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
-            {
-                Title = parentProposal.Title + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
-                Description = parentProposal.Description + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
-                ExpirationDate = parentProposal.ExpirationDate,
-            };
-
-            propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
-            {
-                Community = propagatedCommunity,
-                Proposal = propagatedProposal
-            };
-
-            return propagatedProposal;
-        }
+       
         public void AddHome(Home home)
         {
             if(home == null) throw new ArgumentException("Home cannot be null");
@@ -215,6 +186,51 @@
             Constitution.Update();
             foreach (var proposal in Proposals) proposal.Update();
             foreach (var role in Roles) role.Update();
+        }
+        //UTILITY METHODS: 
+        private protected virtual void PropagateProposal(Proposal parentProposal)
+        {
+
+            foreach (var citizen in Citizens)
+            {
+                if (citizen is Community propagatedCommunity)
+                {
+                    Proposal propagatedProposal = ReturnPropagatedProposal(parentProposal, propagatedCommunity);
+                    //publish in its corresponding community which should call this method if there are more nested sub-communities
+                    propagatedCommunity.PublishProposal(propagatedProposal);
+                }
+            }
+        }
+        static private protected Proposal ReturnPropagatedProposal(Proposal parentProposal, Community propagatedCommunity)
+        {
+            Proposal propagatedProposal = new(propagatedCommunity, parentProposal.Author)
+            {
+                Title = parentProposal.Title + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
+                Description = parentProposal.Description + $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>",
+                ExpirationDate = parentProposal.ExpirationDate,
+            };
+
+            propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
+            {
+                Community = propagatedCommunity,
+                Proposal = propagatedProposal
+            };
+
+            return propagatedProposal;
+        }
+        public List<User> ReturnAllNestedUsers()
+        {
+            HashSet<User> allUsers = new();
+            GetAllNestedUsers(this, allUsers);
+            return allUsers.ToList();
+        }
+        static private void GetAllNestedUsers(Community community, HashSet<User> allUsers)
+        {
+            foreach (var citizen in community.Citizens)
+            {
+                if (citizen is User user) allUsers.Add(user);
+                else if (citizen is Community nestedCommunity) GetAllNestedUsers(nestedCommunity, allUsers);
+            }
         }
     }
 }

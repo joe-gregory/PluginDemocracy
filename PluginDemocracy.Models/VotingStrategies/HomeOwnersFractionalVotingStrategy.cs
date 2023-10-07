@@ -67,9 +67,10 @@
             }
             return ownersVotingValue;
         }
-        public void AddHomeVotes(Proposal proposal)
+        public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
             // Intentionally left empty for this strategy, as no home votes need to be added.
+            return new List<Vote>();
         }
     }
 }

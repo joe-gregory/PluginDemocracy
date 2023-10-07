@@ -29,8 +29,6 @@
         public User homeowner3_1_50;
         public User homeowner3_2_50;
 
-
-
         public ProposalTests()
         {
             //Parent community and its 3 children: citizen1, citizen2 and childGatedCommunity
@@ -91,22 +89,19 @@
             childGatedCommunity.AddOwnerToHome(homeowner3_1_50, 50, home3);
             childGatedCommunity.AddOwnerToHome(homeowner3_2_50, 50, home3);
         }
-
-        [Fact]
-        public void PassedProposalsWithNoFractionalVoting()
+        public List<Proposal> CommonSetup(IVotingStrategy votingStrategy, User author, string proposalTitle, string proposalDescription)
         {
             //Arrange
-            childGatedCommunity.VotingStrategy = new HomeOwnersNonFractionalVotingStrategy();
-            User author = citizen1; 
+            childGatedCommunity.VotingStrategy = votingStrategy;
+            //This is what I am using to differentiate the proposals between different tests
             Proposal parentProposal = new(parentCommunity, author)
             {
-                Title = "title_Passed_NoFractional",
-                Description = "description_Passed_NoFractional",
+                Title = proposalTitle,
+                Description = proposalDescription,
                 Dictamen = new EmptyDictamen(),
             };
 
             //Act
-            //Publish() proposal on parentCommunity. Does the Proposal propagate to childGatedCommunity?
             parentCommunity.PublishProposal(parentProposal);
 
             //Proposal should have the same Voting Strategy as parent, it should have Passed as null and Open be set to true after publishing
@@ -118,6 +113,8 @@
             Assert.Contains(parentProposal, parentCommunity.Proposals);
             var childProposal = childGatedCommunity.Proposals.FirstOrDefault(p => p.Author == author);
             Assert.Contains(childProposal, childGatedCommunity.Proposals);
+            Assert.Null(childProposal?.Passed);
+            Assert.True(childProposal?.Open);
             Assert.Equal(parentProposal.ExpirationDate, childProposal?.ExpirationDate);
 
             //Voting in Parent Community
@@ -126,6 +123,28 @@
 
             //At this point, childGatedCommunity needs to vote to make the proposal true or false. Proposal should not be Passed right now (so Passed = null)
             Assert.Null(parentProposal.Passed);
+            List<Proposal> proposals = new()
+            {
+                parentProposal
+            };
+            if (childProposal != null) proposals.Add(childProposal);
+
+            return proposals;
+        }
+
+        [Fact]
+        public void PassedProposalsWithNoFractionalVoting()
+        {
+            //Arrange
+            //Options:
+            IVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy();
+            User author = citizen1;
+            string proposalTitle = "Passed_Non_Fractional_Voting";
+            string proposalDescription = "Passed_Non_Fractional_Voting";
+            //Arrange:
+            List<Proposal> proposals = CommonSetup(votingStrategy, author, proposalTitle, proposalDescription);
+            Proposal parentProposal = proposals[0];
+            Proposal childProposal = proposals[1];
             ///////////////////////////////////////////Here it should start being different between the 2 nonfractional voting tests
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote IN THE HOMES. 
             //It's 3 homes, so we need 2 Homes to vote yes.
@@ -153,35 +172,15 @@
         public void FailedProposalsWithNoFractionalVoting()
         {
             //Arrange
-            childGatedCommunity.VotingStrategy = new HomeOwnersNonFractionalVotingStrategy(); ;
+            //Options:
+            IVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy(); ;
             User author = citizen2;
-            Proposal parentProposal = new(parentCommunity, author)
-            {
-                Title = "title_Failed_NonFractional",
-                Description = "description_Failed_NoFractional",
-                Dictamen = new EmptyDictamen(),
-            };
-            
-            //Act
-            parentCommunity.PublishProposal(parentProposal);
-
-            //Proposal should have the same Voting Strategy as parent, it should have Passed as null and Open be set to true after publishing
-            Assert.Equal(parentProposal.VotingStrategy, parentCommunity.VotingStrategy);
-            Assert.Null(parentProposal.Passed);
-            Assert.True(parentProposal.Open);
-
-            //Assert propagation to subcommunities& that the proposal was added to parent community
-            Assert.Contains(parentProposal, parentCommunity.Proposals);
-            var childProposal = childGatedCommunity.Proposals.FirstOrDefault(p => p.Author == author);
-            Assert.Contains(childProposal, childGatedCommunity.Proposals);
-            Assert.Equal(parentProposal.ExpirationDate, childProposal?.ExpirationDate);
-
-            //Voting in Parent Community
-            parentProposal.Vote(citizen1, true);
-            parentProposal.Vote(citizen2, false);
-
-            //At this point, childGatedCommunity needs to vote to make the proposal true or false. Proposal should not be Passed right now (so Passed = null)
-            Assert.Null(parentProposal.Passed);
+            string proposalTitle = "Fail_Non_Fractional_Voting";
+            string proposalDescription = "Fail_Non_Fractional_Voting";
+            //Arrange:
+            List<Proposal> proposals = CommonSetup(votingStrategy, author, proposalTitle, proposalDescription);
+            Proposal parentProposal = proposals[0];
+            Proposal childProposal = proposals[1];
             ///////////////////////////////////////////Here it should start being different between the 2 nonfractional voting tests
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
             //It's 3 homes, so 2 homes need to vote no.
@@ -196,6 +195,85 @@
             //Making home 2 reject
             childProposal?.Vote(homeowner2_1_30, false);
             childProposal?.Vote(homeowner2_2_30, false);
+
+            Assert.False(childProposal?.Passed);
+            var vote = parentProposal.Votes.FirstOrDefault(p => p.Citizen == childGatedCommunity);
+            Assert.NotNull(vote);
+            Assert.NotNull(vote?.InFavor);
+            Assert.False(vote?.InFavor);
+            Assert.False(parentProposal.Passed);
+        }
+
+        [Fact]
+        public void PassedProposalWithFractionalVoting()
+        {
+            //Arrange
+            //Options:
+            IVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
+            User author = resident1_1;
+            string proposalTitle = "Passed_Fractional_Voting";
+            string proposalDescription = "Passed_Fractional_Voting";
+            //Arrange:
+            List<Proposal> proposals = CommonSetup(votingStrategy, author, proposalTitle, proposalDescription);
+            Proposal parentProposal = proposals[0];
+            Proposal childProposal = proposals[1];
+            ///////////////////////////////////////////Here it should start being different between the 2 nonfractional voting tests
+            //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
+            //It's 3 homes, so 2 homes need to vote no.
+            childProposal?.Vote(resident1_1, false);
+            childProposal?.Vote(resident1_2, false);
+            childProposal?.Vote(resident1_3, false);
+            childProposal?.Vote(resident2_1, false);
+            childProposal?.Vote(resident2_2, false);
+            childProposal?.Vote(resident2_3, false);
+            //Total vote sums = 300, so I need at least 151 to make it happen. However, 
+            //Making home 1 reject
+            childProposal?.Vote(homeowner1_1_60, true);
+            childProposal?.Vote(homeowner2_1_30, true);
+            childProposal?.Vote(homeowner2_2_30, true);
+            if (childProposal != null) Assert.Null(childProposal.Passed);
+            else Assert.Fail("childProposal was unexpectedly null.");
+            //At this point it Passed should still be null, but the next statement should make it pass
+            childProposal?.Vote(homeowner3_1_50, true);
+
+            Assert.True(childProposal?.Passed);
+            var vote = parentProposal.Votes.FirstOrDefault(p => p.Citizen == childGatedCommunity);
+            Assert.NotNull(vote);
+            Assert.NotNull(vote?.InFavor);
+            Assert.True(vote?.InFavor);
+            Assert.True(parentProposal.Passed);
+        }
+        [Fact]
+        public void FailedProposalWithFractionalVoting()
+        {
+            //Arrange
+            //Options:
+            IVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
+            User author = resident1_2;
+            string proposalTitle = "Fail_Fractional_Voting";
+            string proposalDescription = "Fail_Fractional_Voting";
+            //Arrange:
+            List<Proposal> proposals = CommonSetup(votingStrategy, author, proposalTitle, proposalDescription);
+            Proposal parentProposal = proposals[0];
+            Proposal childProposal = proposals[1];
+            ///////////////////////////////////////////Here it should start being different between the 2 nonfractional voting tests
+            //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
+            //It's 3 homes, so 2 homes need to vote no.
+            childProposal?.Vote(resident1_1, true);
+            childProposal?.Vote(resident1_2, true);
+            childProposal?.Vote(resident1_3, true);
+            childProposal?.Vote(resident2_1, true);
+            childProposal?.Vote(resident2_2, true);
+            childProposal?.Vote(resident2_3, true);
+            //Total vote sums = 300, so I need at least 151 to make it happen. However, 
+            //Making home 1 reject
+            childProposal?.Vote(homeowner1_1_60, false);
+            childProposal?.Vote(homeowner2_1_30, false);
+            childProposal?.Vote(homeowner2_2_30, false);
+            if (childProposal != null) Assert.Null(childProposal.Passed);
+            else Assert.Fail("childProposal was unexpectedly null.");
+            //At this point it Passed should still be null, but the next statement should make it pass
+            childProposal?.Vote(homeowner3_1_50, false);
 
             Assert.False(childProposal?.Passed);
             var vote = parentProposal.Votes.FirstOrDefault(p => p.Citizen == childGatedCommunity);

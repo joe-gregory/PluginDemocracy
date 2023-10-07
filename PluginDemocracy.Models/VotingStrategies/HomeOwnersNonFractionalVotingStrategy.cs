@@ -52,9 +52,12 @@
                 foreach (Home home in community.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
         }
-        public void AddHomeVotes(Proposal proposal)
+        public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
-            foreach(Home home in proposal.Community.Homes)
+            List<Vote> homeVotes = new();
+            //only cycle through homes that haven't casted a vote yet
+            List<Home> homesThatHaventVoted = proposal.Community.Homes.Where(home => !proposal.Votes.Any(vote => vote.Citizen == home)).ToList();
+            foreach (Home home in homesThatHaventVoted)
             {
                 // Collect votes from homeowners only
                 var homeownerVotes = proposal.Votes.Where(vote => home.Owners.ContainsKey(vote.Citizen));
@@ -76,9 +79,10 @@
                 }
                 
                 //Add vote accordingly
-                if (totalValueVotesInFavor > 50) proposal.Vote(home, true);
-                if (totalValueVotesAgainst > 50) proposal.Vote(home, false);
+                if(totalValueVotesInFavor > 50) homeVotes.Add(new Vote(proposal, home, true));
+                if (totalValueVotesAgainst > 50) homeVotes.Add(new Vote(proposal, home, false));
             }
+            return homeVotes;
         }
     }
 }

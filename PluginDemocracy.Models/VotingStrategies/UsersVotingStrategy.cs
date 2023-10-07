@@ -64,8 +64,9 @@
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
             Dictionary<Citizen, int> citizensVotingValue = new();
-            HashSet<User> allUsers = new();
-            GetAllNestedUsers(community, allUsers);
+            
+            List<User> allUsers = new();
+            allUsers = community.ReturnAllNestedUsers();
 
             foreach(var user in allUsers)
             {
@@ -74,18 +75,10 @@
 
             return citizensVotingValue;
         }
-        public void GetAllNestedUsers(Community community, HashSet<User> allUsers)
-        {
-            foreach(var citizen in community.Citizens)
-            {
-                if (citizen is User user) allUsers.Add(user);
-                else if(citizen is Community nestedCommunity) GetAllNestedUsers(nestedCommunity, allUsers);                
-            }
-        }
-
-        public void AddHomeVotes(Proposal proposal)
+        public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
             // Intentionally left empty for this strategy, as no home votes need to be added.
+            return new List<Vote>();
         }
     }
     /// <summary>
