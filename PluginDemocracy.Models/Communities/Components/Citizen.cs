@@ -13,6 +13,26 @@
         /// Communities this Citizen belongs to. 
         /// </summary>
         public List<Community> Citizenships { get; set; }
+        
+        /// <summary>
+        /// This represents the parent communities from above of the communities where this citizen has citizenship.
+        /// </summary>
+        public List<Community> AssociatedCommunities
+        {
+            get
+            {
+                List<Community> communitiesFromAbove = new List<Community>();
+                foreach (Community community in Citizenships)
+                {
+                    foreach (Community aboveCommunity in community.Citizenships)
+                    {
+                        communitiesFromAbove.Add(aboveCommunity);
+                    }
+                }
+                //Make sure unique results
+                return communitiesFromAbove.Distinct().ToList();
+            }
+        }
         public Citizen()
         {
             Guid = new();
@@ -20,7 +40,7 @@
         }
         virtual public void AddCitizenship(Community community)
         {
-            if(!Citizenships.Contains(community)) Citizenships.Add(community);
+            if (!Citizenships.Contains(community)) Citizenships.Add(community);
         }
         virtual public void RemoveCitizenship(Community community)
         {

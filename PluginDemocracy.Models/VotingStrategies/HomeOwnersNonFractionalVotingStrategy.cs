@@ -84,5 +84,9 @@
             }
             return homeVotes;
         }
+        public bool ShouldProposalPropagate(Proposal proposal)
+        {
+            return true;
+        }
     }
 }

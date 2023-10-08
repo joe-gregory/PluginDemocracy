@@ -108,6 +108,7 @@
             Assert.Equal(parentProposal.VotingStrategy, parentCommunity.VotingStrategy);
             Assert.Null(parentProposal.Passed);
             Assert.True(parentProposal.Open);
+            
 
             //Assert propagation to subcommunities& that the proposal was added to parent community
             Assert.Contains(parentProposal, parentCommunity.Proposals);
@@ -257,6 +258,12 @@
             Proposal parentProposal = proposals[0];
             Proposal childProposal = proposals[1];
             ///////////////////////////////////////////Here it should start being different between the 2 nonfractional voting tests
+            /// //Testing User.Proposals: 
+            Assert.Contains(parentProposal, citizen1.Proposals);
+            Assert.Contains(parentProposal, citizen2.Proposals);
+            Assert.DoesNotContain(parentProposal, homeowner1_1_60.Proposals);
+            Assert.DoesNotContain(parentProposal, homeowner1_2_40.Proposals);
+            Assert.DoesNotContain(parentProposal, resident1_1.Proposals);
             //For the GatedCommunity to make a choice, it needs the owners of the homes to vote. 
             //It's 3 homes, so 2 homes need to vote no.
             childProposal?.Vote(resident1_1, true);
@@ -281,6 +288,80 @@
             Assert.NotNull(vote?.InFavor);
             Assert.False(vote?.InFavor);
             Assert.False(parentProposal.Passed);
+        }
+        [Fact]
+        public void UsersVotingStrategyTests()
+        {
+            //Arrange
+            //Options:
+            IVotingStrategy votingStrategy = new UsersVotingStrategy();
+            User authorPassing = resident1_3;
+            User authorFailing = resident2_1;
+            string proposalTitle = "UsersVotingStrategyTests";
+            string proposalDescription = "UsersVotignStrategyTest";
+            parentCommunity.VotingStrategy = votingStrategy;
+            //Arrange:
+            Proposal passingProposal = new(parentCommunity, authorPassing)
+            {
+                Title = "Passing"+proposalTitle,
+                Description = "Passing"+proposalDescription,
+                Dictamen = new EmptyDictamen(),
+            };
+            Proposal failingProposal = new(parentCommunity, authorFailing)
+            {
+                Title = "Failing" + proposalTitle,
+                Description = "Failing" + proposalDescription,
+                Dictamen = new EmptyDictamen(),
+            };
+            parentCommunity.PublishProposal(passingProposal);
+            parentCommunity.PublishProposal(failingProposal);
+            
+            //Testing User.Proposals: 
+            Assert.Contains(passingProposal, citizen1.Proposals);
+            Assert.Contains(passingProposal, citizen2.Proposals);
+            Assert.Contains(passingProposal, homeowner1_1_60.Proposals);
+            Assert.Contains(passingProposal, homeowner2_2_30.Proposals);
+            Assert.Contains(passingProposal, resident1_1.Proposals);
+            Assert.Contains(passingProposal, resident1_2.Proposals);
+            Assert.Contains(passingProposal, resident2_2.Proposals);
+            Assert.DoesNotContain(passingProposal, childGatedCommunity.Proposals);
+
+            Assert.Contains(failingProposal, citizen1.Proposals);
+            Assert.Contains(failingProposal, citizen2.Proposals);
+            Assert.Contains(failingProposal, homeowner1_1_60.Proposals);
+            Assert.Contains(failingProposal, homeowner2_2_30.Proposals);
+            Assert.Contains(failingProposal, resident1_1.Proposals);
+            Assert.Contains(failingProposal, resident1_2.Proposals);
+            Assert.Contains(failingProposal, resident2_2.Proposals);
+            Assert.DoesNotContain(failingProposal, childGatedCommunity.Proposals);
+
+            //Hay 15 Users, so deciding, so deciding vote is 8
+            passingProposal.Vote(citizen1, true);
+            passingProposal.Vote(citizen2, true);
+            passingProposal.Vote(homeowner1_1_60, true);
+            passingProposal.Vote(homeowner1_2_40, true);
+            passingProposal.Vote(homeowner2_1_30, true);
+            passingProposal.Vote(homeowner2_2_30, true);
+            passingProposal.Vote(homeowner2_3_40, true);
+            passingProposal.Vote(homeowner3_1_50, false);
+            Assert.Null(passingProposal.Passed);
+            passingProposal.Vote(resident1_1, true);
+            Assert.True(passingProposal.Passed);
+            Assert.False(passingProposal.Open);
+
+
+            failingProposal.Vote(citizen1, false);
+            failingProposal.Vote(citizen2, false);
+            failingProposal.Vote(homeowner1_1_60, false);
+            failingProposal.Vote(homeowner1_2_40, false);
+            failingProposal.Vote(homeowner2_1_30, false);
+            failingProposal.Vote(homeowner2_2_30, false);
+            failingProposal.Vote(homeowner2_3_40, false);
+            failingProposal.Vote(homeowner3_1_50, true);
+            Assert.Null(failingProposal.Passed);
+            failingProposal.Vote(resident1_1, false);
+            Assert.False(failingProposal.Passed);
+            Assert.False(failingProposal.Open);
         }
     }
 }

@@ -64,8 +64,7 @@
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
             Dictionary<Citizen, int> citizensVotingValue = new();
-            
-            List<User> allUsers = new();
+            List<User> allUsers;
             allUsers = community.ReturnAllNestedUsers();
 
             foreach(var user in allUsers)
@@ -79,6 +78,10 @@
         {
             // Intentionally left empty for this strategy, as no home votes need to be added.
             return new List<Vote>();
+        }
+        public bool ShouldProposalPropagate(Proposal proposal)
+        {
+            return false;
         }
     }
     /// <summary>

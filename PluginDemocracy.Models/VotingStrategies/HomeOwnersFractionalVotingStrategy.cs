@@ -72,5 +72,9 @@
             // Intentionally left empty for this strategy, as no home votes need to be added.
             return new List<Vote>();
         }
+        public bool ShouldProposalPropagate(Proposal proposal)
+        {
+            return true;
+        }
     }
 }

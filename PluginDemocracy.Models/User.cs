@@ -28,6 +28,22 @@
         public bool Admin { get; set; }
         
         private List<Role> Roles { get; set; }
+        /// <summary>
+        /// All the proposals of communities where this citizen has citizenship and also of parent communities where Proposal.VotingWeights keys contians this User.
+        /// </summary>
+        public List<Proposal> Proposals
+        {
+            get
+            {
+                List<Proposal> allAssociatedProposals = new();
+                foreach (Community community in Citizenships) allAssociatedProposals.AddRange(community.Proposals);
+                foreach (Community associatedCommunity in AssociatedCommunities)
+                {
+                    foreach (Proposal proposal in associatedCommunity.Proposals) if (proposal.VotingWeights.ContainsKey(this)) allAssociatedProposals.Add(proposal);
+                }
+                return allAssociatedProposals.Distinct().ToList();
+            }
+        }
         public User()
         {
             Roles = new();

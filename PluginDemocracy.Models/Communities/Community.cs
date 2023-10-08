@@ -123,7 +123,7 @@
         }
         public bool PublishProposal(Proposal proposal)
         {
-            //TODO: make sure the Proposal has all the correct info ValidateProposal() and return messages accordingly of what you are missing.
+            if(VotingStrategy == null) throw new InvalidOperationException("VotingStrategy is null");
             //Ensure this proposal is for this community
             proposal.Community = this;
             //Ensure it has a title
@@ -145,7 +145,7 @@
             proposal.VotingStrategy ??= VotingStrategy;
             proposal.ExpirationDate ??= proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
-            PropagateProposal(proposal);
+            if(VotingStrategy.ShouldProposalPropagate(proposal)) PropagateProposal(proposal);
 
             return true;
         }
