@@ -6,4 +6,60 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="VotingStrategies\Resources\CitizensVotingStrategyResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CitizensVotingStrategyResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="VotingStrategies\Resources\HomeOwnersFractionalVotingStrategyResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HomeOwnersFractionalVotingStrategyResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="VotingStrategies\Resources\HomeOwnersNonFractionalVotingStrategyResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HomeOwnersNonFractionalVotingStrategyResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="VotingStrategies\Resources\UsersVotingStrategyResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UsersVotingStrategyResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="VotingStrategies\Resources\CitizensVotingStrategyResources.es-MX.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>PluginDemocracy.Models</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\CitizensVotingStrategyResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CitizensVotingStrategyResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>PluginDemocracy.Models</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\HomeOwnersFractionalVotingStrategy.es-MX.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\HomeOwnersFractionalVotingStrategyResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HomeOwnersFractionalVotingStrategyResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\HomeOwnersNonFractionalVotingStrategy.es-MX.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\HomeOwnersNonFractionalVotingStrategyResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HomeOwnersNonFractionalVotingStrategyResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\UsersVotingStrategyResources.es-MX.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="VotingStrategies\Resources\UsersVotingStrategyResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UsersVotingStrategyResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

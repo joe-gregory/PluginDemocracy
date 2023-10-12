@@ -15,7 +15,7 @@
                 return _articles.AsReadOnly();
             }
         }
-        private List<Article> _articles;
+        private readonly List<Article> _articles;
         public Constitution()
         {
             _articles = new();
@@ -89,24 +89,6 @@
         public void UpdatePreamble(string newPreamble)
         {
             _preamble = newPreamble;
-        }
-    }
-    public class Article
-    {
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public int? Number { get; set; }
-        public DateTime CreationDate { get; }
-        public DateTime? ExpirationDate { get; set; }
-        BaseDictamen OriginDictamen;
-        public Article(BaseDictamen dictamen, string title, string body, int? number, DateTime? expirationDate)
-        {
-            OriginDictamen = dictamen;
-            Title = title;
-            Body = body;
-            Number = number;
-            CreationDate = DateTime.UtcNow;
-            ExpirationDate = expirationDate;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using PluginDemocracy.Models.VotingStrategies.Resources;
+
+namespace PluginDemocracy.Models
 {
     /// <summary>
     /// NonFractional GatedCommunity Voting Strategy
@@ -15,37 +17,8 @@
     /// </summary>
     public class HomeOwnersNonFractionalVotingStrategy : IVotingStrategy
     {
-        public MultilingualString Title {
-            get
-            {
-                return new MultilingualString()
-                {
-                    EN = "Each Home in the gated community gets a vote.",
-                    ES = "Cada casa en la privada corresponde a 1 voto. "
-                };
-            }
-            set
-            {
-                throw new Exception("Cannot set GatedCommunityVotingStrategy.Title");
-            }
-        }
-        public MultilingualString Description 
-        {
-            get
-            {
-                MultilingualString description = new()
-                {
-                    EN = "This voting strategy vests voting power on home owners. Each home corresponds to 1 vote.",
-                    ES = "Esta modo de voto pone el poder del voto en los propietarios de casas de la privada. Cada casa corresponde a 1 voto."
-                };
-                return description;
-            }
-            set
-            {
-                throw new Exception("Cannot set GatedCommunity.Description");
-            }
-        }
-
+        public string Title => HomeOwnersNonFractionalVotingStrategyResources.Title;
+        public string Description => HomeOwnersNonFractionalVotingStrategyResources.Description;
         public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
         {
                 var homesVotingValue = new Dictionary<Citizen, int>();

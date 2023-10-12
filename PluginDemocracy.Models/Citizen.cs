@@ -21,7 +21,7 @@
         {
             get
             {
-                List<Community> communitiesFromAbove = new List<Community>();
+                List<Community> communitiesFromAbove = new();
                 foreach (Community community in Citizenships)
                 {
                     foreach (Community aboveCommunity in community.Citizenships)
