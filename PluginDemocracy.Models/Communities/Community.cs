@@ -62,9 +62,11 @@ namespace PluginDemocracy.Models
         public List<Proposal> AcceptedProposals => Proposals.Where(proposal => proposal.Passed == true).ToList();
         public List<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Passed == false).ToList();
         public List<Proposal> UndecidedProposals => Proposals.Where(proposal => proposal.Open == true).ToList();
+        public Accounting Accounting { get; }
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
-
+        public List<Project> Projects { get; }
+        public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public Community()
         {
             Citizenships = new();
@@ -74,8 +76,10 @@ namespace PluginDemocracy.Models
             Constitution = new();
             Proposals = new();
             ProposalsExpirationDays = 30;
+            Accounting = new(this);
             Dictamens = new();
             Roles = new();
+            Projects = new();
         }
         /// <summary>
         /// Adding a citizen needs to ensure that no citizen is repeated

@@ -1,6 +1,6 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public abstract class BaseDictamen : IAccountant
+    public abstract class BaseDictamen
     {
         public Guid Guid { get; }
         public string Title { get; set; }
@@ -11,18 +11,17 @@
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
-        public Proposal? Proposal { get; set; }
-
-        public Type Type => typeof(BaseDictamen);
+        public Proposal Proposal { get; set; }
         /// <summary>
         /// Strategies:
         /// </summary> 
-        public BaseDictamen(string title, string description, Community community)
+        public BaseDictamen(string title, string description, Community community, Proposal proposal)
         {
             Guid = Guid.NewGuid();
             Title = title;
             Description = description;
             Community = community;
+            Proposal = proposal;
         }
         /// <summary>
         /// Community invokes Dictamen.Execute() which is the actual action the Dictamen takes. If it works, it returns true. 

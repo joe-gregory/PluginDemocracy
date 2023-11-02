@@ -1,6 +1,6 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class Role : IAccountant
+    public class Role
     {
         public string Title { get; set; }
         /// <summary>
@@ -10,7 +10,6 @@
         /// <summary>
         /// Person who has this role assigned to them
         /// </summary>
-        public Type Type => typeof(Role);
         public Community Community { get; }
         public User? Assignee { get; set; }
         public DateTime? ExpirationDate { get; set; }

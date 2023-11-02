@@ -15,18 +15,30 @@
         /// <summary>
         /// Who made the change
         /// </summary>
-        public IAccountant Accountant { get; }
+        public User? Accountant { get; }
+        public BaseDictamen? Dictamen { get; }
         public ActionType Action { get; }
         public DateTime Date { get; }
         public decimal Amount { get; }
         public string Description { get; }
         public string? Category { get; }
 
-        public TransactionHistoryItem(IAccountant accountant, ActionType action, decimal amount, string description, string? category = null)
+        public TransactionHistoryItem(User accountant, ActionType action, decimal amount, string description, string? category = null)
         {
             Date = DateTime.UtcNow;
             Action = action;
             Accountant = accountant;
+            Dictamen = null;
+            Amount = amount;
+            Description = description;
+            Category = category;
+        }
+        public TransactionHistoryItem(BaseDictamen dictamen, ActionType action, decimal amount, string description, string? category = null)
+        {
+            Date = DateTime.UtcNow;
+            Action = action;
+            Accountant = null;
+            Dictamen = dictamen;
             Amount = amount;
             Description = description;
             Category = category;
