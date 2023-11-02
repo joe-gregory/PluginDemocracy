@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.Globalization;
+
+namespace PluginDemocracy.Models
 {
     /// <summary>
     /// 
@@ -12,7 +14,8 @@
             get => string.Join(" ", Name, Address);
             set => throw new InvalidOperationException("Cannot set FullName directly in Community class.");
         }
-        override public string? Address { get; set; }
+        public CultureInfo? OfficialCurrency { get; set; }
+        public List<CultureInfo> OfficialLanguages { get; set; }
         public string? Description { get; set; }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
@@ -65,6 +68,7 @@
         public Community()
         {
             Citizenships = new();
+            OfficialLanguages = new();
             Homes = new();
             NonResidentialCitizens = new();
             Constitution = new();

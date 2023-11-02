@@ -1,25 +1,28 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public abstract class BaseDictamen : IMultilingualDescriptor
+    public abstract class BaseDictamen : IAccountant
     {
         public Guid Guid { get; }
-        public abstract MultilingualString Title { get; set; }
-        public abstract MultilingualString Description { get; set; }
-        public Community? Community { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public Community Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
         public Proposal? Proposal { get; set; }
+
+        public Type Type => typeof(BaseDictamen);
         /// <summary>
         /// Strategies:
         /// </summary> 
-        public BaseDictamen()
+        public BaseDictamen(string title, string description, Community community)
         {
             Guid = Guid.NewGuid();
-            Title = new();
-            Description = new();
+            Title = title;
+            Description = description;
+            Community = community;
         }
         /// <summary>
         /// Community invokes Dictamen.Execute() which is the actual action the Dictamen takes. If it works, it returns true. 

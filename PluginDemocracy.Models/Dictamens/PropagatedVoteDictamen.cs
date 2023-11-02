@@ -6,16 +6,14 @@
     public class PropagatedVoteDictamen : BaseDictamen
     {
         public Proposal ParentProposal { get; }
-        public override MultilingualString Title { get; set; }
-        public override MultilingualString Description { get; set; }
-
-        public PropagatedVoteDictamen(Proposal parentProposal) : base()
+        public PropagatedVoteDictamen(string title, string description, Community community, Proposal parentProposal) : base(title, description, community)
         {
             ParentProposal = parentProposal;
-            Title = new();
-            Description = new();
-            Title.EN = $"This Dictamen represents a vote in the name of this community for proposal: <br>{ParentProposal.Title}.<br>In parent community {ParentProposal.Community.Name}.";
-            Title.ES = $"Este Dictamen representa un voto en nombre de esta comunidad para la propuesta:<br>{ParentProposal.Title}.<br>En la comunidad padre {ParentProposal.Community.Name}.";
+            //NEEDS FIXING: 
+            //Title = new();
+            //Description = new();
+            //Title.EN = $"This Dictamen represents a vote in the name of this community for proposal: <br>{ParentProposal.Title}.<br>In parent community {ParentProposal.Community.Name}.";
+            //Title.ES = $"Este Dictamen representa un voto en nombre de esta comunidad para la propuesta:<br>{ParentProposal.Title}.<br>En la comunidad padre {ParentProposal.Community.Name}.";
         }
         /// <summary>
         /// In the case of Homes in GatedCommunities, the Dictamen will check what the ParentProposal is looking for in terms of votes. 
