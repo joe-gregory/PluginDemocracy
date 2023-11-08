@@ -2,14 +2,14 @@
 {
     public class Home : Community
     {
-        public Dictionary<Citizen, int> Owners { get; set; }
-        public List<Citizen> Residents { get; set; }
+        public Dictionary<BaseCitizen, int> Owners { get; set; }
+        public List<BaseCitizen> Residents { get; set; }
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
         /// Citizen.Citizenships can be updated for both the GatedCommunity and the Home. The Home doesn't have access to its parent GatedCommunity, so it must be done in the
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
-        override public List<Citizen> Citizens { 
+        override public List<BaseCitizen> Citizens { 
             get => Owners.Keys.Union(Residents).ToList(); 
         }
         public Home() : base()
@@ -28,7 +28,7 @@
         /// <param name="percentage"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AddOwner(Citizen citizen, int percentage)
+        public void AddOwner(BaseCitizen citizen, int percentage)
         {
             if (citizen == null) throw new ArgumentException("citizen cannot be null");
             if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100 integer");
@@ -41,7 +41,7 @@
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
         /// <param name="Citizen"></param>
-        public void RemoveOwner(Citizen Citizen)
+        public void RemoveOwner(BaseCitizen Citizen)
         {
             if (Citizen != null)
             {
@@ -54,7 +54,7 @@
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
         /// <param name="citizen"></param>
-        public void AddResident(Citizen citizen)
+        public void AddResident(BaseCitizen citizen)
         {
             if (citizen != null)
             {
@@ -68,7 +68,7 @@
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
         /// <param name="citizen"></param>
-        public void RemoveResident(Citizen citizen)
+        public void RemoveResident(BaseCitizen citizen)
         {
             if(citizen != null)
             {

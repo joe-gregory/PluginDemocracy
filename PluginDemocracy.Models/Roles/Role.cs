@@ -1,7 +1,8 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class Role
+    public class Role : IRedFlaggable
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         /// <summary>
         /// Description of responsabilities
@@ -13,13 +14,20 @@
         public Community Community { get; }
         public User? Assignee { get; set; }
         public DateTime? ExpirationDate { get; set; }
-        public bool Active { get; set; } 
+        public bool Active { get; set; }
+        public RolePowers Powers { get; }
+        //IREDFLAGGABLE
+        public List<RedFlag> RedFlags { get; }
+        public Type Type => typeof(Role);
+        //END IREDFLAGGABLE
         public Role(string title, string description, Community community)
         {
             Title = title;
             Description = description;
             Community = community;
             Active = true;
+            Powers = new();
+            RedFlags = new();
         }
         public void Update()
         {

@@ -5,8 +5,9 @@
     /// </summary>
     public class Vote
     {
+        public int Id { get; set; }
         public Proposal Proposal { get; }
-        public Citizen Citizen { get; }
+        public BaseCitizen Citizen { get; }
         public bool InFavor { get; }
         public int VoteWeight { get; }
         public int VoteValueInFavor { get; }
@@ -18,7 +19,7 @@
         /// <param name="proposal"></param>
         /// <param name="citizen"></param>
         /// <param name="inFavor"></param>
-        public Vote(Proposal proposal, Citizen citizen, bool inFavor)
+        public Vote(Proposal proposal, BaseCitizen citizen, bool inFavor)
         {
             Proposal = proposal;
             Citizen = citizen;
@@ -44,7 +45,7 @@
         /// <param name="citizen"></param>
         /// <param name="inFavor"></param>
         /// <param name="date"></param>
-        public Vote(Proposal proposal, Citizen citizen, bool inFavor, DateTime date)
+        public Vote(Proposal proposal, BaseCitizen citizen, bool inFavor, DateTime date)
         {
             Proposal = proposal;
             Citizen = citizen;

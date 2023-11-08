@@ -15,17 +15,17 @@ namespace PluginDemocracy.Models
     /// that Home is a subclass of Community and how Proposals propagate down. 
     /// allow different strategy implementations  
     /// </summary>
-    public class HomeOwnersNonFractionalVotingStrategy : IVotingStrategy
+    public class HomeOwnersNonFractionalVotingStrategy : BaseVotingStrategy
     {
-        public string Title => HomeOwnersNonFractionalVotingStrategyResources.Title;
-        public string Description => HomeOwnersNonFractionalVotingStrategyResources.Description;
-        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
+        override public string Title => HomeOwnersNonFractionalVotingStrategyResources.Title;
+        override public string Description => HomeOwnersNonFractionalVotingStrategyResources.Description;
+        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
         {
-                var homesVotingValue = new Dictionary<Citizen, int>();
+                var homesVotingValue = new Dictionary<BaseCitizen, int>();
                 foreach (Home home in community.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
         }
-        public List<Vote> ReturnHomeVotes(Proposal proposal)
+        override public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
             List<Vote> homeVotes = new();
             //only cycle through homes that haven't casted a vote yet
@@ -57,7 +57,7 @@ namespace PluginDemocracy.Models
             }
             return homeVotes;
         }
-        public bool ShouldProposalPropagate(Proposal proposal)
+        override public bool ShouldProposalPropagate(Proposal proposal)
         {
             return true;
         }

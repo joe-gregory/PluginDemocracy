@@ -2,26 +2,23 @@
 {
     public abstract class BaseDictamen
     {
+        public int Id { get; set; }
         public Guid Guid { get; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public Community Community { get; set; }
+        virtual public string? Title { get; set; }
+        virtual public string? Description { get; set; }
+        public Community? Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
-        public Proposal Proposal { get; set; }
+        public Proposal? Proposal { get; set; }
         /// <summary>
         /// Strategies:
         /// </summary> 
-        public BaseDictamen(string title, string description, Community community, Proposal proposal)
+        public BaseDictamen()
         {
             Guid = Guid.NewGuid();
-            Title = title;
-            Description = description;
-            Community = community;
-            Proposal = proposal;
         }
         /// <summary>
         /// Community invokes Dictamen.Execute() which is the actual action the Dictamen takes. If it works, it returns true. 

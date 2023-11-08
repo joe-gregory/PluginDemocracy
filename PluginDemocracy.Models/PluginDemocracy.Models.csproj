@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="Dictamens\Proposals\Resources\ProposalWithDifferentVotingStrategyDictamenResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ProposalWithDifferentVotingStrategyDictamenResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="VotingStrategies\Resources\CitizensVotingStrategyResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -30,6 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Dictamens\Proposals\Resources\ProposalWithDifferentVotingStrategyDictamenResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProposalWithDifferentVotingStrategyDictamenResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>PluginDemocracy.Models</CustomToolNamespace>
+    </EmbeddedResource>
     <EmbeddedResource Update="VotingStrategies\Resources\CitizensVotingStrategyResources.es-MX.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <CustomToolNamespace>PluginDemocracy.Models</CustomToolNamespace>

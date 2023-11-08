@@ -5,12 +5,13 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Basic information about the proposal
         /// </summary>
+        public int Id { get; set; }
         public Guid Guid { get; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public User Author { get; }
         public Community Community { get; set; }
-
+        public List<RedFlag> AddressesRedFlags { get; }
         /// <summary>
         /// PublisedDate is set by the Community when Community.PublishProposal() is invoked.
         /// </summary>
@@ -18,8 +19,8 @@ namespace PluginDemocracy.Models
         public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
         public DateTime? ExpirationDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
-        public IVotingStrategy? VotingStrategy { get; set; }
-        public Dictionary<Citizen, int> VotingWeights
+        public BaseVotingStrategy? VotingStrategy { get; set; }
+        public Dictionary<BaseCitizen, int> VotingWeights
         {
             get
             {
@@ -52,6 +53,7 @@ namespace PluginDemocracy.Models
             Guid = Guid.NewGuid();
             Author = user;
             Community = community;
+            AddressesRedFlags = new();
             VotingStrategy = community.VotingStrategy;
             _votes = new();
             Passed = null;
@@ -62,7 +64,7 @@ namespace PluginDemocracy.Models
         /// <param name="citizen">The citizen voting</param>
         /// <param name="inFavor">False is against (proposal failing). True is in favor of proposal passing.</param>
         /// <exception cref="Exception"></exception>
-        public void Vote(Citizen citizen, bool inFavor)
+        public void Vote(BaseCitizen citizen, bool inFavor)
         {
             Update();
             // Check if the proposal is open for voting
@@ -146,9 +148,14 @@ namespace PluginDemocracy.Models
             if (Passed == null) Open = Published && DateTime.UtcNow < ExpirationDate;
             bool? prevPassedValue = Passed;
             UpdatePassedStatus();
+            //This runs if it is the first time it passes
             if (prevPassedValue == null && Passed != null)
             {
                 IssueDictamen();
+                foreach(RedFlag redFlag in AddressesRedFlags)
+                {
+                    redFlag.ResolveRedFlag();
+                }
             }
         }
         public void IssueDictamen()

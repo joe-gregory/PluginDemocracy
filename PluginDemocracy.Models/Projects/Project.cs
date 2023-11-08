@@ -2,6 +2,7 @@
 {
     public class Project
     {
+        public int Id { get; set; }
         public Guid Guid { get; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -13,7 +14,7 @@
         public decimal RemainingFunding => FundingGoal - CurrentFunding;
         public DateTime Deadline { get; }
         public BaseDictamen Dictamen { get; }
-        public User Author { get; }
+        public User? Author { get; }
         public Accounting Accounting { get; }
 
         public Project(string title, string description, Community community, decimal fundingGoal, DateTime deadline, BaseDictamen dictamen)
@@ -26,7 +27,7 @@
             FundingGoal = fundingGoal;
             Deadline = deadline;
             Dictamen = dictamen;
-            Author = dictamen.Proposal.Author;
+            Author = dictamen.Proposal?.Author?? null;
             Accounting = new Accounting(community);
         }
 

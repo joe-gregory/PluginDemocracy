@@ -2,7 +2,7 @@
 {
     public interface IRedFlaggable
     {
-        public List<RedFlag> Flags { get; set; }
+        public List<RedFlag> RedFlags { get; }
         public Type Type { get; }
     }
 }

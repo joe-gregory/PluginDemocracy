@@ -89,7 +89,7 @@
             childGatedCommunity.AddOwnerToHome(homeowner3_1_50, 50, home3);
             childGatedCommunity.AddOwnerToHome(homeowner3_2_50, 50, home3);
         }
-        public List<Proposal> CommonSetup(IVotingStrategy votingStrategy, User author, string proposalTitle, string proposalDescription)
+        public List<Proposal> CommonSetup(BaseVotingStrategy votingStrategy, User author, string proposalTitle, string proposalDescription)
         {
             //Arrange
             childGatedCommunity.VotingStrategy = votingStrategy;
@@ -138,7 +138,7 @@
         {
             //Arrange
             //Options:
-            IVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy();
+            BaseVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy();
             User author = citizen1;
             string proposalTitle = "Passed_Non_Fractional_Voting";
             string proposalDescription = "Passed_Non_Fractional_Voting";
@@ -174,7 +174,7 @@
         {
             //Arrange
             //Options:
-            IVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy(); ;
+            BaseVotingStrategy votingStrategy = new HomeOwnersNonFractionalVotingStrategy(); ;
             User author = citizen2;
             string proposalTitle = "Fail_Non_Fractional_Voting";
             string proposalDescription = "Fail_Non_Fractional_Voting";
@@ -210,7 +210,7 @@
         {
             //Arrange
             //Options:
-            IVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
+            BaseVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
             User author = resident1_1;
             string proposalTitle = "Passed_Fractional_Voting";
             string proposalDescription = "Passed_Fractional_Voting";
@@ -249,7 +249,7 @@
         {
             //Arrange
             //Options:
-            IVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
+            BaseVotingStrategy votingStrategy = new HomeOwnersFractionalVotingStrategy();
             User author = resident1_2;
             string proposalTitle = "Fail_Fractional_Voting";
             string proposalDescription = "Fail_Fractional_Voting";
@@ -294,7 +294,7 @@
         {
             //Arrange
             //Options:
-            IVotingStrategy votingStrategy = new UsersVotingStrategy();
+            BaseVotingStrategy votingStrategy = new UsersVotingStrategy();
             User authorPassing = resident1_3;
             User authorFailing = resident2_1;
             string proposalTitle = "UsersVotingStrategyTests";

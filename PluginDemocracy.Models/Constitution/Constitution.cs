@@ -5,6 +5,7 @@
     /// </summary>
     public class Constitution
     {
+        public int Id { get; set; }
         public string Preamble => _preamble;
         private string _preamble;
         public IReadOnlyList<Article> Articles

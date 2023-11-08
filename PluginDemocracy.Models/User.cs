@@ -1,6 +1,6 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class User : Citizen
+    public class User : BaseCitizen
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

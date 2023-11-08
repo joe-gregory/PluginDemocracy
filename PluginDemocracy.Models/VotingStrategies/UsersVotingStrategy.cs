@@ -6,10 +6,10 @@ namespace PluginDemocracy.Models
     /// This class represents a voting schema where everybody who is a User type of this Community gets a vote even if it is a member of a sub-community. 
     /// Restrictions can be applied such as age. 
     /// </summary>
-    public class UsersVotingStrategy : IVotingStrategy
+    public class UsersVotingStrategy : BaseVotingStrategy
     {
-        public string Title => UsersVotingStrategyResources.Title;
-        public string Description
+        override public string Title => UsersVotingStrategyResources.Title;
+        override public string Description
         {
             get
             {
@@ -26,10 +26,10 @@ namespace PluginDemocracy.Models
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        public Dictionary<Citizen, int> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
-            Dictionary<Citizen, int> citizensVotingValue = new();
+            Dictionary<BaseCitizen, int> citizensVotingValue = new();
             List<User> allUsers;
             allUsers = community.ReturnAllNestedUsers();
 
@@ -40,12 +40,12 @@ namespace PluginDemocracy.Models
 
             return citizensVotingValue;
         }
-        public List<Vote> ReturnHomeVotes(Proposal proposal)
+        override public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
             // Intentionally left empty for this strategy, as no home votes need to be added.
             return new List<Vote>();
         }
-        public bool ShouldProposalPropagate(Proposal proposal)
+        override public bool ShouldProposalPropagate(Proposal proposal)
         {
             return false;
         }
