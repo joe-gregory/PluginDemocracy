@@ -21,4 +21,5 @@ namespace PluginDemocracy.Mobile.WinUI
 
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
+
 }
