@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.Data", "Plu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.API", "PluginDemocracy.API\PluginDemocracy.API.csproj", "{265E36B1-89FE-4EF8-AD07-F037DD80547A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginDemocracy.Mobile", "PluginDemocracy.Mobile\PluginDemocracy.Mobile.csproj", "{4B114C73-665B-49B3-AF06-36D95DE982A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.Mobile", "PluginDemocracy.Mobile\PluginDemocracy.Mobile.csproj", "{443C0163-1104-4629-9C40-CD3F7DAD54E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.UIComponents", "PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj", "{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginDemocracy.Web", "PluginDemocracy.Web\PluginDemocracy.Web.csproj", "{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +39,20 @@ Global
 		{265E36B1-89FE-4EF8-AD07-F037DD80547A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{265E36B1-89FE-4EF8-AD07-F037DD80547A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{265E36B1-89FE-4EF8-AD07-F037DD80547A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B114C73-665B-49B3-AF06-36D95DE982A7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443C0163-1104-4629-9C40-CD3F7DAD54E5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
