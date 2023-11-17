@@ -2,8 +2,13 @@
     <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     <MudSpacer />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    <MudSpacer />
+    <MudAvatar>
+        @*if logged in, image or letters, if not logged in MudIcon*@
+        <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
+    </MudAvatar>
 </MudAppBar>
-<MudDrawer @bind-Open="@open" Elevation="1">
+<MudDrawer @bind-Open="@open" Elevation="1" Edge="Edge.Start">
     <MudDrawerHeader>
         <MudIcon Icon="@Icons.Material.Filled.Workspaces"/>
         <MudText Typo="Typo.h6">My Community's Name'</MudText>

@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.Mobile", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.UIComponents", "PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj", "{FE9F50A2-DFAE-466C-86D8-5F1E3C47F71B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginDemocracy.Web", "PluginDemocracy.Web\PluginDemocracy.Web.csproj", "{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.WebApp", "PluginDemocracy.WebApp\PluginDemocracy.WebApp.csproj", "{991ACB7C-B2D5-41B5-ACD9-E5E94E80C247}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
