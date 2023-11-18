@@ -6,12 +6,31 @@
 
 <MudLayout>
 
-    <TopNavBar />
+    <TopNavBar HasInternet="@internetState" IsLoggedIn="@loggedInState" />
 
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
+            <div style="margin:20px; align-content:center">
+                <MudButton Color="@(internetState == true ? Color.Success : Color.Error)" OnClick="toggleInternetState" Variant="Variant.Filled">Internet: @(internetState == true ? "On" : "Off")</MudButton>
+                <MudButton Color="@(loggedInState == true ? Color.Success : Color.Error)" OnClick="toggleLoggedInState" Variant="Variant.Filled">LoggedIn: @(loggedInState == true ? "On" : "Off")</MudButton>
+            </div>
             @Body
         </MudContainer>
     </MudMainContent>
 
 </MudLayout>
+
+@code {
+    bool internetState = false;
+    bool loggedInState = false;
+
+    private void toggleInternetState()
+    {
+        internetState = !internetState;
+    }
+
+    private void toggleLoggedInState()
+    {
+        loggedInState = !loggedInState;
+    }
+}

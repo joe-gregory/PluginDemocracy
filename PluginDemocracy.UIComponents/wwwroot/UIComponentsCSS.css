@@ -1,3 +1,7 @@
-.mud-avatar{
+.mud-avatar {
     background-color: white;
 }
+.mud-avatar-disabled {
+        background-color: gray;
+        opacity: 0.5;
+    }

@@ -1,29 +1,36 @@
 ﻿<MudAppBar Elevation="1">
-    <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleCommunityMenu" Disabled="@CommunityMenuButtonDisabled" />
     <MudSpacer />
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     <MudSpacer />
-    <MudAvatar>
+    <MudAvatar @onclick="@ToggleUserMenu" Class="@(UserMenuButtonDisabled ? "mud-avatar-disabled" : "")">
         @*if logged in, image or letters, if not logged in MudIcon*@
         <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
     </MudAvatar>
 </MudAppBar>
-<MudDrawer @bind-Open="@open" Elevation="1" Edge="Edge.Start">
+
+<MudDrawer @bind-Open="@communityMenuOpen" Elevation="1" Anchor="Anchor.Start">
     <MudDrawerHeader>
-        <MudIcon Icon="@Icons.Material.Filled.Workspaces"/>
-        <MudText Typo="Typo.h6">My Community's Name'</MudText>
+        <MudIcon Icon="@Icons.Material.Filled.Workspaces" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6">Privada del Pino</MudText>
     </MudDrawerHeader>
-    <MudNavMenu>
+    <MudNavMenu Disabled="@CommunityMenuButtonDisabled">
         <MudNavLink>Store</MudNavLink>
         <MudNavLink>Library</MudNavLink>
         <MudNavLink>Community</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 
-@code{
-    bool open = false;
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-}
+<MudDrawer @bind-Open="@userMenuOpen" Elevation="1" Anchor="Anchor.End">
+    <MudDrawerHeader>
+            <MudIcon Icon="@Icons.Material.Filled.Person" />
+            <MudSpacer/>
+            <MudText Typo="Typo.h6">Account</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu Disabled = "@UserMenuButtonDisabled">
+        <MudNavLink>Opcion1</MudNavLink>
+        <MudNavLink>Opcion2</MudNavLink>
+        <MudNavLink>Opcion3</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
