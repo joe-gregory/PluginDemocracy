@@ -1,0 +1,52 @@
+﻿@inject BaseAppState AppState 
+
+<MudAppBar Elevation="1">
+    <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleCommunityMenu" Disabled="@CommunityMenuButtonDisabled" />
+    <MudSpacer />
+    <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    <MudSpacer />
+    <MudAvatar @onclick="@ToggleUserMenu" Class="@(UserMenuButtonDisabled ? "mud-avatar-disabled" : "")">
+        @if (AppState.User != null)
+        {
+            if (!string.IsNullOrEmpty(AppState.User.ProfilePicture))
+            {
+                <MudImage Src=@AppState.User.ProfilePicture />
+            }
+            else
+            {
+                <MudText Color="Color.Primary">@AppState.User.Initials</MudText>
+            }
+
+        }   
+            else 
+            {  
+                <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
+            }
+    </MudAvatar>
+</MudAppBar>
+
+<MudDrawer @bind-Open="@communityMenuOpen" Elevation="1" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl">
+    <MudDrawerHeader>
+        <MudIcon Icon="@Icons.Material.Filled.Workspaces" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6">Privada del Pino</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Store</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Library</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Community</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+<MudDrawer @bind-Open="@userMenuOpen" Elevation="1" Anchor="Anchor.End" Breakpoint="Breakpoint.Xl">
+    <MudDrawerHeader>
+            <MudIcon Icon="@Icons.Material.Filled.Person" />
+            <MudSpacer/>
+        <MudText Typo="Typo.h6">@if (AppState.User != null) { @AppState.User.FullName }</MudText>
+        </MudDrawerHeader>
+    <MudNavMenu >
+        <MudNavLink Disabled="@(AppState.User == null)">Opcion1</MudNavLink>
+        <MudNavLink Disabled="@(AppState.User == null)">Opcion2</MudNavLink>
+        <MudNavLink Disabled="@(AppState.User == null)">Opcion3</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>

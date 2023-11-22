@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using PluginDemocracy.UIComponents;
 
 namespace PluginDemocracy.Mobile
 {
@@ -15,8 +16,10 @@ namespace PluginDemocracy.Mobile
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
+            builder.Services.AddSingleton<BaseAppState, MobileAppState>();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddMudServices();
+            builder.Services.AddLocalization();
 
 #if DEBUG
     		builder.Services.AddBlazorWebViewDeveloperTools();

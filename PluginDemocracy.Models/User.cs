@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.Globalization;
+
+namespace PluginDemocracy.Models
 {
     public class User : BaseCitizen
     {
@@ -9,6 +11,17 @@
         {
             get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
                                    .Where(s => !string.IsNullOrEmpty(s)));
+        }
+        public string? Initials
+        {
+            get
+            {
+                string initials = "";
+                if (FirstName != null) initials += FirstName[0];
+                if (LastName != null) initials += LastName[0];
+                if(SecondLastName != null)initials += SecondLastName[0];
+                return initials;
+            }
         }
         public string? Email { get; set; }
         public bool EmailConfirmed { get; set; }
@@ -25,6 +38,7 @@
                 return age;
             } 
         }
+        public CultureInfo? Culture { get; set; }
         public bool Admin { get; set; }
         
         private List<Role> Roles { get; set; }

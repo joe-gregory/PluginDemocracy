@@ -9,6 +9,7 @@
         public Guid Guid { get; }
         virtual public string? FullName { get; }
         virtual public string? Address { get; set; }
+        public string? ProfilePicture { get; set; }
         /// <summary>
         /// Communities this Citizen belongs to. 
         /// </summary>

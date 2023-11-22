@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Globalization
+@inject BaseAppState AppState
+@inject IJSRuntime JS
+@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -6,13 +9,17 @@
 
 <MudLayout>
 
-    <TopNavBar HasInternet="@internetState" IsLoggedIn="@loggedInState" />
+    <TopNavBar />
 
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
             <div style="margin:20px; align-content:center">
-                <MudButton Color="@(internetState == true ? Color.Success : Color.Error)" OnClick="toggleInternetState" Variant="Variant.Filled">Internet: @(internetState == true ? "On" : "Off")</MudButton>
-                <MudButton Color="@(loggedInState == true ? Color.Success : Color.Error)" OnClick="toggleLoggedInState" Variant="Variant.Filled">LoggedIn: @(loggedInState == true ? "On" : "Off")</MudButton>
+                <MudButton Color="@(AppState.HasInternet == true ? Color.Success : Color.Error)" OnClick="toggleInternetState" Variant="Variant.Filled">Internet: @(AppState.HasInternet == true ? "On" : "Off")</MudButton>
+                <MudButton Color="@(AppState.User != null ? Color.Success : Color.Error)" OnClick="toggleLoggedInState" Variant="Variant.Filled" Disabled="@(!AppState.HasInternet)">LoggedIn: @(AppState.User != null ? "Logged In" : "Logged Off")</MudButton>
+                <MudButton Color="@(AppState.User?.ProfilePicture != null ? Color.Success : Color.Error)" OnClick="toggleProfilePicture" Variant="Variant.Filled" Disabled="@(AppState.User == null)">@(AppState.User?.ProfilePicture != null ? "Profile Picture" : "No Profile Picture")</MudButton>
+                <MudButton Color="@getCultureButtonColor()" Variant="Variant.Filled">Toggle Language</MudButton>
+                <MudText>Current Culture = @CultureInfo.CurrentCulture.Name</MudText>
+                <MudButton OnClick="alertCulture">Alert Culture</MudButton>
             </div>
             @Body
         </MudContainer>
@@ -20,17 +27,57 @@
 
 </MudLayout>
 
+
 @code {
-    bool internetState = false;
-    bool loggedInState = false;
+
+    private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
+    private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
+    public Models.User aUser = new Models.User()
+        {
+            FirstName = "Joseph",
+            LastName = "Gregory",
+            Culture = new System.Globalization.CultureInfo("es-MX")
+        };
 
     private void toggleInternetState()
     {
-        internetState = !internetState;
+        AppState.SetInternetState(!AppState.HasInternet);
+        if (!AppState.HasInternet) AppState.User = null;
     }
 
     private void toggleLoggedInState()
     {
-        loggedInState = !loggedInState;
+        if (AppState.User == null) AppState.LogIn(aUser);
+        else AppState.LogOut();
+    }
+
+    private void toggleProfilePicture()
+    {
+        if(AppState.User != null)
+        {
+            if (!string.IsNullOrEmpty(AppState.User.ProfilePicture)) AppState.User.ProfilePicture = null;
+            else AppState.User.ProfilePicture = "https://media.licdn.com/dms/image/D5603AQFe6U_iRMn65Q/profile-displayphoto-shrink_100_100/0/1691519902265?e=1706140800&v=beta&t=YK7rArTUVTt-5HgGO7LnApl3tWcCMPweNfGELRW75GQ";
+        }
+    }
+
+    private Color getCultureButtonColor()
+    {
+        if (CultureInfo.CurrentCulture.Name == "en-US") return Color.Info;
+        else if (CultureInfo.CurrentCulture.Name == "es-MX") return Color.Success;
+        else return Color.Error;
+    }
+
+    private async Task alertCulture()
+    {
+        await JS.InvokeVoidAsync("alert", $"{CultureInfo.CurrentCulture.Name}");
+    }
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += () => StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= () => StateHasChanged();
     }
 }
