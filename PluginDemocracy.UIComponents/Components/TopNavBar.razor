@@ -1,4 +1,4 @@
-﻿@inject BaseAppState AppState 
+﻿@inject BaseAppState AppState
 
 <MudAppBar Elevation="1">
     <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleCommunityMenu" Disabled="@CommunityMenuButtonDisabled" />
@@ -17,36 +17,66 @@
                 <MudText Color="Color.Primary">@AppState.User.Initials</MudText>
             }
 
-        }   
-            else 
-            {  
-                <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
-            }
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
+
+        }
     </MudAvatar>
 </MudAppBar>
 
 <MudDrawer @bind-Open="@communityMenuOpen" Elevation="1" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl">
-    <MudDrawerHeader>
-        <MudIcon Icon="@Icons.Material.Filled.Workspaces" />
-        <MudSpacer />
-        <MudText Typo="Typo.h6">Privada del Pino</MudText>
-    </MudDrawerHeader>
-    <MudNavMenu>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Store</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Library</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">Community</MudNavLink>
-    </MudNavMenu>
+    @if (UserHasCommunity)
+    {
+        <MudDrawerHeader>
+            <MudIcon Icon="@Icons.Material.Filled.Workspaces" />
+            <MudSpacer />
+            <MudText Typo="Typo.h6">AppState.User.Citizenships[0].Name</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Feed")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Create Proposal")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
+                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink>
+            </MudNavMenu>
+    }
+    else
+    {
+        <MudNavMenu>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
+        </MudNavMenu>
+    }
+
 </MudDrawer>
 
 <MudDrawer @bind-Open="@userMenuOpen" Elevation="1" Anchor="Anchor.End" Breakpoint="Breakpoint.Xl">
     <MudDrawerHeader>
-            <MudIcon Icon="@Icons.Material.Filled.Person" />
-            <MudSpacer/>
-        <MudText Typo="Typo.h6">@if (AppState.User != null) { @AppState.User.FullName }</MudText>
+        <MudIcon Icon="@Icons.Material.Filled.Person" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6">@if (AppState.User != null)
+            {
+                @AppState.User.FullName
+            }</MudText>
         </MudDrawerHeader>
-    <MudNavMenu >
-        <MudNavLink Disabled="@(AppState.User == null)">Opcion1</MudNavLink>
-        <MudNavLink Disabled="@(AppState.User == null)">Opcion2</MudNavLink>
-        <MudNavLink Disabled="@(AppState.User == null)">Opcion3</MudNavLink>
-    </MudNavMenu>
-</MudDrawer>
+        <MudNavMenu>
+        @if(AppState.User == null)
+        {
+            <MudNavLink>@AppState.Translate("LogIn")</MudNavLink>
+            <MudNavLink>@AppState.Translate("SignUp")</MudNavLink>
+            
+        }
+        else
+        {
+            <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink>
+            <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
+        }
+        <MudNavLink Icon="@Icons.Material.Filled.Settings">@AppState.Translate("Settings")</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>

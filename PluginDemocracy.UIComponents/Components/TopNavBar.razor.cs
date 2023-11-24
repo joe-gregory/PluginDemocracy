@@ -4,9 +4,10 @@ namespace PluginDemocracy.UIComponents.Components
 {
     public partial class TopNavBar
     {
-        public bool CommunityMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
-        public bool UserMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
-
+        private bool CommunityMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
+        private bool UserMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
+        private bool UserLoggedIn => AppState.User != null;
+        private bool UserHasCommunity => AppState.User != null && AppState.User.Citizenships.Count != 0;
         private bool communityMenuOpen;
         private bool userMenuOpen;
         protected override void OnInitialized()

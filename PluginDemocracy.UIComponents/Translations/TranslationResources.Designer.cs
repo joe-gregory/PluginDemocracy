@@ -115,11 +115,29 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Feed.
+        /// </summary>
+        internal static string Feed {
+            get {
+                return ResourceManager.GetString("Feed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to History.
         /// </summary>
         internal static string History {
             get {
                 return ResourceManager.GetString("History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join an existing community.
+        /// </summary>
+        internal static string JoinAnExistingCommunity {
+            get {
+                return ResourceManager.GetString("JoinAnExistingCommunity", resourceCulture);
             }
         }
         
@@ -174,6 +192,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string RedFlags {
             get {
                 return ResourceManager.GetString("RedFlags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register a new community.
+        /// </summary>
+        internal static string RegisterANewCommunity {
+            get {
+                return ResourceManager.GetString("RegisterANewCommunity", resourceCulture);
             }
         }
         

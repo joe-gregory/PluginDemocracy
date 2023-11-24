@@ -135,8 +135,14 @@
   <data name="CreateProposal" xml:space="preserve">
     <value>Create Proposal</value>
   </data>
+  <data name="Feed" xml:space="preserve">
+    <value>Feed</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
+  </data>
+  <data name="JoinAnExistingCommunity" xml:space="preserve">
+    <value>Join an existing community</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
@@ -155,6 +161,9 @@
   </data>
   <data name="RedFlags" xml:space="preserve">
     <value>Red Flags</value>
+  </data>
+  <data name="RegisterANewCommunity" xml:space="preserve">
+    <value>Register a new community</value>
   </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
