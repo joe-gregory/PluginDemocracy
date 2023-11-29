@@ -38,7 +38,7 @@ namespace PluginDemocracy.Models
                 return age;
             } 
         }
-        public CultureInfo? Culture { get; set; }
+        public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
         
         private List<Role> Roles { get; set; }
@@ -58,14 +58,11 @@ namespace PluginDemocracy.Models
                 return allAssociatedProposals.Distinct().ToList();
             }
         }
-        public User()
+        public User(CultureInfo culture, bool admin = false)
         {
             Roles = new();
-            Admin = false;
-        }
-        public User(bool admin) : this()
-        {
             Admin = admin;
+            Culture = culture;
         }
         public void AddRole(Role role)
         {

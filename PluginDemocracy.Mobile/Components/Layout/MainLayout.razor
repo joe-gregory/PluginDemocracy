@@ -74,7 +74,7 @@
 
     private void toggleCulture()
     {
-        if (TranslationResourceManager.Instance.Culture.Name == "en-US") AppState.SetCulture(new CultureInfo("es-MX"));
+        if (AppState.Culture.Name == "en-US") AppState.SetCulture(new CultureInfo("es-MX"));
         else AppState.SetCulture(new CultureInfo("en-US"));
     }
     protected override void OnInitialized()

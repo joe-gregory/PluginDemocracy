@@ -1,0 +1,20 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="PluginDemocracyTheme.Theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+
+    <TopNavBar @rendermode="InteractiveServer" />
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium">
+                @Body
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
+
+
+

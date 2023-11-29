@@ -1,9 +1,9 @@
 ﻿@inject BaseAppState AppState
 
 <MudAppBar Elevation="1">
-    <MudIconButton Icon="@Icons.Material.Filled.Workspaces" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleCommunityMenu" Disabled="@CommunityMenuButtonDisabled" />
+    <MudIconButton Icon="@PluginDemocracyIcons.CommunityIcon" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleCommunityMenu" Disabled="@CommunityMenuButtonDisabled" />
     <MudSpacer />
-    <MudIcon Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    <MudIcon Icon="@PluginDemocracyIcons.CommunityIcon" Color="Color.Inherit"/>
     <MudSpacer />
     <MudAvatar @onclick="@ToggleUserMenu" Class="@(UserMenuButtonDisabled ? "mud-avatar-disabled" : "")">
         @if (AppState.User != null)
@@ -66,7 +66,7 @@
             }</MudText>
         </MudDrawerHeader>
         <MudNavMenu>
-        @if(AppState.User == null)
+        @if(!UserLoggedIn)
         {
             <MudNavLink>@AppState.Translate("LogIn")</MudNavLink>
             <MudNavLink>@AppState.Translate("SignUp")</MudNavLink>

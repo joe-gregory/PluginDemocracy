@@ -1,0 +1,84 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject BaseAppState AppState
+@using System.Globalization
+
+<PageTitle>Home Nigress</PageTitle>
+
+<MudMainContent>
+    <MudContainer MaxWidth="MaxWidth.Medium">
+        <div style="margin:20px; align-content:center">
+            <MudButton Color="@(AppState.HasInternet == true ? Color.Success : Color.Error)" @onclick="toggleInternetState" Variant="Variant.Filled">Internet: @(AppState.HasInternet == true ? "On" : "Off")</MudButton>
+            <MudButton Color="@(AppState.User != null ? Color.Success : Color.Error)" @onclick="toggleLoggedInState" Variant="Variant.Filled" Disabled="@(!AppState.HasInternet)">LoggedIn: @(AppState.User != null ? "Logged In" : "Logged Off")</MudButton>
+            <MudButton Color="@(AppState.User?.ProfilePicture != null ? Color.Success : Color.Error)" @onclick="toggleProfilePicture" Variant="Variant.Filled" Disabled="@(AppState.User == null)">@(AppState.User?.ProfilePicture != null ? "Profile Picture" : "No Profile Picture")</MudButton>
+            <MudButton Color="@getCultureButtonColor()" Variant="Variant.Filled" OnClick="toggleCulture">Toggle Language</MudButton>
+            <MudText>Current Culture = @AppState.Culture.Name</MudText>
+                <MudText>About Community: @AppState.Translate("AboutCommunity")</MudText>
+                <MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
+                <MudText Class="mb-4">Current count: @currentCount</MudText>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
+                <MudIcon Icon="PluginDemocracyIcons.CommunityIcon" Color="Color.Primary"/>
+            </div>
+        </MudContainer>
+    </MudMainContent>
+
+    @code {
+
+    private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
+    private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
+    public Models.User aUser = new Models.User(new System.Globalization.CultureInfo("es-MX"))
+        {
+            FirstName = "Joseph",
+            LastName = "Gregory",
+
+        };
+
+    private void toggleInternetState()
+    {
+        AppState.SetInternetState(!AppState.HasInternet);
+        if (!AppState.HasInternet) AppState.LogOut();
+    }
+
+    private void toggleLoggedInState()
+    {
+        if (AppState.User == null) AppState.LogIn(aUser);
+        else AppState.LogOut();
+    }
+
+    private void toggleProfilePicture()
+    {
+        if (AppState.User != null)
+        {
+            if (!string.IsNullOrEmpty(AppState.User.ProfilePicture)) AppState.User.ProfilePicture = null;
+            else AppState.User.ProfilePicture = "https://media.licdn.com/dms/image/D5603AQFe6U_iRMn65Q/profile-displayphoto-shrink_100_100/0/1691519902265?e=1706140800&v=beta&t=YK7rArTUVTt-5HgGO7LnApl3tWcCMPweNfGELRW75GQ";
+        }
+    }
+
+    private Color getCultureButtonColor()
+    {
+        if (AppState.Culture.Name == "en-US") return Color.Info;
+        else if (AppState.Culture.Name == "es-MX") return Color.Success;
+        else return Color.Error;
+    }
+
+    private void toggleCulture()
+    {
+        if (AppState.Culture.Name == "en-US") AppState.SetCulture(new CultureInfo("es-MX"));
+        else AppState.SetCulture(new CultureInfo("en-US"));
+    }
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += () => InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= () => InvokeAsync(StateHasChanged);
+    }
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

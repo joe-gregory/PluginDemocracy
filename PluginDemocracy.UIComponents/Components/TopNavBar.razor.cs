@@ -13,11 +13,11 @@ namespace PluginDemocracy.UIComponents.Components
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            AppState.OnChange += StateHasChanged;
+            AppState.OnChange += () => InvokeAsync(StateHasChanged);
         }
         public void Dispose()
         {
-            AppState.OnChange -= StateHasChanged;
+            AppState.OnChange -= () => InvokeAsync(StateHasChanged);
         }
         void ToggleCommunityMenu()
         {

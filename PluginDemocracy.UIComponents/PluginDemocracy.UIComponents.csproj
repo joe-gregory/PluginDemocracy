@@ -6,6 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Icons\CommunityIcon.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icons\CommunityIcon.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
