@@ -132,26 +132,56 @@
   <data name="Constution" xml:space="preserve">
     <value>Constitución</value>
   </data>
+  <data name="CountryCode" xml:space="preserve">
+    <value>Código de país</value>
+  </data>
   <data name="CreateProposal" xml:space="preserve">
     <value>Crear Propuesta</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Fecha de nacimiento</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Ingles</value>
   </data>
   <data name="Feed" xml:space="preserve">
     <value>Muro</value>
   </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>Historia</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value>No válido</value>
   </data>
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Unirse a una comunidad registrada</value>
   </data>
-  <data name="Languaje" xml:space="preserve">
+  <data name="Language" xml:space="preserve">
     <value>Lenguaje</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellido</value>
   </data>
   <data name="LogIn" xml:space="preserve">
     <value>Inicia sesión</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Cerrar sesión</value>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>Segundo nombre</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Número de teléfono</value>
+  </data>
+  <data name="PluginDemocracy" xml:space="preserve">
+    <value>Democracia Conectada</value>
   </data>
   <data name="Projects" xml:space="preserve">
     <value>Proyectos</value>
@@ -162,17 +192,32 @@
   <data name="RedFlags" xml:space="preserve">
     <value>Banderas Rojas</value>
   </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
   <data name="RegisterANewCommunity" xml:space="preserve">
     <value>Registrar una comunidad nueva</value>
   </data>
+  <data name="Required" xml:space="preserve">
+    <value>Requerido</value>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
+  </data>
+  <data name="SecondLastName" xml:space="preserve">
+    <value>Segundo apellido</value>
+  </data>
+  <data name="SelectCulture" xml:space="preserve">
+    <value>Seleccionar cultura</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
   </data>
   <data name="SignUp" xml:space="preserve">
-    <value>Registrarte</value>
+    <value>Registrate</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>Español</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>Usuario</value>

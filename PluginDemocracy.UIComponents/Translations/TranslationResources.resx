@@ -132,14 +132,29 @@
   <data name="Constitution" xml:space="preserve">
     <value>Constitution</value>
   </data>
+  <data name="CountryCode" xml:space="preserve">
+    <value>Country code</value>
+  </data>
   <data name="CreateProposal" xml:space="preserve">
     <value>Create Proposal</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Date of birth</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
   </data>
   <data name="Feed" xml:space="preserve">
     <value>Feed</value>
   </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value>Invalid</value>
   </data>
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Join an existing community</value>
@@ -147,11 +162,26 @@
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
   <data name="LogIn" xml:space="preserve">
     <value>Log in</value>
   </data>
   <data name="LogOut" xml:space="preserve">
     <value>Log out</value>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>Middle name</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="PluginDemocracy" xml:space="preserve">
+    <value>Plugin Democracy</value>
   </data>
   <data name="Projects" xml:space="preserve">
     <value>Projects</value>
@@ -162,17 +192,32 @@
   <data name="RedFlags" xml:space="preserve">
     <value>Red Flags</value>
   </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
   <data name="RegisterANewCommunity" xml:space="preserve">
     <value>Register a new community</value>
   </data>
+  <data name="Required" xml:space="preserve">
+    <value>Required</value>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
+  </data>
+  <data name="SecondLastName" xml:space="preserve">
+    <value>Second last name</value>
+  </data>
+  <data name="SelectCulture" xml:space="preserve">
+    <value>Select culture</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="SignUp" xml:space="preserve">
     <value>Sign up</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>Spanish</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>

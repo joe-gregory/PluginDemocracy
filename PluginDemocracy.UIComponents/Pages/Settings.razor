@@ -1,0 +1,7 @@
+﻿@inject BaseAppState AppState
+@using System.Globalization
+
+<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("Settings")</MudText>
+    <MudText typeof="Typo.h4">@AppState.Translate("Language")</MudText>
+    <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
+

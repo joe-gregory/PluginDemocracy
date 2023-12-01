@@ -26,10 +26,11 @@
 
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
-    public Models.User aUser = new Models.User(new System.Globalization.CultureInfo("es-MX"))
+    public Models.User aUser = new Models.User()
         {
             FirstName = "Joseph",
             LastName = "Gregory",
+            Culture = new System.Globalization.CultureInfo("es-MX")
 
         };
 

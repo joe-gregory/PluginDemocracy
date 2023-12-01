@@ -19,4 +19,8 @@
 		<ProjectReference Include="..\PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj" />
 	</ItemGroup>
 	
+	<ItemGroup>
+	  <Folder Include="Components\Pages\User\" />
+	</ItemGroup>
+	
 </Project>

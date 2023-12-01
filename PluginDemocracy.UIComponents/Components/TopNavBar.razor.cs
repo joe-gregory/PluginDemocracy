@@ -21,6 +21,7 @@ namespace PluginDemocracy.UIComponents.Components
         }
         void ToggleCommunityMenu()
         {
+            if (CommunityMenuButtonDisabled) return;
             communityMenuOpen = !communityMenuOpen;
         }
 

@@ -1,0 +1,71 @@
+﻿@inject BaseAppState AppState
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("SignUp")</MudText>
+    <MudForm Model="@user" @bind-IsValid="@success" @bind-Errors="@errors">
+        <MudPaper Class="pa-4" Elevation="25">
+            <MudTextField T="string" Label="@AppState.Translate("FirstName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@user.FirstName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("MiddleName")" Required="false" @bind-Value="@user.MiddleName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("LastName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@user.LastName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("SecondLastName")" Required="false" @bind-Value="@user.SecondLastName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="user.Email" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true" RequiredError="Password is required!" @bind-Value="user.Password" Variant="Variant.Outlined" />
+            <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Translate("CountryCode") : @countryCode <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
+            <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="user.PhoneNumber" Variant="Variant.Outlined" />
+            <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="user.DateOfBirth"/>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5">@AppState.Translate("Register")</MudButton>
+        </MudPaper>
+    </MudForm>
+    @code {
+    private User user = new User();
+    private string countryCode = "+1";
+    private string selectedFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+    private string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+    private string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
+    private MudBlazor.Color thumbIconColor = MudBlazor.Color.Info;
+    private bool disabled = false;
+    private bool _checked = false;
+    private void SetLook()
+    {
+        //true == Mexican
+        if (_checked) thumbIconColor = MudBlazor.Color.Success;
+        else thumbIconColor = MudBlazor.Color.Info;
+    }
+    private void OnSwitchToggled()
+    {
+        _checked = !_checked;
+        if (_checked)
+        {
+            countryCode = "+52";
+            selectedFlag = mxnFlag;
+        }
+        else
+        {
+            countryCode = "+1";
+            selectedFlag = usaFlag;
+        }
+        SetLook();
+    }
+
+    bool success;
+    string[] errors = { };
+    MudTextField<string>? pwField1;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 7)
+            yield return "Password must be at least of length 7";
+        // if (!Regex.IsMatch(pw, @"[A-Z]"))
+        //     yield return "Password must contain at least one capital letter";
+        // if (!Regex.IsMatch(pw, @"[a-z]"))
+        //     yield return "Password must contain at least one lowercase letter";
+        // if (!Regex.IsMatch(pw, @"[0-9]"))
+        //     yield return "Password must contain at least one digit";
+    }
+}

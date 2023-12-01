@@ -5,6 +5,7 @@ namespace PluginDemocracy.Models
     public class User : BaseCitizen
     {
         public string? FirstName { get; set; }
+        public string? MiddleName { get; set; }
         public string? LastName { get; set; }
         public string? SecondLastName { get; set; }
         override public string? FullName
@@ -25,6 +26,7 @@ namespace PluginDemocracy.Models
         }
         public string? Email { get; set; }
         public bool EmailConfirmed { get; set; }
+        public string? Password { get; set; }
         public string? PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
         override public string? Address { get; set; }
@@ -58,11 +60,11 @@ namespace PluginDemocracy.Models
                 return allAssociatedProposals.Distinct().ToList();
             }
         }
-        public User(CultureInfo culture, bool admin = false)
+        public User(bool admin = false)
         {
             Roles = new();
             Admin = admin;
-            Culture = culture;
+            Culture = new CultureInfo("en-US");
         }
         public void AddRole(Role role)
         {
