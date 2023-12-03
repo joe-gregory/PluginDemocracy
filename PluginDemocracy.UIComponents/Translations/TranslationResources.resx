@@ -183,6 +183,9 @@
   <data name="PluginDemocracy" xml:space="preserve">
     <value>Plugin Democracy</value>
   </data>
+  <data name="PrimaryLanguageAndCulture" xml:space="preserve">
+    <value>Primary language and culture</value>
+  </data>
   <data name="Projects" xml:space="preserve">
     <value>Projects</value>
   </data>

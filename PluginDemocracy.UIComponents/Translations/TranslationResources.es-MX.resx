@@ -183,6 +183,9 @@
   <data name="PluginDemocracy" xml:space="preserve">
     <value>Democracia Conectada</value>
   </data>
+  <data name="PrimaryLanguageAndCulture" xml:space="preserve">
+    <value>Lenguaje y cultura principal</value>
+  </data>
   <data name="Projects" xml:space="preserve">
     <value>Proyectos</value>
   </data>

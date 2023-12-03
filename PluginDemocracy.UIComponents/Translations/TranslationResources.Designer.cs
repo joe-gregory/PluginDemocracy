@@ -259,6 +259,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Primary language and culture.
+        /// </summary>
+        internal static string PrimaryLanguageAndCulture {
+            get {
+                return ResourceManager.GetString("PrimaryLanguageAndCulture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Projects.
         /// </summary>
         internal static string Projects {
