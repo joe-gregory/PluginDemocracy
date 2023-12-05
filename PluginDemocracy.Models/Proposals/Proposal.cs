@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PluginDemocracy.Models
 {
     public class Proposal
@@ -13,19 +15,20 @@ namespace PluginDemocracy.Models
         public Community Community { get; set; }
         public List<RedFlag> AddressesRedFlags { get; }
         /// <summary>
-        /// PublisedDate is set by the Community when Community.PublishProposal() is invoked.
+        /// PublishedDate is set by the Community when Community.PublishProposal() is invoked.
         /// </summary>
         public DateTime? PublishedDate { get; set; }
+        [NotMapped]
         public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
-        public DateTime? ExpirationDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public BaseVotingStrategy? VotingStrategy { get; set; }
         public Dictionary<BaseCitizen, int> VotingWeights
         {
             get
             {
-                if (VotingStrategy == null) throw new FormatException("Proposal.VotingStrategy is null");
-                else return VotingStrategy.ReturnVotingWeights(Community);
+                if (Community != null && VotingStrategy != null) return VotingStrategy.ReturnVotingWeights(Community);
+                else return new Dictionary<BaseCitizen, int>();
             }
         }
         /// <summary>
@@ -33,11 +36,17 @@ namespace PluginDemocracy.Models
         /// A Proposal passes when VotesInFavor is more than half of TotalVotingValuesSum
         /// </summary>
         private readonly List<Vote> _votes;
+        [NotMapped]
         public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
+        [NotMapped]
         public IReadOnlyList<Vote> VotesInFavor => _votes.Where(vote => vote.InFavor == true).ToList().AsReadOnly();
+        [NotMapped]
         public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
+        [NotMapped]
         public int TotalVotingValuesSum => VotingWeights.Values.Sum();
+        [NotMapped]
         public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
+        [NotMapped]
         public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
         /// <summary>
         /// Gets a value indicating whether the proposal is currently open for voting.
@@ -48,6 +57,13 @@ namespace PluginDemocracy.Models
         /// Indicates if the proposal has passed (majority of votes are true).
         /// </summary>
         public bool? Passed { get; set; }
+        protected Proposal() 
+        {
+            _votes = new();
+            AddressesRedFlags = new();
+            Author = new();
+            Community = new();
+        }
         public Proposal(Community community, User user)
         {
             Guid = Guid.NewGuid();
@@ -100,7 +116,6 @@ namespace PluginDemocracy.Models
             if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
             //Find an existing vote by the same citizen, if any
             Vote? existingVote = _votes.FirstOrDefault(v => v.Citizen == vote.Citizen);
-
             Vote newVote = new(this, vote.Citizen, vote.InFavor, vote.Date);
 
             if (existingVote != null)

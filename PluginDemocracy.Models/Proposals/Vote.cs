@@ -6,13 +6,17 @@
     public class Vote
     {
         public int Id { get; set; }
-        public Proposal Proposal { get; }
-        public BaseCitizen Citizen { get; }
-        public bool InFavor { get; }
-        public int VoteWeight { get; }
-        public int VoteValueInFavor { get; }
-        public int VoteValueAgainst { get; }
-        public DateTime Date { get; }
+        public Proposal? Proposal { get; private set; }
+        public BaseCitizen Citizen { get; private set; }
+        public bool InFavor { get; private set; }
+        public int VoteWeight { get; private set; }
+        public int VoteValueInFavor { get; private set; }
+        public int VoteValueAgainst { get; private set; }
+        public DateTime Date { get; private set; }
+        protected Vote()
+        {
+            Citizen = new User();
+        }
         /// <summary>
         /// This is the default constructor. The other is only for use by the PropagatedVoteDictamen class
         /// </summary>

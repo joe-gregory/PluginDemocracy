@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PluginDemocracy.Models
 {
@@ -8,11 +8,10 @@ namespace PluginDemocracy.Models
     public class Community : BaseCitizen
     {
         //Basic information
-        public int Id { get; set; }
         public string? Name { get; set; }
         public override string? FullName => string.Join(" ", Name, Address);
-        public CultureInfo? OfficialCurrency { get; set; }
-        public List<CultureInfo> OfficialLanguages { get; set; }
+        public string OfficialCurrency { get; set; } = "USD";
+        public List<string> OfficialLanguages { get; set; } 
         public string? Description { get; set; }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
@@ -34,6 +33,9 @@ namespace PluginDemocracy.Models
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
         public bool CanHaveNonResidentialCitizens { get; set; }
+        /// <summary>
+        /// Citizens that don't live in a home
+        /// </summary>
         public List<BaseCitizen> NonResidentialCitizens { get; private set; }
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
@@ -56,13 +58,17 @@ namespace PluginDemocracy.Models
         public int TotalVotes => CitizensVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
+        [NotMapped]
         public List<Proposal> AcceptedProposals => Proposals.Where(proposal => proposal.Passed == true).ToList();
+        [NotMapped]
         public List<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Passed == false).ToList();
+        [NotMapped]
         public List<Proposal> UndecidedProposals => Proposals.Where(proposal => proposal.Open == true).ToList();
         public Accounting Accounting { get; }
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
         public List<Project> Projects { get; }
+        [NotMapped]
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
         public List<Post> Posts { get; }
@@ -152,7 +158,7 @@ namespace PluginDemocracy.Models
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
             proposal.VotingStrategy ??= VotingStrategy;
-            proposal.ExpirationDate ??= proposal.PublishedDate?.AddDays(ProposalsExpirationDays);
+            proposal.ExpirationDate = proposal.PublishedDate?.AddDays(ProposalsExpirationDays) ?? DateTime.Now.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             if (VotingStrategy.ShouldProposalPropagate(proposal)) PropagateProposal(proposal);
 
@@ -166,7 +172,7 @@ namespace PluginDemocracy.Models
             {
                 if (!Homes.Contains(home))
                 {
-                    home.Owners = new Dictionary<BaseCitizen, int>();
+                    home.Ownerships = new HashSet<HomeOwnership>();
                     home.Residents = new List<BaseCitizen>();
                     Homes.Add(home);
                 }
@@ -235,7 +241,7 @@ namespace PluginDemocracy.Models
             GetAllNestedUsers(this, allUsers);
             return allUsers.ToList();
         }
-        public void RaiseRedFlag(User user, string description, IRedFlaggable itemFlagged)
+        public void RaiseRedFlag(User user, string description, BaseRedFlaggable itemFlagged)
         {
             RedFlag newRedFlag = new(this, user, description, itemFlagged);
             RedFlags.Add(newRedFlag);

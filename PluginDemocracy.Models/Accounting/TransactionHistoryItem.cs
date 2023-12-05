@@ -27,7 +27,7 @@
         /// <summary>
         /// Private parameterless constructor for EF
         /// </summary>
-        private TransactionHistoryItem() { }
+        protected TransactionHistoryItem() { }
 
         public TransactionHistoryItem(User accountant, ActionType actionType, Transaction transactionSnapShot)
         {

@@ -7,7 +7,7 @@ namespace PluginDemocracy.UIComponents.Pages
         private bool _checked;
         private MudBlazor.Color thumbIconColor;
         private bool disabled = false;
-        private string selectedFlag;
+        private string selectedFlag = string.Empty;
         private string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
         private string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
         /// <summary>

@@ -1,21 +1,26 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class Transaction : IRedFlaggable
+    public class Transaction : BaseRedFlaggable
     {
-        public int Id { get; set; }
-        public Guid ID { get; }
-        public decimal Amount { get; private set; }
-        public string Description { get; private set; }
+        public override int Id { get; set; }
+        public Guid Guid { get; }
+        public decimal? Amount { get; private set; }
+        public string? Description { get; private set; }
         public string? Category { get; private set; }
-        public List<TransactionHistoryItem> History { get; }
+        public List<TransactionHistoryItem> History { get; private set; }
         //IREDFLAGGABLE:
-        public List<RedFlag> RedFlags { get; }
-        public Type Type => typeof(Transaction);
+        public override List<RedFlag> RedFlags { get; }
+        public override Type Type => typeof(Transaction);
         //END IREDFLAGGABLE
-
+        protected Transaction()
+        {
+            Guid = new();
+            RedFlags = new();
+            History = new();
+        }
         public Transaction(User accountant, decimal amount, string description, string? category = null)
         {
-            ID = new();
+            Guid = new();
             Amount = amount;
             Description = description;
             if(category != null) Category = category;
@@ -26,7 +31,7 @@
         }
         public Transaction(BaseDictamen dictamen, decimal amount, string description, string? category = null)
         {
-            ID = new();
+            Guid = new();
             Amount = amount;
             Description = description;
             if (category != null) Category = category;
@@ -37,7 +42,7 @@
         }
         public Transaction (Transaction transactionSnapShot)
         {
-            ID = transactionSnapShot.ID; 
+            Guid = transactionSnapShot.Guid; 
             Amount = transactionSnapShot.Amount;
             Description = transactionSnapShot.Description;
             Category = transactionSnapShot.Category;

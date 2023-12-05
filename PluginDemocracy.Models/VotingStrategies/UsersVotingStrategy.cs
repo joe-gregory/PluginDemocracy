@@ -1,4 +1,5 @@
 ﻿using PluginDemocracy.Models.VotingStrategies.Resources;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PluginDemocracy.Models
 {
@@ -8,7 +9,9 @@ namespace PluginDemocracy.Models
     /// </summary>
     public class UsersVotingStrategy : BaseVotingStrategy
     {
+        [NotMapped]
         override public string Title => UsersVotingStrategyResources.Title;
+        [NotMapped]
         override public string Description
         {
             get

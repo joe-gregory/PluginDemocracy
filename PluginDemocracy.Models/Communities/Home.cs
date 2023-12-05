@@ -2,7 +2,12 @@
 {
     public class Home : Community
     {
-        public Dictionary<BaseCitizen, int> Owners { get; set; }
+        public virtual ICollection<HomeOwnership> Ownerships { get; set; }
+        public Dictionary<BaseCitizen, int> Owners
+        {
+            get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
+        }
+
         public List<BaseCitizen> Residents { get; set; }
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
@@ -14,7 +19,7 @@
         }
         public Home() : base()
         {
-            Owners = new();
+            Ownerships = new HashSet<HomeOwnership>();
             Residents = new();
             VotingStrategy = new CitizensVotingStrategy();
             CanHaveNonResidentialCitizens = false;
@@ -34,21 +39,31 @@
             if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100 integer");
             int currentTotalPercentage = Owners.Values.Sum();
             if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
-            Owners[citizen] = percentage;
+            HomeOwnership newOwner = new()
+            {
+                Owner = citizen,
+                OwnershipPercentage = percentage,
+                Home = this,
+            };
+            Ownerships.Add(newOwner);
             citizen.AddCitizenship(this);
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
         /// <param name="Citizen"></param>
-        public void RemoveOwner(BaseCitizen Citizen)
+        public void RemoveOwner(BaseCitizen citizen)
         {
-            if (Citizen != null)
+            if (citizen == null)
+                throw new ArgumentException("Citizen cannot be null");
+
+            var ownership = Ownerships.FirstOrDefault(o => o.OwnerId == citizen.Id);
+            if (ownership != null)
             {
-                Owners.Remove(Citizen);
-                if (!Citizens.Contains(Citizen)) Citizen.RemoveCitizenship(this);
+                Ownerships.Remove(ownership);
+                if (!Citizens.Contains(citizen))
+                    citizen.RemoveCitizenship(this);
             }
-            else throw new ArgumentException("Citizen cannot be null");
         }
         /// <summary>
         /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships

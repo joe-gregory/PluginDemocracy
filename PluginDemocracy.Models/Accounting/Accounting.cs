@@ -6,7 +6,7 @@
         public Community? Community { get; set; }
         public List<Transaction> Transactions { get; private set; }
         public decimal Balance => Transactions?.Sum(t => t.Amount) ?? 0m;
-        public Accounting()
+        protected Accounting()
         {
             Transactions = new List<Transaction>();
         }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PluginDemocracy.Models
 {
@@ -40,7 +41,9 @@ namespace PluginDemocracy.Models
                 return age;
             } 
         }
-        public CultureInfo Culture { get; set; }
+        private string cultureCode = "en-US";
+        [NotMapped]
+        public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
         public bool Admin { get; set; }
         
         private List<Role> Roles { get; set; }

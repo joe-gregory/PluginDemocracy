@@ -1,4 +1,5 @@
 ﻿using PluginDemocracy.Models.VotingStrategies.Resources;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PluginDemocracy.Models
 {
@@ -17,7 +18,9 @@ namespace PluginDemocracy.Models
     /// </summary>
     public class HomeOwnersNonFractionalVotingStrategy : BaseVotingStrategy
     {
+        [NotMapped]
         override public string Title => HomeOwnersNonFractionalVotingStrategyResources.Title;
+        [NotMapped]
         override public string Description => HomeOwnersNonFractionalVotingStrategyResources.Description;
         override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
         {
@@ -29,7 +32,8 @@ namespace PluginDemocracy.Models
         {
             List<Vote> homeVotes = new();
             //only cycle through homes that haven't casted a vote yet
-            List<Home> homesThatHaventVoted = proposal.Community.Homes.Where(home => !proposal.Votes.Any(vote => vote.Citizen == home)).ToList();
+            List<Home> homesThatHaventVoted = new();
+            if (proposal.Community != null) homesThatHaventVoted = proposal.Community.Homes.Where(home => !proposal.Votes.Any(vote => vote.Citizen == home)).ToList();
             foreach (Home home in homesThatHaventVoted)
             {
                 // Collect votes from homeowners only

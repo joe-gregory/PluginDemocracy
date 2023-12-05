@@ -1,11 +1,15 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PluginDemocracy.Models
 {
     /// <summary>
     /// This is the simplest form of a voting strategy where each Community.Citizen gets one vote. 
     /// </summary>
     public class CitizensVotingStrategy : BaseVotingStrategy
     {
+        [NotMapped]
         override public string Title => CitizensVotingStrategyResources.Title;
+        [NotMapped]
         override public string Description => CitizensVotingStrategyResources.Description;
         override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
         {

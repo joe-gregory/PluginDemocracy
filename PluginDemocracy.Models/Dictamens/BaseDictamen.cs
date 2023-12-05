@@ -12,6 +12,7 @@
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
+        public int ProposalId { get; set; }
         public Proposal? Proposal { get; set; }
         /// <summary>
         /// Strategies:

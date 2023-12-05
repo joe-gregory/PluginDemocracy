@@ -1,6 +1,5 @@
 ﻿using PluginDemocracy.Models.VotingStrategies.Resources;
-using System.Reflection;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace PluginDemocracy.Models
 {
     /// <summary>
@@ -18,7 +17,9 @@ namespace PluginDemocracy.Models
     /// </summary>
     public class HomeOwnersFractionalVotingStrategy : BaseVotingStrategy
     {
+        [NotMapped]
         override public string Title => HomeOwnersFractionalVotingStrategyResources.Title;
+        [NotMapped]
         override public string Description => HomeOwnersFractionalVotingStrategyResources.Description;
         override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
         {

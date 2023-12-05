@@ -18,8 +18,9 @@ namespace PluginDemocracy.API
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-            builder.Services.AddDbContext<PluginDemocracyContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase")));
+            builder.Services.AddDbContext<PluginDemocracyContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
+                b => b.MigrationsAssembly("PluginDemocracy.Data")));
             
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

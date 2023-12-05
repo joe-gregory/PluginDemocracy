@@ -4,15 +4,20 @@
     {
         public int Id { get; set; }
         public bool Resolved { get; set; }
-        public Community Community { get; }
+        public Community Community { get; private set;}
         /// <summary>
         /// The users that are raising this flag. 
         /// </summary>
-        public List<User> Users { get; }
-        public string Description { get; }
-        public IRedFlaggable ItemFlagged { get; }
-        public DateTime CreatedOn { get; }
-        public RedFlag(Community community, User user, string description, IRedFlaggable itemFlagged)
+        public List<User> Users { get; private set; }
+        public string? Description { get; private set; }
+        public BaseRedFlaggable? ItemFlagged { get; private set; }
+        public DateTime? CreatedOn { get; private set; }
+        protected RedFlag() {
+            Users = new();
+            Community = new();
+            
+        }
+        public RedFlag(Community community, User user, string description, BaseRedFlaggable itemFlagged)
         {
             Users = new();
             Community = community;
@@ -34,7 +39,7 @@
         public void ResolveRedFlag()
         {
             Resolved = true;
-            ItemFlagged.RedFlags.Remove(this);
+            ItemFlagged?.RedFlags.Remove(this);
             Community.RedFlags.Remove(this);
         }
     }
