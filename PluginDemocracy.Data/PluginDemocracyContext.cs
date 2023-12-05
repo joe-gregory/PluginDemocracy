@@ -25,11 +25,6 @@ namespace PluginDemocracy.Data
         {
             modelBuilder.Entity<Role>().OwnsOne(r => r.Powers);
         }
-        ///MOVE TO API PROGRAM.CS WHEN I CREATE IT! 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("");
-        }
+       
     }
 }

@@ -5,6 +5,7 @@
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("SignUp")</MudText>
     <MudForm Model="@user" @bind-IsValid="@success" @bind-Errors="@errors">
         <MudPaper Class="pa-4" Elevation="25">
+            <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColorCulture" CheckedChanged="OnCultureSwitchToggled">@AppState.Translate("PrimaryLanguageAndCulture") : @user.Culture.Name <img src="@selectedFlagCulture" height="14" class="mr-1" /></MudSwitch>
             <MudTextField T="string" Label="@AppState.Translate("FirstName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@user.FirstName" Variant="Variant.Outlined" />
             <MudTextField T="string" Label="@AppState.Translate("MiddleName")" Required="false" @bind-Value="@user.MiddleName" Variant="Variant.Outlined" />
             <MudTextField T="string" Label="@AppState.Translate("LastName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@user.LastName" Variant="Variant.Outlined" />
@@ -12,49 +13,66 @@
             <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="user.Email" Variant="Variant.Outlined" />
             <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true" RequiredError="Password is required!" @bind-Value="user.Password" Variant="Variant.Outlined" />
             <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColorPhone" CheckedChanged="OnPhoneSwitchToggled" Disabled="@disabled">@AppState.Translate("CountryCode") : @countryCode <img src="@selectedFlagPhone" height="14" class="mr-1" /></MudSwitch>
-            <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="user.PhoneNumber" Variant="Variant.Outlined" />
-        <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="user.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
-            <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColorCulture" CheckedChanged="OnCultureSwitchToggled">@AppState.Translate("PrimaryLanguageAndCulture") : @user.Culture.Name <img src="@selectedFlagCulture" height="14" class="mr-1" /></MudSwitch>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5">@AppState.Translate("Register")</MudButton>
+            <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="phoneNumber" Variant="Variant.Outlined" Counter="10" MaxLength="10" HelperText="Cel" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="@phoneAdornmentColor" />
+            <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="user.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5" OnClick="PostForm">@AppState.Translate("Register")</MudButton>
         </MudPaper>
     </MudForm>
     @code {
     private User user = new User()
-    {
-        Culture = new System.Globalization.CultureInfo("en-US"),
-    };
+        {
+            Culture = new System.Globalization.CultureInfo("en-US"),
+        };
     private string countryCode = "+1";
     private string selectedFlagPhone = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
     private string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
     private string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
 
+    private string phoneNumber ="";
     private MudBlazor.Color thumbIconColorPhone = MudBlazor.Color.Info;
+    private MudBlazor.Color phoneAdornmentColor = MudBlazor.Color.Info;
     private bool disabled = false;
+
     private bool _checkedPhone = false;
 
     private MudBlazor.Color thumbIconColorCulture = MudBlazor.Color.Info;
     private bool _checkedCulture = false;
     private string selectedFlagCulture = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _checkedPhone = AppState.Culture.Name == "es-MX";
+        SetLookPhoneSwitch();
+    }
+
+    private IEnumerable<string> MaxCharacters(string pn)
+    {
+        if (!string.IsNullOrEmpty(pn) && 10 < pn?.Length) yield return "Max 10 characters";
+        if (pn.Length > 0 && !Regex.IsMatch(pn, @"^\d+$")) yield return "Phone number must contain only digits 0-9";
+        if (pn.Length > 0 && pn.Length < 10) yield return "Phone number needs at least 10 digits (xxx) xxx-xxxx";
+    }
 
     private void SetLookPhoneSwitch()
     {
         //true == Mexican so that default (left) is American
-        if (_checkedPhone) thumbIconColorPhone = MudBlazor.Color.Success;
-        else thumbIconColorPhone = MudBlazor.Color.Info;
-    }
-    private void OnPhoneSwitchToggled()
-    {
-        _checkedPhone = !_checkedPhone;
         if (_checkedPhone)
         {
+            thumbIconColorPhone = MudBlazor.Color.Success;
+            phoneAdornmentColor = MudBlazor.Color.Success;
             countryCode = "+52";
             selectedFlagPhone = mxnFlag;
         }
         else
         {
+            thumbIconColorPhone = MudBlazor.Color.Info;
+            phoneAdornmentColor = MudBlazor.Color.Info;
             countryCode = "+1";
             selectedFlagPhone = usaFlag;
         }
+    }
+    private void OnPhoneSwitchToggled()
+    {
+        _checkedPhone = !_checkedPhone;
         SetLookPhoneSwitch();
     }
 
@@ -77,6 +95,7 @@
         _checkedCulture = !_checkedCulture;
         if (_checkedCulture) user.Culture = new System.Globalization.CultureInfo("es-MX");
         else user.Culture = new System.Globalization.CultureInfo("en-US");
+        AppState.SetCulture(user.Culture);
         SetLookCultureSwitch();
     }
 
@@ -99,5 +118,10 @@
         //     yield return "Password must contain at least one lowercase letter";
         // if (!Regex.IsMatch(pw, @"[0-9]"))
         //     yield return "Password must contain at least one digit";
+    }
+
+    private void PostForm()
+    {
+        if (!string.IsNullOrEmpty(phoneNumber)) user.PhoneNumber = phoneNumber;
     }
 }

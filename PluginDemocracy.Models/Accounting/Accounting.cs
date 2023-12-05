@@ -3,9 +3,13 @@
     public class Accounting
     {
         public int Id { get; set; }
-        public Community Community { get; set; }
-        public List<Transaction> Transactions { get; }
-        public decimal Balance => Transactions.Sum(t => t.Amount);
+        public Community? Community { get; set; }
+        public List<Transaction> Transactions { get; private set; }
+        public decimal Balance => Transactions?.Sum(t => t.Amount) ?? 0m;
+        public Accounting()
+        {
+            Transactions = new List<Transaction>();
+        }
         public Accounting(Community community)
         {
             Community = community;
