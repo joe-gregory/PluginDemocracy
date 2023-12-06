@@ -26,10 +26,10 @@ namespace PluginDemocracy.Models
             }
         }
         public string? Email { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public string? Password { get; set; }
-        public string? PhoneNumber { get; set; }
-        public bool PhoneNumberConfirmed { get; set; }
+        public bool EmailConfirmed { get; set; } = false;
+        public string? HashedPassword { get; set; }
+        public string? PhoneNumber { get; set; } = null;
+        public bool PhoneNumberConfirmed { get; set; } = false;
         override public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int Age { 
@@ -63,12 +63,28 @@ namespace PluginDemocracy.Models
                 return allAssociatedProposals.Distinct().ToList();
             }
         }
-        public User(bool admin = false)
+        protected User(bool admin = false)
         {
             Roles = new();
             Admin = admin;
             Culture = new CultureInfo("en-US");
         }
+        public User(string firstName, string? lastName, string? email, string? hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
+        {
+            FirstName = firstName;
+            MiddleName = middleName;
+            LastName = lastName;
+            SecondLastName = secondLastName;
+            Email = email;
+            HashedPassword = hashedPassword;
+            PhoneNumber = phoneNumber;
+            Address = address;
+            DateOfBirth = dateOfBirth;
+            Culture = culture;
+
+            Roles = new();
+        }
+
         public void AddRole(Role role)
         {
             if (role != null && !Roles.Contains(role)) Roles.Add(role);
