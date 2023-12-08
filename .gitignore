@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/PluginDemocracy.API/appsettings.json
+/PluginDemocracy.Data/appsettings.json
+/PluginDemocracy.WebApp/appsettings.json
