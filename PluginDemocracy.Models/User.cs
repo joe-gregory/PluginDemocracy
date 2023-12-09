@@ -5,9 +5,9 @@ namespace PluginDemocracy.Models
 {
     public class User : BaseCitizen
     {
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
         public string? MiddleName { get; set; }
-        public string? LastName { get; set; }
+        public string LastName { get; set; }
         public string? SecondLastName { get; set; }
         override public string? FullName
         {
@@ -25,9 +25,10 @@ namespace PluginDemocracy.Models
                 return initials;
             }
         }
-        public string? Email { get; set; }
+        public string Email { get; set; }
+        public string? EmailConfirmationToken { get; set; }
         public bool EmailConfirmed { get; set; } = false;
-        public string? HashedPassword { get; set; }
+        public string HashedPassword { get; set; }
         public string? PhoneNumber { get; set; } = null;
         public bool PhoneNumberConfirmed { get; set; } = false;
         override public string? Address { get; set; }
@@ -65,11 +66,15 @@ namespace PluginDemocracy.Models
         }
         protected User(bool admin = false)
         {
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            Email = string.Empty;
+            HashedPassword = string.Empty;
             Roles = new();
             Admin = admin;
             Culture = new CultureInfo("en-US");
         }
-        public User(string firstName, string? lastName, string? email, string? hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
+        public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
             FirstName = firstName;
             MiddleName = middleName;

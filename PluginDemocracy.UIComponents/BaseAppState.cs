@@ -1,4 +1,5 @@
-﻿using PluginDemocracy.Models;
+﻿using Microsoft.AspNetCore.Components.Web;
+using PluginDemocracy.Models;
 using System.Globalization;
 
 namespace PluginDemocracy.UIComponents

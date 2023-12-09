@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
@@ -60,8 +61,8 @@ namespace PluginDemocracy.Models
         protected Proposal() 
         {
             _votes = new();
+            Author = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, DateTime.Now, new CultureInfo("en-US"));
             AddressesRedFlags = new();
-            Author = new();
             Community = new();
         }
         public Proposal(Community community, User user)
@@ -116,6 +117,7 @@ namespace PluginDemocracy.Models
             if (!Open) throw new Exception("Unable to vote: Proposal is not open for voting.");
             //Find an existing vote by the same citizen, if any
             Vote? existingVote = _votes.FirstOrDefault(v => v.Citizen == vote.Citizen);
+            if (vote.Citizen == null) throw new Exception("vote.Citizen cannot be null for voting");
             Vote newVote = new(this, vote.Citizen, vote.InFavor, vote.Date);
 
             if (existingVote != null)

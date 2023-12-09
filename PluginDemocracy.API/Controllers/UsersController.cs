@@ -17,44 +17,76 @@ namespace PluginDemocracy.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly PluginDemocracyContext _context;
+        private UtilityClass _utilityClass;
 
-        public UsersController(PluginDemocracyContext context)
+        public UsersController(PluginDemocracyContext context, UtilityClass utilityClass)
         {
             _context = context;
+            _utilityClass = utilityClass;
         }
 
         [HttpPost("signup")]
         public async Task<ActionResult<User>> SignUp(UserDto registeringUser)
         {
+            //CREATE RESPONSE OBJECT
+            PDAPIResponse apiResponse = new();
+
+            //CHECK VALIDITY OF INPUT
             if (!ModelState.IsValid || registeringUser.Password.Length >= 7) return BadRequest(ModelState);
 
+            //CREATE & SAVE NEW USER
             //Create new User object
             User newUser = new User(
             firstName: registeringUser.FirstName, 
             lastName: registeringUser.LastName, 
             email: registeringUser.Email, 
-            hashedPassword: null, 
+            hashedPassword: string.Empty, 
             phoneNumber: registeringUser.PhoneNumber, 
             address: registeringUser.Address, 
             dateOfBirth: registeringUser.DateOfBirth, 
             culture: registeringUser.Culture, 
             middleName: registeringUser.MiddleName, 
             secondLastName: registeringUser.SecondLastName);
-
-            //hash password
+            //hash password && assign
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
-
-
-            // Add the new user to the context
+            // Save the new user to the context
             _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
+            try 
+            {
+                await _context.SaveChangesAsync();
+                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Success, _utilityClass.Translate("NewUserCreated", newUser.Culture)));
+            }
+            catch(Exception ex)
+            {
+                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Error, _utilityClass.Translate("UnableToCreateNewUser", newUser.Culture) + $"Error: {ex.Message}"));
+                //Return here if unable to save user. 
+                return StatusCode(503, apiResponse);
+            }
+            
 
-            // Optionally, send a confirmation email or perform other actions
-            // ...
-
-            // Return the created user with a 'CreatedAtAction' response
-            return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
+            //CONFIRMATION EMAIL
+            // Send a confirmation email or perform other actions
+            string emailConfirmationToken = Guid.NewGuid().ToString();
+            newUser.EmailConfirmationToken = emailConfirmationToken;
+            //Pick HTML message to send given the Culture of the user
+            string emailConfirmationLink = $"{Request.Scheme}://{Request.Host}/user/{newUser.Id}/confirmemail/{newUser.EmailConfirmationToken}";
+            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{_utilityClass.Translate("ConfirmEmailTitle", newUser.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate("EmailConfirmP1", newUser.Culture)}</p>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate("EmailConfirmP2", newUser.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{_utilityClass.Translate("ConfirmEmailLink", newUser.Culture)}</a></p>";
+            //Send Email
+            try 
+            {
+                await _utilityClass.SendEmailAsync(toEmail: newUser.Email, subject: _utilityClass.Translate("ConfirmEmailTitle", newUser.Culture), body: emailBody);
+            }
+            catch(Exception ex)
+            {
+                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Error, ex.Message));
+            }
+            
+            //SEND FINAL RESPONSE
+            apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailConfirmLink", newUser.Culture);
+            apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("ConfirmEmailCheckInbox", newUser.Culture);
+            return Ok(apiResponse);
         }
 
         //SCAFFOLDING: 

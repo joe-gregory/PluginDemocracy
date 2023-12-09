@@ -21,6 +21,8 @@ namespace PluginDemocracy.API
             builder.Services.AddDbContext<PluginDemocracyContext>(
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
                 b => b.MigrationsAssembly("PluginDemocracy.Data")));
+
+            builder.Services.AddSingleton<UtilityClass>();
             
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

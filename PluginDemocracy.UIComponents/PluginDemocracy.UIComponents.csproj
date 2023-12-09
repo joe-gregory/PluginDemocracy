@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\GenericMessage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Icons\CommunityIcon.svg" />
   </ItemGroup>
 
@@ -43,6 +47,18 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TranslationResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\GenericMessage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\GenericMessage.razor" />
   </ItemGroup>
 
 </Project>

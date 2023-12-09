@@ -33,4 +33,22 @@
     <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Translations\TranslationResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TranslationResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Translations\TranslationResources.es-MX.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Translations\TranslationResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TranslationResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

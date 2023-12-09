@@ -11,7 +11,7 @@ namespace PluginDemocracy.API.Models
         public string FirstName { get; set; } = string.Empty;
         public string? MiddleName { get; set; }
         [System.ComponentModel.DataAnnotations.Required]
-        public string? LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         public string? SecondLastName { get; set; }
         override public string? FullName
         {
@@ -31,7 +31,7 @@ namespace PluginDemocracy.API.Models
         }
         [System.ComponentModel.DataAnnotations.Required]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public bool? EmailConfirmed { get; set; }
         [System.ComponentModel.DataAnnotations.Required]
         [DataType(DataType.Password)]
@@ -54,5 +54,31 @@ namespace PluginDemocracy.API.Models
         public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
         public bool? Admin { get; set; }
         //TODO: List of RolesDto and List of ProposalsDto
+        public static UserDto ReturnUserDtoFromUser(PluginDemocracy.Models.User user)
+        {
+            UserDto userDto = new() 
+            {
+                Id = user.Id,
+                Guid = user.Guid,
+                ProfilePicture = user.ProfilePicture,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName, 
+                SecondLastName = user.SecondLastName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber, 
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                Address = user.Address,
+                DateOfBirth = user.DateOfBirth,
+                Culture = user.Culture,
+                Admin = user.Admin,
+                //TODO: ADDROLES
+                //TODO: Add List<CommunityDto> Citizenships
+                //TODO: Add List<CommunityDto> AssociatedCommunities
+            };
+
+            return userDto;
+        }
     }
 }

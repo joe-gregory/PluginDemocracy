@@ -16,6 +16,7 @@
   </ItemGroup>
 	
 	<ItemGroup>
+		<ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
 		<ProjectReference Include="..\PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj" />
 	</ItemGroup>
 	

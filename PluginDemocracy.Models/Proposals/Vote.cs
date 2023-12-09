@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.Globalization;
+
+namespace PluginDemocracy.Models
 {
     /// <summary>
     /// This class represents a vote
@@ -15,7 +17,7 @@
         public DateTime Date { get; private set; }
         protected Vote()
         {
-            Citizen = new User();
+            Citizen = new User(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, DateTime.Now, new CultureInfo("en-US"));
         }
         /// <summary>
         /// This is the default constructor. The other is only for use by the PropagatedVoteDictamen class
