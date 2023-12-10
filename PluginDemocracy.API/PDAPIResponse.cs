@@ -5,26 +5,35 @@ namespace PluginDemocracy.API
     public class PDAPIResponse
     {
         public UserDto? User;
-        public List<Message> Messages;
+        public List<Alert> Alerts;
         public string? RedirectTo;
         public Dictionary<string, string> RedirectParameters;
         public PDAPIResponse()
         {
-            Messages = new();
+            Alerts = new();
             RedirectParameters = new();
         }
-        public class Message
+        public void AddAlert(string severity, string message)
+        {
+            if (Enum.TryParse(severity, true, out Severity severityLevel))
+            {
+                Alert messageToAdd = new(severityLevel, message);
+                Alerts.Add(messageToAdd);
+            }
+            else throw new Exception("Unable to add message to PDAPIResponse.Messages using AddMessage method. Likely Severity provided with typos.");
+        }
+        public class Alert
         {
             //Normal, Info, Success, Warning, Error
-            SeverityLevel Severity;
-            string Body;
-            public Message(SeverityLevel severity, string body)
+            public Severity Severity;
+            public string Message;
+            public Alert(Severity severity, string body)
             {
                 Severity = severity;
-                Body = body;
+                Message = body;
             }
         }
-        public enum SeverityLevel
+        public enum Severity
         {
             Normal,
             Info,

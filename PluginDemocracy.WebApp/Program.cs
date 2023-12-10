@@ -7,6 +7,7 @@ using PluginDemocracy.WebApp.Data;
 
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
+using MudBlazor;
 
 namespace PluginDemocracy.WebApp
 {
@@ -20,14 +21,28 @@ namespace PluginDemocracy.WebApp
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            builder.Services.AddMudServices();
-            
+            builder.Services.AddHttpClient();
+
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+                config.SnackbarConfiguration.PreventDuplicates = true;
+                config.SnackbarConfiguration.NewestOnTop = false;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 10000;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+                config.SnackbarConfiguration.ClearAfterNavigation = false;
+            });
+
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-            builder.Services.AddSingleton<BaseAppState, WebAppState>();
+            builder.Services.AddSingleton<WebAppState>();
             
             builder.Services.AddAuthentication(options =>
                 {

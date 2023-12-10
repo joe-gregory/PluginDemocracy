@@ -9,7 +9,24 @@ namespace PluginDemocracy.API.Controllers
     public class UtilityController : ControllerBase
     {
         // GET: api/<UtilityController>
-        [HttpGet("testmessagepage")]
+        [HttpGet("testmessagespage")]
+        public ActionResult<PDAPIResponse> TestMessagesPageWithRedirection()
+        {
+            PDAPIResponse apiResponse = new();
+            apiResponse.RedirectTo = "/message";
+            //Fill generic message dictionary
+            apiResponse.RedirectParameters["Title"] = "Testing Title";
+            apiResponse.RedirectParameters["Body"] = "Testing body lorem ipsum lorem ipsum lorem";
+            //Fill Alert messages
+            apiResponse.AddAlert("info", "Testing info message");
+            apiResponse.AddAlert("warning", "Testing warning message");
+            apiResponse.AddAlert("success", "Testing success message");
+            apiResponse.AddAlert("normal", "Testing normal message");
+            apiResponse.AddAlert("Error", "Testing error message");
+
+            //return
+            return Ok(apiResponse);
+        }
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };

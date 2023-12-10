@@ -56,11 +56,11 @@ namespace PluginDemocracy.API.Controllers
             try 
             {
                 await _context.SaveChangesAsync();
-                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Success, _utilityClass.Translate("NewUserCreated", newUser.Culture)));
+                apiResponse.Alerts.Add(new PDAPIResponse.Alert(PDAPIResponse.Severity.Success, _utilityClass.Translate("NewUserCreated", newUser.Culture)));
             }
             catch(Exception ex)
             {
-                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Error, _utilityClass.Translate("UnableToCreateNewUser", newUser.Culture) + $"Error: {ex.Message}"));
+                apiResponse.Alerts.Add(new PDAPIResponse.Alert(PDAPIResponse.Severity.Error, _utilityClass.Translate("UnableToCreateNewUser", newUser.Culture) + $"Error: {ex.Message}"));
                 //Return here if unable to save user. 
                 return StatusCode(503, apiResponse);
             }
@@ -80,7 +80,7 @@ namespace PluginDemocracy.API.Controllers
             }
             catch(Exception ex)
             {
-                apiResponse.Messages.Add(new PDAPIResponse.Message(PDAPIResponse.SeverityLevel.Error, ex.Message));
+                apiResponse.Alerts.Add(new PDAPIResponse.Alert(PDAPIResponse.Severity.Error, ex.Message));
             }
             
             //SEND FINAL RESPONSE

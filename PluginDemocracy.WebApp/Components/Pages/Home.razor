@@ -1,6 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject BaseAppState AppState
+@inject WebAppState AppState
 @using System.Globalization
 
 <PageTitle>Home Nigress</PageTitle>
@@ -12,6 +12,7 @@
             <MudButton Color="@(AppState.User != null ? Color.Success : Color.Error)" @onclick="toggleLoggedInState" Variant="Variant.Filled" Disabled="@(!AppState.HasInternet)">LoggedIn: @(AppState.User != null ? "Logged In" : "Logged Off")</MudButton>
             <MudButton Color="@(AppState.User?.ProfilePicture != null ? Color.Success : Color.Error)" @onclick="toggleProfilePicture" Variant="Variant.Filled" Disabled="@(AppState.User == null)">@(AppState.User?.ProfilePicture != null ? "Profile Picture" : "No Profile Picture")</MudButton>
             <MudButton Color="@getCultureButtonColor()" Variant="Variant.Filled" OnClick="toggleCulture">Toggle Language</MudButton>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="getMessages">Messages Page Test</MudButton>
             <MudText>Current Culture = @AppState.Culture.Name</MudText>
                 <MudText>About Community: @AppState.Translate("AboutCommunity")</MudText>
                 <MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
@@ -26,13 +27,18 @@
 
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
-    public Models.User aUser = new Models.User()
+    public UserDto aUser = new ()
         {
             FirstName = "Joseph",
             LastName = "Gregory",
             Culture = new System.Globalization.CultureInfo("es-MX")
 
         };
+
+    private async Task getMessages()
+    {
+        await AppState.GetDataAsync("utility/testmessagespage");
+    }
 
     private void toggleInternetState()
     {

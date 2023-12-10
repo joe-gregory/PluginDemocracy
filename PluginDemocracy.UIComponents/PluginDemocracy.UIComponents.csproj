@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\GenericMessage.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Icons\CommunityIcon.svg" />
   </ItemGroup>
 
@@ -31,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
     <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
   </ItemGroup>
 
@@ -55,10 +52,6 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\GenericMessage.razor" />
   </ItemGroup>
 
 </Project>
