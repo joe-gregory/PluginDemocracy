@@ -42,7 +42,7 @@ namespace PluginDemocracy.WebApp
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-            builder.Services.AddSingleton<WebAppState>();
+            builder.Services.AddSingleton<BaseAppState, WebAppState>();
             
             builder.Services.AddAuthentication(options =>
                 {

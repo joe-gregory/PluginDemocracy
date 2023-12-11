@@ -27,6 +27,8 @@ namespace PluginDemocracy.API.Controllers
             //return
             return Ok(apiResponse);
         }
+        // GET: api/Utility/values
+        [HttpGet("values")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
