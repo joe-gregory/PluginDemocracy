@@ -8,6 +8,7 @@ using PluginDemocracy.WebApp.Data;
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
 using MudBlazor;
+using Microsoft.AspNetCore.Components;
 
 namespace PluginDemocracy.WebApp
 {
@@ -20,6 +21,8 @@ namespace PluginDemocracy.WebApp
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddScoped<NavigationManager>(sp => new NavigationManager(sp.GetRequiredService<IUriHelper>()) { BaselineHref = "/" });
 
             builder.Services.AddHttpClient();
 

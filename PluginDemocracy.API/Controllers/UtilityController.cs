@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PluginDemocracy.API.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,6 +11,7 @@ namespace PluginDemocracy.API.Controllers
     {
         // GET: api/<UtilityController>
         [HttpGet("testmessagespage")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<PDAPIResponse> TestMessagesPageWithRedirection()
         {
             PDAPIResponse apiResponse = new();
@@ -25,7 +27,7 @@ namespace PluginDemocracy.API.Controllers
             apiResponse.AddAlert("Error", "Testing error message");
 
             //return
-            return Ok(apiResponse);
+            return apiResponse;
         }
         // GET: api/Utility/values
         [HttpGet("values")]

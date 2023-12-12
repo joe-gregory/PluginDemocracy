@@ -3,7 +3,7 @@
 @inject BaseAppState AppState
 @using System.Globalization
 
-<PageTitle>Home Nigress</PageTitle>
+<PageTitle>Home</PageTitle>
 
 <MudMainContent>
     <MudContainer MaxWidth="MaxWidth.Medium">
@@ -38,7 +38,7 @@
 
     private async Task getMessages()
     {
-        await AppState.GetDataAsync("utility/testmessagespage");
+        PDAPIResponse apiResponse = await AppState.GetDataAsync("utility/testmessagespage");
     }
 
     private void toggleInternetState()

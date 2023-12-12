@@ -4,7 +4,6 @@ using System.Globalization;
 using PluginDemocracy.API.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
-using PluginDemocracy.API;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using System.Net.Http.Json;
@@ -58,16 +57,11 @@ namespace PluginDemocracy.UIComponents
             catch (Exception ex)
             {
                 // Handle exceptions
-                Console.WriteLine(ex);
-
+                PDAPIResponse apiResponse = new();
+                apiResponse.AddAlert("error", $"Error: {ex.Message}");
+                AddSnackBarMessages(apiResponse.Alerts);
                 NotifyStateChanged(); // Notify UI about the error
-                return new PDAPIResponse
-                {
-                    Alerts = new List<PDAPIResponse.Alert>
-                {
-                    new PDAPIResponse.Alert(PDAPIResponse.Severity.Error, $"Error: {ex.Message}")
-                }
-                };
+                return apiResponse;
             }
         }
         public void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)

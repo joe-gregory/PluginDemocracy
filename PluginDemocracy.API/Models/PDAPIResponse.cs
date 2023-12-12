@@ -1,13 +1,11 @@
-﻿using PluginDemocracy.API.Models;
-
-namespace PluginDemocracy.API
+﻿namespace PluginDemocracy.API.Models
 {
     public class PDAPIResponse
     {
-        public UserDto? User;
-        public List<Alert> Alerts;
-        public string? RedirectTo;
-        public Dictionary<string, string> RedirectParameters;
+        public UserDto? User { get; set; }
+        public List<Alert> Alerts { get; set; }
+        public string? RedirectTo { get; set; }
+        public Dictionary<string, string> RedirectParameters { get; set; }
         public PDAPIResponse()
         {
             Alerts = new();
@@ -17,7 +15,9 @@ namespace PluginDemocracy.API
         {
             if (Enum.TryParse(severity, true, out Severity severityLevel))
             {
-                Alert messageToAdd = new(severityLevel, message);
+                Alert messageToAdd = new();
+                messageToAdd.Severity = severityLevel;
+                messageToAdd.Message = message;
                 Alerts.Add(messageToAdd);
             }
             else throw new Exception("Unable to add message to PDAPIResponse.Messages using AddMessage method. Likely Severity provided with typos.");
@@ -25,13 +25,8 @@ namespace PluginDemocracy.API
         public class Alert
         {
             //Normal, Info, Success, Warning, Error
-            public Severity Severity;
-            public string Message;
-            public Alert(Severity severity, string body)
-            {
-                Severity = severity;
-                Message = body;
-            }
+            public Severity Severity { get; set; }
+            public string? Message { get; set; }
         }
         public enum Severity
         {
