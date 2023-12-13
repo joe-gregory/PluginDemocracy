@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace PluginDemocracy.API.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<ActionResult<User>> SignUp(UserDto registeringUser)
+        public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
         {
             //CREATE RESPONSE OBJECT
             PDAPIResponse apiResponse = new();
@@ -65,7 +66,6 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(503, apiResponse);
             }
             
-
             //CONFIRMATION EMAIL
             // Send a confirmation email or perform other actions
             string emailConfirmationToken = Guid.NewGuid().ToString();
@@ -88,6 +88,57 @@ namespace PluginDemocracy.API.Controllers
             apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("ConfirmEmailCheckInbox", newUser.Culture);
             return Ok(apiResponse);
         }
+
+        [HttpGet("{id}/confirmemail/{emailConfirmationToken}")]
+        public async Task<ActionResult<PDAPIResponse>> ConfirmEmail(int id, string emailConfirmationToken)
+        {
+            PDAPIResponse apiResponse = new();
+            apiResponse.RedirectTo = FrontEndPages.GenericMessagePage;
+
+            User? existingUser = await _context.FindAsync<User>(id);
+
+            if(existingUser == null)
+            {
+                apiResponse.AddAlert("error", "User not found");
+                apiResponse.RedirectParameters["Title"] = _utilityClass.GetAllTranslationsInNewLines("UserNotFound");
+                apiResponse.RedirectParameters["Body"] = _utilityClass.GetAllTranslationsInNewLines("UserNotFoundBody");
+                return BadRequest(apiResponse);
+            }
+
+            //If user does exist and confirmationToken does match
+            if (existingUser.EmailConfirmationToken == emailConfirmationToken)
+            {
+                existingUser.EmailConfirmed = true;
+                apiResponse.AddAlert("success", _utilityClass.Translate("YourEmailHasBeenConfirmed", existingUser.Culture));
+
+                //Add message parameters & redirect to generic message page 
+                
+                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailOutEmailConfirmedTitle", existingUser.Culture);
+                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("EmailOutEmailConfirmedBody", existingUser.Culture);
+
+                //Send an email saying that the email address has been confirmed
+                try
+                {
+                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate("EmailOutEmailConfirmedTitle", existingUser.Culture), body: _utilityClass.Translate("EmailOutEmailConfirmedBody", existingUser.Culture));
+                    return Ok(apiResponse);
+                }
+                catch(Exception ex)
+                {
+                    apiResponse.AddAlert("error", $"Unable to send thank you for confirming email\nError:\n{ex.Message}");
+                    return Ok(apiResponse);
+                }
+            }
+            //If user is not null but the confirmationToken does not match
+            else
+            {
+                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailTokenNoMatchTitle", existingUser.Culture);
+                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("EmailTokenNoMatchBody", existingUser.Culture);
+                apiResponse.AddAlert("error", _utilityClass.Translate("EmailTokenNoMatchTitle", existingUser.Culture));
+                return BadRequest(apiResponse);
+            }
+        }
+
+
 
         //SCAFFOLDING: 
         // GET: api/Users

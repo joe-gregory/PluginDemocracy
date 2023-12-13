@@ -13,7 +13,7 @@ namespace PluginDemocracy.API
         private readonly string mailJetSecretKey;
         private readonly string smtpHost;
         private readonly int smtpPort = 587;
-
+        public List<CultureInfo> SupportedLanguages = new() { new CultureInfo("en-US"), new CultureInfo("es-MX") }; 
         public UtilityClass(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -44,6 +44,17 @@ namespace PluginDemocracy.API
         {
             return TranslationResources.ResourceManager.GetObject(text, culture) as string ?? "No matching translation found";
         }
+        public string GetAllTranslationsInNewLines(string text)
+        {
+            string textToReturn = string.Empty;
 
+            for(int i = 0; i < SupportedLanguages.Count; i++)
+            {
+                textToReturn += TranslationResources.ResourceManager.GetObject(text, SupportedLanguages[i]);
+                if (i != SupportedLanguages.Count - 1) textToReturn += "/n";
+            }
+
+            return textToReturn;
+        }
     }
 }

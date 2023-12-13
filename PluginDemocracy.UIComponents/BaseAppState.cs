@@ -15,7 +15,7 @@ namespace PluginDemocracy.UIComponents
         protected readonly IServiceProvider _serviceProvider;
         protected readonly IConfiguration _configuration;
         protected readonly IHttpClientFactory _httpClientFactory;
-        public PDAPIResponse ApiResponse { get; protected set; }
+        public PDAPIResponse ApiResponse { get; set; }
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:
         public event Action? OnChange;
@@ -57,6 +57,8 @@ namespace PluginDemocracy.UIComponents
             catch (Exception ex)
             {
                 // Handle exceptions
+                
+                
                 PDAPIResponse apiResponse = new();
                 apiResponse.AddAlert("error", $"Error: {ex.Message}");
                 AddSnackBarMessages(apiResponse.Alerts);

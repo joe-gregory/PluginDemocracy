@@ -2,6 +2,10 @@
 @rendermode InteractiveServer
 @inject BaseAppState AppState
 @using System.Globalization
+@inject Services services
+@inject ISnackbar Snackbar
+
+
 
 <PageTitle>Home</PageTitle>
 
@@ -20,11 +24,15 @@
             <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
             <MudIcon Icon="PluginDemocracyIcons.CommunityIcon" Color="Color.Primary"/>
             <MudText>AppState.BaseUrl: @AppState.BaseUrl</MudText>
+            <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="goTo">Testing Navitation</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="createTestSnackBars">
+                    Open Snackbar
+                </MudButton>
         </div>
         </MudContainer>
     </MudMainContent>
 
-    @code {
+@code {
 
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
@@ -36,9 +44,21 @@
 
         };
 
+    private void createTestSnackBars()
+    {
+        Snackbar.Add("Normal Snackbar", Severity.Normal);
+        Snackbar.Add("Info Snackbar", Severity.Info);
+        Snackbar.Add("Success Snackbar", Severity.Success);
+        Snackbar.Add("Warning Snackbar", Severity.Warning);
+        Snackbar.Add("Error Snackbar", Severity.Error);
+    }
+    private void goTo()
+    {
+        services.NavigateTo("message");
+    }
     private async Task getMessages()
     {
-        PDAPIResponse apiResponse = await AppState.GetDataAsync("utility/testmessagespage");
+        PDAPIResponse apiResponse = await services.GetDataAsync("test/testmessagespage");
     }
 
     private void toggleInternetState()

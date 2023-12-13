@@ -106,6 +106,48 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Thank you for confirming your email address! We&apos;re thrilled to have you on board. 
+        ///
+        ///You&apos;ve taken an important step in activating your accoung, and now you can help mold the communities in which you live. This is a non-profit ongoing project. If you find any issues with the software or you need features to better serve your community, please take the initiative to let us know. This is one way you can help our communities be more democratic. 
+        ///
+        ///Sincerely, 
+        ///
+        ///The Plugin Democracy Team .
+        /// </summary>
+        public static string EmailOutEmailConfirmedBody {
+            get {
+                return ResourceManager.GetString("EmailOutEmailConfirmedBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email Address Confirmed - Welcome!.
+        /// </summary>
+        public static string EmailOutEmailConfirmedTitle {
+            get {
+                return ResourceManager.GetString("EmailOutEmailConfirmedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The token does not match and the email address cannot be confirmed.
+        /// </summary>
+        public static string EmailTokenNoMatchBody {
+            get {
+                return ResourceManager.GetString("EmailTokenNoMatchBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The token does not match.
+        /// </summary>
+        public static string EmailTokenNoMatchTitle {
+            get {
+                return ResourceManager.GetString("EmailTokenNoMatchTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New user created.
         /// </summary>
         public static string NewUserCreated {
@@ -120,6 +162,42 @@ namespace PluginDemocracy.API.Translations {
         public static string UnableToCreateNewUser {
             get {
                 return ResourceManager.GetString("UnableToCreateNewUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User not found.
+        /// </summary>
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user was not found in the database when trying to confirm the Email address..
+        /// </summary>
+        public static string UserNotFoundBody {
+            get {
+                return ResourceManager.GetString("UserNotFoundBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your Email Has Been Confirmed.
+        /// </summary>
+        public static string YourEmailHasBeenConfirmed {
+            get {
+                return ResourceManager.GetString("YourEmailHasBeenConfirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank you for confirming your email address! We&apos;re thrilled to have you on board..
+        /// </summary>
+        public static string YourEmailHasBeenConfirmedBody {
+            get {
+                return ResourceManager.GetString("YourEmailHasBeenConfirmedBody", resourceCulture);
             }
         }
     }

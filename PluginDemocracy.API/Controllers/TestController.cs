@@ -7,7 +7,7 @@ namespace PluginDemocracy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UtilityController : ControllerBase
+    public class TestController : ControllerBase
     {
         // GET: api/<UtilityController>
         [HttpGet("testmessagespage")]
@@ -15,7 +15,7 @@ namespace PluginDemocracy.API.Controllers
         public ActionResult<PDAPIResponse> TestMessagesPageWithRedirection()
         {
             PDAPIResponse apiResponse = new();
-            apiResponse.RedirectTo = "/message";
+            apiResponse.RedirectTo = FrontEndPages.GenericMessagePage;
             //Fill generic message dictionary
             apiResponse.RedirectParameters["Title"] = "Testing Title";
             apiResponse.RedirectParameters["Body"] = "Testing body lorem ipsum lorem ipsum lorem";

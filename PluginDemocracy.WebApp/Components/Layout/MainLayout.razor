@@ -2,12 +2,11 @@
 
 <MudThemeProvider Theme="PluginDemocracyTheme.Theme" />
 <MudDialogProvider />
-<MudSnackbarProvider />
+<MudSnackbarProvider @rendermode="InteractiveServer"/>
 
 <MudLayout>
 
     <TopNavBar @rendermode="InteractiveServer" />
-
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
             <div class="PD-body">

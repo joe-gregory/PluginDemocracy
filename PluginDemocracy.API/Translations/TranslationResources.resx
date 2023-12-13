@@ -132,10 +132,40 @@
   <data name="ConfirmEmailTitle" xml:space="preserve">
     <value>Please confirm your email</value>
   </data>
+  <data name="EmailOutEmailConfirmedBody" xml:space="preserve">
+    <value>Thank you for confirming your email address! We're thrilled to have you on board. 
+
+You've taken an important step in activating your accoung, and now you can help mold the communities in which you live. This is a non-profit ongoing project. If you find any issues with the software or you need features to better serve your community, please take the initiative to let us know. This is one way you can help our communities be more democratic. 
+
+Sincerely, 
+
+The Plugin Democracy Team </value>
+  </data>
+  <data name="EmailOutEmailConfirmedTitle" xml:space="preserve">
+    <value>Email Address Confirmed - Welcome!</value>
+  </data>
+  <data name="EmailTokenNoMatchBody" xml:space="preserve">
+    <value>The token does not match and the email address cannot be confirmed</value>
+  </data>
+  <data name="EmailTokenNoMatchTitle" xml:space="preserve">
+    <value>The token does not match</value>
+  </data>
   <data name="NewUserCreated" xml:space="preserve">
     <value>New user created</value>
   </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Unable to create new user</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="UserNotFoundBody" xml:space="preserve">
+    <value>The user was not found in the database when trying to confirm the Email address.</value>
+  </data>
+  <data name="YourEmailHasBeenConfirmed" xml:space="preserve">
+    <value>Your Email Has Been Confirmed</value>
+  </data>
+  <data name="YourEmailHasBeenConfirmedBody" xml:space="preserve">
+    <value>Thank you for confirming your email address! We're thrilled to have you on board.</value>
   </data>
 </root>

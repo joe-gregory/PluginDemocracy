@@ -22,14 +22,10 @@ namespace PluginDemocracy.WebApp
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            builder.Services.AddScoped<NavigationManager>(sp => new NavigationManager(sp.GetRequiredService<IUriHelper>()) { BaselineHref = "/" });
-
             builder.Services.AddHttpClient();
-
             builder.Services.AddMudServices(config =>
             {
-                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
-
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
                 config.SnackbarConfiguration.PreventDuplicates = true;
                 config.SnackbarConfiguration.NewestOnTop = false;
                 config.SnackbarConfiguration.ShowCloseIcon = true;
@@ -46,6 +42,7 @@ namespace PluginDemocracy.WebApp
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
             builder.Services.AddSingleton<BaseAppState, WebAppState>();
+            builder.Services.AddScoped<Services>();
             
             builder.Services.AddAuthentication(options =>
                 {

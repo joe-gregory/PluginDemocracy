@@ -132,10 +132,40 @@
   <data name="ConfirmEmailTitle" xml:space="preserve">
     <value>Por favor confirma tu correo electrónico</value>
   </data>
+  <data name="EmailOutEmailConfirmedBody" xml:space="preserve">
+    <value>¡Gracias por confirmar tu dirección de correo electrónico! Nos emociona tenerte a bordo. 
+
+Has dado un paso importante al activar tu cuenta, y ahora puedes ayudar a moldear las comunidades en las que vives. Este es un proyecto sin fines de lucro en curso. Si encuentras algún problema con el software o necesitas funciones para servir mejor a tu comunidad, por favor, toma la iniciativa de hacérnoslo saber. Esta es una forma en que puedes ayudar a que nuestras comunidades sean más democráticas.
+
+Atentamente,
+
+El equipo de Democracia Conectada</value>
+  </data>
+  <data name="EmailOutEmailConfirmedTitle" xml:space="preserve">
+    <value>Correo electronico confirmado - Bienvenido!</value>
+  </data>
+  <data name="EmailTokenNoMatchBody" xml:space="preserve">
+    <value>El token no coincide y la dirección de correo electrónico no puede ser confirmada.</value>
+  </data>
+  <data name="EmailTokenNoMatchTitle" xml:space="preserve">
+    <value>El token no coincide</value>
+  </data>
   <data name="NewUserCreated" xml:space="preserve">
     <value>Nuevo usuario creado</value>
   </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Error creando nuevo usuario</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Usuario no encontrado</value>
+  </data>
+  <data name="UserNotFoundBody" xml:space="preserve">
+    <value>El usuario no fue encontrado en la base de datos cuando se intento confirmar el correo electronico.</value>
+  </data>
+  <data name="YourEmailHasBeenConfirmed" xml:space="preserve">
+    <value>Tu Correo Electronico ha sido Confirmado</value>
+  </data>
+  <data name="YourEmailHasBeenConfirmedBody" xml:space="preserve">
+    <value>¡Gracias por confirmar tu dirección de correo electrónico! Estamos encantados de tenerte a bordo.</value>
   </data>
 </root>
