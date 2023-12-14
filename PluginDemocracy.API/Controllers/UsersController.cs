@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.Models;
+using PluginDemocracy.API.Translations;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 
@@ -57,11 +58,11 @@ namespace PluginDemocracy.API.Controllers
             try 
             {
                 await _context.SaveChangesAsync();
-                apiResponse.AddAlert("success", _utilityClass.Translate("NewUserCreated", newUser.Culture));
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewUserCreated, newUser.Culture));
             }
             catch(Exception ex)
             {
-                apiResponse.AddAlert("error", _utilityClass.Translate("UnableToCreateNewUser", newUser.Culture) + $"Error: {ex.Message}");
+                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.UnableToCreateNewUser, newUser.Culture) + $"Error: {ex.Message}");
                 //Return here if unable to save user. 
                 return StatusCode(503, apiResponse);
             }
@@ -72,11 +73,11 @@ namespace PluginDemocracy.API.Controllers
             newUser.EmailConfirmationToken = emailConfirmationToken;
             //Pick HTML message to send given the Culture of the user
             string emailConfirmationLink = $"{Request.Scheme}://{Request.Host}/user/{newUser.Id}/confirmemail/{newUser.EmailConfirmationToken}";
-            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{_utilityClass.Translate("ConfirmEmailTitle", newUser.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate("EmailConfirmP1", newUser.Culture)}</p>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate("EmailConfirmP2", newUser.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{_utilityClass.Translate("ConfirmEmailLink", newUser.Culture)}</a></p>";
+            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP1, newUser.Culture)}</p>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP2, newUser.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{_utilityClass.Translate(ResourceKeys.ConfirmEmailLink, newUser.Culture)}</a></p>";
             //Send Email
             try 
             {
-                await _utilityClass.SendEmailAsync(toEmail: newUser.Email, subject: _utilityClass.Translate("ConfirmEmailTitle", newUser.Culture), body: emailBody);
+                await _utilityClass.SendEmailAsync(toEmail: newUser.Email, subject: _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture), body: emailBody);
             }
             catch(Exception ex)
             {
@@ -84,8 +85,8 @@ namespace PluginDemocracy.API.Controllers
             }
             
             //SEND FINAL RESPONSE
-            apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailConfirmLink", newUser.Culture);
-            apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("ConfirmEmailCheckInbox", newUser.Culture);
+            apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture);
+            apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, newUser.Culture);
             return Ok(apiResponse);
         }
 
@@ -109,17 +110,17 @@ namespace PluginDemocracy.API.Controllers
             if (existingUser.EmailConfirmationToken == emailConfirmationToken)
             {
                 existingUser.EmailConfirmed = true;
-                apiResponse.AddAlert("success", _utilityClass.Translate("YourEmailHasBeenConfirmed", existingUser.Culture));
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
 
                 //Add message parameters & redirect to generic message page 
                 
-                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailOutEmailConfirmedTitle", existingUser.Culture);
-                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("EmailOutEmailConfirmedBody", existingUser.Culture);
+                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
+                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
 
                 //Send an email saying that the email address has been confirmed
                 try
                 {
-                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate("EmailOutEmailConfirmedTitle", existingUser.Culture), body: _utilityClass.Translate("EmailOutEmailConfirmedBody", existingUser.Culture));
+                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture));
                     return Ok(apiResponse);
                 }
                 catch(Exception ex)
@@ -131,9 +132,9 @@ namespace PluginDemocracy.API.Controllers
             //If user is not null but the confirmationToken does not match
             else
             {
-                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate("EmailTokenNoMatchTitle", existingUser.Culture);
-                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate("EmailTokenNoMatchBody", existingUser.Culture);
-                apiResponse.AddAlert("error", _utilityClass.Translate("EmailTokenNoMatchTitle", existingUser.Culture));
+                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailTokenNoMatchTitle, existingUser.Culture);
+                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailTokenNoMatchBody, existingUser.Culture);
+                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailTokenNoMatchTitle, existingUser.Culture));
                 return BadRequest(apiResponse);
             }
         }
