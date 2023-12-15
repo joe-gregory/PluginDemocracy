@@ -17,12 +17,12 @@
             Home home = new();
             gatedCommunity.AddHome(home);
             
-            User owner1_60 = new();
-            User owner2_60 = new();
+            User owner1_60 = UserFactory.GenerateUser();
+            User owner2_60 = UserFactory.GenerateUser();
             //Act
-            gatedCommunity.AddOwnerToHome(owner1_60, 60, home);
+            home.AddOwner(owner2_60, 60);
             //Assert
-            Assert.Throws<ArgumentException>(() => gatedCommunity.AddOwnerToHome(owner2_60, 60, home));
+            Assert.Throws<ArgumentException>(() => home.AddOwner(owner2_60, 60));
         }
     }
 }

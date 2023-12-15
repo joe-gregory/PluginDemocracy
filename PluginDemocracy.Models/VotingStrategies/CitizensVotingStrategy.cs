@@ -11,10 +11,10 @@ namespace PluginDemocracy.Models
         override public string Title => CitizensVotingStrategyResources.Title;
         [NotMapped]
         override public string Description => CitizensVotingStrategyResources.Description;
-        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
-            Dictionary<BaseCitizen, int> citizensVotingValue = new();
+            Dictionary<BaseCitizen, double> citizensVotingValue = new();
             foreach(BaseCitizen citizen in community.Citizens)
             {
                 citizensVotingValue[citizen] = 1;

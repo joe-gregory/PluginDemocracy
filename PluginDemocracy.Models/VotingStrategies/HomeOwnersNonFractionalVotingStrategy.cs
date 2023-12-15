@@ -22,9 +22,9 @@ namespace PluginDemocracy.Models
         override public string Title => HomeOwnersNonFractionalVotingStrategyResources.Title;
         [NotMapped]
         override public string Description => HomeOwnersNonFractionalVotingStrategyResources.Description;
-        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
         {
-                var homesVotingValue = new Dictionary<BaseCitizen, int>();
+                var homesVotingValue = new Dictionary<BaseCitizen, double>();
                 foreach (Home home in community.Homes) homesVotingValue[home] = 1;
                 return homesVotingValue;
         }
@@ -41,7 +41,7 @@ namespace PluginDemocracy.Models
 
                 // Sum up total value votes in favor
                 List<Vote> homeownerVotesInFavor = homeownerVotes.Where(vote => vote.InFavor == true).ToList();
-                int totalValueVotesInFavor = 0;
+                double totalValueVotesInFavor = 0;
                 foreach(Vote vote in homeownerVotesInFavor)
                 {
                     totalValueVotesInFavor += home.Owners[vote.Citizen];
@@ -49,7 +49,7 @@ namespace PluginDemocracy.Models
                 
                 //Sum votes against
                 List<Vote> homeownerVotesAgainst = homeownerVotes.Where(vote => vote.InFavor == false).ToList();
-                int totalValueVotesAgainst = 0;
+                double totalValueVotesAgainst = 0;
                 foreach(Vote vote in homeownerVotesAgainst)
                 {
                     totalValueVotesAgainst += home.Owners[vote.Citizen];

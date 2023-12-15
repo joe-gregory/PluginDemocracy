@@ -29,10 +29,10 @@ namespace PluginDemocracy.Models
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
         {
             //Scope to see if there are sub-communities and get the Users of said sub-communities.
-            Dictionary<BaseCitizen, int> citizensVotingValue = new();
+            Dictionary<BaseCitizen, double> citizensVotingValue = new();
             List<User> allUsers;
             allUsers = community.ReturnAllNestedUsers();
 

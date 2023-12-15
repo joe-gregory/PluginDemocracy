@@ -13,6 +13,10 @@ namespace PluginDemocracy.Models
         public string OfficialCurrency { get; set; } = "USD";
         public List<string> OfficialLanguages { get; set; }
         public string? Description { get; set; }
+        /// <summary>
+        /// The Communities that this Home belongs to. Like to which Home owners association or Privada does this belong to. 
+        /// </summary>
+        public List<Community> Communities { get; private set; }
         [NotMapped]
         public override List<Community> Citizenships
         {
@@ -21,6 +25,7 @@ namespace PluginDemocracy.Models
                 List<Community> citizenships = new();
                 citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
                 citizenships.AddRange(NonResidentialCitizenIn);
+                citizenships.AddRange(Communities);
                 return citizenships.Distinct().ToList();
             }
         }
@@ -34,7 +39,8 @@ namespace PluginDemocracy.Models
             {
                 List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<BaseCitizen>();
                 List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<User>();
-                return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
+                List<Home> homes = Homes ?? new List<Home>();  
+                return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Union(homes).Distinct().ToList();
             }
         }
         public bool CanHaveHomes { get; set; }
@@ -46,7 +52,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Citizens that don't live in a home
         /// </summary>
-        public List<BaseCitizen> NonResidentialCitizens { get; private set; }
+        public virtual List<BaseCitizen> NonResidentialCitizens { get; protected set; }
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
@@ -57,15 +63,15 @@ namespace PluginDemocracy.Models
         /// Each inheriting class can override who gets to vote and how much each vote counts. 
         /// In BaseCommunity, each Citizens gets one vote. 
         /// </summary>
-        public Dictionary<BaseCitizen, int> CitizensVotingValue
+        public Dictionary<BaseCitizen, double> CitizensVotingValue
         {
             get
             {
-                if (VotingStrategy == null) return new Dictionary<BaseCitizen, int>();
+                if (VotingStrategy == null) return new Dictionary<BaseCitizen, double>();
                 else return VotingStrategy.ReturnVotingWeights(this);
             }
         }
-        public int TotalVotes => CitizensVotingValue.Values.Sum();
+        public double TotalVotes => CitizensVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
         [NotMapped]
@@ -84,6 +90,7 @@ namespace PluginDemocracy.Models
         public List<Post> Posts { get; }
         public Community()
         {
+            Communities = new();
             OfficialLanguages = new();
             Homes = new();
             NonResidentialCitizens = new();
@@ -113,7 +120,7 @@ namespace PluginDemocracy.Models
             if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
             if (citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Remove(this);
         }
-        public bool PublishProposal(Proposal proposal)
+        public void PublishProposal(Proposal proposal, bool skipExpirationDate = false)
         {
             if (VotingStrategy == null) throw new InvalidOperationException("VotingStrategy is null");
             //Ensure this proposal is for this community
@@ -135,27 +142,30 @@ namespace PluginDemocracy.Models
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
             proposal.VotingStrategy ??= VotingStrategy;
-            proposal.ExpirationDate = proposal.PublishedDate?.AddDays(ProposalsExpirationDays) ?? DateTime.Now.AddDays(ProposalsExpirationDays);
+            if(skipExpirationDate) DateTime.Now.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             if (VotingStrategy.ShouldProposalPropagate(proposal)) PropagateProposal(proposal);
 
-            return true;
         }
 
         public void AddHome(Home home)
         {
             if (!CanHaveHomes) throw new InvalidOperationException("Cannot add Homes when CanHaveHomes is set to false");
             if (home == null) throw new ArgumentNullException("Home cannot be null");
-            if (!Homes.Contains(home))
+
+            if (!Homes.Contains(home)) 
             {
-                home.Ownerships = new HashSet<HomeOwnership>();
-                home.Residents = new List<User>();
                 Homes.Add(home);
+                home.Communities.Add(this);
             }
         }
         public void RemoveHome(Home home)
         {
-            if (Homes.Contains(home)) Homes.Remove(home);
+            if (Homes.Contains(home)) 
+            {
+                Homes.Remove(home);
+                home.Communities.Remove(this);
+            }
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
@@ -185,7 +195,7 @@ namespace PluginDemocracy.Models
                 {
                     Proposal propagatedProposal = ReturnPropagatedProposal(parentProposal, propagatedCommunity);
                     //publish in its corresponding community which should call this method if there are more nested sub-communities
-                    propagatedCommunity.PublishProposal(propagatedProposal);
+                    propagatedCommunity.PublishProposal(propagatedProposal, skipExpirationDate : true);
                 }
             }
         }

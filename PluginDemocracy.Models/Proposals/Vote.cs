@@ -11,9 +11,9 @@ namespace PluginDemocracy.Models
         public Proposal? Proposal { get; private set; }
         public BaseCitizen Citizen { get; private set; }
         public bool InFavor { get; private set; }
-        public int VoteWeight { get; private set; }
-        public int VoteValueInFavor { get; private set; }
-        public int VoteValueAgainst { get; private set; }
+        public double VoteWeight { get; private set; }
+        public double VoteValueInFavor { get; private set; }
+        public double VoteValueAgainst { get; private set; }
         public DateTime Date { get; private set; }
         protected Vote()
         {

@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace PluginDemocracy.Models.Tests
 {
     /// <summary>
@@ -25,10 +27,10 @@ namespace PluginDemocracy.Models.Tests
                 CanHaveHomes = false,
                 CanHaveNonResidentialCitizens = true,
             };
-            User lvl_1_userCitizen = new();
+            User lvl_1_userCitizen = UserFactory.GenerateUser();
 
             Community lvl_2_grandchildCommunityCitizen = new();
-            User lvl_2_grandchildUserCitizen = new();
+            User lvl_2_grandchildUserCitizen = UserFactory.GenerateUser();
 
             //Act - Adding citizens
             lvl_0_Community.AddNonResidentialCitizen(lvl_1_communityCitizen);
@@ -124,20 +126,17 @@ namespace PluginDemocracy.Models.Tests
             {
                 Name = "Home"
             };
-            User owner = new() 
-            { 
-                FirstName = "Owner",
-            };
-            User resident = new() 
-            { 
-                FirstName = "Resident",
-            };
+            User owner = UserFactory.GenerateUser();
+            owner.FirstName = "Owner";
+
+            User resident = UserFactory.GenerateUser();
+            resident.FirstName = "Resident";
 
             //Act
             gatedCommunity.AddHome(home);
-            gatedCommunity.AddOwnerToHome(owner, 100, home);
-            gatedCommunity.AddResidentToHome(owner, home);
-            gatedCommunity.AddResidentToHome(resident, home);
+            home.AddOwner(owner, 100);
+            home.AddResident(resident);
+            home.AddResident(owner);
 
             //Assert
             Assert.Contains(owner, home.Owners.Keys);
@@ -146,14 +145,14 @@ namespace PluginDemocracy.Models.Tests
             Assert.Contains(owner, gatedCommunity.Citizens);
             Assert.Contains(resident, gatedCommunity.Citizens);
 
-            Assert.Contains(home, owner.Citizenships); //
+            Assert.Contains(home, owner.Citizenships);
             Assert.Contains(gatedCommunity, owner.Citizenships);
             Assert.Contains(home, resident.Citizenships);
             Assert.Contains(gatedCommunity, resident.Citizenships);
             
             //Act
             //Removing owner from owners list should still show up on citizens because it is on the list of residents
-            gatedCommunity.RemoveOwnerFromHome(owner, home);
+            home.RemoveOwner(owner);
 
             //Assert
             Assert.DoesNotContain(owner, home.Owners.Keys);
@@ -165,7 +164,7 @@ namespace PluginDemocracy.Models.Tests
             Assert.Contains(resident, gatedCommunity.Citizens);
 
             //Act
-            gatedCommunity.RemoveResidentFromHome(owner, home);
+            home.RemoveResident(owner);
 
             //Assert
             Assert.DoesNotContain(owner, home.Owners.Keys);
@@ -177,7 +176,7 @@ namespace PluginDemocracy.Models.Tests
             Assert.Contains(resident, gatedCommunity.Citizens);
 
             //Act
-            gatedCommunity.RemoveResidentFromHome(resident, home);
+            home.RemoveResident(resident);
 
             //Assert
             Assert.DoesNotContain(owner, home.Owners.Keys);

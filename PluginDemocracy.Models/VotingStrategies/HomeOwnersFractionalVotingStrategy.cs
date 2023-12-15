@@ -4,7 +4,7 @@ namespace PluginDemocracy.Models
 {
     /// <summary>
     /// Fractional GatedCommunity Voting Strategy
-    /// This voting strategy represents a Gated Community where each Home has 100 votes and different owners can vote in different ways.
+    /// This voting strategy represents a Gated Community where each Home has 100.00 votes and different owners can vote in different ways.
     /// There are 2 ways to count votes depending on how partial Home owners are treated.
     /// In one scenario, Homes can only represent a whole vote. For example, if 60% of owners
     /// of that home vote in favor of a Proposal, then that entire Home's vote is in favor. 
@@ -13,7 +13,6 @@ namespace PluginDemocracy.Models
     /// other 40% against would count against. 
     /// This strategy represents Homes vote as a whole unit because it is the most straighforward implementation given 
     /// that Home is a subclass of Community and how Proposals propagate down. 
-    /// allow different strategy implementations  
     /// </summary>
     public class HomeOwnersFractionalVotingStrategy : BaseVotingStrategy
     {
@@ -21,9 +20,9 @@ namespace PluginDemocracy.Models
         override public string Title => HomeOwnersFractionalVotingStrategyResources.Title;
         [NotMapped]
         override public string Description => HomeOwnersFractionalVotingStrategyResources.Description;
-        override public Dictionary<BaseCitizen, int> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
         {
-            var ownersVotingValue = new Dictionary<BaseCitizen, int>();
+            var ownersVotingValue = new Dictionary<BaseCitizen, double>();
             foreach (Home home in community.Homes)
             {
                 foreach (BaseCitizen owner in home.Owners.Keys)

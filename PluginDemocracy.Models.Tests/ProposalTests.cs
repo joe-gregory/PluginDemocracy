@@ -15,16 +15,16 @@
         public Home home3;
         public User homeowner1_1_60;
         public User homeowner1_2_40;
-        public User resident1_1 = new();
-        public User resident1_2 = new();
-        public User resident1_3 = new();
+        public User resident1_1 = UserFactory.GenerateUser();
+        public User resident1_2 = UserFactory.GenerateUser();
+        public User resident1_3 = UserFactory.GenerateUser();
 
         public User homeowner2_1_30;
         public User homeowner2_2_30;
         public User homeowner2_3_40;
-        public User resident2_1 = new();
-        public User resident2_2 = new();
-        public User resident2_3 = new();
+        public User resident2_1 = UserFactory.GenerateUser();
+        public User resident2_2 = UserFactory.GenerateUser();
+        public User resident2_3 = UserFactory.GenerateUser();
 
         public User homeowner3_1_50;
         public User homeowner3_2_50;
@@ -39,8 +39,8 @@
                 CanHaveHomes = false,
                 CanHaveNonResidentialCitizens = true,
             };
-            citizen1 = new();
-            citizen2 = new();
+            citizen1 = UserFactory.GenerateUser();
+            citizen2 = UserFactory.GenerateUser();
             childGatedCommunity = new()
             {
                 Name = "childGatedCommunity",
@@ -53,41 +53,41 @@
 
             //home 1
             home1 = new();
-            homeowner1_1_60 = new(); //whichHome_id#_percentageOwnership
-            homeowner1_2_40 = new();
+            homeowner1_1_60 = UserFactory.GenerateUser(); //whichHome_id#_percentageOwnership
+            homeowner1_2_40 = UserFactory.GenerateUser();
             childGatedCommunity.AddHome(home1);
-            childGatedCommunity.AddOwnerToHome(homeowner1_1_60, 60, home1);
-            childGatedCommunity.AddOwnerToHome(homeowner1_2_40, 40, home1);
-            resident1_1 = new();
-            resident1_2 = new();
-            resident1_3 = new();
-            childGatedCommunity.AddResidentToHome(resident1_1, home1);
-            childGatedCommunity.AddResidentToHome(resident1_2, home1);
-            childGatedCommunity.AddResidentToHome(resident1_3, home1);
+            home1.AddOwner(homeowner1_1_60, 60);
+            home1.AddOwner(homeowner1_2_40, 40);
+            resident1_1 = UserFactory.GenerateUser();
+            resident1_2 = UserFactory.GenerateUser();
+            resident1_3 = UserFactory.GenerateUser();
+            home1.AddResident(resident1_1);
+            home1.AddResident(resident1_2);
+            home1.AddResident(resident1_3);
 
             //home2
             home2 = new();
-            homeowner2_1_30 = new();
-            homeowner2_2_30 = new();
-            homeowner2_3_40 = new();
+            homeowner2_1_30 = UserFactory.GenerateUser();
+            homeowner2_2_30 = UserFactory.GenerateUser();
+            homeowner2_3_40 = UserFactory.GenerateUser();
             childGatedCommunity.AddHome(home2);
-            childGatedCommunity.AddOwnerToHome(homeowner2_1_30, 30, home2);
-            childGatedCommunity.AddOwnerToHome(homeowner2_2_30, 30, home2);
-            childGatedCommunity.AddOwnerToHome(homeowner2_3_40, 40, home2);
-            resident2_1 = new();
-            resident2_2 = new();
-            resident2_3 = new();
-            childGatedCommunity.AddResidentToHome(resident2_1, home2);
-            childGatedCommunity.AddResidentToHome(resident2_2, home2);
-            childGatedCommunity.AddResidentToHome(resident2_3, home2);
+            home2.AddOwner(homeowner2_1_30, 30);
+            home2.AddOwner(homeowner2_2_30, 30);
+            home2.AddOwner(homeowner2_3_40, 40);
+            resident2_1 = UserFactory.GenerateUser();
+            resident2_2 = UserFactory.GenerateUser();
+            resident2_3 = UserFactory.GenerateUser();
+            home2.AddResident(resident2_1);
+            home2.AddResident(resident2_2);
+            home2.AddResident(resident2_3);
 
             //home3
             home3 = new();
-            homeowner3_1_50 = new();
-            homeowner3_2_50 = new();
+            homeowner3_1_50 = UserFactory.GenerateUser();
+            homeowner3_2_50 = UserFactory.GenerateUser();
             childGatedCommunity.AddHome(home3);
-            childGatedCommunity.AddOwnerToHome(homeowner3_1_50, 50, home3);
-            childGatedCommunity.AddOwnerToHome(homeowner3_2_50, 50, home3);
+            home3.AddOwner(homeowner3_1_50, 50);
+            home3.AddOwner(homeowner3_2_50, 50);
         }
         public List<Proposal> CommonSetup(BaseVotingStrategy votingStrategy, User author, string proposalTitle, string proposalDescription)
         {

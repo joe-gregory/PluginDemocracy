@@ -24,12 +24,12 @@ namespace PluginDemocracy.Models
         public DateTime ExpirationDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public BaseVotingStrategy? VotingStrategy { get; set; }
-        public Dictionary<BaseCitizen, int> VotingWeights
+        public Dictionary<BaseCitizen, double> VotingWeights
         {
             get
             {
                 if (Community != null && VotingStrategy != null) return VotingStrategy.ReturnVotingWeights(Community);
-                else return new Dictionary<BaseCitizen, int>();
+                else return new Dictionary<BaseCitizen, double>();
             }
         }
         /// <summary>
@@ -44,11 +44,11 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public IReadOnlyList<Vote> VotesAgainst => _votes.Where(vote => vote.InFavor == false).ToList().AsReadOnly();
         [NotMapped]
-        public int TotalVotingValuesSum => VotingWeights.Values.Sum();
+        public double TotalVotingValuesSum => VotingWeights.Values.Sum();
         [NotMapped]
-        public int TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
+        public double TotalValueVotesInFavor => VotesInFavor.Sum(vote => vote.VoteValueInFavor);
         [NotMapped]
-        public int TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
+        public double TotalValueVotesAgainst => VotesAgainst.Sum(vote => vote.VoteValueAgainst);
         /// <summary>
         /// Gets a value indicating whether the proposal is currently open for voting.
         /// This takes into account both the community's open status strategy and whether the proposal has been published.
