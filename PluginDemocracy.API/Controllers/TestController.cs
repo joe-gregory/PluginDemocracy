@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PluginDemocracy.API.Models;
+using PluginDemocracy.API.UrlRegistry;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,7 +16,7 @@ namespace PluginDemocracy.API.Controllers
         public ActionResult<PDAPIResponse> TestMessagesPageWithRedirection()
         {
             PDAPIResponse apiResponse = new();
-            apiResponse.RedirectTo = FrontEndPages.GenericMessagePage;
+            apiResponse.RedirectTo = FrontEndPages.GenericMessage;
             //Fill generic message dictionary
             apiResponse.RedirectParameters["Title"] = "Testing Title";
             apiResponse.RedirectParameters["Body"] = "Testing body lorem ipsum lorem ipsum lorem";

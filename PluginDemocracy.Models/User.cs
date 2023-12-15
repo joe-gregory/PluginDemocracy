@@ -1,19 +1,24 @@
 ﻿using System.Globalization;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace PluginDemocracy.Models
 {
     public class User : BaseCitizen
     {
+        [Required]
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
+        [Required]
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
+        [NotMapped]
         override public string? FullName
         {
             get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
                                    .Where(s => !string.IsNullOrEmpty(s)));
         }
+        [NotMapped]
         public string? Initials
         {
             get
@@ -25,14 +30,17 @@ namespace PluginDemocracy.Models
                 return initials;
             }
         }
+        [Required]
         public string Email { get; set; }
         public string? EmailConfirmationToken { get; set; }
         public bool EmailConfirmed { get; set; } = false;
+        [Required]
         public string HashedPassword { get; set; }
         public string? PhoneNumber { get; set; } = null;
         public bool PhoneNumberConfirmed { get; set; } = false;
         override public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
+        [NotMapped]
         public int Age { 
             get
             {
@@ -44,9 +52,8 @@ namespace PluginDemocracy.Models
         }
         private string cultureCode = "en-US";
         [NotMapped]
-        public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
+        public CultureInfo Culture { get => new(cultureCode); set => cultureCode = value.Name; }
         public bool Admin { get; set; }
-        
         private List<Role> Roles { get; set; }
         /// <summary>
         /// All the proposals of communities where this citizen has citizenship and also of parent communities where Proposal.VotingWeights keys contians this User.
@@ -64,15 +71,36 @@ namespace PluginDemocracy.Models
                 return allAssociatedProposals.Distinct().ToList();
             }
         }
+        /// <summary>
+        /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
+        /// </summary>
+        [NotMapped]
+        public override List<Community> Citizenships 
+        { 
+            get 
+            {
+                List<Community> citizenships = new();
+                citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
+                citizenships.AddRange(NonResidentialCitizenIn);
+                citizenships.AddRange(ResidentOfHomes);
+                return citizenships.Distinct().ToList();
+            } 
+        }
+        
+        /// <summary>
+        /// A list where User shows up on Home.Residents
+        /// </summary>
+        public List<Home> ResidentOfHomes { get; set; }
         protected User(bool admin = false)
         {
             FirstName = string.Empty;
             LastName = string.Empty;
             Email = string.Empty;
             HashedPassword = string.Empty;
-            Roles = new();
-            Admin = admin;
             Culture = new CultureInfo("en-US");
+            Admin = admin;
+            Roles = new();
+            ResidentOfHomes = new();
         }
         public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
@@ -86,8 +114,8 @@ namespace PluginDemocracy.Models
             Address = address;
             DateOfBirth = dateOfBirth;
             Culture = culture;
-
             Roles = new();
+            ResidentOfHomes = new();
         }
 
         public void AddRole(Role role)

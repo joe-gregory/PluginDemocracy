@@ -32,7 +32,7 @@
         </MudContainer>
     </MudMainContent>
 
-@code {
+    @code {
 
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
@@ -58,7 +58,8 @@
     }
     private async Task getMessages()
     {
-        PDAPIResponse apiResponse = await services.GetDataAsync("test/testmessagespage");
+        string url = ApiEndPoints.GetTestMessagesPage;
+        PDAPIResponse apiResponse = await services.GetDataAsync(url);
     }
 
     private void toggleInternetState()

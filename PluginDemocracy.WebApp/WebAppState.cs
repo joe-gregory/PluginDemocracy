@@ -13,7 +13,6 @@ namespace PluginDemocracy.WebApp
         public WebAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory) : base(configuration, serviceProvider, httpClientFactory)
         {
             BaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
-            BaseUrl += "/api/";
         }
     }
 }

@@ -44,39 +44,36 @@ namespace PluginDemocracy.UIComponents
                 return _appState.ApiResponse;
             }
         }
-        //public async Task<PDAPIResponse> GetDataAsync(string endpoint)
-        //{
-        //    try
-        //    {
-        //        //In ASP.NET Core and Blazor applications, HttpClient should typically be provided through the built-in IHttpClientFactory rather than injected directly. This factory helps manage the lifetimes of HttpClient instances and avoid common pitfalls like socket exhaustion.
-        //        var httpClient = _httpClientFactory.CreateClient();
-        //        var apiResponse = await httpClient.GetFromJsonAsync<PDAPIResponse>($"{BaseUrl}{endpoint}");
-        //        if (apiResponse != null) AddSnackBarMessages(apiResponse.Alerts);
-        //        else apiResponse = new();
-        //        NotifyStateChanged();
-        //        ApiResponse = apiResponse;
-        //        if (!string.IsNullOrEmpty(ApiResponse.RedirectTo))
-        //        {
-        //            using (var scope = _serviceProvider.CreateScope())
-        //            {
-        //                var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
-        //                navigationManager.NavigateTo(ApiResponse.RedirectTo);
-        //            }
-        //        }
-        //        return apiResponse;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Handle exceptions
+        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T data)
+        {
+            try
+            {
+                string url = _appState.BaseUrl + endpoint;
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
+                if (!response.IsSuccessStatusCode)
+                {
+                    AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
+                    return new PDAPIResponse();
+                }
+                PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
+                if (apiResponse == null)
+                {
+                    AddSnackBarMessage("warning", "PDAPIResponse null");
+                    return new PDAPIResponse();
+                }
 
+                AddSnackBarMessages(apiResponse.Alerts);
+                _appState.ApiResponse = apiResponse;
+                if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
 
-        //        PDAPIResponse apiResponse = new();
-        //        apiResponse.AddAlert("error", $"Error: {ex.Message}");
-        //        AddSnackBarMessages(apiResponse.Alerts);
-        //        NotifyStateChanged(); // Notify UI about the error
-        //        return apiResponse;
-        //    }
-        //}
+                return apiResponse;
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                return new PDAPIResponse();
+            }
+        }
         public void NavigateTo(string page)
         {
             _navigation.NavigateTo(page);

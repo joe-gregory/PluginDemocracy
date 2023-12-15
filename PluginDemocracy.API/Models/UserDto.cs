@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Framework;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 
 namespace PluginDemocracy.API.Models
@@ -51,6 +52,7 @@ namespace PluginDemocracy.API.Models
             }
         }
         private string cultureCode = "en-US";
+        [JsonIgnore]
         public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
         public bool? Admin { get; set; }
         //TODO: List of RolesDto and List of ProposalsDto

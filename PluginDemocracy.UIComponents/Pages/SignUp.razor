@@ -1,4 +1,5 @@
 ﻿@inject BaseAppState AppState
+@inject Services Services
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using PluginDemocracy.API.Models
@@ -121,8 +122,9 @@
         //     yield return "Password must contain at least one digit";
     }
 
-    private void PostForm()
+    private async void PostForm()
     {
         if (!string.IsNullOrEmpty(phoneNumber)) user.PhoneNumber = phoneNumber;
+        await Services.PostDataAsync<UserDto>(ApiEndPoints.PostSignUp, user);
     }
 }

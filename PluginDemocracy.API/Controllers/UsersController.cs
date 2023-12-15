@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.Models;
 using PluginDemocracy.API.Translations;
+using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 
@@ -34,7 +35,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse apiResponse = new();
 
             //CHECK VALIDITY OF INPUT
-            if (!ModelState.IsValid || registeringUser.Password.Length >= 7) return BadRequest(ModelState);
+            if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
 
             //CREATE & SAVE NEW USER
             //Create new User object
@@ -81,7 +82,7 @@ namespace PluginDemocracy.API.Controllers
             }
             catch(Exception ex)
             {
-                apiResponse.AddAlert("error", ex.Message);
+                apiResponse.AddAlert("error", $"Error sending confirmation email: {ex.Message}");
             }
             
             //SEND FINAL RESPONSE
@@ -94,7 +95,7 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail(int id, string emailConfirmationToken)
         {
             PDAPIResponse apiResponse = new();
-            apiResponse.RedirectTo = FrontEndPages.GenericMessagePage;
+            apiResponse.RedirectTo = FrontEndPages.GenericMessage;
 
             User? existingUser = await _context.FindAsync<User>(id);
 

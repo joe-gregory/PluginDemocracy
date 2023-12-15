@@ -8,6 +8,7 @@ namespace PluginDemocracy.Data
         public PluginDemocracyContext(DbContextOptions<PluginDemocracyContext> options) : base(options) { }
 
         public DbSet<Community> Communities { get; set; }
+        public DbSet<HomeOwnership> HomeOwnership { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Accounting> Accounting { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
@@ -23,15 +24,29 @@ namespace PluginDemocracy.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
-            modelBuilder.Entity<Role>() // Assuming Role is another derived type
+            modelBuilder.Entity<Community>()
+                .ToTable("Communities");
+
+            // Configure the many-to-many relationship between BaseCitizen and Community
+            modelBuilder.Entity<BaseCitizen>()
+                .HasMany(b => b.Citizenships)
+                .WithMany() // No inverse collection specified in Community since Community.Citizenships is a computed property
+                .UsingEntity<Dictionary<string, object>>(
+                    "BaseCitizenCommunity",
+                    b => b.HasOne<Community>().WithMany().HasForeignKey("CommunityId"),
+                    c => c.HasOne<BaseCitizen>().WithMany().HasForeignKey("BaseCitizenId"));
+
+            modelBuilder.Entity<Role>()
                 .ToTable("Roles");
-           
-
-            modelBuilder.Entity<Transaction>() // Assuming Transaction is a derived type
-                .ToTable("Transactions");
 
             modelBuilder.Entity<Role>().OwnsOne(r => r.Powers);
+
+            modelBuilder.Entity<Transaction>()
+                .ToTable("Transactions");
 
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.Community) // Navigation property in Project
@@ -60,28 +75,10 @@ namespace PluginDemocracy.Data
                 .Property(t => t.Amount)
                 .HasPrecision(18, 6);
 
-            modelBuilder.Entity<BaseCitizen>()
-                .HasMany(b => b.Citizenships)
-                .WithMany(c => c.Citizens)
-                .UsingEntity(j => j.ToTable("BaseCitizenCommunity")); // Optional: specify the join table name
-
             modelBuilder.Entity<Proposal>()
                 .HasOne(p => p.Dictamen)
                 .WithOne(d => d.Proposal)
                 .HasForeignKey<BaseDictamen>(d => d.ProposalId);
-
-            modelBuilder.Entity<Community>()
-              .HasMany(c => c.NonResidentialCitizens)
-              .WithMany() // Assuming there's no inverse navigation property
-              .UsingEntity<Dictionary<string, object>>(
-                  "CommunityNonResidentialCitizen",
-                  j => j.HasOne<BaseCitizen>().WithMany().HasForeignKey("BaseCitizenId"),
-                  j => j.HasOne<Community>().WithMany().HasForeignKey("CommunityId"),
-                  j =>
-                  {
-                      j.HasKey("BaseCitizenId", "CommunityId");
-                      j.ToTable("CommunityNonResidentialCitizens");
-                  });
         }
     }
 }

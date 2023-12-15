@@ -71,7 +71,7 @@
         @if (!UserLoggedIn)
         {
             <MudNavLink>@AppState.Translate("LogIn")</MudNavLink>
-            <MudNavLink Href="/signup">@AppState.Translate("SignUp")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.SignUp">@AppState.Translate("SignUp")</MudNavLink>
 
         }
         else

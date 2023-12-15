@@ -13,14 +13,18 @@ namespace PluginDemocracy.API
         private readonly string mailJetSecretKey;
         private readonly string smtpHost;
         private readonly int smtpPort = 587;
-        public List<CultureInfo> SupportedLanguages = new() { new CultureInfo("en-US"), new CultureInfo("es-MX") }; 
+        public List<string> SupportedLanguages = ["en-US", "es-MX"]; 
         public UtilityClass(IConfiguration configuration)
         {
             _configuration = configuration;
-            if(string.IsNullOrEmpty(_configuration["MailJet:ApiKey"]) || string.IsNullOrEmpty(_configuration["MailJet:SecretKey"]) || string.IsNullOrEmpty(_configuration["MailJet: SmtpServer"])) throw new InvalidOperationException("Mailjet API keys are not configured properly.");
+            
             mailJetApiKey = _configuration["MailJet:ApiKey"]?? string.Empty;
             mailJetSecretKey = _configuration["MailJet:SecretKey"]?? string.Empty;
-            smtpHost = _configuration["MailJet: SmtpServer"]?? string.Empty;
+            smtpHost = _configuration["MailJet:SmtpServer"]?? string.Empty;
+
+            if (string.IsNullOrEmpty(mailJetApiKey)) throw new InvalidOperationException("Mailjet API key is not configured properly.");
+            if (string.IsNullOrEmpty(mailJetSecretKey)) throw new InvalidOperationException("Mailjet secret key is not configured properly.");
+            if (string.IsNullOrEmpty(smtpHost)) throw new InvalidOperationException("Mailjet Smtp Server is not configured properly.");
         }
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
@@ -50,7 +54,8 @@ namespace PluginDemocracy.API
 
             for(int i = 0; i < SupportedLanguages.Count; i++)
             {
-                textToReturn += TranslationResources.ResourceManager.GetObject(text, SupportedLanguages[i]);
+                CultureInfo culture = new CultureInfo(SupportedLanguages[i]);
+                textToReturn += TranslationResources.ResourceManager.GetObject(text, culture);
                 if (i != SupportedLanguages.Count - 1) textToReturn += "/n";
             }
 

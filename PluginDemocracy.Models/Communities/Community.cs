@@ -11,24 +11,34 @@ namespace PluginDemocracy.Models
         public string? Name { get; set; }
         public override string? FullName => string.Join(" ", Name, Address);
         public string OfficialCurrency { get; set; } = "USD";
-        public List<string> OfficialLanguages { get; set; } 
+        public List<string> OfficialLanguages { get; set; }
         public string? Description { get; set; }
+        [NotMapped]
+        public override List<Community> Citizenships
+        {
+            get
+            {
+                List<Community> citizenships = new();
+                citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
+                citizenships.AddRange(NonResidentialCitizenIn);
+                return citizenships.Distinct().ToList();
+            }
+        }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
+        [NotMapped]
         virtual public List<BaseCitizen> Citizens
         {
             get
             {
                 List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<BaseCitizen>();
-                List<BaseCitizen> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<BaseCitizen>();
+                List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<User>();
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
-
         public bool CanHaveHomes { get; set; }
         public List<Home> Homes { get; private set; }
-
         /// <summary>
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
@@ -74,7 +84,6 @@ namespace PluginDemocracy.Models
         public List<Post> Posts { get; }
         public Community()
         {
-            Citizenships = new();
             OfficialLanguages = new();
             Homes = new();
             NonResidentialCitizens = new();
@@ -94,47 +103,15 @@ namespace PluginDemocracy.Models
         /// <param name="user"></param>
         public void AddNonResidentialCitizen(BaseCitizen citizen)
         {
-            if (citizen != null && CanHaveNonResidentialCitizens)
-            {
-                if (CanHaveNonResidentialCitizens)
-                {
-                    NonResidentialCitizens.Add(citizen);
-                    if (NonResidentialCitizens.Contains(citizen)) citizen.AddCitizenship(this);
-                }
-                else throw new InvalidOperationException("Cannot add NonResidential Citizens when CanHaveNonResidentialCitizens is set to false.");
-
-            }
-            else throw new ArgumentException("Citizen cannot be null when adding to NonResidentialCitizens.");
+            if (!CanHaveNonResidentialCitizens) throw new InvalidOperationException("Unable to add NonResidentialCitizens when CanHaveNonResidentialCitizens is set to false.");
+            if (citizen == null) throw new ArgumentException("Citizen cannot be null");
+            if (!NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Add(citizen);
+            if (!citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Add(this);
         }
         public void RemoveNonResidentialCitizen(BaseCitizen citizen)
         {
-            if (citizen != null)
-            {
-                if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
-                //if after this the citizen doesn't appear in Citizens, remove his/her citizenship
-                if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
-            }
-        }
-        public void AddResidentToHome(BaseCitizen citizen, Home home)
-        {
-            home.AddResident(citizen);
-            if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
-        }
-        public void RemoveResidentFromHome(BaseCitizen citizen, Home home)
-        {
-            home.RemoveResident(citizen);
-            //if no longer appears in Citizens, remove
-            if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
-        }
-        public void AddOwnerToHome(BaseCitizen citizen, int percentage, Home home)
-        {
-            home.AddOwner(citizen, percentage);
-            if (Citizens.Contains(citizen)) citizen.AddCitizenship(this);
-        }
-        public void RemoveOwnerFromHome(BaseCitizen citizen, Home home)
-        {
-            home.RemoveOwner(citizen);
-            if (!Citizens.Contains(citizen)) citizen.RemoveCitizenship(this);
+            if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
+            if (citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Remove(this);
         }
         public bool PublishProposal(Proposal proposal)
         {
@@ -167,18 +144,14 @@ namespace PluginDemocracy.Models
 
         public void AddHome(Home home)
         {
-            if (home == null) throw new ArgumentException("Home cannot be null");
-            if (CanHaveHomes)
+            if (!CanHaveHomes) throw new InvalidOperationException("Cannot add Homes when CanHaveHomes is set to false");
+            if (home == null) throw new ArgumentNullException("Home cannot be null");
+            if (!Homes.Contains(home))
             {
-                if (!Homes.Contains(home))
-                {
-                    home.Ownerships = new HashSet<HomeOwnership>();
-                    home.Residents = new List<BaseCitizen>();
-                    Homes.Add(home);
-                }
-                else throw new InvalidOperationException("Cannot add a home twice to the list");
+                home.Ownerships = new HashSet<HomeOwnership>();
+                home.Residents = new List<User>();
+                Homes.Add(home);
             }
-            else throw new InvalidOperationException("Cannot add Homs when CanHaveHomes is set to false");
         }
         public void RemoveHome(Home home)
         {
@@ -253,7 +226,7 @@ namespace PluginDemocracy.Models
         }
         public void RemovePost(Post post)
         {
-            if(Posts.Contains(post)) Posts.Remove(post);
+            if (Posts.Contains(post)) Posts.Remove(post);
         }
         static private void GetAllNestedUsers(Community community, HashSet<User> allUsers)
         {

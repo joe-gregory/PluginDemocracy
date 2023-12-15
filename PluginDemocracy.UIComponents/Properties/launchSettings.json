@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PluginDemocracy.UIComponents": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT": "0"
+      }
+    }
+  }
+}
