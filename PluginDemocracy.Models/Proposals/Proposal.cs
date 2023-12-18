@@ -22,6 +22,7 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public bool Published { get { return PublishedDate != null && DateTime.UtcNow > PublishedDate; } }
         public DateTime ExpirationDate { get; set; }
+        public DateTime ClosedDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public BaseVotingStrategy? VotingStrategy { get; set; }
         public Dictionary<BaseCitizen, double> VotingWeights
@@ -137,7 +138,7 @@ namespace PluginDemocracy.Models
             VotingStrategy?.ReturnHomeVotes(this);
             Update();
         }
-        public void UpdatePassedStatus()
+        private void UpdatePassedStatus()
         {
             if (Passed == null)
             {
@@ -145,11 +146,13 @@ namespace PluginDemocracy.Models
                 {
                     Passed = true;
                     Open = false;
+                    ClosedDate = DateTime.UtcNow;
                 }
                 if (TotalValueVotesAgainst > TotalVotingValuesSum / 2)
                 {
                     Passed = false;
                     Open = false;
+                    ClosedDate = DateTime.UtcNow;
                 }
             }
 
@@ -162,7 +165,12 @@ namespace PluginDemocracy.Models
         /// </summary>
         public void Update()
         {
-            if (Passed == null) Open = Published && DateTime.UtcNow < ExpirationDate;
+            if (Passed == null)
+            {
+                bool openOriginalValue = Open;
+                Open = Published && DateTime.UtcNow < ExpirationDate;
+                if(openOriginalValue != Open) ClosedDate = DateTime.UtcNow;
+            }
             bool? prevPassedValue = Passed;
             UpdatePassedStatus();
             //This runs if it is the first time it passes

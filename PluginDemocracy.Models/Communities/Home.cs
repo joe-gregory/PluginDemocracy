@@ -50,7 +50,7 @@ namespace PluginDemocracy.Models
         public void AddOwner(BaseCitizen citizen, double percentage)
         {
             if (citizen == null) throw new ArgumentException("citizen cannot be null");
-            if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100 integer");
+            if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100");
             double currentTotalPercentage = Owners.Values.Sum();
             if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
             HomeOwnership newHomeOwnership = new(this, citizen, percentage);

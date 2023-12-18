@@ -120,7 +120,7 @@ namespace PluginDemocracy.Models
             if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
             if (citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Remove(this);
         }
-        public void PublishProposal(Proposal proposal, bool skipExpirationDate = false)
+        public void PublishProposal(Proposal proposal, bool skipAssigningExpirationDate = false)
         {
             if (VotingStrategy == null) throw new InvalidOperationException("VotingStrategy is null");
             //Ensure this proposal is for this community
@@ -142,7 +142,7 @@ namespace PluginDemocracy.Models
             //If everything is Ok, add to add of list of Proposals and return True so that the proposal can set its PublishedDate
             proposal.Open = true;
             proposal.VotingStrategy ??= VotingStrategy;
-            if(skipExpirationDate) DateTime.Now.AddDays(ProposalsExpirationDays);
+            if(!skipAssigningExpirationDate) proposal.ExpirationDate = DateTime.Now.AddDays(ProposalsExpirationDays);
             Proposals.Add(proposal);
             if (VotingStrategy.ShouldProposalPropagate(proposal)) PropagateProposal(proposal);
 
@@ -195,7 +195,7 @@ namespace PluginDemocracy.Models
                 {
                     Proposal propagatedProposal = ReturnPropagatedProposal(parentProposal, propagatedCommunity);
                     //publish in its corresponding community which should call this method if there are more nested sub-communities
-                    propagatedCommunity.PublishProposal(propagatedProposal, skipExpirationDate : true);
+                    propagatedCommunity.PublishProposal(propagatedProposal, skipAssigningExpirationDate : true);
                 }
             }
         }

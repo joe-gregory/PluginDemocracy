@@ -61,7 +61,6 @@ namespace PluginDemocracy.API.Models
             UserDto userDto = new() 
             {
                 Id = user.Id,
-                Guid = user.Guid,
                 ProfilePicture = user.ProfilePicture,
                 FirstName = user.FirstName,
                 MiddleName = user.MiddleName,

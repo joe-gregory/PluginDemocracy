@@ -15,16 +15,16 @@
         public Home home3;
         public User homeowner1_1_60;
         public User homeowner1_2_40;
-        public User resident1_1 = UserFactory.GenerateUser();
-        public User resident1_2 = UserFactory.GenerateUser();
-        public User resident1_3 = UserFactory.GenerateUser();
+        public User resident1_1;
+        public User resident1_2;
+        public User resident1_3;
 
         public User homeowner2_1_30;
         public User homeowner2_2_30;
         public User homeowner2_3_40;
-        public User resident2_1 = UserFactory.GenerateUser();
-        public User resident2_2 = UserFactory.GenerateUser();
-        public User resident2_3 = UserFactory.GenerateUser();
+        public User resident2_1;
+        public User resident2_2;
+        public User resident2_3;
 
         public User homeowner3_1_50;
         public User homeowner3_2_50;
@@ -53,8 +53,11 @@
 
             //home 1
             home1 = new();
+            home1.Name = "home1";
             homeowner1_1_60 = UserFactory.GenerateUser(); //whichHome_id#_percentageOwnership
+            homeowner1_1_60.FirstName = "homeowner1_1_60";
             homeowner1_2_40 = UserFactory.GenerateUser();
+            homeowner1_2_40.FirstName = "homeowner1_2_40";
             childGatedCommunity.AddHome(home1);
             home1.AddOwner(homeowner1_1_60, 60);
             home1.AddOwner(homeowner1_2_40, 40);
@@ -67,9 +70,13 @@
 
             //home2
             home2 = new();
+            home2.Name = "home2";
             homeowner2_1_30 = UserFactory.GenerateUser();
+            homeowner2_1_30.FirstName = "homeowner2_1_30";
             homeowner2_2_30 = UserFactory.GenerateUser();
+            homeowner2_2_30.FirstName = "homeowner2_2_30";
             homeowner2_3_40 = UserFactory.GenerateUser();
+            homeowner2_3_40.FirstName = "homeowner2_3_40";
             childGatedCommunity.AddHome(home2);
             home2.AddOwner(homeowner2_1_30, 30);
             home2.AddOwner(homeowner2_2_30, 30);
@@ -83,8 +90,11 @@
 
             //home3
             home3 = new();
+            home3.Name = "home3";
             homeowner3_1_50 = UserFactory.GenerateUser();
+            homeowner3_1_50.FirstName = "homeowner3_1_50";
             homeowner3_2_50 = UserFactory.GenerateUser();
+            homeowner3_2_50.FirstName = "homeowner3_2_50";
             childGatedCommunity.AddHome(home3);
             home3.AddOwner(homeowner3_1_50, 50);
             home3.AddOwner(homeowner3_2_50, 50);
