@@ -32,13 +32,13 @@ namespace PluginDemocracy.Data
                 .ToTable("Communities");
 
             // Configure the many-to-many relationship between BaseCitizen and Community
-            modelBuilder.Entity<BaseCitizen>()
-                .HasMany(b => b.Citizenships)
-                .WithMany() // No inverse collection specified in Community since Community.Citizenships is a computed property
-                .UsingEntity<Dictionary<string, object>>(
-                    "BaseCitizenCommunity",
-                    b => b.HasOne<Community>().WithMany().HasForeignKey("CommunityId"),
-                    c => c.HasOne<BaseCitizen>().WithMany().HasForeignKey("BaseCitizenId"));
+            //modelBuilder.Entity<BaseCitizen>()
+            //    .HasMany(b => b.Citizenships)
+            //    .WithMany() // No inverse collection specified in Community since Community.Citizenships is a computed property
+            //    .UsingEntity<Dictionary<string, object>>(
+            //        "BaseCitizenCommunity",
+            //        b => b.HasOne<Community>().WithMany().HasForeignKey("CommunityId"),
+            //        c => c.HasOne<BaseCitizen>().WithMany().HasForeignKey("BaseCitizenId"));
 
             modelBuilder.Entity<Role>()
                 .ToTable("Roles");

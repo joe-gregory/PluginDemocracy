@@ -14,6 +14,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Communities this Citizen belongs to. 
         /// </summary>
+        [NotMapped]
         public abstract List<Community> Citizenships { get; }
         public List<Community> NonResidentialCitizenIn { get; set; }
         /// <summary>

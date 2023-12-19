@@ -119,7 +119,6 @@ namespace PluginDemocracy.Models
             Roles = new();
             ResidentOfHomes = new();
         }
-
         public void AddRole(Role role)
         {
             if (role != null && !Roles.Contains(role)) Roles.Add(role);
