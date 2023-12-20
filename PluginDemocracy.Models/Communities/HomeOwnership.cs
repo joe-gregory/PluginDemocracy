@@ -10,6 +10,7 @@ namespace PluginDemocracy.Models
     {
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
+        private int HomeId { get; set; }
         public virtual Home Home { get; set; }
         public virtual BaseCitizen Owner { get; set; }
         /// <summary>

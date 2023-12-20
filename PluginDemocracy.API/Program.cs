@@ -19,8 +19,17 @@ namespace PluginDemocracy.API
                 .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
             builder.Services.AddDbContext<PluginDemocracyContext>(
-                options => options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
-                b => b.MigrationsAssembly("PluginDemocracy.Data")));
+                options => options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
+                    sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5, // Maximum number of retries
+                            maxRetryDelay: TimeSpan.FromSeconds(30), // Maximum delay between retries
+                            errorNumbersToAdd: null); // SQL error numbers to consider for retries
+                        sqlOptions.MigrationsAssembly("PluginDemocracy.Data");
+                    }));
+
 
             builder.Services.AddSingleton<UtilityClass>();
             

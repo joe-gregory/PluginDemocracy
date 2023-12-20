@@ -224,6 +224,9 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<int>("HomeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("HomeId1")
+                        .HasColumnType("int");
+
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
@@ -233,6 +236,8 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HomeId");
+
+                    b.HasIndex("HomeId1");
 
                     b.HasIndex("OwnerId");
 
@@ -517,7 +522,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("RedFlagId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.PropagatedVoteDictamen", b =>
@@ -709,10 +714,14 @@ namespace PluginDemocracy.Data.Migrations
             modelBuilder.Entity("PluginDemocracy.Models.HomeOwnership", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.Home", "Home")
-                        .WithMany("Ownerships")
+                        .WithMany()
                         .HasForeignKey("HomeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PluginDemocracy.Models.Home", null)
+                        .WithMany("Ownerships")
+                        .HasForeignKey("HomeId1");
 
                     b.HasOne("PluginDemocracy.Models.BaseCitizen", "Owner")
                         .WithMany("HomeOwnerships")
