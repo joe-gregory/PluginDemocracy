@@ -38,6 +38,10 @@ namespace PluginDemocracy.Data
                 .HasValue<Community>("Community")
                 .HasValue<Home>("Home");
 
+            modelBuilder.Entity<Home>()
+                .Ignore(h => h.AssociatedCommunities)
+                .Ignore(h => h.Citizenships);
+
             modelBuilder.Entity<HomeOwnership>()
                 .HasOne(ho => ho.Home)
                 .WithMany()
