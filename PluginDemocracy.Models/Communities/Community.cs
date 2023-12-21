@@ -16,7 +16,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// The Communities that this Home belongs to. Like to which Home owners association or Privada does this belong to. 
         /// </summary>
-        public List<Community> Communities { get; private set; }
         [NotMapped]
         public override List<Community> Citizenships
         {
@@ -25,7 +24,6 @@ namespace PluginDemocracy.Models
                 List<Community> citizenships = new();
                 citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
                 citizenships.AddRange(NonResidentialCitizenIn);
-                citizenships.AddRange(Communities);
                 return citizenships.Distinct().ToList();
             }
         }
@@ -39,7 +37,7 @@ namespace PluginDemocracy.Models
             {
                 List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<BaseCitizen>();
                 List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<User>();
-                List<Home> homes = Homes ?? new List<Home>();  
+                List<Home> homes = Homes ?? [];  
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Union(homes).Distinct().ToList();
             }
         }
@@ -94,7 +92,6 @@ namespace PluginDemocracy.Models
         public List<Post> Posts { get; }
         public Community()
         {
-            Communities = [];
             OfficialLanguages = [];
             Homes = [];
             _communityNonResidentialCitizens = [];
@@ -186,7 +183,7 @@ namespace PluginDemocracy.Models
             if (!Homes.Contains(home)) 
             {
                 Homes.Add(home);
-                home.Communities.Add(this);
+                home.ParentCommunity = this;
             }
         }
         public void RemoveHome(Home home)
@@ -194,7 +191,7 @@ namespace PluginDemocracy.Models
             if (Homes.Contains(home)) 
             {
                 Homes.Remove(home);
-                home.Communities.Remove(this);
+                home.ParentCommunity = null;
             }
         }
         public bool IssueDictamen(BaseDictamen dictamen)

@@ -38,14 +38,18 @@ namespace PluginDemocracy.Data
                 .HasValue<Community>("Community")
                 .HasValue<Home>("Home");
 
+            modelBuilder.Entity<Community>()
+                .HasMany(c => c.Homes)
+                .WithOne(h => h.ParentCommunity);
+
             modelBuilder.Entity<Home>()
                 .Ignore(h => h.AssociatedCommunities)
-                .Ignore(h => h.Citizenships);
+                .Ignore(h => h.Citizenships)
+                .Ignore(h => h.NonResidentialCitizenIn);
 
             modelBuilder.Entity<HomeOwnership>()
                 .HasOne(ho => ho.Home)
                 .WithMany()
-                .HasForeignKey("HomeId") // Use a string to reference the private field
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Role>()

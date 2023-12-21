@@ -4,7 +4,17 @@ namespace PluginDemocracy.Models
 {
     public class Home : Community
     {
-
+        public int Id { get; set; }
+        public Community? ParentCommunity { get; set; }
+        public string Address { get; set; }
+        [NotMapped]
+        public override List<Community> Citizenships {
+            get
+            {
+                if (ParentCommunity != null) return [ParentCommunity];
+                else return [];
+            }
+        }
         public ICollection<HomeOwnership> Ownerships { get; set; }
         [NotMapped]
         public Dictionary<BaseCitizen, double> Owners
@@ -76,7 +86,6 @@ namespace PluginDemocracy.Models
         public void AddResident(User citizen)
         {
             if (citizen == null) throw new ArgumentException("Citizen cannot be null");
-            if (Residents.Contains(citizen)) throw new InvalidOperationException("Citizen is already a resident");
 
             Residents.Add(citizen);
             citizen.ResidentOfHomes.Add(this);
