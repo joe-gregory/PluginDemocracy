@@ -20,6 +20,7 @@ namespace PluginDemocracy.Models
         override public string Title => HomeOwnersFractionalVotingStrategyResources.Title;
         [NotMapped]
         override public string Description => HomeOwnersFractionalVotingStrategyResources.Description;
+        //METHODS: 
         override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
         {
             var ownersVotingValue = new Dictionary<BaseCitizen, double>();

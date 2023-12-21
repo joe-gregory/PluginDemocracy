@@ -25,6 +25,7 @@ namespace PluginDemocracy.Models
         public DateTime ClosedDate { get; set; }
         public BaseDictamen? Dictamen { get; set; }
         public BaseVotingStrategy? VotingStrategy { get; set; }
+        [NotMapped]
         public Dictionary<BaseCitizen, double> VotingWeights
         {
             get

@@ -10,7 +10,6 @@ namespace PluginDemocracy.Models
         public string? Description { get; set; }
         public DateTime? CreatedOn { get; }
         public bool Active => DateTime.UtcNow < Deadline;
-        public int CommunityId { get; set; }
         public Community? Community { get; }
         public decimal? FundingGoal { get; set; }
         public decimal? CurrentFunding => Accounting?.Balance ?? 0m;

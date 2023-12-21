@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
@@ -9,7 +10,16 @@ namespace PluginDemocracy.Models
     {
         public int Id { get; set; }
         public Proposal? Proposal { get; private set; }
-        public BaseCitizen Citizen { get; private set; }
+        [NotMapped]
+        public BaseCitizen Citizen { get 
+            { 
+                if(_userCitizen != null) return _userCitizen;
+                else if(_communityCitizen != null) return _communityCitizen;
+                else throw new Exception("Citizen is neither User nor Community");
+            } 
+        }
+        private User? _userCitizen { get; }
+        private Community? _communityCitizen { get; }
         public bool InFavor { get; private set; }
         public double VoteWeight { get; private set; }
         public double VoteValueInFavor { get; private set; }
@@ -17,7 +27,7 @@ namespace PluginDemocracy.Models
         public DateTime Date { get; private set; }
         protected Vote()
         {
-            Citizen = new User(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, DateTime.Now, new CultureInfo("en-US"));
+            _communityCitizen = new();
         }
         /// <summary>
         /// This is the default constructor. The other is only for use by the PropagatedVoteDictamen class
@@ -28,7 +38,14 @@ namespace PluginDemocracy.Models
         public Vote(Proposal proposal, BaseCitizen citizen, bool inFavor)
         {
             Proposal = proposal;
-            Citizen = citizen;
+            if(citizen is User userCitizen)
+            {
+                _userCitizen = userCitizen;
+            }
+            else if(citizen is Community communityCitizen)
+            {
+                _communityCitizen = communityCitizen;
+            }
             InFavor = inFavor;
             VoteValueAgainst = 0;
             VoteValueInFavor = 0;
@@ -54,7 +71,14 @@ namespace PluginDemocracy.Models
         public Vote(Proposal proposal, BaseCitizen citizen, bool inFavor, DateTime date)
         {
             Proposal = proposal;
-            Citizen = citizen;
+            if (citizen is User userCitizen)
+            {
+                _userCitizen = userCitizen;
+            }
+            else if (citizen is Community communityCitizen)
+            {
+                _communityCitizen = communityCitizen;
+            }
             InFavor = inFavor;
             VoteValueAgainst = 0;
             VoteValueInFavor = 0;

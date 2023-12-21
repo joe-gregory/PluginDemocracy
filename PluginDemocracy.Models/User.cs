@@ -58,6 +58,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// All the proposals of communities where this citizen has citizenship and also of parent communities where Proposal.VotingWeights keys contians this User.
         /// </summary>
+        [NotMapped]
         public List<Proposal> Proposals
         {
             get

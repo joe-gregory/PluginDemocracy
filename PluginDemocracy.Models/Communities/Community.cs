@@ -52,7 +52,10 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Citizens that don't live in a home
         /// </summary>
-        public virtual List<BaseCitizen> NonResidentialCitizens { get; protected set; }
+        [NotMapped]
+        public virtual List<BaseCitizen> NonResidentialCitizens { get => _communityNonResidentialCitizens.Cast<BaseCitizen>().Concat(_userNonResidentialCitizens).ToList(); }
+        private readonly List<Community> _communityNonResidentialCitizens;
+        private readonly List<User> _userNonResidentialCitizens;
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
@@ -63,6 +66,7 @@ namespace PluginDemocracy.Models
         /// Each inheriting class can override who gets to vote and how much each vote counts. 
         /// In BaseCommunity, each Citizens gets one vote. 
         /// </summary>
+        [NotMapped]
         public Dictionary<BaseCitizen, double> CitizensVotingValue
         {
             get
@@ -90,35 +94,61 @@ namespace PluginDemocracy.Models
         public List<Post> Posts { get; }
         public Community()
         {
-            Communities = new();
-            OfficialLanguages = new();
-            Homes = new();
-            NonResidentialCitizens = new();
+            Communities = [];
+            OfficialLanguages = [];
+            Homes = [];
+            _communityNonResidentialCitizens = [];
+            _userNonResidentialCitizens = [];
             Constitution = new();
-            Proposals = new();
+            Proposals = [];
             ProposalsExpirationDays = 30;
             Accounting = new(this);
-            Dictamens = new();
-            Roles = new();
-            Projects = new();
-            RedFlags = new();
-            Posts = new();
+            Dictamens = [];
+            Roles = [];
+            Projects = [];
+            RedFlags = [];
+            Posts = [];
         }
         /// <summary>
-        /// Adding a citizen needs to ensure that no citizen is repeated
+        /// Adding a non residential citizen involves adding the citizen to this community's NonResidentialCitizens AND adding this community to the
+        /// list of citizen.NonResidentialCitizenIn.
         /// </summary>
-        /// <param name="user"></param>
-        public void AddNonResidentialCitizen(BaseCitizen citizen)
+        public virtual void AddNonResidentialCitizen(BaseCitizen citizen)
         {
             if (!CanHaveNonResidentialCitizens) throw new InvalidOperationException("Unable to add NonResidentialCitizens when CanHaveNonResidentialCitizens is set to false.");
             if (citizen == null) throw new ArgumentException("Citizen cannot be null");
-            if (!NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Add(citizen);
-            if (!citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Add(this);
+
+            if (citizen is Community community) 
+            { 
+                _communityNonResidentialCitizens.Add(community);
+                community.NonResidentialCitizenIn.Add(this);
+            }
+
+            if (citizen is User user) 
+            {
+                _userNonResidentialCitizens.Add(user);
+                user.NonResidentialCitizenIn.Add(this);
+            }
         }
+        /// <summary>
+        /// Remove from both Community list and BaseCitizen list
+        /// </summary>
+        /// <param name="citizen"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void RemoveNonResidentialCitizen(BaseCitizen citizen)
         {
-            if (NonResidentialCitizens.Contains(citizen)) NonResidentialCitizens.Remove(citizen);
-            if (citizen.NonResidentialCitizenIn.Contains(this)) citizen.NonResidentialCitizenIn.Remove(this);
+            if (citizen == null) throw new ArgumentException("Citizen cannot be null");
+            
+            if (citizen is Community community)
+            {
+                _communityNonResidentialCitizens.Remove(community);
+                community.NonResidentialCitizenIn.Remove(this);
+            }
+            if (citizen is User user)
+            {
+                _userNonResidentialCitizens.Remove(user);
+                user.NonResidentialCitizenIn.Remove(this);
+            }
         }
         public void PublishProposal(Proposal proposal, bool skipAssigningExpirationDate = false)
         {

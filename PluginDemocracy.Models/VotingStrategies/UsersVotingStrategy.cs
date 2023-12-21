@@ -24,6 +24,8 @@ namespace PluginDemocracy.Models
         }
         public int? MinimumAge { get; set; }
         public int? MaximumAge { get; set; }
+        //METHODS:
+
         /// <summary>
         /// This method needs to check all sub-communities for Users as well.
         /// </summary>

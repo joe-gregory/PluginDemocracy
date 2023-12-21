@@ -3,7 +3,6 @@
     public abstract class BaseDictamen
     {
         public int Id { get; set; }
-        public Guid Guid { get; }
         virtual public string? Title { get; set; }
         virtual public string? Description { get; set; }
         public Community? Community { get; set; }
@@ -12,15 +11,7 @@
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
-        public int ProposalId { get; set; }
         public Proposal? Proposal { get; set; }
-        /// <summary>
-        /// Strategies:
-        /// </summary> 
-        public BaseDictamen()
-        {
-            Guid = Guid.NewGuid();
-        }
         /// <summary>
         /// Community invokes Dictamen.Execute() which is the actual action the Dictamen takes. If it works, it returns true. 
         /// </summary>

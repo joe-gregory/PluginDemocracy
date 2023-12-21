@@ -44,8 +44,8 @@ namespace PluginDemocracy.Models
         }
         protected BaseCitizen()
         {
-            HomeOwnerships = new List<HomeOwnership>();
-            NonResidentialCitizenIn = new();
+            HomeOwnerships = [];
+            NonResidentialCitizenIn = [];
         }
     }
 }

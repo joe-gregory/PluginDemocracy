@@ -24,13 +24,10 @@ namespace PluginDemocracy.Models
             get => Owners.Keys.Union(Residents).ToList();
         }
         /// <summary>
-        /// This is for the purpose of shutting down NonResidentialCitizens in Home
-        /// </summary>
-        private static readonly List<BaseCitizen> EmptyCitizensList = new List<BaseCitizen>();
-        /// <summary>
         /// Shutting down this property for Home class
         /// </summary>
-        public override List<BaseCitizen> NonResidentialCitizens { get { return EmptyCitizensList; } protected set { } }
+        [NotMapped]
+        public override List<BaseCitizen> NonResidentialCitizens { get => [];   }
         public Home() : base()
         {
             Ownerships = new HashSet<HomeOwnership>();
