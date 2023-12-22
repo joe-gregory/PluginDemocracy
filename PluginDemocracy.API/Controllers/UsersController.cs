@@ -86,6 +86,7 @@ namespace PluginDemocracy.API.Controllers
             }
             
             //SEND FINAL RESPONSE
+            apiResponse.RedirectTo = FrontEndPages.GenericMessage;
             apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture);
             apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, newUser.Culture);
             return Ok(apiResponse);

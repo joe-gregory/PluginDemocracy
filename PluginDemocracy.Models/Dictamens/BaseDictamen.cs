@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PluginDemocracy.Models
 {
     public abstract class BaseDictamen
     {
@@ -11,6 +13,8 @@
         /// <summary>
         /// Proposal that is running this Dictamen
         /// </summary>
+        public int ProposalId { get; set; }
+        [ForeignKey("ProposalId")]
         public Proposal? Proposal { get; set; }
         /// <summary>
         /// Community invokes Dictamen.Execute() which is the actual action the Dictamen takes. If it works, it returns true. 

@@ -7,6 +7,7 @@ namespace PluginDemocracy.Data
     {
         public PluginDemocracyContext(DbContextOptions<PluginDemocracyContext> options) : base(options) { }
         public DbSet<Community> Communities { get; set; }
+        public DbSet<Home> Homes { get; set; }
         public DbSet<HomeOwnership> HomeOwnership { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Accounting> Accounting { get; set; }
@@ -24,7 +25,7 @@ namespace PluginDemocracy.Data
         {
             modelBuilder.Entity<User>()
                 .ToTable("Users");
-            
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -32,15 +33,19 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Community>()
                 .ToTable("Communities");
 
+            modelBuilder.Entity<Home>()
+                .ToTable("Homes");
+
             // Configure TPH for Community
-            modelBuilder.Entity<Community>()
-                .HasDiscriminator<string>("CommunityType")
-                .HasValue<Community>("Community")
-                .HasValue<Home>("Home");
+
+            //modelBuilder.Entity<Community>()
+            //    .HasDiscriminator<string>("CommunityType")
+            //    .HasValue<Community>("Community")
+            //    .HasValue<Home>("Home");
 
             modelBuilder.Entity<Community>()
-                .HasMany(c => c.Homes)
-                .WithOne(h => h.ParentCommunity);
+                 .HasMany(c => c.Homes)
+                 .WithOne(h => h.ParentCommunity);
 
             //modelBuilder.Entity<Home>()
             //    .Ignore(h => h.Citizenships)
@@ -63,11 +68,11 @@ namespace PluginDemocracy.Data
                 .WithMany(c => c.Projects); // Navigation property in Community
 
             //Configure TPH for BaseDictamen
-           modelBuilder.Entity<BaseDictamen>()
-               .HasDiscriminator<string>("DictamenType")
-               .HasValue<PropagatedVoteDictamen>("PropagatedVoteDictamen")
-               .HasValue<ProposalWithDifferentVotingStrategyDictamen>("ProposalWithDifferentVotingStrategyDictamen");
-            
+            modelBuilder.Entity<BaseDictamen>()
+                .HasDiscriminator<string>("DictamenType")
+                .HasValue<PropagatedVoteDictamen>("PropagatedVoteDictamen")
+                .HasValue<ProposalWithDifferentVotingStrategyDictamen>("ProposalWithDifferentVotingStrategyDictamen");
+
             //Configure TPH for BaseVotingStrategy
             modelBuilder.Entity<BaseVotingStrategy>()
                .HasDiscriminator<string>("VotingStrategyType")

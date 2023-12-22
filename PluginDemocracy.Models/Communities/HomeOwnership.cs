@@ -12,6 +12,7 @@ namespace PluginDemocracy.Models
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
         private int HomeId { get; set; }
+        [ForeignKey("HomeId")]
         public virtual Home Home { get; set; }
         [NotMapped]
         public virtual BaseCitizen Owner { 
