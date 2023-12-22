@@ -33,6 +33,14 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Community>()
                 .ToTable("Communities");
 
+            //modelBuilder.Entity<Community>()
+            //    .HasMany(typeof(User), "_userNonResidentialCitizens")
+            //    .WithMany("NonResidentialCitizenIn");
+
+            //modelBuilder.Entity<Community>()
+            //    .HasMany(typeof(Community), "_communityNonResidentialCitizens")
+            //    .WithMany("NonResidentialCitizenIn");
+
             modelBuilder.Entity<Home>()
                 .ToTable("Homes");
 

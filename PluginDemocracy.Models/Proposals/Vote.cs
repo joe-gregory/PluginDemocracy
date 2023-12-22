@@ -19,9 +19,9 @@ namespace PluginDemocracy.Models
                 else throw new Exception("Citizen is neither User nor Community");
             } 
         }
-        private User? _userCitizen { get; }
-        private Community? _communityCitizen { get; }
-        private Home? _homeCitizen { get; }
+        public User? _userCitizen { get; }
+        public Community? _communityCitizen { get; }
+        public Home? _homeCitizen { get; }
         public bool InFavor { get; private set; }
         public double VoteWeight { get; private set; }
         public double VoteValueInFavor { get; private set; }

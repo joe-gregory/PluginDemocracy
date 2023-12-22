@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.UIComponent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginDemocracy.WebApp", "PluginDemocracy.WebApp\PluginDemocracy.WebApp.csproj", "{453A9F1F-F26C-4174-A332-6F9E89229C5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginDemocracy.DTOs", "PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj", "{264A6919-52BF-47BD-A3FD-8DEB70C5EC99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{453A9F1F-F26C-4174-A332-6F9E89229C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{453A9F1F-F26C-4174-A332-6F9E89229C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{453A9F1F-F26C-4174-A332-6F9E89229C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{264A6919-52BF-47BD-A3FD-8DEB70C5EC99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{264A6919-52BF-47BD-A3FD-8DEB70C5EC99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{264A6919-52BF-47BD-A3FD-8DEB70C5EC99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{264A6919-52BF-47BD-A3FD-8DEB70C5EC99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

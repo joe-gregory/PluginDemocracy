@@ -49,8 +49,8 @@ namespace PluginDemocracy.Models
         /// </summary>
         [NotMapped]
         public virtual List<BaseCitizen> NonResidentialCitizens { get => _communityNonResidentialCitizens.Cast<BaseCitizen>().Concat(_userNonResidentialCitizens).ToList(); }
-        private readonly List<Community> _communityNonResidentialCitizens;
-        private readonly List<User> _userNonResidentialCitizens;
+        public readonly List<Community> _communityNonResidentialCitizens;
+        public readonly List<User> _userNonResidentialCitizens;
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>

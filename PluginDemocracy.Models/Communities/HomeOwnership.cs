@@ -23,8 +23,8 @@ namespace PluginDemocracy.Models
                 throw new InvalidOperationException("Owner is neither User nor Community");
             } 
         }
-        private User? _userOwner;
-        private Community? _communityOwner;
+        public User? _userOwner;
+        public Community? _communityOwner;
         /// <summary>
         /// Required by EFC
         /// </summary>

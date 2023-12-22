@@ -51,7 +51,7 @@ namespace PluginDemocracy.API.Models
                 return age;
             }
         }
-        private string cultureCode = "en-US";
+        public string cultureCode { get; private set; } = "en-US";
         [JsonIgnore]
         public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
         public bool? Admin { get; set; }

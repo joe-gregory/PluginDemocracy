@@ -38,7 +38,7 @@ namespace PluginDemocracy.Models
         /// Total amount of votes possible. Some citizens may have more VotingValue than others. This is the sum of all VotingValues.
         /// A Proposal passes when VotesInFavor is more than half of TotalVotingValuesSum
         /// </summary>
-        private readonly List<Vote> _votes;
+        public readonly List<Vote> _votes;
         [NotMapped]
         public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
         [NotMapped]

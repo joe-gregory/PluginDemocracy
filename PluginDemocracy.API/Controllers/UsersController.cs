@@ -39,7 +39,7 @@ namespace PluginDemocracy.API.Controllers
 
             //CREATE & SAVE NEW USER
             //Create new User object
-            User newUser = new User(
+            User newUser = new(
             firstName: registeringUser.FirstName, 
             lastName: registeringUser.LastName, 
             email: registeringUser.Email, 

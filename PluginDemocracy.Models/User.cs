@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
@@ -50,11 +50,11 @@ namespace PluginDemocracy.Models
                 return age;
             } 
         }
-        private string cultureCode = "en-US";
+        public string _cultureCode { get; private set; } = "en-US";
         [NotMapped]
-        public CultureInfo Culture { get => new(cultureCode); set => cultureCode = value.Name; }
+        public CultureInfo Culture { get => new(_cultureCode); set => _cultureCode = value.Name; }
         public bool Admin { get; set; }
-        private List<Role> Roles { get; set; }
+        public List<Role> Roles { get; set; }
         /// <summary>
         /// All the proposals of communities where this citizen has citizenship and also of parent communities where Proposal.VotingWeights keys contians this User.
         /// </summary>

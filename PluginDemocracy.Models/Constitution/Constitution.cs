@@ -6,8 +6,7 @@
     public class Constitution
     {
         public int Id { get; set; }
-        public string Preamble => _preamble;
-        private string _preamble;
+        public string Preamble { get; set; }
         public IReadOnlyList<Article> Articles
         {
             get
@@ -16,11 +15,11 @@
                 return _articles.AsReadOnly();
             }
         }
-        private readonly List<Article> _articles;
+        public readonly List<Article> _articles;
         public Constitution()
         {
-            _articles = new();
-            _preamble = string.Empty;
+            _articles = [];
+            Preamble = string.Empty;
         }
         public void AddArticle(Article article)
         {
@@ -89,7 +88,7 @@
         }
         public void UpdatePreamble(string newPreamble)
         {
-            _preamble = newPreamble;
+            Preamble = newPreamble;
         }
     }
 }
