@@ -1,17 +1,16 @@
-﻿using Microsoft.Build.Framework;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text.Json.Serialization;
+using PluginDemocracy.Models;
 
-
-namespace PluginDemocracy.API.Models
+namespace PluginDemocracy.DTOs
 {
     public class UserDto : BaseCitizenDto
     {
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public string FirstName { get; set; } = string.Empty;
         public string? MiddleName { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public string LastName { get; set; } = string.Empty;
         public string? SecondLastName { get; set; }
         override public string? FullName
@@ -30,11 +29,11 @@ namespace PluginDemocracy.API.Models
                 return initials;
             }
         }
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         public bool? EmailConfirmed { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
@@ -51,24 +50,24 @@ namespace PluginDemocracy.API.Models
                 return age;
             }
         }
-        public string cultureCode { get; private set; } = "en-US";
+        public string cultureCode { get; set; } = "en-US";
         [JsonIgnore]
         public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
         public bool? Admin { get; set; }
         //TODO: List of RolesDto and List of ProposalsDto
-        public static UserDto ReturnUserDtoFromUser(PluginDemocracy.Models.User user)
+        public static UserDto ReturnUserDtoFromUser(User user)
         {
-            UserDto userDto = new() 
+            UserDto userDto = new()
             {
                 Id = user.Id,
                 ProfilePicture = user.ProfilePicture,
                 FirstName = user.FirstName,
                 MiddleName = user.MiddleName,
-                LastName = user.LastName, 
+                LastName = user.LastName,
                 SecondLastName = user.SecondLastName,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
-                PhoneNumber = user.PhoneNumber, 
+                PhoneNumber = user.PhoneNumber,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
                 Address = user.Address,
                 DateOfBirth = user.DateOfBirth,
@@ -80,6 +79,22 @@ namespace PluginDemocracy.API.Models
             };
 
             return userDto;
+        }
+        public static User ReturnUserFromUserDto(UserDto userDto)
+        {
+            User user = new(
+                firstName: userDto.FirstName,
+                lastName: userDto.LastName,
+                email: userDto.Email,
+                hashedPassword: string.Empty,
+                phoneNumber: userDto.PhoneNumber,
+                address: userDto.Address,
+                dateOfBirth: userDto.DateOfBirth,
+                culture: userDto.Culture,
+                middleName: userDto.MiddleName,
+                secondLastName: userDto.SecondLastName);
+
+            return user;
         }
     }
 }

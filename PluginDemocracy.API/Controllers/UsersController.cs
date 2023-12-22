@@ -7,52 +7,40 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PluginDemocracy.API.Models;
 using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
+using PluginDemocracy.DTOs;
 
 namespace PluginDemocracy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController(PluginDemocracyContext context, UtilityClass utilityClass) : ControllerBase
     {
-        private readonly PluginDemocracyContext _context;
-        private UtilityClass _utilityClass;
-
-        public UsersController(PluginDemocracyContext context, UtilityClass utilityClass)
-        {
-            _context = context;
-            _utilityClass = utilityClass;
-        }
+        private readonly PluginDemocracyContext _context = context;
+        private UtilityClass _utilityClass = utilityClass;
 
         [HttpPost("signup")]
         public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
         {
-            //CREATE RESPONSE OBJECT
+            //Create response object
             PDAPIResponse apiResponse = new();
 
-            //CHECK VALIDITY OF INPUT
+            //Check validity of input
             if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
 
-            //CREATE & SAVE NEW USER
             //Create new User object
-            User newUser = new(
-            firstName: registeringUser.FirstName, 
-            lastName: registeringUser.LastName, 
-            email: registeringUser.Email, 
-            hashedPassword: string.Empty, 
-            phoneNumber: registeringUser.PhoneNumber, 
-            address: registeringUser.Address, 
-            dateOfBirth: registeringUser.DateOfBirth, 
-            culture: registeringUser.Culture, 
-            middleName: registeringUser.MiddleName, 
-            secondLastName: registeringUser.SecondLastName);
+            User newUser = UserDto.ReturnUserFromUserDto(registeringUser);
+            
             //hash password && assign
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
+
+            //Email confirmation token
+            newUser.EmailConfirmationToken = Guid.NewGuid().ToString();
+            
             // Save the new user to the context
             _context.Users.Add(newUser);
             apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
@@ -68,11 +56,7 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(503, apiResponse);
             }
             
-            //CONFIRMATION EMAIL
-            // Send a confirmation email or perform other actions
-            string emailConfirmationToken = Guid.NewGuid().ToString();
-            newUser.EmailConfirmationToken = emailConfirmationToken;
-            //Pick HTML message to send given the Culture of the user
+            //Send confirmation email
             string emailConfirmationLink = $"{Request.Scheme}://{Request.Host}/user/{newUser.Id}/confirmemail/{newUser.EmailConfirmationToken}";
             string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP1, newUser.Culture)}</p>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP2, newUser.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{_utilityClass.Translate(ResourceKeys.ConfirmEmailLink, newUser.Culture)}</a></p>";
             //Send Email
@@ -85,10 +69,11 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", $"Error sending confirmation email: {ex.Message}");
             }
             
-            //SEND FINAL RESPONSE
+            //Redirect to generic message page and add a message
             apiResponse.RedirectTo = FrontEndPages.GenericMessage;
             apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture);
             apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, newUser.Culture);
+            
             return Ok(apiResponse);
         }
 

@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
+    <ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
     <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
   </ItemGroup>
 

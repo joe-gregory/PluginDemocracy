@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using PluginDemocracy.Models;
 using System.Globalization;
-using PluginDemocracy.API.Models;
+using PluginDemocracy.DTOs;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

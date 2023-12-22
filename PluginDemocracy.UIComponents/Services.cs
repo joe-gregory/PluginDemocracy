@@ -1,24 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
-using PluginDemocracy.API.Models;
+using PluginDemocracy.DTOs;  
 using System.Net.Http.Json;
 
 namespace PluginDemocracy.UIComponents
 {
-    public class Services
+    public class Services(NavigationManager navigation, ISnackbar snackbar, HttpClient httpClient, BaseAppState appState)
     {
-        private NavigationManager _navigation;
-        private ISnackbar _snackBar;
-        private HttpClient _httpClient;
-        private BaseAppState _appState;
-        public Services(NavigationManager navigation, ISnackbar snackbar, HttpClient httpClient, BaseAppState appState)
-        {
-            _navigation = navigation;
-            _snackBar = snackbar;
-            _httpClient = httpClient;
-            _appState = appState;
-        }
+        private readonly NavigationManager _navigation = navigation;
+        private readonly ISnackbar _snackBar = snackbar;
+        private readonly HttpClient _httpClient = httpClient;
+        private readonly BaseAppState _appState = appState;
+
         public async Task<PDAPIResponse> GetDataAsync(string endpoint)
         {
             _appState.IsLoading = true;

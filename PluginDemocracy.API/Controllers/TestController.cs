@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PluginDemocracy.API.Models;
+using PluginDemocracy.DTOs;
 using PluginDemocracy.API.UrlRegistry;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

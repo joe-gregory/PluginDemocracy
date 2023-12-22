@@ -1,4 +1,4 @@
-﻿namespace PluginDemocracy.API.Models
+﻿namespace PluginDemocracy.DTOs
 {
     public abstract class BaseCitizenDto
     {
