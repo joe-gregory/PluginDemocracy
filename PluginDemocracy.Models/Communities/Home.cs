@@ -2,26 +2,36 @@
 
 namespace PluginDemocracy.Models
 {
-    public class Home : Community
+    public class Home : BaseCitizen
     {
-        public int Id { get; set; }
         public Community? ParentCommunity { get; set; }
-        public string Address { get; set; }
         [NotMapped]
-        public override List<Community> Citizenships {
+        public override string FullName { 
+            get 
+            { 
+                string fullName = string.Empty;
+                foreach (HomeOwnership hw in Ownerships) fullName += hw.Owner.FullName + ", ";
+                return fullName;
+            } 
+        }
+        [NotMapped]
+        public override List<Community> Citizenships
+        {
             get
             {
                 if (ParentCommunity != null) return [ParentCommunity];
                 else return [];
             }
         }
+        [NotMapped]
+        public override string Address { get => InternalAddress + "/n" + ParentCommunity?.Address; }
+        public string InternalAddress { get; set; }
         public ICollection<HomeOwnership> Ownerships { get; set; }
         [NotMapped]
         public Dictionary<BaseCitizen, double> Owners
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
-
         public List<User> Residents { get; set; }
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
@@ -29,25 +39,17 @@ namespace PluginDemocracy.Models
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
         [NotMapped]
-        override public List<BaseCitizen> Citizens
+       public List<BaseCitizen> Citizens
         {
             get => Owners.Keys.Union(Residents).ToList();
         }
-        /// <summary>
-        /// Shutting down this property for Home class
-        /// </summary>
-        [NotMapped]
-        public override List<BaseCitizen> NonResidentialCitizens { get => [];   }
         public Home() : base()
         {
+            InternalAddress = string.Empty;
             Ownerships = new HashSet<HomeOwnership>();
             Residents = new();
-            VotingStrategy = new CitizensVotingStrategy();
-            CanHaveNonResidentialCitizens = false;
-            CanHaveHomes = false;
         }
         /// <summary>
-        /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships. 
         /// Adds owner with percentage or updates owners percentage
         /// </summary>
         /// <param name="citizen"></param>
@@ -65,7 +67,6 @@ namespace PluginDemocracy.Models
             citizen.HomeOwnerships.Add(newHomeOwnership);
         }
         /// <summary>
-        /// This method should be called on parent Gated Community to correctly update Citizen.Citizenships
         /// </summary>
         /// <param name="Citizen"></param>
         public void RemoveOwner(BaseCitizen citizen)

@@ -42,10 +42,8 @@ namespace PluginDemocracy.Data
                 .HasMany(c => c.Homes)
                 .WithOne(h => h.ParentCommunity);
 
-            modelBuilder.Entity<Home>()
-                .Ignore(h => h.AssociatedCommunities)
-                .Ignore(h => h.Citizenships)
-                .Ignore(h => h.NonResidentialCitizenIn);
+            //modelBuilder.Entity<Home>()
+            //    .Ignore(h => h.Citizenships)
 
             modelBuilder.Entity<HomeOwnership>()
                 .HasOne(ho => ho.Home)

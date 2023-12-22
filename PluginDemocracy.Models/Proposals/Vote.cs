@@ -15,11 +15,13 @@ namespace PluginDemocracy.Models
             { 
                 if(_userCitizen != null) return _userCitizen;
                 else if(_communityCitizen != null) return _communityCitizen;
+                else if(_homeCitizen != null) return _homeCitizen;
                 else throw new Exception("Citizen is neither User nor Community");
             } 
         }
         private User? _userCitizen { get; }
         private Community? _communityCitizen { get; }
+        private Home? _homeCitizen { get; }
         public bool InFavor { get; private set; }
         public double VoteWeight { get; private set; }
         public double VoteValueInFavor { get; private set; }
@@ -45,6 +47,10 @@ namespace PluginDemocracy.Models
             else if(citizen is Community communityCitizen)
             {
                 _communityCitizen = communityCitizen;
+            }
+            else if(citizen is Home homeCitizen)
+            {
+                _homeCitizen = homeCitizen;
             }
             InFavor = inFavor;
             VoteValueAgainst = 0;

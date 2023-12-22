@@ -21,9 +21,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                List<Community> citizenships = new();
-                citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
-                citizenships.AddRange(NonResidentialCitizenIn);
+                List<Community> citizenships = [.. NonResidentialCitizenIn];
                 return citizenships.Distinct().ToList();
             }
         }
@@ -37,8 +35,7 @@ namespace PluginDemocracy.Models
             {
                 List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<BaseCitizen>();
                 List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<User>();
-                List<Home> homes = Homes ?? [];  
-                return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Union(homes).Distinct().ToList();
+                return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
         public bool CanHaveHomes { get; set; }

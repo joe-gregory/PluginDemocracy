@@ -31,9 +31,9 @@ namespace PluginDemocracy.Models
         }
         override public List<Vote> ReturnHomeVotes(Proposal proposal)
         {
-            List<Vote> homeVotes = new();
+            List<Vote> homeVotes = [];
             //only cycle through homes that haven't casted a vote yet
-            List<Home> homesThatHaventVoted = new();
+            List<Home> homesThatHaventVoted = [];
             if (proposal.Community != null) homesThatHaventVoted = proposal.Community.Homes.Where(home => !proposal.Votes.Any(vote => vote.Citizen == home)).ToList();
             foreach (Home home in homesThatHaventVoted)
             {

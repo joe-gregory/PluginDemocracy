@@ -81,10 +81,8 @@ namespace PluginDemocracy.Models
             get 
             {
                 List<Community> citizenships = new();
-                citizenships.AddRange(HomeOwnerships.Select(o => o.Home));
                 foreach(HomeOwnership ho in HomeOwnerships) citizenships.AddRange(ho.Home.Citizenships);
                 citizenships.AddRange(NonResidentialCitizenIn);
-                citizenships.AddRange(ResidentOfHomes);
                 citizenships.AddRange(ResidentOfHomes.SelectMany(h => h.Citizenships));
                 return citizenships.Distinct().ToList();
             } 
