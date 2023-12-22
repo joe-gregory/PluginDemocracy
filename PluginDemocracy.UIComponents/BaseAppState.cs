@@ -15,6 +15,16 @@ namespace PluginDemocracy.UIComponents
         protected readonly IServiceProvider _serviceProvider;
         protected readonly IConfiguration _configuration;
         protected readonly IHttpClientFactory _httpClientFactory;
+        private bool _isLoading = false;
+        public bool IsLoading 
+        { 
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                NotifyStateChanged();
+            } 
+        } 
         public PDAPIResponse ApiResponse { get; set; }
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:

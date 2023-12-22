@@ -25,6 +25,7 @@
             <MudIcon Icon="PluginDemocracyIcons.CommunityIcon" Color="Color.Primary"/>
             <MudText>AppState.BaseUrl: @AppState.BaseUrl</MudText>
             <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="goTo">Testing Navitation</MudButton>
+            <MudButton Color="Color.Surface" Variant="Variant.Filled" OnClick="changeIsLoading">ChangeIsLoading</MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="createTestSnackBars">
                     Open Snackbar
                 </MudButton>
@@ -44,6 +45,10 @@
 
         };
 
+    private void changeIsLoading()
+    {
+        AppState.IsLoading = !AppState.IsLoading;
+    }
     private void createTestSnackBars()
     {
         Snackbar.Add("Normal Snackbar", Severity.Normal);

@@ -6,7 +6,19 @@
         <MudIcon Icon="@PluginDemocracyIcons.CommunityIcon" Color="Color.Primary" />
     </MudAvatar>
     <MudSpacer />
-    <MudAvatar @onclick='() => NavMan.NavigateTo("/")' style="margin-right: 8px;"><MudIcon Icon="@Icons.Material.Filled.Power" Color="Color.Primary" /></MudAvatar>
+    <MudAvatar @onclick='() => NavMan.NavigateTo("/")' style="margin-right: 8px;">
+        @{
+            if (AppState.IsLoading)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Power" Color="Color.Primary" />
+            }
+        }
+        
+    </MudAvatar>
     <MudText @onclick='() => NavMan.NavigateTo("/")'>@AppState.Translate("PluginDemocracy")</MudText>
         <MudSpacer />
         <MudAvatar @onclick="@ToggleUserMenu" Class="@(UserMenuButtonDisabled ? "mud-avatar-disabled" : "")">

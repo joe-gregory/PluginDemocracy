@@ -21,6 +21,7 @@ namespace PluginDemocracy.UIComponents
         }
         public async Task<PDAPIResponse> GetDataAsync(string endpoint)
         {
+            _appState.IsLoading = true;
             try
             {
                 PDAPIResponse? apiResponse = await _httpClient.GetFromJsonAsync<PDAPIResponse>($"{_appState.BaseUrl}{endpoint}");
@@ -35,17 +36,20 @@ namespace PluginDemocracy.UIComponents
                 }
                 _appState.ApiResponse = apiResponse;
                 if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
+                _appState.IsLoading = false;
                 return _appState.ApiResponse;
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
                 _appState.ApiResponse = new();
+                _appState.IsLoading = false;
                 return _appState.ApiResponse;
             }
         }
         public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T data)
         {
+            _appState.IsLoading = true;
             try
             {
                 string url = _appState.BaseUrl + endpoint;
@@ -53,24 +57,27 @@ namespace PluginDemocracy.UIComponents
                 if (!response.IsSuccessStatusCode)
                 {
                     AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
+                    _appState.IsLoading = false;
                     return new PDAPIResponse();
                 }
                 PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
                 if (apiResponse == null)
                 {
                     AddSnackBarMessage("warning", "PDAPIResponse null");
+                    _appState.IsLoading = false;
                     return new PDAPIResponse();
                 }
 
                 AddSnackBarMessages(apiResponse.Alerts);
                 _appState.ApiResponse = apiResponse;
                 if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
-
+                _appState.IsLoading = false;
                 return apiResponse;
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
                 return new PDAPIResponse();
             }
         }
