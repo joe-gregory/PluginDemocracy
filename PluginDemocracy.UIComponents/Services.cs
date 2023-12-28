@@ -6,6 +6,13 @@ using System.Net.Http.Json;
 
 namespace PluginDemocracy.UIComponents
 {
+    /// <summary>
+    /// Services for API calls, navigation, and snackbar messages
+    /// </summary>
+    /// <param name="navigation">Navigation Manager</param>
+    /// <param name="snackbar">ISnackbar</param>
+    /// <param name="httpClient">HttpClient for making API calls</param>
+    /// <param name="appState">BaseAppState to track changes to App state</param>
     public class Services(NavigationManager navigation, ISnackbar snackbar, HttpClient httpClient, BaseAppState appState)
     {
         private readonly NavigationManager _navigation = navigation;

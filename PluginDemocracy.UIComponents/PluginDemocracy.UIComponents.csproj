@@ -68,7 +68,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\ConfirmEmail.razor" />
     <_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\ConfirmEmail.razor" />
   </ItemGroup>
 
 </Project>

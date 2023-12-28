@@ -38,12 +38,8 @@ namespace PluginDemocracy.API.Controllers
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
 
-            //Email confirmation token
-            newUser.EmailConfirmationToken = Guid.NewGuid().ToString();
-            
             // Save the new user to the context
             _context.Users.Add(newUser);
-            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
             try 
             {
                 await _context.SaveChangesAsync();
@@ -55,35 +51,25 @@ namespace PluginDemocracy.API.Controllers
                 //Return here if unable to save user. 
                 return StatusCode(503, apiResponse);
             }
-            
+
             //Send confirmation email
-            string emailConfirmationLink = $"{Request.Scheme}://{Request.Host}/user/{newUser.Id}/confirmemail/{newUser.EmailConfirmationToken}";
-            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP1, newUser.Culture)}</p>\r\n<p style=\"text-align: center;\">{_utilityClass.Translate(ResourceKeys.ConfirmEmailP2, newUser.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{_utilityClass.Translate(ResourceKeys.ConfirmEmailLink, newUser.Culture)}</a></p>";
-            //Send Email
-            try 
-            {
-                await _utilityClass.SendEmailAsync(toEmail: newUser.Email, subject: _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture), body: emailBody);
-            }
-            catch(Exception ex)
-            {
-                apiResponse.AddAlert("error", $"Error sending confirmation email: {ex.Message}");
-            }
-            
-            //Redirect to generic message page and add a message
-            apiResponse.RedirectTo = FrontEndPages.GenericMessage;
-            apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailTitle, newUser.Culture);
-            apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, newUser.Culture);
-            
+            await _utilityClass.SendConfirmationEmail(newUser, apiResponse);
+
+            //Attach user data to response object
+            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
+
             return Ok(apiResponse);
         }
 
-        [HttpGet("{id}/confirmemail/{emailConfirmationToken}")]
-        public async Task<ActionResult<PDAPIResponse>> ConfirmEmail(int id, string emailConfirmationToken)
+        [HttpGet("{userId}/confirmemail/{emailConfirmationToken}")]
+        public async Task<ActionResult<PDAPIResponse>> ConfirmEmail(int userId, string emailConfirmationToken)
         {
-            PDAPIResponse apiResponse = new();
-            apiResponse.RedirectTo = FrontEndPages.GenericMessage;
+            PDAPIResponse apiResponse = new()
+            {
+                RedirectTo = FrontEndPages.GenericMessage
+            };
 
-            User? existingUser = await _context.FindAsync<User>(id);
+            User? existingUser = await _context.FindAsync<User>(userId);
 
             if(existingUser == null)
             {
@@ -108,7 +94,7 @@ namespace PluginDemocracy.API.Controllers
                 try
                 {
                     await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture));
-                    return Ok(apiResponse);
+                    return Redirect(_utilityClass.WebAppBaseUrl);
                 }
                 catch(Exception ex)
                 {
@@ -125,8 +111,6 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(apiResponse);
             }
         }
-
-
 
         //SCAFFOLDING: 
         // GET: api/Users
