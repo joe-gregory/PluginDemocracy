@@ -60,9 +60,50 @@ namespace PluginDemocracy.API.Controllers
 
             return Ok(apiResponse);
         }
+        //
+        // POST: api/Users/Login
+        [HttpPost("login")]
+        public async Task<ActionResult<PDAPIResponse>> LogIn(UserDto registeringUser)
+        {
+            //Create response object
+            PDAPIResponse apiResponse = new();
 
-        [HttpGet("{userId}/confirmemail/{emailConfirmationToken}")]
-        public async Task<ActionResult<PDAPIResponse>> ConfirmEmail(int userId, string emailConfirmationToken)
+            //Check validity of input
+            if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
+
+            //Create new User object
+            User newUser = UserDto.ReturnUserFromUserDto(registeringUser);
+
+            //hash password && assign
+            PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
+            newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
+
+            // Save the new user to the context
+            _context.Users.Add(newUser);
+            try
+            {
+                await _context.SaveChangesAsync();
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewUserCreated, newUser.Culture));
+            }
+            catch (Exception ex)
+            {
+                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.UnableToCreateNewUser, newUser.Culture) + $"Error: {ex.Message}");
+                //Return here if unable to save user. 
+                return StatusCode(503, apiResponse);
+            }
+
+            //Send confirmation email
+            await _utilityClass.SendConfirmationEmail(newUser, apiResponse);
+
+            //Attach user data to response object
+            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
+
+            return Ok(apiResponse);
+        }
+        //END POST: api/Users/Login
+
+        [HttpGet("confirmemail")]
+        public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
         {
             PDAPIResponse apiResponse = new()
             {
@@ -83,13 +124,20 @@ namespace PluginDemocracy.API.Controllers
             if (existingUser.EmailConfirmationToken == emailConfirmationToken)
             {
                 existingUser.EmailConfirmed = true;
-                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
 
-                //Add message parameters & redirect to generic message page 
-                
+                //Add Messages saying the email was confirmed
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
                 apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
                 apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
-
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch(Exception ex)
+                {
+                    apiResponse.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+                    return StatusCode(500, apiResponse);
+                }
                 //Send an email saying that the email address has been confirmed
                 try
                 {

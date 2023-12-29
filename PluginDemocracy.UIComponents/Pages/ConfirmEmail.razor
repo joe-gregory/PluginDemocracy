@@ -1,17 +1,23 @@
 ﻿@inject Services Services
 
+<MudText Typo="Typo.h3">Confirming Email Address...</MudText>
+
 @code {
 
     [Parameter] 
-    public int userId { get; set; }
+    public int? userId { get; set; }
 
     [Parameter]
-    public string emailConfirmationToken { get; set; }
+    public string? emailConfirmationToken { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Services.GetDataAsync(ApiEndPoints.C);
+        await base.OnInitializedAsync();
+        if(userId != null && emailConfirmationToken != null)
+        {
+            string completeSubLink = $"{ApiEndPoints.ConfirmEmail}?userId={userId}&emailConfirmationToken={emailConfirmationToken}";
+            await Services.GetDataAsync(completeSubLink);
+        } 
 
     }
 }

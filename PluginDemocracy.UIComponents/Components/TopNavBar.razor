@@ -82,7 +82,7 @@
     <MudNavMenu>
         @if (!UserLoggedIn)
         {
-            <MudNavLink>@AppState.Translate("LogIn")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.Login" >@AppState.Translate("LogIn")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.SignUp">@AppState.Translate("SignUp")</MudNavLink>
 
         }

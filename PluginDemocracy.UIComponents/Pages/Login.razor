@@ -1,0 +1,47 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Login</MudText>
+<MudForm Model="@userDto" @bind-IsValid="@success" @bind-Errors="@errors">
+    <MudPaper Class="pa-4" Elevation="25" Outlined="true">
+        
+        <MudGrid Justify="Justify.Center" Style="align-items: center;">
+            <MudItem>
+                <MudIcon Icon="@Icons.Material.Outlined.Person" Color="Color.Primary" />
+            </MudItem>
+        </MudGrid>
+
+        <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="userDto.Email" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="userDto.Password" Variant="Variant.Outlined" />
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5" OnClick="PostForm">Login</MudButton>
+
+    </MudPaper>
+</MudForm>
+@code {
+    private UserDto userDto = new UserDto();
+    private bool success;
+    string[] errors = { };
+    MudTextField<string>? pwField1;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 7)
+            yield return "Password must be at least of length 7";
+    }
+
+    private void PostForm()
+    {
+        success = false;
+        StateHasChanged();
+        Services.PostDataAsync<>
+        //Services.Login(userDto);
+    }
+}

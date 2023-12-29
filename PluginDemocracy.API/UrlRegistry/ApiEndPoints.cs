@@ -10,5 +10,6 @@
         public static readonly string UsersController = Base + "users/";
         public static readonly string PostSignUp = UsersController + "signup";
         public static readonly string ConfirmEmail = UsersController + "confirmemail";
+        public static readonly string PostLogin = UsersController + "login";
     }
 }
