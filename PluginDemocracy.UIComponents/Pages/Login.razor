@@ -4,7 +4,7 @@
 @using System.ComponentModel.DataAnnotations
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Login</MudText>
-<MudForm Model="@userDto" @bind-IsValid="@success" @bind-Errors="@errors">
+<MudForm Model="@loginInfo" @bind-IsValid="@success" @bind-Errors="@errors">
     <MudPaper Class="pa-4" Elevation="25" Outlined="true">
         
         <MudGrid Justify="Justify.Center" Style="align-items: center;">
@@ -13,16 +13,18 @@
             </MudItem>
         </MudGrid>
 
-        <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="userDto.Email" Variant="Variant.Outlined" />
-        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="userDto.Password" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="loginInfo.Email" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="loginInfo.Password" Variant="Variant.Outlined" />
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5" OnClick="PostForm">Login</MudButton>
 
     </MudPaper>
 </MudForm>
 @code {
-    private UserDto userDto = new UserDto();
+    private LoginInfo loginInfo = new();
+
     private bool success;
+
     string[] errors = { };
     MudTextField<string>? pwField1;
 
@@ -37,11 +39,12 @@
             yield return "Password must be at least of length 7";
     }
 
-    private void PostForm()
+    private async void PostForm()
     {
         success = false;
         StateHasChanged();
-        Services.PostDataAsync<>
+        string endpoint = ApiEndPoints.PostLogin;
+        await Services.PostDataAsync<LoginInfo>(endpoint, loginInfo);
         //Services.Login(userDto);
     }
 }

@@ -31,6 +31,7 @@ namespace PluginDemocracy.UIComponents
         public event Action? OnChange;
         public bool HasInternet { get; protected set; }
         public UserDto? User { get; protected set; }
+        public bool LoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         //METHODS:
@@ -43,39 +44,7 @@ namespace PluginDemocracy.UIComponents
             ApiResponse = new();
         }
         protected void NotifyStateChanged() => OnChange?.Invoke();
-        public async Task<PDAPIResponse> GetDataAsync(string endpoint)
-        {
-            try
-            {
-                //In ASP.NET Core and Blazor applications, HttpClient should typically be provided through the built-in IHttpClientFactory rather than injected directly. This factory helps manage the lifetimes of HttpClient instances and avoid common pitfalls like socket exhaustion.
-                var httpClient = _httpClientFactory.CreateClient();
-                var apiResponse = await httpClient.GetFromJsonAsync<PDAPIResponse>($"{BaseUrl}{endpoint}");
-                if (apiResponse != null) AddSnackBarMessages(apiResponse.Alerts);
-                else apiResponse = new();
-                NotifyStateChanged();
-                ApiResponse = apiResponse;
-                if (!string.IsNullOrEmpty(ApiResponse.RedirectTo))
-                {
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
-                        navigationManager.NavigateTo(ApiResponse.RedirectTo);
-                    }
-                }
-                return apiResponse;
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions
-                
-                
-                PDAPIResponse apiResponse = new();
-                apiResponse.AddAlert("error", $"Error: {ex.Message}");
-                AddSnackBarMessages(apiResponse.Alerts);
-                NotifyStateChanged(); // Notify UI about the error
-                return apiResponse;
-            }
-        }
+        
         public void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
         {
             using (var scope = _serviceProvider.CreateScope())
@@ -86,7 +55,6 @@ namespace PluginDemocracy.UIComponents
                     if (Enum.TryParse(alert.Severity.ToString(), true, out MudBlazor.Severity mudBlazorSeverity)) snackbar.Add(alert.Message, mudBlazorSeverity);
                 }
             }
-
         }
         public void LogIn(UserDto user)
         {

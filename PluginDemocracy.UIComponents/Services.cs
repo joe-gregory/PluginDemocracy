@@ -34,6 +34,8 @@ namespace PluginDemocracy.UIComponents
                 else
                 {
                     AddSnackBarMessages(apiResponse.Alerts);
+                    if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
+
                 }
                 _appState.ApiResponse = apiResponse;
                 if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
@@ -68,7 +70,7 @@ namespace PluginDemocracy.UIComponents
                     _appState.IsLoading = false;
                     return new PDAPIResponse();
                 }
-
+                if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
                 AddSnackBarMessages(apiResponse.Alerts);
                 _appState.ApiResponse = apiResponse;
                 if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);

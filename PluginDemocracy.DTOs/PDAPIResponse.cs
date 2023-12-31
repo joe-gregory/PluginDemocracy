@@ -3,6 +3,7 @@
     public class PDAPIResponse
     {
         public UserDto? User { get; set; }
+        public bool LoggedIn { get {  return User != null; } }
         public List<Alert> Alerts { get; set; }
         public string? RedirectTo { get; set; }
         public Dictionary<string, string> RedirectParameters { get; set; }
