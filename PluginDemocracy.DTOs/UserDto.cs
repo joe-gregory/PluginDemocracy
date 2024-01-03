@@ -18,14 +18,15 @@ namespace PluginDemocracy.DTOs
             get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
                                    .Where(s => !string.IsNullOrEmpty(s)));
         }
+        [JsonIgnore]
         public string? Initials
         {
             get
             {
-                string initials = "";
-                if (FirstName != null) initials += FirstName[0];
-                if (LastName != null) initials += LastName[0];
-                if (SecondLastName != null) initials += SecondLastName[0];
+                string initials = string.Empty;
+                if (!string.IsNullOrEmpty(FirstName)) initials += FirstName[0];
+                if (!string.IsNullOrEmpty(LastName)) initials += LastName[0];
+                if (!string.IsNullOrEmpty(SecondLastName)) initials += SecondLastName[0];
                 return initials;
             }
         }

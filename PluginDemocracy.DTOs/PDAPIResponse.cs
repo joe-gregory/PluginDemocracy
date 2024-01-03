@@ -9,8 +9,8 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public PDAPIResponse()
         {
-            Alerts = new();
-            RedirectParameters = new();
+            Alerts = [];
+            RedirectParameters = [];
         }
         public void AddAlert(string severity, string message)
         {

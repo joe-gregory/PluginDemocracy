@@ -20,7 +20,7 @@ namespace PluginDemocracy.API.Controllers
     public class UsersController(PluginDemocracyContext context, UtilityClass utilityClass) : ControllerBase
     {
         private readonly PluginDemocracyContext _context = context;
-        private UtilityClass _utilityClass = utilityClass;
+        private readonly UtilityClass _utilityClass = utilityClass;
 
         [HttpPost("signup")]
         public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
@@ -60,48 +60,39 @@ namespace PluginDemocracy.API.Controllers
 
             return Ok(apiResponse);
         }
-        //
-        // POST: api/Users/Login
         [HttpPost("login")]
-        public async Task<ActionResult<PDAPIResponse>> LogIn(UserDto registeringUser)
+        public async Task<ActionResult<PDAPIResponse>> LogIn(LoginInfoDto loginInfo)
         {
             //Create response object
             PDAPIResponse apiResponse = new();
 
-            //Check validity of input
-            if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
-
-            //Create new User object
-            User newUser = UserDto.ReturnUserFromUserDto(registeringUser);
-
-            //hash password && assign
-            PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
-            newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
-
-            // Save the new user to the context
-            _context.Users.Add(newUser);
-            try
+            //Look up user by email
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
+            if(existingUser == null)
             {
-                await _context.SaveChangesAsync();
-                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewUserCreated, newUser.Culture));
+                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
+                return BadRequest(apiResponse);
             }
-            catch (Exception ex)
+            loginInfo.Password ??= string.Empty;
+
+            //Compare passwords
+            PasswordHasher<User> _passwordHasher = new();
+            PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.HashedPassword, loginInfo.Password);
+            if(result == PasswordVerificationResult.Failed)
             {
-                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.UnableToCreateNewUser, newUser.Culture) + $"Error: {ex.Message}");
-                //Return here if unable to save user. 
-                return StatusCode(503, apiResponse);
+                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordMismatch, loginInfo.Culture));
+                return BadRequest(apiResponse);
             }
-
-            //Send confirmation email
-            await _utilityClass.SendConfirmationEmail(newUser, apiResponse);
-
-            //Attach user data to response object
-            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
-
-            return Ok(apiResponse);
+            else
+            {
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, loginInfo.Culture));
+                //Convert User to UserDto
+                apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                //Redirect to home feed after login in or join community page if no community
+                apiResponse.RedirectTo = FrontEndPages.Community;
+                return Ok(apiResponse);
+            }
         }
-        //END POST: api/Users/Login
-
         [HttpGet("confirmemail")]
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
         {
@@ -129,6 +120,7 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
                 apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
                 apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
+                apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
                 try
                 {
                     await _context.SaveChangesAsync();

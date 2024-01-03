@@ -11,7 +11,7 @@
         //TODO: Add List<CommunityDto> AssociatedCommunities
         public BaseCitizenDto()
         {
-            Citizenships = new();
+            Citizenships = [];
         }
     }
 }

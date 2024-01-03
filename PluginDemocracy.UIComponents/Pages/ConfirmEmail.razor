@@ -13,11 +13,15 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
         if(userId != null && emailConfirmationToken != null)
         {
             string completeSubLink = $"{ApiEndPoints.ConfirmEmail}?userId={userId}&emailConfirmationToken={emailConfirmationToken}";
             await Services.GetDataAsync(completeSubLink);
         } 
-
+        else
+        {
+            Services.AddSnackBarMessage("error", "Internal error. Get request to confirm email was not sent");
+        }
     }
 }

@@ -21,7 +21,7 @@
     </MudPaper>
 </MudForm>
 @code {
-    private LoginInfo loginInfo = new();
+    LoginInfoDto loginInfo = new();
 
     private bool success;
 
@@ -43,8 +43,7 @@
     {
         success = false;
         StateHasChanged();
-        string endpoint = ApiEndPoints.PostLogin;
-        await Services.PostDataAsync<LoginInfo>(endpoint, loginInfo);
-        //Services.Login(userDto);
+        loginInfo.Culture = AppState.Culture;
+        await Services.PostDataAsync<LoginInfoDto>(ApiEndPoints.PostLogin, loginInfo);
     }
 }

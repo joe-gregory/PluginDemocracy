@@ -132,6 +132,9 @@
   <data name="ConfirmEmailTitle" xml:space="preserve">
     <value>Por favor confirma tu correo electrónico</value>
   </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>No se encontro ningun usuario con este correo electronico</value>
+  </data>
   <data name="EmailOutEmailConfirmedBody" xml:space="preserve">
     <value>¡Gracias por confirmar tu dirección de correo electrónico! Nos emociona tenerte a bordo. 
 
@@ -153,6 +156,9 @@ El equipo de Democracia Conectada</value>
   <data name="NewUserCreated" xml:space="preserve">
     <value>Nuevo usuario creado</value>
   </data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>La contraseña es incorrecta</value>
+  </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Error creando nuevo usuario</value>
   </data>
@@ -161,6 +167,9 @@ El equipo de Democracia Conectada</value>
   </data>
   <data name="UserNotFoundBody" xml:space="preserve">
     <value>El usuario no fue encontrado en la base de datos cuando se intento confirmar el correo electronico.</value>
+  </data>
+  <data name="YouHaveLoggedIn" xml:space="preserve">
+    <value>Has iniciado sesion</value>
   </data>
   <data name="YourEmailHasBeenConfirmed" xml:space="preserve">
     <value>Tu Correo Electronico ha sido Confirmado</value>

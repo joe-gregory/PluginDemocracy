@@ -7,5 +7,6 @@
         public static readonly string SignUp = "/signup";
         public static readonly string ConfirmEmail = "/confirmemail";
         public static readonly string Login = "/login";
+        public static readonly string Community = "/community";
     }
 }

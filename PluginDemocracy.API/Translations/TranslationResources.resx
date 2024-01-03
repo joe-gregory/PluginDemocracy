@@ -132,6 +132,9 @@
   <data name="ConfirmEmailTitle" xml:space="preserve">
     <value>Please confirm your email</value>
   </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>No user with the given email was found</value>
+  </data>
   <data name="EmailOutEmailConfirmedBody" xml:space="preserve">
     <value>Thank you for confirming your email address! We're thrilled to have you on board. 
 
@@ -153,6 +156,9 @@ The Plugin Democracy Team </value>
   <data name="NewUserCreated" xml:space="preserve">
     <value>New user created</value>
   </data>
+  <data name="PasswordCantBeEmpty" xml:space="preserve">
+    <value>Wrong password</value>
+  </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Unable to create new user</value>
   </data>
@@ -161,6 +167,9 @@ The Plugin Democracy Team </value>
   </data>
   <data name="UserNotFoundBody" xml:space="preserve">
     <value>The user was not found in the database when trying to confirm the Email address.</value>
+  </data>
+  <data name="YouHaveLoggedIn" xml:space="preserve">
+    <value>You have logged in</value>
   </data>
   <data name="YourEmailHasBeenConfirmed" xml:space="preserve">
     <value>Your Email Has Been Confirmed</value>

@@ -1,4 +1,5 @@
 ﻿@inject BaseAppState AppState
+@inject Services Services
 @inject NavigationManager NavMan
 
 <MudAppBar Elevation="1">
@@ -89,7 +90,7 @@
         else
         {
             <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink>
-            <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
+            <MudNavLink OnClick="@(Services.LogOutAndRedirectHome)" Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
         }
     <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/settings">@AppState.Translate("Settings")</MudNavLink>
     </MudNavMenu>

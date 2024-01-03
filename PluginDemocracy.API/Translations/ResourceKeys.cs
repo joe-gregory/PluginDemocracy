@@ -17,5 +17,8 @@
         public static string UserNotFoundBody => "UserNotFoundBody";
         public static string YourEmailHasBeenConfirmed => "YourEmailHasBeenConfirmed";
         public static string YourEmailHasBeenConfirmedBody => "YourEmailHasBeenConfirmedBody";
+        public static string EmailNotFound => "EmailNotFound";
+        public static string PasswordMismatch => "PasswordMismatch";
+        public static string YouHaveLoggedIn => "YouHaveLoggedIn";
     }
 }
