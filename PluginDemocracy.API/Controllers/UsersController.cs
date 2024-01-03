@@ -17,10 +17,10 @@ namespace PluginDemocracy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(PluginDemocracyContext context, UtilityClass utilityClass) : ControllerBase
+    public class UsersController(PluginDemocracyContext context, ApiUtilityClass utilityClass) : ControllerBase
     {
         private readonly PluginDemocracyContext _context = context;
-        private readonly UtilityClass _utilityClass = utilityClass;
+        private readonly ApiUtilityClass _utilityClass = utilityClass;
 
         [HttpPost("signup")]
         public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
@@ -115,34 +115,36 @@ namespace PluginDemocracy.API.Controllers
             if (existingUser.EmailConfirmationToken == emailConfirmationToken)
             {
                 existingUser.EmailConfirmed = true;
-
-                //Add Messages saying the email was confirmed
-                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
-                apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
-                apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
-                apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
                 try
                 {
                     await _context.SaveChangesAsync();
+                    
+                    //Add Messages saying the email was confirmed
+                    apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
+                    apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
+                    apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
+                    apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+
+                    //Send an email saying that the email address has been confirmed
+                    try
+                    {
+                        await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture));
+                        return Ok(apiResponse);
+                    }
+                    catch (Exception ex)
+                    {
+                        apiResponse.AddAlert("error", $"Unable to send thank you for confirming email\nError:\n{ex.Message}");
+                        return Ok(apiResponse);
+                    }
                 }
                 catch(Exception ex)
                 {
                     apiResponse.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
                     return StatusCode(500, apiResponse);
                 }
-                //Send an email saying that the email address has been confirmed
-                try
-                {
-                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture));
-                    return Redirect(_utilityClass.WebAppBaseUrl);
-                }
-                catch(Exception ex)
-                {
-                    apiResponse.AddAlert("error", $"Unable to send thank you for confirming email\nError:\n{ex.Message}");
-                    return Ok(apiResponse);
-                }
+                
             }
-            //If user is not null but the confirmationToken does not match
+            //If user exists but the confirmationToken does not match
             else
             {
                 apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailTokenNoMatchTitle, existingUser.Culture);

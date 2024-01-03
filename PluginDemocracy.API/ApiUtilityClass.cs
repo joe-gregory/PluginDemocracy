@@ -4,13 +4,16 @@ using System.Net.Mail;
 using Azure.Core;
 using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
+using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
 
-
 namespace PluginDemocracy.API
 {
-    public class UtilityClass
+    /// <summary>
+    /// This is a scoped service so it cannot hold state data.
+    /// </summary>
+    public class ApiUtilityClass
     {
         private readonly IConfiguration _configuration;
         private readonly string mailJetApiKey;
@@ -19,9 +22,11 @@ namespace PluginDemocracy.API
         private readonly int smtpPort = 587;
         public readonly string WebAppBaseUrl;
         public List<string> SupportedLanguages = ["en-US", "es-MX"]; 
-        public UtilityClass(IConfiguration configuration)
+        public readonly PluginDemocracyContext _context;
+        public ApiUtilityClass(IConfiguration configuration, PluginDemocracyContext context)
         {
             _configuration = configuration;
+            _context = context;
             
             mailJetApiKey = _configuration["MailJet:ApiKey"]?? string.Empty;
             mailJetSecretKey = _configuration["MailJet:SecretKey"]?? string.Empty;
@@ -72,6 +77,14 @@ namespace PluginDemocracy.API
         {
             //Create new email confirmation token
             user.EmailConfirmationToken = Guid.NewGuid().ToString();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                apiResponse.AddAlert("error", "Error saving changes to database: " + e.Message);
+            }
 
             //Build confirmation link
             string emailConfirmationLink = $"{WebAppBaseUrl}{FrontEndPages.ConfirmEmail}?userId={user.Id}&token={user.EmailConfirmationToken}";

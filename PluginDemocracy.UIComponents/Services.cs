@@ -65,6 +65,7 @@ namespace PluginDemocracy.UIComponents
             }
 
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
+
             if (apiResponse == null)
             {
                 AddSnackBarMessage("warning", "PDAPIResponse null");

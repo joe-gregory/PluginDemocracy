@@ -31,7 +31,7 @@ namespace PluginDemocracy.API
                     }));
 
 
-            builder.Services.AddSingleton<UtilityClass>();
+            builder.Services.AddScoped<ApiUtilityClass>();
             
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -13,6 +13,7 @@ namespace PluginDemocracy.DTOs
         [Required]
         public string LastName { get; set; } = string.Empty;
         public string? SecondLastName { get; set; }
+        [JsonIgnore]
         override public string? FullName
         {
             get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
@@ -41,6 +42,7 @@ namespace PluginDemocracy.DTOs
         public bool? PhoneNumberConfirmed { get; set; }
         override public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
+        [JsonIgnore]
         public int Age
         {
             get
@@ -53,7 +55,7 @@ namespace PluginDemocracy.DTOs
         }
         public string cultureCode { get; set; } = "en-US";
         [JsonIgnore]
-        public CultureInfo Culture { get => new CultureInfo(cultureCode); set => cultureCode = value.Name; }
+        public CultureInfo Culture { get => new(cultureCode); set => cultureCode = value.Name; }
         public bool? Admin { get; set; }
         //TODO: List of RolesDto and List of ProposalsDto
         public static UserDto ReturnUserDtoFromUser(User user)
