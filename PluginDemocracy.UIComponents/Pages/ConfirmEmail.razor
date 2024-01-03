@@ -1,27 +1,30 @@
-﻿@inject Services Services
+﻿@using Microsoft.AspNetCore.WebUtilities
+@inject Services Services
+@inject NavigationManager NavManager
 
 <MudText Typo="Typo.h3">Confirming Email Address...</MudText>
+<MudText>Testing query parameters...</MudText>
+<MudText>userId = @userId</MudText>
+<MudText>emailConfirmationToken = @emailConfirmationToken</MudText>
 
 @code {
-
-    [Parameter] 
+    [SupplyParameterFromQuery]
     public int? userId { get; set; }
-
-    [Parameter]
+    [SupplyParameterFromQuery(Name = "token")]
     public string? emailConfirmationToken { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        if(userId != null && emailConfirmationToken != null)
-        {
-            string completeSubLink = $"{ApiEndPoints.ConfirmEmail}?userId={userId}&emailConfirmationToken={emailConfirmationToken}";
-            await Services.GetDataAsync(completeSubLink);
-        } 
-        else
-        {
-            Services.AddSnackBarMessage("error", "Internal error. Get request to confirm email was not sent");
-        }
+        // if(userId != null && emailConfirmationToken != null)
+        // {
+        //     string completeSubLink = $"{ApiEndPoints.ConfirmEmail}?userId={userId}&emailConfirmationToken={emailConfirmationToken}";
+        //     await Services.GetDataAsync(completeSubLink);
+        // } 
+        // else
+        // {
+        //     Services.AddSnackBarMessage("error", "Internal error. Get request to confirm email was not sent");
+        // }
     }
 }
