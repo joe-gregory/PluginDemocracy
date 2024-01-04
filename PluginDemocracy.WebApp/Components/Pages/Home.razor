@@ -85,6 +85,7 @@
         {
             if (!string.IsNullOrEmpty(AppState.User.ProfilePicture)) AppState.User.ProfilePicture = null;
             else AppState.User.ProfilePicture = "https://media.licdn.com/dms/image/D5603AQFe6U_iRMn65Q/profile-displayphoto-shrink_100_100/0/1691519902265?e=1706140800&v=beta&t=YK7rArTUVTt-5HgGO7LnApl3tWcCMPweNfGELRW75GQ";
+            StateHasChanged();
         }
     }
 

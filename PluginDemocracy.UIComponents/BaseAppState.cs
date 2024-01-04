@@ -29,7 +29,7 @@ namespace PluginDemocracy.UIComponents
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:
         public event Action? OnChange;
-        public bool HasInternet { get; protected set; }
+        public abstract bool HasInternet { get; protected set; }
         public UserDto? User { get; protected set; }
         public bool LoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
