@@ -10,18 +10,14 @@
     [SupplyParameterFromQuery(Name = "token")]
     public string? emailConfirmationToken { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnInitializedAsync();
-
-        if(userId != null && emailConfirmationToken != null)
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
         {
             string completeSubLink = $"{ApiEndPoints.ConfirmEmail}?userId={userId}&emailConfirmationToken={emailConfirmationToken}";
             await Services.GetDataAsync(completeSubLink);
-        } 
-        else
-        {
-            Services.AddSnackBarMessage("error", "Internal error. Get request to confirm email was not sent");
         }
+
     }
 }
