@@ -73,8 +73,7 @@ namespace PluginDemocracy.UIComponents
                 return new PDAPIResponse();
             }
 
-            // If apiResponse.User is sent, log in user.
-            if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
+
             //Add snackbar messages sent from API
             AddSnackBarMessages(apiResponse.Alerts);
             //Add latest API response to AppState
@@ -83,6 +82,8 @@ namespace PluginDemocracy.UIComponents
             if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
             //Stop loading spinner
             _appState.IsLoading = false;
+            // If apiResponse.User is sent, log in user.
+            if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
 
             return apiResponse;
         }
