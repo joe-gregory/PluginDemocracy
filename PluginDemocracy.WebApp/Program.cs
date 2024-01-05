@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.WebApp.Components;
-using PluginDemocracy.WebApp.Components.Account;
-
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
 using MudBlazor;
@@ -36,9 +34,6 @@ namespace PluginDemocracy.WebApp
             });
 
             builder.Services.AddCascadingAuthenticationState();
-            builder.Services.AddScoped<IdentityUserAccessor>();
-            builder.Services.AddScoped<IdentityRedirectManager>();
-            builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
             builder.Services.AddSingleton<BaseAppState, WebAppState>();
             builder.Services.AddScoped<Services>();
@@ -51,16 +46,7 @@ namespace PluginDemocracy.WebApp
                 .AddIdentityCookies();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-            builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
-
-            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
             var app = builder.Build();
 
@@ -85,7 +71,6 @@ namespace PluginDemocracy.WebApp
                 .AddInteractiveServerRenderMode();
 
             // Add additional endpoints required by the Identity /Account Razor components.
-            app.MapAdditionalIdentityEndpoints();
 
             app.Run();
         }
