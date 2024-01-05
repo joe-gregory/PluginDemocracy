@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.WebApp.Components;
 using PluginDemocracy.WebApp.Components.Account;
-using PluginDemocracy.WebApp.Data;
 
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
