@@ -1,7 +1,11 @@
 ﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Claims;
+using System.Text;
 using Azure.Core;
+using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
@@ -103,6 +107,25 @@ namespace PluginDemocracy.API
             {
                 apiResponse.AddAlert("error", $"Error sending confirmation email: {ex.Message}");
             }
+        }
+        public string CreateJsonWebToken(int userId)
+        {
+            JwtSecurityTokenHandler tokenHandler = new();
+            string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
+            if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
+            byte[] key = Encoding.ASCII.GetBytes(secret);
+            SecurityTokenDescriptor tokenDescriptor = new()
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.Name, userId.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

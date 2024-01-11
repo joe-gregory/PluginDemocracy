@@ -159,6 +159,12 @@ The Plugin Democracy Team </value>
   <data name="PasswordCantBeEmpty" xml:space="preserve">
     <value>Wrong password</value>
   </data>
+  <data name="ResetPasswordEmailBody" xml:space="preserve">
+    <value>Follow this link to reset your password:</value>
+  </data>
+  <data name="ResetPasswordEmailSubject" xml:space="preserve">
+    <value>Reset Password for Plugin Democracy</value>
+  </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Unable to create new user</value>
   </data>

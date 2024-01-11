@@ -20,5 +20,7 @@
         public static string EmailNotFound => "EmailNotFound";
         public static string PasswordMismatch => "PasswordMismatch";
         public static string YouHaveLoggedIn => "YouHaveLoggedIn";
+        public static string ResetPasswordEmailSubject => "ResetPasswordEmailSubject";
+        public static string ResetPasswordEmailBody => "ResetPasswordEmailBody";
     }
 }

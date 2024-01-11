@@ -12,6 +12,10 @@ using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 using PluginDemocracy.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -153,8 +157,33 @@ namespace PluginDemocracy.API.Controllers
                 return Ok(apiResponse);
             }
         }
+        [HttpPost("sendforgotpasswordemail")]
+        public async Task<ActionResult<PDAPIResponse>> ForgotPassword(LoginInfoDto loginInfo)
+        {
+            PDAPIResponse response = new();
+            //Generate a secure, unique token. It should expire after a certain time and should contain information about the user.
+            //Ensure that a user exists with the given email.
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
+            if(existingUser != null)
+            {
+                _utilityClass.CreateJsonWebToken(existingUser.Id);
+                //Create link to send to user. It should point to the app
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ForgotPassword}?userId={existingUser.Id}&token={existingUser.EmailConfirmationToken}";
+                //Send an email with a link to reset the password.
+                try
+                {
+                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSubject, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailBody, existingUser.Culture) + $"/n<a href=\"{link}\">{link}</a>");
+                }
+                catch(Exception ex)
+                {
+                    response.AddAlert("error", $"Unable to send email\nError:\n{ex.Message}");
+                    return StatusCode(500, response);
+                }
+            }
+            //LO QUE SIGUE ES ENVIAR PDAPIResponse diciendo que si existe el correo se envio el link para resetear la contraseña
 
-        //SCAFFOLDING: 
+        }
+        ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()

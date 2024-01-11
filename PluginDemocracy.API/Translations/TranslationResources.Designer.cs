@@ -175,6 +175,24 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Follow this link to reset your password:.
+        /// </summary>
+        public static string ResetPasswordEmailBody {
+            get {
+                return ResourceManager.GetString("ResetPasswordEmailBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Password for Plugin Democracy.
+        /// </summary>
+        public static string ResetPasswordEmailSubject {
+            get {
+                return ResourceManager.GetString("ResetPasswordEmailSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to create new user.
         /// </summary>
         public static string UnableToCreateNewUser {

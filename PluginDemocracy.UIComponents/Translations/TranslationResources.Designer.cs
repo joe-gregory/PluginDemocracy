@@ -160,6 +160,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Forgot password?.
+        /// </summary>
+        internal static string ForgotPassword_ {
+            get {
+                return ResourceManager.GetString("ForgotPassword?", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to History.
         /// </summary>
         internal static string History {
@@ -345,6 +354,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string SelectCulture {
             get {
                 return ResourceManager.GetString("SelectCulture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Password Reset Link.
+        /// </summary>
+        internal static string SendPasswordResetLink {
+            get {
+                return ResourceManager.GetString("SendPasswordResetLink", resourceCulture);
             }
         }
         

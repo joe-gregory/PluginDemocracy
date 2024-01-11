@@ -150,6 +150,9 @@
   <data name="FirstName" xml:space="preserve">
     <value>First name</value>
   </data>
+  <data name="ForgotPassword?" xml:space="preserve">
+    <value>Forgot password?</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
   </data>
@@ -212,6 +215,9 @@
   </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Select culture</value>
+  </data>
+  <data name="SendPasswordResetLink" xml:space="preserve">
+    <value>Send Password Reset Link</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>

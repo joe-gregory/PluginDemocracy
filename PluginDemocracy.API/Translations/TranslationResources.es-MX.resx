@@ -159,6 +159,12 @@ El equipo de Democracia Conectada</value>
   <data name="PasswordMismatch" xml:space="preserve">
     <value>La contraseña es incorrecta</value>
   </data>
+  <data name="ResetPasswordEmailBody" xml:space="preserve">
+    <value>Sigue este enlace para cambiar tu contraseña</value>
+  </data>
+  <data name="ResetPasswordEmailSubject" xml:space="preserve">
+    <value>Reestablecer contraseña para Democracia Conectada</value>
+  </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Error creando nuevo usuario</value>
   </data>

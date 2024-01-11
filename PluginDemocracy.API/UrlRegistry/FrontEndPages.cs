@@ -8,5 +8,6 @@
         public static readonly string ConfirmEmail = "/confirmemail";
         public static readonly string Login = "/login";
         public static readonly string Community = "/community";
+        public static readonly string ForgotPassword = "/forgotpassword";
     }
 }
