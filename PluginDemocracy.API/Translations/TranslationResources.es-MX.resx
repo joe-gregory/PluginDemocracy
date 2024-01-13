@@ -162,6 +162,12 @@ El equipo de Democracia Conectada</value>
   <data name="ResetPasswordEmailBody" xml:space="preserve">
     <value>Sigue este enlace para cambiar tu contraseña</value>
   </data>
+  <data name="ResetPasswordEmailSentBody" xml:space="preserve">
+    <value>Si existe una cuenta con el correo electronico especificado, se ha enviado un link para resetear la contraseña.</value>
+  </data>
+  <data name="ResetPasswordEmailSentTitle" xml:space="preserve">
+    <value>Correo con link para resetear contraseña ha sido enviado</value>
+  </data>
   <data name="ResetPasswordEmailSubject" xml:space="preserve">
     <value>Reestablecer contraseña para Democracia Conectada</value>
   </data>

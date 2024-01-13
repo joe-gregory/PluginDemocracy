@@ -12,7 +12,7 @@
         <MudTextField T="string" Label="@AppState.Translate("LastName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@userDto.LastName" Variant="Variant.Outlined" />
         <MudTextField T="string" Label="@AppState.Translate("SecondLastName")" Required="false" @bind-Value="@userDto.SecondLastName" Variant="Variant.Outlined" />
         <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="userDto.Email" Variant="Variant.Outlined" />
-        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true" RequiredError="Password is required!" @bind-Value="userDto.Password" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(Services.PasswordStrength))" Required="true" RequiredError="Password is required!" @bind-Value="userDto.Password" Variant="Variant.Outlined" />
         <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColorPhone" CheckedChanged="OnPhoneSwitchToggled" Disabled="@disabled">@AppState.Translate("CountryCode") : @countryCode <img src="@selectedFlagPhone" height="14" class="mr-1" /></MudSwitch>
         <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="phoneNumber" Variant="Variant.Outlined" Counter="10" MaxLength="10" HelperText="Cel" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="@phoneAdornmentColor" />
         <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="userDto.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
@@ -115,23 +115,6 @@
     bool success;
     string[] errors = { };
     MudTextField<string>? pwField1;
-
-    private IEnumerable<string> PasswordStrength(string pw)
-    {
-        if (string.IsNullOrWhiteSpace(pw))
-        {
-            yield return "Password is required!";
-            yield break;
-        }
-        if (pw.Length < 7)
-            yield return "Password must be at least of length 7";
-        // if (!Regex.IsMatch(pw, @"[A-Z]"))
-        //     yield return "Password must contain at least one capital letter";
-        // if (!Regex.IsMatch(pw, @"[a-z]"))
-        //     yield return "Password must contain at least one lowercase letter";
-        // if (!Regex.IsMatch(pw, @"[0-9]"))
-        //     yield return "Password must contain at least one digit";
-    }
 
     private async void PostForm()
     {

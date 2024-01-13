@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 using PluginDemocracy.DTOs;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -37,19 +27,19 @@ namespace PluginDemocracy.API.Controllers
 
             //Create new User object
             User newUser = UserDto.ReturnUserFromUserDto(registeringUser);
-            
+
             //hash password && assign
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
 
             // Save the new user to the context
             _context.Users.Add(newUser);
-            try 
+            try
             {
                 await _context.SaveChangesAsync();
                 apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewUserCreated, newUser.Culture));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.UnableToCreateNewUser, newUser.Culture) + $"Error: {ex.Message}");
                 //Return here if unable to save user. 
@@ -72,7 +62,7 @@ namespace PluginDemocracy.API.Controllers
 
             //Look up user by email
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
-            if(existingUser == null)
+            if (existingUser == null)
             {
                 apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
                 return BadRequest(apiResponse);
@@ -82,7 +72,7 @@ namespace PluginDemocracy.API.Controllers
             //Compare passwords
             PasswordHasher<User> _passwordHasher = new();
             PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.HashedPassword, loginInfo.Password);
-            if(result == PasswordVerificationResult.Failed)
+            if (result == PasswordVerificationResult.Failed)
             {
                 apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordMismatch, loginInfo.Culture));
                 return BadRequest(apiResponse);
@@ -107,7 +97,7 @@ namespace PluginDemocracy.API.Controllers
 
             User? existingUser = await _context.FindAsync<User>(userId);
 
-            if(existingUser == null)
+            if (existingUser == null)
             {
                 apiResponse.AddAlert("error", "User not found");
                 apiResponse.RedirectParameters["Title"] = _utilityClass.GetAllTranslationsInNewLines("UserNotFound");
@@ -122,7 +112,7 @@ namespace PluginDemocracy.API.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    
+
                     //Add Messages saying the email was confirmed
                     apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
                     apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
@@ -141,12 +131,12 @@ namespace PluginDemocracy.API.Controllers
                         return Ok(apiResponse);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     apiResponse.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
                     return StatusCode(500, apiResponse);
                 }
-                
+
             }
             //If user exists but the confirmationToken does not match
             else
@@ -164,25 +154,68 @@ namespace PluginDemocracy.API.Controllers
             //Generate a secure, unique token. It should expire after a certain time and should contain information about the user.
             //Ensure that a user exists with the given email.
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
-            if(existingUser != null)
+            if (existingUser != null)
             {
                 _utilityClass.CreateJsonWebToken(existingUser.Id);
                 //Create link to send to user. It should point to the app
-                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ForgotPassword}?userId={existingUser.Id}&token={existingUser.EmailConfirmationToken}";
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ResetPassword}?token={existingUser.EmailConfirmationToken}";
                 //Send an email with a link to reset the password.
                 try
                 {
                     await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSubject, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailBody, existingUser.Culture) + $"/n<a href=\"{link}\">{link}</a>");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     response.AddAlert("error", $"Unable to send email\nError:\n{ex.Message}");
                     return StatusCode(500, response);
                 }
             }
-            //LO QUE SIGUE ES ENVIAR PDAPIResponse diciendo que si existe el correo se envio el link para resetear la contraseña
+            //enviar PDAPIResponse diciendo que si existe el correo se envio el link para resetear la contraseña
+            response.RedirectTo = FrontEndPages.GenericMessage;
+            response.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSentTitle, existingUser?.Culture ?? new CultureInfo("en-US"));
+            response.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSentBody, existingUser?.Culture ?? new CultureInfo("en-US"));
+            return Ok(response);
 
         }
+        [HttpPost("resetpassword")]
+        public async Task<ActionResult<PDAPIResponse>> ResetPassword(UserDto userDto, [FromQuery] string token)
+        {
+            //Unpack the token y checa que usuario es. Si todo se ve bien, save the new password in the corresponding user.
+            
+            ////LO QUE HIZO LA AI. HAVENT CHECKED IT OUT: 
+            //PDAPIResponse response = new();
+            ////Check if the token is valid
+            //User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == userDto.EmailConfirmationToken);
+            //if(existingUser == null)
+            //{
+            //    response.AddAlert("error", _utilityClass.Translate(ResourceKeys.InvalidToken, userDto.Culture));
+            //    return BadRequest(response);
+            //}
+            ////Check if the passwords match
+            //if(userDto.Password != userDto.ConfirmPassword)
+            //{
+            //    response.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordsDoNotMatch, userDto.Culture));
+            //    return BadRequest(response);
+            //}
+            ////Hash the password
+            //PasswordHasher<User> _passwordHasher = new();
+            //existingUser.HashedPassword = _passwordHasher.HashPassword(existingUser, userDto.Password);
+            ////Save the new password
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //    response.AddAlert("success", _utilityClass.Translate(ResourceKeys.PasswordReset, existingUser.Culture));
+            //    response.RedirectTo = FrontEndPages.GenericMessage;
+            //    response.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.PasswordReset, existingUser.Culture);
+            //    response.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.PasswordResetBody, existingUser.Culture);
+            //    return Ok(response);
+            //}
+            //catch(Exception ex)
+            //{
+            //    response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+            //    return StatusCode(500, response);
+            //}
+        }   
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
         // GET: api/Users
         [HttpGet]

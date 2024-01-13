@@ -22,5 +22,7 @@
         public static string YouHaveLoggedIn => "YouHaveLoggedIn";
         public static string ResetPasswordEmailSubject => "ResetPasswordEmailSubject";
         public static string ResetPasswordEmailBody => "ResetPasswordEmailBody";
+        public static string ResetPasswordEmailSentTitle => "ResetPasswordEmailSentTitle";
+        public static string ResetPasswordEmailSentBody => "ResetPasswordEmailSentBody";
     }
 }

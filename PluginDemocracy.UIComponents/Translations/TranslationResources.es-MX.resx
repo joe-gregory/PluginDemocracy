@@ -177,8 +177,14 @@
   <data name="MiddleName" xml:space="preserve">
     <value>Segundo nombre</value>
   </data>
+  <data name="NewPasswordTitle" xml:space="preserve">
+    <value>Inserte Nueva Contraseña</value>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Las contraseñas no coinciden</value>
   </data>
   <data name="PhoneNumber" xml:space="preserve">
     <value>Número de teléfono</value>

@@ -12,5 +12,6 @@
         public static readonly string ConfirmEmail = UsersController + "confirmemail";
         public static readonly string PostLogin = UsersController + "login";
         public static readonly string PostSendForgotPasswordEmail = UsersController + "sendforgotpasswordemail";
+        public static readonly string PostResetPassword = UsersController + "resetpassword";
     }
 }

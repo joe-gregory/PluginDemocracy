@@ -184,6 +184,24 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If there is an account with the specified email address, a reset password link has been sent to the inbox. .
+        /// </summary>
+        public static string ResetPasswordEmailSentBody {
+            get {
+                return ResourceManager.GetString("ResetPasswordEmailSentBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset password link sent to email address.
+        /// </summary>
+        public static string ResetPasswordEmailSentTitle {
+            get {
+                return ResourceManager.GetString("ResetPasswordEmailSentTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset Password for Plugin Democracy.
         /// </summary>
         public static string ResetPasswordEmailSubject {

@@ -2,12 +2,13 @@
 {
     public static class FrontEndPages
     {
-        public static readonly string Home = "/";
-        public static readonly string GenericMessage = "/message";
-        public static readonly string SignUp = "/signup";
-        public static readonly string ConfirmEmail = "/confirmemail";
-        public static readonly string Login = "/login";
-        public static readonly string Community = "/community";
-        public static readonly string ForgotPassword = "/forgotpassword";
+        public const string Home = "/";
+        public const string GenericMessage = "/message";
+        public const string SignUp = "/signup";
+        public const string ConfirmEmail = "/confirmemail";
+        public const string Login = "/login";
+        public const string Community = "/community";
+        public const string ForgotPassword = "/forgotpassword";
+        public const string ResetPassword = "/resetpassword";
     }
 }

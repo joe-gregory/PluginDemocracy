@@ -107,5 +107,21 @@ namespace PluginDemocracy.UIComponents
             _appState.LogOut();
             NavigateTo(FrontEndPages.Home);
         }
+       public IEnumerable<string> PasswordStrength(string pw)
+        {
+            if (string.IsNullOrWhiteSpace(pw))
+            {
+                yield return "Password is required!";
+                yield break;
+            }
+            if (pw.Length < 7)
+                yield return "Password must be at least of length 7";
+            // if (!Regex.IsMatch(pw, @"[A-Z]"))
+            //     yield return "Password must contain at least one capital letter";
+            // if (!Regex.IsMatch(pw, @"[a-z]"))
+            //     yield return "Password must contain at least one lowercase letter";
+            // if (!Regex.IsMatch(pw, @"[0-9]"))
+            //     yield return "Password must contain at least one digit";
+        }
     }
 }
