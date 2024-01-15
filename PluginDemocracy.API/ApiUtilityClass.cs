@@ -127,5 +127,33 @@ namespace PluginDemocracy.API
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        public int? ReturnUserIdFromJsonWebToken(string token)
+        {
+            JwtSecurityTokenHandler tokenHandler = new();
+            //Determines if the string is a well formed Json Web Token (JWT).
+            if (!tokenHandler.CanReadToken(token)) return null;
+            
+            //Ensure I sent this token using the security key
+            string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
+            if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
+            byte[] key = Encoding.ASCII.GetBytes(secret);
+
+            TokenValidationParameters tokenValidationParameters = new()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false, //Issuer is the server that created the token
+                ValidateAudience = false, //Audience is the intended recipient of the token
+                ClockSkew = TimeSpan.Zero //ClockSkew is used to determine if a token is valid or not
+            };
+            SecurityToken validatedToken;
+            var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out validatedToken);
+
+            //Get the user Id
+            var jwtSecurityToken = tokenHandler.ReadJwtToken(token);
+            var userId = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+
+            return int.Parse(userId);
+        }
     }
 }

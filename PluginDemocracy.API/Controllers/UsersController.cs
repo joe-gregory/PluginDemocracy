@@ -180,41 +180,26 @@ namespace PluginDemocracy.API.Controllers
         [HttpPost("resetpassword")]
         public async Task<ActionResult<PDAPIResponse>> ResetPassword(UserDto userDto, [FromQuery] string token)
         {
+            PDAPIResponse response = new();
             //Unpack the token y checa que usuario es. Si todo se ve bien, save the new password in the corresponding user.
-            
-            ////LO QUE HIZO LA AI. HAVENT CHECKED IT OUT: 
-            //PDAPIResponse response = new();
-            ////Check if the token is valid
-            //User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == userDto.EmailConfirmationToken);
-            //if(existingUser == null)
-            //{
-            //    response.AddAlert("error", _utilityClass.Translate(ResourceKeys.InvalidToken, userDto.Culture));
-            //    return BadRequest(response);
-            //}
-            ////Check if the passwords match
-            //if(userDto.Password != userDto.ConfirmPassword)
-            //{
-            //    response.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordsDoNotMatch, userDto.Culture));
-            //    return BadRequest(response);
-            //}
-            ////Hash the password
-            //PasswordHasher<User> _passwordHasher = new();
-            //existingUser.HashedPassword = _passwordHasher.HashPassword(existingUser, userDto.Password);
-            ////Save the new password
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //    response.AddAlert("success", _utilityClass.Translate(ResourceKeys.PasswordReset, existingUser.Culture));
-            //    response.RedirectTo = FrontEndPages.GenericMessage;
-            //    response.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.PasswordReset, existingUser.Culture);
-            //    response.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.PasswordResetBody, existingUser.Culture);
-            //    return Ok(response);
-            //}
-            //catch(Exception ex)
-            //{
-            //    response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
-            //    return StatusCode(500, response);
-            //}
+            int? userId = _utilityClass.ReturnUserIdFromJsonWebToken(token);
+            if (userId == null)
+            {
+                response.AddAlert("error", "Returned null as userId in token");
+                return BadRequest(response);
+            }
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if(existingUser == null)
+            {
+                response.AddAlert("error", "User not found");
+                return BadRequest(response);
+            }
+
+            //hash password && assign
+            PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
+            existingUser.HashedPassword = _passwordHasher.HashPassword(existingUser, userDto.Password);
+            response.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewPasswordSuccess, existingUser.Culture));
+            return Ok(response);
         }   
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
         // GET: api/Users
