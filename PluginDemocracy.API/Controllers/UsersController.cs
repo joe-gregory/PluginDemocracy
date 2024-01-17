@@ -235,7 +235,40 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, response);
             }
             return Ok(response);
-        }   
+        }
+        [HttpPost("toggleuserculture")]
+        public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture(UserDto userDto)
+        {
+            PDAPIResponse response = new();
+            //Find user
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDto.Id);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User not found");
+                return BadRequest(response);
+            }
+            //Toggle culture
+            if (existingUser.Culture.Name == "en-US") existingUser.Culture = new CultureInfo("es-MX");
+            else if (existingUser.Culture.Name == "es-MX") existingUser.Culture = new CultureInfo("en-US");
+            else
+            {
+                response.AddAlert("error", "Culture not USA or MEX");
+                return BadRequest(response);
+            }
+            //Save changes
+            try
+            {
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "Culture changed successfully");
+                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+                return StatusCode(500, response);
+            }
+            return Ok(response);
+        }
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
         // GET: api/Users
         [HttpGet]

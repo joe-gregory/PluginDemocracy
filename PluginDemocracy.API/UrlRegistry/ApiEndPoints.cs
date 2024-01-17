@@ -13,5 +13,6 @@
         public static readonly string PostLogin = UsersController + "login";
         public static readonly string PostSendForgotPasswordEmail = UsersController + "sendforgotpasswordemail";
         public static readonly string PostResetPassword = UsersController + "resetpassword";
+        public static readonly string PostToggleUserCulture = UsersController + "toggleuserculture";
     }
 }

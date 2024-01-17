@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using PluginDemocracy.API.UrlRegistry;
+using PluginDemocracy.DTOs;
+using System.Drawing;
 
 namespace PluginDemocracy.UIComponents.Pages
 {
@@ -29,17 +31,35 @@ namespace PluginDemocracy.UIComponents.Pages
                 thumbIconColor = MudBlazor.Color.Success;
                 selectedFlag = mxnFlag;
             }
-            else 
+            else
             {
                 thumbIconColor = MudBlazor.Color.Info;
                 selectedFlag = usaFlag;
-            } 
+            }
         }
-        private void OnSwitchToggled()
+        private async Task OnSwitchToggled()
         {
-            _checked = !_checked;
-            if (_checked) AppState.SetCulture(new System.Globalization.CultureInfo("es-MX"));
-            else AppState.SetCulture(new System.Globalization.CultureInfo("en-US"));
+
+            if (AppState.IsLoggedIn)
+            {
+                try
+                {
+                    #pragma warning disable CS8604 // Possible null reference argument warning disabled because AppState.IsLoggedIn checks that AppState.User != null.
+                    await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture, AppState.User);
+                    _checked = !_checked;
+                }
+                catch(Exception ex)
+                {
+                    Services.AddSnackBarMessage("error", ex.Message);
+                }
+            }
+            else
+            {
+                _checked = !_checked;
+                if (_checked) AppState.SetCulture(new System.Globalization.CultureInfo("es-MX"));
+                else AppState.SetCulture(new System.Globalization.CultureInfo("en-US"));
+            }
+
             SetLook();
         }
     }

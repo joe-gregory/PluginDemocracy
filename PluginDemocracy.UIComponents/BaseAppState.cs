@@ -31,7 +31,7 @@ namespace PluginDemocracy.UIComponents
         public event Action? OnChange;
         public abstract bool HasInternet { get; protected set; }
         public UserDto? User { get; protected set; }
-        public bool LoggedIn { get => User != null; }
+        public bool IsLoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         //METHODS:
