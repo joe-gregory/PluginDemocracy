@@ -111,9 +111,11 @@ namespace PluginDemocracy.API
         public string CreateJsonWebToken(int userId)
         {
             JwtSecurityTokenHandler tokenHandler = new();
+            
             string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
             if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
             byte[] key = Encoding.ASCII.GetBytes(secret);
+
             SecurityTokenDescriptor tokenDescriptor = new()
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -130,14 +132,15 @@ namespace PluginDemocracy.API
         public int? ReturnUserIdFromJsonWebToken(string token)
         {
             JwtSecurityTokenHandler tokenHandler = new();
-            //Determines if the string is a well formed Json Web Token (JWT).
-            if (!tokenHandler.CanReadToken(token)) return null;
-            
-            //Ensure I sent this token using the security key
+
             string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
             if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
             byte[] key = Encoding.ASCII.GetBytes(secret);
 
+            //Determines if the string is a well formed Json Web Token (JWT).
+            if (!tokenHandler.CanReadToken(token)) return null;
+            
+            //Ensure I sent this token using the security key
             TokenValidationParameters tokenValidationParameters = new()
             {
                 ValidateIssuerSigningKey = true,
@@ -146,14 +149,39 @@ namespace PluginDemocracy.API
                 ValidateAudience = false, //Audience is the intended recipient of the token
                 ClockSkew = TimeSpan.Zero //ClockSkew is used to determine if a token is valid or not
             };
-            SecurityToken validatedToken;
-            var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out validatedToken);
+            ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
             //Get the user Id
-            var jwtSecurityToken = tokenHandler.ReadJwtToken(token);
-            var userId = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+            JwtSecurityToken jwtSecurityToken = tokenHandler.ReadJwtToken(token);
+            //string userId = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
+            // Instead of using ClaimTypes.Name, I'm using the string I found using a website. Not sure why I can't use ClaimTypes.Name
+            string userId = jwtSecurityToken.Claims.First(claim => claim.Type == "unique_name").Value;
 
             return int.Parse(userId);
+        }
+        /// <summary>
+        /// Will return true when the token has expired
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>k
+        /// 
+        public bool HasJWTExpired(string token)
+        {
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtToken;
+
+            jwtToken = tokenHandler.ReadJwtToken(token);
+
+            if(jwtToken == null) throw new Exception("JWT token is null");
+
+            //Extract expiration claim
+            var expClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp);
+            if(expClaim == null) throw new Exception("JWT token does not have an expiration claim");
+
+            var expTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expClaim.Value));
+
+            return expTime < DateTimeOffset.UtcNow;
         }
     }
 }

@@ -25,5 +25,7 @@
         public static string ResetPasswordEmailSentTitle => "ResetPasswordEmailSentTitle";
         public static string ResetPasswordEmailSentBody => "ResetPasswordEmailSentBody";
         public static string NewPasswordSuccess => "NewPasswordSuccess";
+        public static string SuccessfullyUpdatedPasswordTitle => "SuccessfullyUpdatedPasswordTitle";
+        public static string SuccessfullyUpdatedPasswordBody => "SuccessfullyUpdatedPasswordBody";
     }
 }

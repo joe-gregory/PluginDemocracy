@@ -11,5 +11,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string NewPasswordTitle = "NewPasswordTitle";
         public const string PasswordsDoNotMatch = "PasswordsDoNotMatch";
         public const string Password = "Password";
+        public const string ForgotPassword = "ForgotPassword?";
+        public const string ChangePassword = "ChangePassword";
     }
 }

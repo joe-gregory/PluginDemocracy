@@ -126,6 +126,9 @@
   <data name="Accounting" xml:space="preserve">
     <value>Contabilidad</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar contraseña</value>
+  </data>
   <data name="Community" xml:space="preserve">
     <value>Comunidad</value>
   </data>

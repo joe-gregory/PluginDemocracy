@@ -174,6 +174,12 @@ El equipo de Democracia Conectada</value>
   <data name="ResetPasswordEmailSubject" xml:space="preserve">
     <value>Reestablecer contraseña para Democracia Conectada</value>
   </data>
+  <data name="SuccessfullyUpdatedPasswordBody" xml:space="preserve">
+    <value>Tu contraseña para Democracia Conectada ha sido exitosamente actualizada</value>
+  </data>
+  <data name="SuccessfullyUpdatedPasswordTitle" xml:space="preserve">
+    <value>Tu contraseña ha sido actualizada</value>
+  </data>
   <data name="UnableToCreateNewUser" xml:space="preserve">
     <value>Error creando nuevo usuario</value>
   </data>

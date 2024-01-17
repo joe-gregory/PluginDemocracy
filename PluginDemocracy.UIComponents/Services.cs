@@ -46,6 +46,12 @@ namespace PluginDemocracy.UIComponents
             try
             {
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
+                ///DEL///
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("HERE");
+                Console.WriteLine(responseBody);
+                Console.WriteLine("END HERE");
+                ///DEL UP TO HERE///
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)

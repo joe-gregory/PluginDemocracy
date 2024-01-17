@@ -156,9 +156,9 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
             if (existingUser != null)
             {
-                _utilityClass.CreateJsonWebToken(existingUser.Id);
+                string token = _utilityClass.CreateJsonWebToken(existingUser.Id);
                 //Create link to send to user. It should point to the app
-                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ResetPassword}?token={existingUser.EmailConfirmationToken}";
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ResetPassword}?token={token}";
                 //Send an email with a link to reset the password.
                 try
                 {
@@ -178,27 +178,62 @@ namespace PluginDemocracy.API.Controllers
 
         }
         [HttpPost("resetpassword")]
-        public async Task<ActionResult<PDAPIResponse>> ResetPassword(UserDto userDto, [FromQuery] string token)
+        public async Task<ActionResult<PDAPIResponse>> ResetPassword(LoginInfoDto loginInfoDto, [FromQuery] string token)
         {
             PDAPIResponse response = new();
+
+            //Make sure token hasn't expired
+            try
+            {
+                if(_utilityClass.HasJWTExpired(token))
+                {
+                    response.AddAlert("error", "Token has expired");
+                    return BadRequest(response);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Error checking if token has expired\nError:\n{ex.Message}");
+                return StatusCode(500, response);
+            }
+
             //Unpack the token y checa que usuario es. Si todo se ve bien, save the new password in the corresponding user.
             int? userId = _utilityClass.ReturnUserIdFromJsonWebToken(token);
+
             if (userId == null)
             {
                 response.AddAlert("error", "Returned null as userId in token");
                 return BadRequest(response);
             }
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if(existingUser == null)
+            if(existingUser == null || loginInfoDto.Password == null)
             {
-                response.AddAlert("error", "User not found");
+                response.AddAlert("error", "User not found or loginInfoDto.Password is null");
                 return BadRequest(response);
             }
 
             //hash password && assign
-            PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
-            existingUser.HashedPassword = _passwordHasher.HashPassword(existingUser, userDto.Password);
-            response.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewPasswordSuccess, existingUser.Culture));
+            PasswordHasher<User> _passwordHasher = new();
+            existingUser.HashedPassword = _passwordHasher.HashPassword(existingUser, loginInfoDto.Password);
+            try
+            {
+                _context.SaveChanges();
+                //Alert success message
+                response.AddAlert("success", _utilityClass.Translate(ResourceKeys.NewPasswordSuccess, existingUser.Culture));
+                //Redirect page and message
+                response.RedirectTo = FrontEndPages.GenericMessage;
+                response.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.SuccessfullyUpdatedPasswordTitle, existingUser.Culture);
+                response.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.SuccessfullyUpdatedPasswordBody, existingUser.Culture);
+                //Send email
+                await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.SuccessfullyUpdatedPasswordTitle, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.SuccessfullyUpdatedPasswordBody, existingUser.Culture));
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+                response.RedirectTo = FrontEndPages.Home;
+                return StatusCode(500, response);
+            }
             return Ok(response);
         }   
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////

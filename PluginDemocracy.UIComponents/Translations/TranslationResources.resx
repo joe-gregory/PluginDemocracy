@@ -126,6 +126,9 @@
   <data name="Accounting" xml:space="preserve">
     <value>Accounting</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
   <data name="Community" xml:space="preserve">
     <value>Community</value>
   </data>

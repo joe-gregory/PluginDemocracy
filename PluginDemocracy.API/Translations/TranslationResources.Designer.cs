@@ -220,6 +220,24 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your login password for Plugin Democracy has been successfully updated.
+        /// </summary>
+        public static string SuccessfullyUpdatedPasswordBody {
+            get {
+                return ResourceManager.GetString("SuccessfullyUpdatedPasswordBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password has been updated.
+        /// </summary>
+        public static string SuccessfullyUpdatedPasswordTitle {
+            get {
+                return ResourceManager.GetString("SuccessfullyUpdatedPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to create new user.
         /// </summary>
         public static string UnableToCreateNewUser {
