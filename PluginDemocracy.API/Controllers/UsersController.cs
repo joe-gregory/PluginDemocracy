@@ -269,6 +269,42 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(response);
         }
+        [HttpPost("updateaccount")]
+        public async Task<ActionResult<PDAPIResponse>> UpdateAccount(UserDto userDto)
+        {
+            PDAPIResponse response = new();
+            //Find user
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDto.Id);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User not found");
+                return BadRequest(response);
+            }
+            //Update user
+            existingUser.FirstName = userDto.FirstName;
+            existingUser.MiddleName = userDto.MiddleName;
+            existingUser.LastName = userDto.LastName;
+            existingUser.SecondLastName = userDto.SecondLastName;
+            existingUser.Email = userDto.Email;
+            existingUser.PhoneNumber = userDto.PhoneNumber;
+            existingUser.Address = userDto.Address;
+            existingUser.DateOfBirth = userDto.DateOfBirth;
+            existingUser.Culture = userDto.Culture;
+            //Save changes
+            try
+            {
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "Account updated successfully");
+                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+                return StatusCode(500, response);
+            }
+            return Ok(response);
+        }
+
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
         // GET: api/Users
         [HttpGet]

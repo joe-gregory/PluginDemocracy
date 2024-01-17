@@ -421,6 +421,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Account Information.
+        /// </summary>
+        internal static string UpdateAccountInformation {
+            get {
+                return ResourceManager.GetString("UpdateAccountInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         internal static string User {

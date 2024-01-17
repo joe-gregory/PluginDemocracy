@@ -162,6 +162,9 @@ The Plugin Democracy Team </value>
   <data name="PasswordCantBeEmpty" xml:space="preserve">
     <value>Wrong password</value>
   </data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>Password does not match</value>
+  </data>
   <data name="ResetPasswordEmailBody" xml:space="preserve">
     <value>Follow this link to reset your password:</value>
   </data>

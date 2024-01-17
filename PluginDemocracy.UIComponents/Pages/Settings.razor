@@ -1,9 +1,38 @@
 ﻿@inject BaseAppState AppState
 @inject Services Services
 @using System.Globalization
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
 
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("Settings")</MudText>
 <MudText Typo="Typo.h4">@AppState.Translate("Language")</MudText>
 <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
-<MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
+<MudPaper Elevation="25" Variant="Variant.Outlined" Class="mt-5 mb-5">
+    <MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
+</MudPaper>
 
+@if (AppState.IsLoggedIn)
+{
+    <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.UpdateAccountInformation)</MudText>
+    <MudForm Model="@userDto" @bind-IsValid="@success" @bind-Errors="@errors">
+        <MudPaper Class="pa-4" Elevation="25">
+            <MudTextField T="string" Label="@AppState.Translate("FirstName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@userDto.FirstName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("MiddleName")" Required="false" @bind-Value="@userDto.MiddleName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("LastName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@userDto.LastName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("SecondLastName")" Required="false" @bind-Value="@userDto.SecondLastName" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="userDto.Email" Variant="Variant.Outlined" />
+            <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="userDto.PhoneNumber" Variant="Variant.Outlined" Counter="13" MaxLength="13" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="@MudBlazor.Color.Info" />
+            <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="userDto.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@disable" Class="mt-5" OnClick="PostForm">@AppState.Translate("Register")</MudButton>
+        </MudPaper>
+    </MudForm>
+}
+
+@code
+{
+    UserDto userDto = new();
+
+    bool success = false;
+    string[] errors = { };
+    private bool disable = false
+}

@@ -22,6 +22,23 @@ namespace PluginDemocracy.UIComponents.Pages
             else if (AppState.Culture.Name == "en-US") _checked = false;
             else disabled = true;
             SetLook();
+            if(AppState.IsLoggedIn)
+            {
+                #pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
+                userDto.FirstName = AppState.User.FirstName;
+                #pragma warning restore CS8602 // Dereference of a possibly null reference.
+                userDto.MiddleName = AppState.User.MiddleName;
+                userDto.LastName = AppState.User.LastName;
+                userDto.SecondLastName = AppState.User.SecondLastName;
+                userDto.Email = AppState.User.Email;
+                userDto.Password = AppState.User.Password;
+                userDto.PhoneNumber = AppState.User.PhoneNumber;
+                userDto.Address = AppState.User.Address;
+                userDto.DateOfBirth = AppState.User.DateOfBirth;
+                userDto.Culture = AppState.User.Culture;
+                userDto.Admin = AppState.User.Admin;
+            };
+            
         }
         private void SetLook()
         {
@@ -46,6 +63,7 @@ namespace PluginDemocracy.UIComponents.Pages
                 {
                     #pragma warning disable CS8604 // Possible null reference argument warning disabled because AppState.IsLoggedIn checks that AppState.User != null.
                     await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture, AppState.User);
+                    #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     _checked = !_checked;
                 }
                 catch(Exception ex)
@@ -59,8 +77,12 @@ namespace PluginDemocracy.UIComponents.Pages
                 if (_checked) AppState.SetCulture(new System.Globalization.CultureInfo("es-MX"));
                 else AppState.SetCulture(new System.Globalization.CultureInfo("en-US"));
             }
-
             SetLook();
+        }
+        private async void PostForm()
+        {
+            disable = true;
+            Services.PostDataAsync<UserDto>(cualEsElEndPoint, userDto);
         }
     }
 }

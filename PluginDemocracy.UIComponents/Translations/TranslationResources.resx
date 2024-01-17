@@ -237,6 +237,9 @@
   <data name="Spanish" xml:space="preserve">
     <value>Spanish</value>
   </data>
+  <data name="UpdateAccountInformation" xml:space="preserve">
+    <value>Update Account Information</value>
+  </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>

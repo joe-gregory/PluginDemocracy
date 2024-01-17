@@ -13,5 +13,6 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Password = "Password";
         public const string ForgotPassword = "ForgotPassword?";
         public const string ChangePassword = "ChangePassword";
+        public const string UpdateAccountInformation = "UpdateAccountInformation";
     }
 }
