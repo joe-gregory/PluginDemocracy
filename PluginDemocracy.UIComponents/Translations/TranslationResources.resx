@@ -192,6 +192,9 @@
   <data name="PhoneNumber" xml:space="preserve">
     <value>Phone number</value>
   </data>
+  <data name="PleaseConfirmEmailForFullFunctionality" xml:space="preserve">
+    <value>Please confirm your email for full functionality</value>
+  </data>
   <data name="PluginDemocracy" xml:space="preserve">
     <value>Plugin Democracy</value>
   </data>
@@ -237,8 +240,14 @@
   <data name="Spanish" xml:space="preserve">
     <value>Spanish</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
   <data name="UpdateAccountInformation" xml:space="preserve">
     <value>Update Account Information</value>
+  </data>
+  <data name="UpdateProfilePicture" xml:space="preserve">
+    <value>Update Profile Picture</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>

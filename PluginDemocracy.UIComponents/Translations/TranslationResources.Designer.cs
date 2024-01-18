@@ -286,6 +286,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please confirm your email for full functionality.
+        /// </summary>
+        internal static string PleaseConfirmEmailForFullFunctionality {
+            get {
+                return ResourceManager.GetString("PleaseConfirmEmailForFullFunctionality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Plugin Democracy.
         /// </summary>
         internal static string PluginDemocracy {
@@ -421,11 +430,29 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        internal static string Update {
+            get {
+                return ResourceManager.GetString("Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Account Information.
         /// </summary>
         internal static string UpdateAccountInformation {
             get {
                 return ResourceManager.GetString("UpdateAccountInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Profile Picture.
+        /// </summary>
+        internal static string UpdateProfilePicture {
+            get {
+                return ResourceManager.GetString("UpdateProfilePicture", resourceCulture);
             }
         }
         

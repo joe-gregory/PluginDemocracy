@@ -44,8 +44,7 @@ namespace PluginDemocracy.UIComponents
             ApiResponse = new();
         }
         protected void NotifyStateChanged() => OnChange?.Invoke();
-        
-        public void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
+        protected void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

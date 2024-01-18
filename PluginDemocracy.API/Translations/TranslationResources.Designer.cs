@@ -61,6 +61,15 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account updated successfully.
+        /// </summary>
+        public static string AccountUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("AccountUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please check your inbox to confirm your email.
         /// </summary>
         public static string ConfirmEmailCheckInbox {
@@ -102,6 +111,15 @@ namespace PluginDemocracy.API.Translations {
         public static string ConfirmEmailTitle {
             get {
                 return ResourceManager.GetString("ConfirmEmailTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Culture updated successfully .
+        /// </summary>
+        public static string CultureUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("CultureUpdatedSuccessfully", resourceCulture);
             }
         }
         

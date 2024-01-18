@@ -14,5 +14,8 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string ForgotPassword = "ForgotPassword?";
         public const string ChangePassword = "ChangePassword";
         public const string UpdateAccountInformation = "UpdateAccountInformation";
+        public const string Update = "Update";
+        public const string PleaseConfirmEmailForFullFunctionality = "PleaseConfirmEmailForFullFunctionality";
+        public const string UpdateProfilePicture = "UpdateProfilePicture";
     }
 }

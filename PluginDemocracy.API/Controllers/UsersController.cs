@@ -6,6 +6,7 @@ using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 using PluginDemocracy.DTOs;
+using Azure.Storage.Blobs;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -79,7 +80,7 @@ namespace PluginDemocracy.API.Controllers
             }
             else
             {
-                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, loginInfo.Culture));
+                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
                 //Convert User to UserDto
                 apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
                 //Redirect to home feed after login in or join community page if no community
@@ -259,7 +260,7 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-                response.AddAlert("success", "Culture changed successfully");
+                response.AddAlert("success", _utilityClass.Translate(ResourceKeys.CultureUpdatedSuccessfully, existingUser.Culture));
                 response.User = UserDto.ReturnUserDtoFromUser(existingUser);
             }
             catch (Exception ex)
@@ -285,16 +286,24 @@ namespace PluginDemocracy.API.Controllers
             existingUser.MiddleName = userDto.MiddleName;
             existingUser.LastName = userDto.LastName;
             existingUser.SecondLastName = userDto.SecondLastName;
-            existingUser.Email = userDto.Email;
             existingUser.PhoneNumber = userDto.PhoneNumber;
             existingUser.Address = userDto.Address;
             existingUser.DateOfBirth = userDto.DateOfBirth;
             existingUser.Culture = userDto.Culture;
+            if(existingUser.Email != userDto.Email)
+            {
+                existingUser.Email = userDto.Email;
+                existingUser.EmailConfirmed = false;
+                //Send confirmation email
+                await _utilityClass.SendConfirmationEmail(existingUser, response);
+                response.AddAlert("info", _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, existingUser.Culture));       
+            }
             //Save changes
             try
             {
                 await _context.SaveChangesAsync();
-                response.AddAlert("success", "Account updated successfully");
+                response.AddAlert("success", _utilityClass.Translate(ResourceKeys.AccountUpdatedSuccessfully, existingUser.Culture));
+                //Attach user data to response object
                 response.User = UserDto.ReturnUserDtoFromUser(existingUser);
             }
             catch (Exception ex)
@@ -303,6 +312,13 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, response);
             }
             return Ok(response);
+        }
+        [HttpPost("updateprofilepicture")]
+        public async Task<PDAPIResponse>> UpdateProfilePicture(Stream fileStream, UserDto userDto)
+        {
+            string sasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+            if (string.IsNullOrEmpty(sasToken)) throw new Exception("JBlobSASToken is null or empty");
+            //BlobSASURL <- other key
         }
 
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////

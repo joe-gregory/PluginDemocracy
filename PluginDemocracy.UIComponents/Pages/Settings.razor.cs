@@ -1,4 +1,5 @@
-﻿using PluginDemocracy.API.UrlRegistry;
+﻿using Humanizer.Localisation;
+using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Drawing;
 
@@ -12,6 +13,10 @@ namespace PluginDemocracy.UIComponents.Pages
         private string selectedFlag = string.Empty;
         private const string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
         private const string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
+        private UserDto userDto = new();
+        bool success = false;
+        string[] errors = [];
+        private bool disable = false;
         /// <summary>
         /// Checked true equals es-MX, not checked false = USA
         /// </summary>
@@ -22,11 +27,12 @@ namespace PluginDemocracy.UIComponents.Pages
             else if (AppState.Culture.Name == "en-US") _checked = false;
             else disabled = true;
             SetLook();
-            if(AppState.IsLoggedIn)
+            if (AppState.IsLoggedIn)
             {
-                #pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
+#pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
+                userDto.Id = AppState.User.Id;
                 userDto.FirstName = AppState.User.FirstName;
-                #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 userDto.MiddleName = AppState.User.MiddleName;
                 userDto.LastName = AppState.User.LastName;
                 userDto.SecondLastName = AppState.User.SecondLastName;
@@ -37,8 +43,8 @@ namespace PluginDemocracy.UIComponents.Pages
                 userDto.DateOfBirth = AppState.User.DateOfBirth;
                 userDto.Culture = AppState.User.Culture;
                 userDto.Admin = AppState.User.Admin;
+                if(AppState.User.EmailConfirmed != true) Services.AddSnackBarMessage("info", AppState.Translate(Translations.ResourceKeys.PleaseConfirmEmailForFullFunctionality));
             };
-            
         }
         private void SetLook()
         {
@@ -61,12 +67,12 @@ namespace PluginDemocracy.UIComponents.Pages
             {
                 try
                 {
-                    #pragma warning disable CS8604 // Possible null reference argument warning disabled because AppState.IsLoggedIn checks that AppState.User != null.
+#pragma warning disable CS8604 // Possible null reference argument warning disabled because AppState.IsLoggedIn checks that AppState.User != null.
                     await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture, AppState.User);
-                    #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     _checked = !_checked;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Services.AddSnackBarMessage("error", ex.Message);
                 }
@@ -82,7 +88,14 @@ namespace PluginDemocracy.UIComponents.Pages
         private async void PostForm()
         {
             disable = true;
-            Services.PostDataAsync<UserDto>(cualEsElEndPoint, userDto);
+            await Services.PostDataAsync<UserDto>(ApiEndPoints.PostUpdateAccount, userDto);
+            disable = false;
+        }
+        private async void UpdateProfilePicture()
+        {
+            disable = true;
+            await Services.PostDataAsync<UserDto>("", userDto);
+            disable = false;
         }
     }
 }

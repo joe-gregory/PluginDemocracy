@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccountUpdatedSuccessfully" xml:space="preserve">
+    <value>Información ha sido actualizada exitosamente</value>
+  </data>
   <data name="ConfirmEmailCheckInbox" xml:space="preserve">
     <value>Por favor cheque su inbox para confirmar su correo electronico</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="ConfirmEmailTitle" xml:space="preserve">
     <value>Por favor confirma tu correo electrónico</value>
+  </data>
+  <data name="CultureUpdatedSuccessfully" xml:space="preserve">
+    <value>Su cultura se ha actualizado exitosamente</value>
   </data>
   <data name="EmailNotFound" xml:space="preserve">
     <value>No se encontro ningun usuario con este correo electronico</value>

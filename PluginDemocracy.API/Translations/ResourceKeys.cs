@@ -27,5 +27,7 @@
         public static string NewPasswordSuccess => "NewPasswordSuccess";
         public static string SuccessfullyUpdatedPasswordTitle => "SuccessfullyUpdatedPasswordTitle";
         public static string SuccessfullyUpdatedPasswordBody => "SuccessfullyUpdatedPasswordBody";
+        public static string AccountUpdatedSuccessfully => "AccountUpdatedSuccessfully";
+        public static string CultureUpdatedSuccessfully => "CultureUpdatedSuccessfully";
     }
 }

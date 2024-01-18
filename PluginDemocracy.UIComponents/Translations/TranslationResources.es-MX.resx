@@ -192,6 +192,9 @@
   <data name="PhoneNumber" xml:space="preserve">
     <value>Número de teléfono</value>
   </data>
+  <data name="PleaseConfirmEmailForFullFunctionality" xml:space="preserve">
+    <value>Favor de verificar su correo electronico para poder tener acceso a toda la aplicacion.</value>
+  </data>
   <data name="PluginDemocracy" xml:space="preserve">
     <value>Democracia Conectada</value>
   </data>
@@ -237,8 +240,14 @@
   <data name="Spanish" xml:space="preserve">
     <value>Español</value>
   </data>
+  <data name="Update" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
   <data name="UpdateAccountInformation" xml:space="preserve">
     <value>Actualiza la informacion de tu cuenta</value>
+  </data>
+  <data name="UpdateProfilePicture" xml:space="preserve">
+    <value>Actualizar Foto de Perfil</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>Usuario</value>

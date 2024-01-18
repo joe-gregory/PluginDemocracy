@@ -5,15 +5,43 @@
 @using System.ComponentModel.DataAnnotations
 
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("Settings")</MudText>
-<MudText Typo="Typo.h4">@AppState.Translate("Language")</MudText>
-<MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
+    <MudText Typo="Typo.h4">@AppState.Translate("Language")</MudText>
+    <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
 <MudPaper Elevation="25" Variant="Variant.Outlined" Class="mt-5 mb-5">
     <MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
-</MudPaper>
+    </MudPaper>
 
 @if (AppState.IsLoggedIn)
 {
-    <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.UpdateAccountInformation)</MudText>
+    <MudPaper Class="mt-5 mb-5">
+        <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.UpdateProfilePicture)</MudText>
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <MudAvatar Style="height:200px;width:200px;">
+                @if (AppState.User != null)
+                {
+                    if (!string.IsNullOrEmpty(AppState.User.ProfilePicture))
+                    {
+                        <MudImage Src=@AppState.User.ProfilePicture />
+                    }
+                    else
+                    {
+                        <MudImage Src="https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png" />
+                    }
+                }
+            </MudAvatar>
+        </div>
+        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFile" MaximumFileCount="1">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id">
+                    @AppState.Translate(ResourceKeys.Update)
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+    </MudPaper>
+    
+
+
+    <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-5 mb-5">@AppState.Translate(ResourceKeys.UpdateAccountInformation)</MudText>
     <MudForm Model="@userDto" @bind-IsValid="@success" @bind-Errors="@errors">
         <MudPaper Class="pa-4" Elevation="25">
             <MudTextField T="string" Label="@AppState.Translate("FirstName")" Required="true" RequiredError="@AppState.Translate("Required")" @bind-Value="@userDto.FirstName" Variant="Variant.Outlined" />
@@ -22,17 +50,18 @@
             <MudTextField T="string" Label="@AppState.Translate("SecondLastName")" Required="false" @bind-Value="@userDto.SecondLastName" Variant="Variant.Outlined" />
             <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="userDto.Email" Variant="Variant.Outlined" />
             <MudTextField T="string" Label="@AppState.Translate("PhoneNumber")" Required="false" InputType="@InputType.Telephone" @bind-Value="userDto.PhoneNumber" Variant="Variant.Outlined" Counter="13" MaxLength="13" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Phone" AdornmentColor="@MudBlazor.Color.Info" />
-            <MudTextField T="DateTime?" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-bind-Value="userDto.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@disable" Class="mt-5" OnClick="PostForm">@AppState.Translate("Register")</MudButton>
-        </MudPaper>
-    </MudForm>
+            <MudTextField T="DateTime" Label="@AppState.Translate("DateOfBirth")" Format="yyyy-MM-dd" InputType="InputType.Date" Variant="Variant.Outlined" @bind-Value="userDto.DateOfBirth" Required="true" RequiredError="@AppState.Translate("Required")" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@disable" Class="mt-5" OnClick="PostForm">@AppState.Translate("Update")</MudButton>
+            </MudPaper>
+        </MudForm>
 }
 
-@code
-{
-    UserDto userDto = new();
+@code{
+    private IBrowserFile file = null;
+    private void UploadFile(IBrowserFile f)
+    {
+        file = f;
 
-    bool success = false;
-    string[] errors = { };
-    private bool disable = false
+    }
+
 }
