@@ -29,5 +29,6 @@
         public static string SuccessfullyUpdatedPasswordBody => "SuccessfullyUpdatedPasswordBody";
         public static string AccountUpdatedSuccessfully => "AccountUpdatedSuccessfully";
         public static string CultureUpdatedSuccessfully => "CultureUpdatedSuccessfully";
+        public static string ProfilePictureUpdated => "ProfilePictureUpdated";
     }
 }

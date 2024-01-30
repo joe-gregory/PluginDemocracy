@@ -15,5 +15,6 @@
         public static readonly string PostResetPassword = UsersController + "resetpassword";
         public static readonly string PostToggleUserCulture = UsersController + "toggleuserculture";
         public static readonly string PostUpdateAccount = UsersController + "updateaccount";
+        public static readonly string UpdateProfilePicture = UsersController + "updateprofilepicture";
     }
 }

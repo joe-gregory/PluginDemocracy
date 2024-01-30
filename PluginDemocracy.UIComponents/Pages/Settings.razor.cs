@@ -32,7 +32,7 @@ namespace PluginDemocracy.UIComponents.Pages
 #pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
                 userDto.Id = AppState.User.Id;
                 userDto.FirstName = AppState.User.FirstName;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference..
                 userDto.MiddleName = AppState.User.MiddleName;
                 userDto.LastName = AppState.User.LastName;
                 userDto.SecondLastName = AppState.User.SecondLastName;
@@ -94,7 +94,7 @@ namespace PluginDemocracy.UIComponents.Pages
         private async void UpdateProfilePicture()
         {
             disable = true;
-            await Services.PostDataAsync<UserDto>("", userDto);
+            await Services.PostDataAsync<UserDto>(ApiEndPoints.UpdateProfilePicture, userDto);
             disable = false;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
@@ -46,12 +47,40 @@ namespace PluginDemocracy.UIComponents
             try
             {
                 HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
-                ///DEL///
-                string responseBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("HERE");
-                Console.WriteLine(responseBody);
-                Console.WriteLine("END HERE");
-                ///DEL UP TO HERE///
+                return await CommunicationCommon(response);
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.ApiResponse = new();
+                _appState.IsLoading = false;
+                return _appState.ApiResponse;
+            }
+        }
+        public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + apiEndpoint;
+
+            // Use MultipartFormDataContent to send files
+            using var content = new MultipartFormDataContent();
+            await using var fileStream = browserFile.OpenReadStream();
+
+            var fileContent = new StreamContent(fileStream);
+            fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+            {
+                Name = "file",
+                FileName = browserFile.Name
+            };
+
+            content.Add(fileContent, "file");
+
+            string userIdValue = _appState.User?.Id?.ToString() ?? string.Empty;
+            if (!string.IsNullOrEmpty(userIdValue)) content.Add(new StringContent(userIdValue), "userId");
+
+            try
+            {
+                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)

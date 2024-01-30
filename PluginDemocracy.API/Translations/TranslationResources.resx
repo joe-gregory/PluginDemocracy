@@ -171,6 +171,9 @@ The Plugin Democracy Team </value>
   <data name="PasswordMismatch" xml:space="preserve">
     <value>Password does not match</value>
   </data>
+  <data name="ProfilePictureUpdated" xml:space="preserve">
+    <value>Profile picture updated successfully</value>
+  </data>
   <data name="ResetPasswordEmailBody" xml:space="preserve">
     <value>Follow this link to reset your password:</value>
   </data>

@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
-using PluginDemocracy.DTOs;
+using PluginDemocracy. DTOs;
 using Azure.Storage.Blobs;
+using Azure;
+using Azure.Storage.Blobs.Models;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -314,11 +316,59 @@ namespace PluginDemocracy.API.Controllers
             return Ok(response);
         }
         [HttpPost("updateprofilepicture")]
-        public async Task<PDAPIResponse>> UpdateProfilePicture(Stream fileStream, UserDto userDto)
+        public async Task<PDAPIResponse> UpdateProfilePicture(IFormFile file, int userId)
         {
-            string sasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
-            if (string.IsNullOrEmpty(sasToken)) throw new Exception("JBlobSASToken is null or empty");
-            //BlobSASURL <- other key
+            PDAPIResponse response = new();
+
+            //Make sure it is the correct type of file
+            string fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!fileExtension.StartsWith(".")) fileExtension = "." + fileExtension;
+            if(fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+            {
+                response.AddAlert("error", "File extension is not jpg, jpeg, or png");
+                return response;
+            }
+
+            string blobSasURL = Environment.GetEnvironmentVariable("BlobSASURL") ?? string.Empty;
+            if(string.IsNullOrEmpty(blobSasURL)) throw new Exception("BlobSASURL environment variable is null or empty");
+
+            BlobContainerClient blobContainerClient = new(new Uri(blobSasURL));
+
+            //Find user
+            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            //If user does not exist, return error
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User not found");
+                return response;
+            }
+
+            string blobName = $"user/profilepicture/{existingUser.Id}{fileExtension}";
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
+            string contentType = fileExtension switch
+            {
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+            };
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
+
+            try
+            {
+                BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
+                await using var fileStream = file.OpenReadStream();
+                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType});
+                existingUser.ProfilePicture = blobClient.Uri.ToString();
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
+                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                return response; 
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
+                return response;
+            }
         }
 
         ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////

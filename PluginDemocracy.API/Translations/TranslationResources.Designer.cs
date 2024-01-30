@@ -211,6 +211,15 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profile picture updated successfully.
+        /// </summary>
+        public static string ProfilePictureUpdated {
+            get {
+                return ResourceManager.GetString("ProfilePictureUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Follow this link to reset your password:.
         /// </summary>
         public static string ResetPasswordEmailBody {
