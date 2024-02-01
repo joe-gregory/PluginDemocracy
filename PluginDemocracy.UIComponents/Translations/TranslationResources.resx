@@ -195,6 +195,9 @@
   <data name="PleaseConfirmEmailForFullFunctionality" xml:space="preserve">
     <value>Please confirm your email for full functionality</value>
   </data>
+  <data name="PleaseSelectAFile" xml:space="preserve">
+    <value>Please select a file</value>
+  </data>
   <data name="PluginDemocracy" xml:space="preserve">
     <value>Plugin Democracy</value>
   </data>
@@ -224,6 +227,9 @@
   </data>
   <data name="SecondLastName" xml:space="preserve">
     <value>Second last name</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
   </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Select culture</value>

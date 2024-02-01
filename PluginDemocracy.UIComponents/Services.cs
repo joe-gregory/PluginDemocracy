@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
-using PluginDemocracy.DTOs;  
+using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -40,7 +40,7 @@ namespace PluginDemocracy.UIComponents
                 return _appState.ApiResponse;
             }
         }
-        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T data) where T : class 
+        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T data) where T : class
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
@@ -63,23 +63,29 @@ namespace PluginDemocracy.UIComponents
             string url = _appState.BaseUrl + apiEndpoint;
 
             // Use MultipartFormDataContent to send files
-            using var content = new MultipartFormDataContent();
-            await using var fileStream = browserFile.OpenReadStream();
+            MultipartFormDataContent content = [];
 
-            var fileContent = new StreamContent(fileStream);
-            fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
-            {
-                Name = "file",
-                FileName = browserFile.Name
-            };
-
-            content.Add(fileContent, "file");
-
-            string userIdValue = _appState.User?.Id?.ToString() ?? string.Empty;
-            if (!string.IsNullOrEmpty(userIdValue)) content.Add(new StringContent(userIdValue), "userId");
-
+            int megaBytesMax = 10;
+            long maxFileSize = megaBytesMax * 1024 * 1024; //10MB
+            if (browserFile.Size > maxFileSize) AddSnackBarMessage("error", $"File size exceeds {megaBytesMax}MB");
             try
             {
+                //Adding file to content
+                await using Stream fileStream = browserFile.OpenReadStream(maxFileSize);
+                StreamContent fileContent = new(fileStream);
+                fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "file",
+                    FileName = browserFile.Name
+                };
+                content.Add(fileContent, "file");
+
+                //Adding userId to content
+                string userIdValue = _appState.User?.Id?.ToString() ?? string.Empty;
+                if (string.IsNullOrEmpty(userIdValue)) AddSnackBarMessage("error", "User.Id null or empty");
+                if (!string.IsNullOrEmpty(userIdValue)) content.Add(new StringContent(userIdValue), "userId");
+
+                //Sending content to API
                 HttpResponseMessage response = await _httpClient.PostAsync(url, content);
                 return await CommunicationCommon(response);
             }
@@ -142,7 +148,7 @@ namespace PluginDemocracy.UIComponents
             _appState.LogOut();
             NavigateTo(FrontEndPages.Home);
         }
-       public IEnumerable<string> PasswordStrength(string pw)
+        public IEnumerable<string> PasswordStrength(string pw)
         {
             if (string.IsNullOrWhiteSpace(pw))
             {

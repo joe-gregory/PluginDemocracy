@@ -3,17 +3,18 @@
 @using System.Globalization
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
 
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate("Settings")</MudText>
     <MudText Typo="Typo.h4">@AppState.Translate("Language")</MudText>
-    <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" CheckedChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
+    <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" ThumbIconColor="thumbIconColor" ValueChanged="OnSwitchToggled" Disabled="@disabled">@AppState.Culture.Name <img src="@selectedFlag" height="14" class="mr-1" /></MudSwitch>
 <MudPaper Elevation="25" Variant="Variant.Outlined" Class="mt-5 mb-5">
     <MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
     </MudPaper>
 
 @if (AppState.IsLoggedIn)
 {
-    <MudPaper Class="mt-5 mb-5">
+    <MudPaper Class="mt-5 mb-5 pa-4">
         <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.UpdateProfilePicture)</MudText>
         <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
             <MudAvatar Style="height:200px;width:200px;">
@@ -30,13 +31,14 @@
                 }
             </MudAvatar>
         </div>
-        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFile" MaximumFileCount="1">
+        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg, .jpeg" FilesChanged="@( (IBrowserFile f) => file = f)" MaximumFileCount="1" Context="fileInput">
             <ButtonTemplate>
-                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id">
-                    @AppState.Translate(ResourceKeys.Update)
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.AttachFile" for="@fileInput">
+                    @AppState.Translate(ResourceKeys.Select) @(file != null ? " (1)" : "")
                 </MudButton>
             </ButtonTemplate>
         </MudFileUpload>
+        <MudButton Class="mt-5" Disabled="@(file == null)" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UpdateProfilePicture">@AppState.Translate(ResourceKeys.Update)</MudButton>
     </MudPaper>
     
 
@@ -54,14 +56,4 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@disable" Class="mt-5" OnClick="PostForm">@AppState.Translate("Update")</MudButton>
             </MudPaper>
         </MudForm>
-}
-
-@code{
-    private IBrowserFile file = null;
-    private void UploadFile(IBrowserFile f)
-    {
-        file = f;
-
-    }
-
 }

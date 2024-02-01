@@ -316,7 +316,7 @@ namespace PluginDemocracy.API.Controllers
             return Ok(response);
         }
         [HttpPost("updateprofilepicture")]
-        public async Task<PDAPIResponse> UpdateProfilePicture(IFormFile file, int userId)
+        public async Task<ActionResult<PDAPIResponse>> UpdateProfilePicture([FromForm] IFormFile file, [FromForm]int userId)
         {
             PDAPIResponse response = new();
 
@@ -326,12 +326,12 @@ namespace PluginDemocracy.API.Controllers
             if(fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
             {
                 response.AddAlert("error", "File extension is not jpg, jpeg, or png");
-                return response;
+                return BadRequest(response);
             }
 
+            //Connect to Blob service
             string blobSasURL = Environment.GetEnvironmentVariable("BlobSASURL") ?? string.Empty;
             if(string.IsNullOrEmpty(blobSasURL)) throw new Exception("BlobSASURL environment variable is null or empty");
-
             BlobContainerClient blobContainerClient = new(new Uri(blobSasURL));
 
             //Find user
@@ -340,7 +340,7 @@ namespace PluginDemocracy.API.Controllers
             if (existingUser == null)
             {
                 response.AddAlert("error", "User not found");
-                return response;
+                return BadRequest(response);
             }
 
             string blobName = $"user/profilepicture/{existingUser.Id}{fileExtension}";
@@ -357,17 +357,17 @@ namespace PluginDemocracy.API.Controllers
             {
                 BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
                 await using var fileStream = file.OpenReadStream();
-                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType});
+                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType}); //aqui esta el error
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
                 response.User = UserDto.ReturnUserDtoFromUser(existingUser);
-                return response; 
+                return Ok(response); 
             }
             catch (Exception ex)
             {
                 response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
-                return response;
+                return BadRequest(response);
             }
         }
 

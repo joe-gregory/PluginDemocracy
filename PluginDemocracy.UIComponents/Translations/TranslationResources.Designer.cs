@@ -295,6 +295,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select a file.
+        /// </summary>
+        internal static string PleaseSelectAFile {
+            get {
+                return ResourceManager.GetString("PleaseSelectAFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Plugin Democracy.
         /// </summary>
         internal static string PluginDemocracy {
@@ -381,6 +390,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string SecondLastName {
             get {
                 return ResourceManager.GetString("SecondLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        internal static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
             }
         }
         

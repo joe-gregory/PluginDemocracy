@@ -1,4 +1,5 @@
 ﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Components.Forms;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Drawing;
@@ -17,6 +18,7 @@ namespace PluginDemocracy.UIComponents.Pages
         bool success = false;
         string[] errors = [];
         private bool disable = false;
+        private IBrowserFile? file = null;
         /// <summary>
         /// Checked true equals es-MX, not checked false = USA
         /// </summary>
@@ -94,8 +96,15 @@ namespace PluginDemocracy.UIComponents.Pages
         private async void UpdateProfilePicture()
         {
             disable = true;
-            await Services.PostDataAsync<UserDto>(ApiEndPoints.UpdateProfilePicture, userDto);
+            if (file == null)
+            {
+                Services.AddSnackBarMessage("warning", AppState.Translate(Translations.ResourceKeys.PleaseSelectAFile));
+                return;
+            }
+            await Services.UploadFileAsync(ApiEndPoints.UpdateProfilePicture, file);
             disable = false;
+            file = null;
+            StateHasChanged();
         }
     }
 }

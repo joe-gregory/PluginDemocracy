@@ -17,5 +17,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Update = "Update";
         public const string PleaseConfirmEmailForFullFunctionality = "PleaseConfirmEmailForFullFunctionality";
         public const string UpdateProfilePicture = "UpdateProfilePicture";
+        public const string PleaseSelectAFile = "PleaseSelectAFile";
+        public const string Select = "Select";
     }
 }
