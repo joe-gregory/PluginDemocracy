@@ -10,6 +10,10 @@ using System.Net.Http.Json;
 
 namespace PluginDemocracy.UIComponents
 {
+    /// <summary>
+    /// TODO: a loading method wherever I am storing data on web or maui that obtains this class. The SessionJWT is particuarly important for keeping session. 
+    /// TODO: When a user opens up the app, the app needs to make sure that its token is still valid and if not, it should logout the user to ask for credentials again. Maybe the app needs to make a get request when just booting up to make sure the JWT is still valid. 
+    /// </summary>
     public abstract class BaseAppState
     {
         protected readonly IServiceProvider _serviceProvider;
@@ -34,6 +38,7 @@ namespace PluginDemocracy.UIComponents
         public bool IsLoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
+        public string? SessionJWT { get; set; }
         //METHODS:
         public BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
         {
@@ -64,6 +69,7 @@ namespace PluginDemocracy.UIComponents
         public void LogOut()
         {
             User = null;
+            SessionJWT = null;
             NotifyStateChanged();
         }
         //TODO: Change to protected later on cuando este implementando como checar el internet en diferentes devices

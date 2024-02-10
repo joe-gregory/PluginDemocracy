@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
+using Azure;
 using Azure.Core;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
@@ -17,7 +19,7 @@ namespace PluginDemocracy.API
     /// <summary>
     /// This is a scoped service so it cannot hold state data.
     /// </summary>
-    public class ApiUtilityClass
+    public class APIUtilityClass
     {
         private readonly IConfiguration _configuration;
         private readonly string mailJetApiKey;
@@ -27,7 +29,7 @@ namespace PluginDemocracy.API
         public readonly string WebAppBaseUrl;
         public List<string> SupportedLanguages = ["en-US", "es-MX"]; 
         public readonly PluginDemocracyContext _context;
-        public ApiUtilityClass(IConfiguration configuration, PluginDemocracyContext context)
+        public APIUtilityClass(IConfiguration configuration, PluginDemocracyContext context)
         {
             _configuration = configuration;
             _context = context;
@@ -77,6 +79,18 @@ namespace PluginDemocracy.API
 
             return textToReturn;
         }
+        /// <summary>
+        /// This method will send an email to the users account with a link to confirm their email address. This method is used when the user's email
+        /// is not confirmed and sends an email to allow confirmation. Examples of locations include when a user registers for the first time or when the user updates their email address.
+        /// The email is sent to user.Email and the email body contains a link to confirm the email address. The link is built using the user's Id and a new email confirmation token which
+        /// is stored in User.EmailConfirmationToken. This current implementation assigns a new Guid to User.EmailConfirmationToken. Future implementations could use a 
+        /// JWT in order to set things such as expiration time and such.
+        /// The email's title and body is built using the user's culture to and stored translation resources in TranslationResources.resx and their culture specific files.
+        /// </summary>
+        /// <param name="user">This is the user to which the email will be sent to at User.Email</param>
+        /// <param name="apiResponse">This is the response the controller will send back to the frontend. It is passed to this method so that messages can be added to the response such as 
+        /// if there were errors sending the email and such.</param>
+        /// <returns></returns>
         public async Task SendConfirmationEmail(User user, PDAPIResponse apiResponse)
         {
             //Create new email confirmation token
@@ -87,7 +101,7 @@ namespace PluginDemocracy.API
             }
             catch(Exception e)
             {
-                apiResponse.AddAlert("error", "Error saving changes to database: " + e.Message);
+                apiResponse.AddAlert("error", "Error saving User.EmailConfirmationToken to database: " + e.Message);
             }
 
             //Build confirmation link
@@ -108,7 +122,14 @@ namespace PluginDemocracy.API
                 apiResponse.AddAlert("error", $"Error sending confirmation email: {ex.Message}");
             }
         }
-        public string CreateJsonWebToken(int userId)
+        /// <summary>
+        /// Creates a Json Web Token (JWT) with the user's Id as the payload and it uses an environment variable to set the signature. The token will expire in expirationDays days.
+        /// </summary>
+        /// <param name="userId">User.Id</param>
+        /// <param name="expirationDays">Days from today when it expires</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public string CreateJWT(int userId, int expirationDays)
         {
             JwtSecurityTokenHandler tokenHandler = new();
             
@@ -122,25 +143,59 @@ namespace PluginDemocracy.API
                 {
                     new(ClaimTypes.Name, userId.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(2),
+                Expires = DateTime.UtcNow.AddDays(expirationDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        public int? ReturnUserIdFromJsonWebToken(string token)
+        /// <summary>
+        /// Returns the userId stored in the JWT. This method uses IsJWTValid to check if the token is valid. If invalid, it returns null.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        /// <param name="response">Optional PDAPIResponse object to add error messages.</param>
+        /// <returns></returns>
+        public int? ReturnUserIdFromJWT(string token, PDAPIResponse? response = null)
+        {
+            if (!IsJWTValid(token, response)) return null;
+
+            //Get the user Id
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken jwtSecurityToken = tokenHandler.ReadJwtToken(token);
+            string userIdString = jwtSecurityToken.Claims.First(claim => claim.Type == "unique_name").Value; // Instead of using ClaimTypes.Name, I'm using the string I found using a website. Not sure why I can't use ClaimTypes.Name
+
+            try
+            {
+                int userId = int.Parse(userIdString);
+                return userId;
+            }
+            catch (Exception e)
+            {
+                response?.AddAlert("error", $"Error parsing userId to int from JWT: {e.Message}");
+                return null;
+            }
+        }
+        /// <summary>
+        /// Returns true if a JWT is valid. It checks the expiration date and that the signature match.  
+        /// </summary>
+        /// <param name="token">String token being checked</param>
+        /// <param name="response">This is an optional parameter in case alert messages will be added that will later be passed to the frontend when the response is sent</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static bool IsJWTValid(string token, PDAPIResponse? response = null)
         {
             JwtSecurityTokenHandler tokenHandler = new();
+            // Check if the token is in a valid JWT format
+            if (!tokenHandler.CanReadToken(token))
+            {
+                response?.AddAlert("error", "Invalid JWT format");
+                return false;
+            }
 
             string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
             if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
             byte[] key = Encoding.ASCII.GetBytes(secret);
-
-            //Determines if the string is a well formed Json Web Token (JWT).
-            if (!tokenHandler.CanReadToken(token)) return null;
-            
-            //Ensure I sent this token using the security key
             TokenValidationParameters tokenValidationParameters = new()
             {
                 ValidateIssuerSigningKey = true,
@@ -149,39 +204,66 @@ namespace PluginDemocracy.API
                 ValidateAudience = false, //Audience is the intended recipient of the token
                 ClockSkew = TimeSpan.Zero //ClockSkew is used to determine if a token is valid or not
             };
-            ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-
-            //Get the user Id
-            JwtSecurityToken jwtSecurityToken = tokenHandler.ReadJwtToken(token);
-            //string userId = jwtSecurityToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
-            // Instead of using ClaimTypes.Name, I'm using the string I found using a website. Not sure why I can't use ClaimTypes.Name
-            string userId = jwtSecurityToken.Claims.First(claim => claim.Type == "unique_name").Value;
-
-            return int.Parse(userId);
+            try
+            {
+                ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+                return true;
+            }
+            // Catch more specific exceptions related to token validation
+            catch (SecurityTokenExpiredException e)
+            {
+                // Specific handling for expired tokens
+                response?.AddAlert("error", $"Token expired: {e.Message}");
+                return false;
+            }
+            catch (SecurityTokenException e) 
+            {
+                response?.AddAlert("error", $"Error validating token: {e.Message}");
+                return false;
+            }
+            catch (Exception e) // General exceptions could be logged or handled differently
+            {
+                // Consider logging the exception details for debugging purposes
+                response?.AddAlert("error", $"Unexpected error during token validation: {e.Message}");
+                return false;
+            }
         }
         /// <summary>
-        /// Will return true when the token has expired
+        /// This method will extract the user from the claims in the userPrincipal. It will then use the userId to fetch the user from the database and return it.
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="userPrincipal"></param>
+        /// <param name="response"></param>
         /// <returns></returns>
-        /// <exception cref="Exception"></exception>k
-        /// 
-        public bool HasJWTExpired(string token)
+        public async Task<User?> ReturnUserFromClaims(System.Security.Claims.ClaimsPrincipal userPrincipal, PDAPIResponse? response = null)
         {
-            JwtSecurityTokenHandler tokenHandler = new();
-            JwtSecurityToken jwtToken;
-
-            jwtToken = tokenHandler.ReadJwtToken(token);
-
-            if(jwtToken == null) throw new Exception("JWT token is null");
-
-            //Extract expiration claim
-            var expClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp);
-            if(expClaim == null) throw new Exception("JWT token does not have an expiration claim");
-
-            var expTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expClaim.Value));
-
-            return expTime < DateTimeOffset.UtcNow;
+            //Extract User from claims
+            System.Security.Claims.Claim? userIdClaim = userPrincipal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+            if (userIdClaim == null)
+            {
+                response?.AddAlert("error", "Unable to find userId in claims");
+                return null;
+            }
+            // Now I can use this userId to fetch user details from my DbContext
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+            {
+                response?.AddAlert("error", "Unable to parse userId from claims to int");
+                return null;
+            }
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    response?.AddAlert("error", "User extracted from claims not found in database");
+                    return null;
+                }
+                return user;
+            }
+            catch (Exception e)
+            {
+                response?.AddAlert("error", "Error fetching user from database: " + e.Message);
+                return null;
+            }
         }
     }
 }

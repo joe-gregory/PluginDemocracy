@@ -5,6 +5,8 @@ using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PluginDemocracy.UIComponents
@@ -22,39 +24,58 @@ namespace PluginDemocracy.UIComponents
         private readonly ISnackbar _snackBar = snackbar;
         private readonly HttpClient _httpClient = httpClient;
         private readonly BaseAppState _appState = appState;
-
+        /// <summary>
+        /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
+        /// </summary>
+        /// <param name="endpoint">The API endpoint to hit</param>
+        /// <returns>PDAPIResponse from server or if none an empty PDAPIResponse</returns>
         public async Task<PDAPIResponse> GetDataAsync(string endpoint)
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
+
+            using HttpRequestMessage request = new(HttpMethod.Get, url);
+            // Add the JWT as a Bearer token in the Authorization header if it's available
+            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync(url);
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
-                _appState.ApiResponse = new();
                 _appState.IsLoading = false;
-                return _appState.ApiResponse;
+                return new();
             }
         }
-        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T data) where T : class
+        /// <summary>
+        /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
+        /// </summary>
+        /// <typeparam name="T">Type for optional data load</typeparam>
+        /// <param name="endpoint">The API endpoint to hit</param>
+        /// <param name="data">Data load in post request</param>
+        /// <returns>PDAPIResponse from server or if none an empty PDAPIResponse</returns>
+        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = null) where T : class
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
+            //Add JWT to request if available
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT); 
+            //Add request content if the data is not null
+            if(data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
-                _appState.ApiResponse = new();
                 _appState.IsLoading = false;
-                return _appState.ApiResponse;
+                return new();
             }
         }
         public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
@@ -65,9 +86,14 @@ namespace PluginDemocracy.UIComponents
             // Use MultipartFormDataContent to send files
             MultipartFormDataContent content = [];
 
-            int megaBytesMax = 10;
-            long maxFileSize = megaBytesMax * 1024 * 1024; //10MB
-            if (browserFile.Size > maxFileSize) AddSnackBarMessage("error", $"File size exceeds {megaBytesMax}MB");
+            int maxMegaBytes = 10;
+            long maxFileSize = maxMegaBytes * 1024 * 1024; //10MB
+            if (browserFile.Size > maxFileSize)
+            {
+                AddSnackBarMessage("error", $"File size exceeds {maxMegaBytes}MB");
+                _appState.IsLoading = false;
+                return new PDAPIResponse(); // Ensure you exit the method if the file is too large
+            }
             try
             {
                 //Adding file to content
@@ -80,30 +106,33 @@ namespace PluginDemocracy.UIComponents
                 };
                 content.Add(fileContent, "file");
 
-                //Adding userId to content
-                string userIdValue = _appState.User?.Id?.ToString() ?? string.Empty;
-                if (string.IsNullOrEmpty(userIdValue)) AddSnackBarMessage("error", "User.Id null or empty");
-                if (!string.IsNullOrEmpty(userIdValue)) content.Add(new StringContent(userIdValue), "userId");
+                //Create HttpRequestMessage to include JWT in Authorization header
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = content
+                };
+                //Add SessionJWT as a Bearer token in the Authorization header if it's available
+                if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
 
                 //Sending content to API
-                HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
-                _appState.ApiResponse = new();
                 _appState.IsLoading = false;
-                return _appState.ApiResponse;
+                return new();
             }
         }
+        /// <summary>
+        /// Turns of _appState.IsLoading, extracts snackbar messages from the API response, and returns the API response. 
+        /// </summary>
+        /// <param name="response">The response sent from the server</param>
+        /// <returns>PDAPIResponse extracted from response</returns>
         private async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode)
-            {
-                AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
-                _appState.IsLoading = false;
-            }
+            if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
 
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
 
@@ -113,7 +142,6 @@ namespace PluginDemocracy.UIComponents
                 _appState.IsLoading = false;
                 return new PDAPIResponse();
             }
-
 
             //Add snackbar messages sent from API
             AddSnackBarMessages(apiResponse.Alerts);
@@ -125,7 +153,14 @@ namespace PluginDemocracy.UIComponents
             _appState.IsLoading = false;
             // If apiResponse.User is sent, log in user.
             if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
-
+            //if apiResponse.SessionJWT is sent, set it in AppState
+            if(apiResponse.SessionJWT != null) _appState.SessionJWT = apiResponse.SessionJWT;
+            //if apiResponse.LogOut is sent, log out user and redirect to home
+            if (apiResponse.LogOut == true)
+            {
+                _appState.LogOut();
+                NavigateTo(FrontEndPages.Login);
+            }
             return apiResponse;
         }
         public void NavigateTo(string page)

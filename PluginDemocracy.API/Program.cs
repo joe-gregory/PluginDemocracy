@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
+using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.Data;
+using System.Text;
 
 namespace PluginDemocracy.API
 {
@@ -15,12 +17,24 @@ namespace PluginDemocracy.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            //Authentication
+            string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
+            if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
+            byte[] key = Encoding.ASCII.GetBytes(secret);
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-
-            builder.Services.AddDbContext<PluginDemocracyContext>(
-                options => options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero,
+                    };
+                });
+           
+            builder.Services.AddDbContext<PluginDemocracyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
                     sqlServerOptionsAction: sqlOptions =>
                     {
                         sqlOptions.EnableRetryOnFailure(
@@ -30,8 +44,7 @@ namespace PluginDemocracy.API
                         sqlOptions.MigrationsAssembly("PluginDemocracy.Data");
                     }));
 
-
-            builder.Services.AddScoped<ApiUtilityClass>();
+            builder.Services.AddScoped<APIUtilityClass>();
             
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

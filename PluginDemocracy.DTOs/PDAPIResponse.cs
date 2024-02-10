@@ -2,11 +2,18 @@
 {
     public class PDAPIResponse
     {
+        #region PROPERTIES
         public UserDto? User { get; set; }
-        public bool LoggedIn { get {  return User != null; } }
         public List<Alert> Alerts { get; set; }
         public string? RedirectTo { get; set; }
         public Dictionary<string, string> RedirectParameters { get; set; }
+        public string? SessionJWT { get; set; }
+        public bool? LogOut { get; set; }
+        #endregion
+        #region METHODS
+        /// <summary>
+        /// Constructor Method. Initializes Alerts and RedirectParameters.
+        /// </summary>
         public PDAPIResponse()
         {
             Alerts = [];
@@ -23,6 +30,8 @@
             }
             else throw new Exception("Unable to add message to PDAPIResponse.Messages using AddMessage method. Likely Severity provided with typos.");
         }
+        #endregion
+        #region ALERT CLASS AND ENUM
         public class Alert
         {
             //Normal, Info, Success, Warning, Error
@@ -37,5 +46,6 @@
             Warning,
             Error
         }
+        #endregion
     }
 }

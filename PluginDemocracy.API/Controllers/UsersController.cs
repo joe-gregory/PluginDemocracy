@@ -5,20 +5,21 @@ using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.Models;
-using PluginDemocracy. DTOs;
+using PluginDemocracy.DTOs;
 using Azure.Storage.Blobs;
 using Azure;
 using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PluginDemocracy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(PluginDemocracyContext context, ApiUtilityClass utilityClass) : ControllerBase
+    public class UsersController(PluginDemocracyContext context, APIUtilityClass utilityClass) : ControllerBase
     {
         private readonly PluginDemocracyContext _context = context;
-        private readonly ApiUtilityClass _utilityClass = utilityClass;
-
+        private readonly APIUtilityClass _utilityClass = utilityClass;
+        #region PUBLIC ENDPOINTS
         [HttpPost("signup")]
         public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
         {
@@ -85,6 +86,8 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
                 //Convert User to UserDto
                 apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                //Send a SessionJWT to the client so that they can maintain a session
+                apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
                 //Redirect to home feed after login in or join community page if no community
                 apiResponse.RedirectTo = FrontEndPages.Community;
                 return Ok(apiResponse);
@@ -159,7 +162,8 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
             if (existingUser != null)
             {
-                string token = _utilityClass.CreateJsonWebToken(existingUser.Id);
+                //JWT Expires in 2 days. 
+                string token = _utilityClass.CreateJWT(existingUser.Id, 2);
                 //Create link to send to user. It should point to the app
                 string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.ResetPassword}?token={token}";
                 //Send an email with a link to reset the password.
@@ -185,24 +189,8 @@ namespace PluginDemocracy.API.Controllers
         {
             PDAPIResponse response = new();
 
-            //Make sure token hasn't expired
-            try
-            {
-                if(_utilityClass.HasJWTExpired(token))
-                {
-                    response.AddAlert("error", "Token has expired");
-                    return BadRequest(response);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                response.AddAlert("error", $"Error checking if token has expired\nError:\n{ex.Message}");
-                return StatusCode(500, response);
-            }
-
             //Unpack the token y checa que usuario es. Si todo se ve bien, save the new password in the corresponding user.
-            int? userId = _utilityClass.ReturnUserIdFromJsonWebToken(token);
+            int? userId = _utilityClass.ReturnUserIdFromJWT(token);
 
             if (userId == null)
             {
@@ -210,7 +198,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if(existingUser == null || loginInfoDto.Password == null)
+            if (existingUser == null || loginInfoDto.Password == null)
             {
                 response.AddAlert("error", "User not found or loginInfoDto.Password is null");
                 return BadRequest(response);
@@ -239,17 +227,18 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(response);
         }
+        #endregion
+        #region AUTHRORIZE ENDPOINTS
+        [Authorize]
         [HttpPost("toggleuserculture")]
-        public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture(UserDto userDto)
+        public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture()
         {
+            //Create response object
             PDAPIResponse response = new();
-            //Find user
-            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDto.Id);
-            if (existingUser == null)
-            {
-                response.AddAlert("error", "User not found");
-                return BadRequest(response);
-            }
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null) return BadRequest(response);
+
             //Toggle culture
             if (existingUser.Culture.Name == "en-US") existingUser.Culture = new CultureInfo("es-MX");
             else if (existingUser.Culture.Name == "es-MX") existingUser.Culture = new CultureInfo("en-US");
@@ -272,15 +261,20 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(response);
         }
+        [Authorize]
         [HttpPost("updateaccount")]
         public async Task<ActionResult<PDAPIResponse>> UpdateAccount(UserDto userDto)
         {
+            //Create response object
             PDAPIResponse response = new();
-            //Find user
-            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDto.Id);
-            if (existingUser == null)
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null) return BadRequest(response);
+
+            //Does the UserDto match the one from the SessionJWT?
+            if (existingUser.Id != userDto.Id)
             {
-                response.AddAlert("error", "User not found");
+                response.AddAlert("error", "User Id does not match the one in the JWT");
                 return BadRequest(response);
             }
             //Update user
@@ -292,13 +286,25 @@ namespace PluginDemocracy.API.Controllers
             existingUser.Address = userDto.Address;
             existingUser.DateOfBirth = userDto.DateOfBirth;
             existingUser.Culture = userDto.Culture;
-            if(existingUser.Email != userDto.Email)
+            if (existingUser.Email != userDto.Email)
             {
-                existingUser.Email = userDto.Email;
-                existingUser.EmailConfirmed = false;
-                //Send confirmation email
-                await _utilityClass.SendConfirmationEmail(existingUser, response);
-                response.AddAlert("info", _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, existingUser.Culture));       
+                //Make sure no other users have this email address:
+                if (await _context.Users.AnyAsync(u => u.Email == userDto.Email)) response.AddAlert("error", "There is already a user with this email address");
+                else
+                {
+                    existingUser.Email = userDto.Email;
+                    existingUser.EmailConfirmed = false;
+                    //Send confirmation email
+                    try
+                    {
+                        await _utilityClass.SendConfirmationEmail(existingUser, response);
+                        response.AddAlert("info", _utilityClass.Translate(ResourceKeys.ConfirmEmailCheckInbox, existingUser.Culture));
+                    }
+                    catch (Exception ex)
+                    {
+                        response.AddAlert("error", $"Unable to send confirmation email\nError:\n{ex.Message}");
+                    }
+                }
             }
             //Save changes
             try
@@ -315,15 +321,20 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(response);
         }
+        [Authorize]
         [HttpPost("updateprofilepicture")]
-        public async Task<ActionResult<PDAPIResponse>> UpdateProfilePicture([FromForm] IFormFile file, [FromForm]int userId)
+        public async Task<ActionResult<PDAPIResponse>> UpdateProfilePicture([FromForm] IFormFile file)
         {
+            //Create response object
             PDAPIResponse response = new();
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null) return BadRequest(response);
 
             //Make sure it is the correct type of file
             string fileExtension = Path.GetExtension(file.FileName).ToLower();
             if (!fileExtension.StartsWith(".")) fileExtension = "." + fileExtension;
-            if(fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+            if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
             {
                 response.AddAlert("error", "File extension is not jpg, jpeg, or png");
                 return BadRequest(response);
@@ -331,17 +342,8 @@ namespace PluginDemocracy.API.Controllers
 
             //Connect to Blob service
             string blobSasURL = Environment.GetEnvironmentVariable("BlobSASURL") ?? string.Empty;
-            if(string.IsNullOrEmpty(blobSasURL)) throw new Exception("BlobSASURL environment variable is null or empty");
+            if (string.IsNullOrEmpty(blobSasURL)) throw new Exception("BlobSASURL environment variable is null or empty");
             BlobContainerClient blobContainerClient = new(new Uri(blobSasURL));
-
-            //Find user
-            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            //If user does not exist, return error
-            if (existingUser == null)
-            {
-                response.AddAlert("error", "User not found");
-                return BadRequest(response);
-            }
 
             string blobName = $"user/profilepicture/{existingUser.Id}{fileExtension}";
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
@@ -357,12 +359,12 @@ namespace PluginDemocracy.API.Controllers
             {
                 BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
                 await using var fileStream = file.OpenReadStream();
-                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType}); //aqui esta el error
+                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType }); //aqui esta el error
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
                 response.User = UserDto.ReturnUserDtoFromUser(existingUser);
-                return Ok(response); 
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -370,8 +372,8 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
-
-        ////////////////////////SCAFFOLDING: /////////////////////////////////////////////////////////////
+        #endregion
+        #region SCAFFOLDING
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -455,5 +457,6 @@ namespace PluginDemocracy.API.Controllers
         {
             return _context.Users.Any(e => e.Id == id);
         }
+        #endregion
     }
 }

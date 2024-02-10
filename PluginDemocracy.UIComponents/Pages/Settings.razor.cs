@@ -64,13 +64,12 @@ namespace PluginDemocracy.UIComponents.Pages
         }
         private async Task OnSwitchToggled()
         {
-
             if (AppState.IsLoggedIn)
             {
                 try
                 {
 #pragma warning disable CS8604 // Possible null reference argument warning disabled because AppState.IsLoggedIn checks that AppState.User != null.
-                    await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture, AppState.User);
+                    await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                     _checked = !_checked;
                 }
