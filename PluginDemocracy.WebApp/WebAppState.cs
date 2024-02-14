@@ -15,5 +15,13 @@ namespace PluginDemocracy.WebApp
         {
             BaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
         }
+        /// <summary>
+        /// TODO: Save the state of the app to local storage in browser
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public override void SaveState()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

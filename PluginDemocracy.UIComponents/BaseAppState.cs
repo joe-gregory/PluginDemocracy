@@ -40,14 +40,15 @@ namespace PluginDemocracy.UIComponents
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         public string? SessionJWT { get; set; }
         //METHODS:
+        #region METHODS
         public BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
-            
             ApiResponse = new();
         }
+        #region PROTECTED METHODS
         protected void NotifyStateChanged() => OnChange?.Invoke();
         protected void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
         {
@@ -60,6 +61,8 @@ namespace PluginDemocracy.UIComponents
                 }
             }
         }
+        #endregion
+        #region PUBLIC METHODS
         public void LogIn(UserDto user)
         {
             User = user;
@@ -88,6 +91,11 @@ namespace PluginDemocracy.UIComponents
         {
             return TranslationResourceManager[key];
         }
-
+        /// <summary>
+        /// This might need to be protected? 
+        /// </summary>
+        public abstract void SaveState();
+        #endregion region
+        #endregion
     }
 }

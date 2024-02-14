@@ -7,6 +7,7 @@ using Microsoft.Identity.Web.Resource;
 using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.Data;
 using System.Text;
+using System.Text.Json;
 
 namespace PluginDemocracy.API
 {
@@ -32,8 +33,35 @@ namespace PluginDemocracy.API
                         ValidateAudience = false,
                         ClockSkew = TimeSpan.Zero,
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception is SecurityTokenExpiredException)
+                            {
+                                context.Response.StatusCode = 401; //Unauthorized
+                                context.Response.ContentType = "application/json";
+
+                                //Manually constructing the PDAPIResponse equivalent JSON
+                                var response = new
+                                {
+                                    Alerts = new List<object> { new { Severity = "info", Message = "Session has expired. Please log in again." }},
+                                    RedirectTo = (string?)null,
+                                    RedirectParameters = new Dictionary<string, string>(),
+                                    SessionJWT = (string?)null,
+                                    LogOut = true
+                                };
+
+                                var json = JsonSerializer.Serialize(response);
+                                context.Response.WriteAsync(json);
+                                //prevent the default ASP.NET Core response:
+                                context.NoResult();
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
-           
+
             builder.Services.AddDbContext<PluginDemocracyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PluginDemocracyDatabase"),
                     sqlServerOptionsAction: sqlOptions =>
                     {
@@ -45,7 +73,7 @@ namespace PluginDemocracy.API
                     }));
 
             builder.Services.AddScoped<APIUtilityClass>();
-            
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
