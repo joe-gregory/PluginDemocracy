@@ -6,13 +6,14 @@ namespace PluginDemocracy.Models
     {
         public Community? ParentCommunity { get; set; }
         [NotMapped]
-        public override string FullName { 
-            get 
-            { 
+        public override string FullName
+        {
+            get
+            {
                 string fullName = string.Empty;
                 foreach (HomeOwnership hw in Ownerships) fullName += hw.Owner.FullName + ", ";
                 return fullName;
-            } 
+            }
         }
         [NotMapped]
         public override List<Community> Citizenships
@@ -39,7 +40,7 @@ namespace PluginDemocracy.Models
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
         [NotMapped]
-       public List<BaseCitizen> Citizens
+        public List<BaseCitizen> Citizens
         {
             get => Owners.Keys.Union(Residents).ToList();
         }
@@ -47,7 +48,7 @@ namespace PluginDemocracy.Models
         {
             InternalAddress = string.Empty;
             Ownerships = new HashSet<HomeOwnership>();
-            Residents = new();
+            Residents = [];
         }
         /// <summary>
         /// Adds owner with percentage or updates owners percentage

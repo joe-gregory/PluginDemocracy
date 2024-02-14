@@ -30,7 +30,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                List<Community> communitiesFromAbove = new();
+                List<Community> communitiesFromAbove = [];
                 foreach (Community community in Citizenships)
                 {
                     foreach (Community aboveCommunity in community.Citizenships)

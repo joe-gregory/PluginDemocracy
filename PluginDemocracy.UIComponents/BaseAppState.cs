@@ -50,6 +50,10 @@ namespace PluginDemocracy.UIComponents
         }
         #region PROTECTED METHODS
         protected void NotifyStateChanged() => OnChange?.Invoke();
+        /// <summary>
+        /// TODO: THIS CAN PROBABLY BE DELETED
+        /// </summary>
+        /// <param name="alerts"></param>
         protected void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
         {
             using (var scope = _serviceProvider.CreateScope())

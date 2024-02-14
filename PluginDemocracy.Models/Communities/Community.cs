@@ -33,8 +33,8 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? new List<BaseCitizen>();
-                List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? new List<User>();
+                List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? [];
+                List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
@@ -246,7 +246,7 @@ namespace PluginDemocracy.Models
         {
             HashSet<User> allUsers = new();
             GetAllNestedUsers(this, allUsers);
-            return allUsers.ToList();
+            return [.. allUsers];
         }
         public void RaiseRedFlag(User user, string description, BaseRedFlaggable itemFlagged)
         {

@@ -35,6 +35,7 @@ namespace PluginDemocracy.DTOs
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         public bool? EmailConfirmed { get; set; }
+        //Password field is used by create account in frontend
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
@@ -52,11 +53,34 @@ namespace PluginDemocracy.DTOs
                 return age;
             }
         }
-        private string cultureCode = "en-US";
+        public string _cultureCode = "en-US";
         [JsonIgnore]
-        public CultureInfo Culture { get => new(cultureCode); set => cultureCode = value.Name; }
+        public CultureInfo Culture { get => new(_cultureCode); set => _cultureCode = value.Name; }
         public bool? Admin { get; set; }
-        //TODO: List of RolesDto and List of ProposalsDto
+        //TODO: List of RolesDto, List of ProposalsDto, Citizenships (List<CommunityDto>), AssociatedCommunities (List<CommunityDto>), ResidentOfHomes (List<HomeDto>)
+        #region TODO
+        public List<RoleDto> Roles { get; set; } = [];
+        public List<ProposalDto> Proposals { get; set; } = [];
+
+        /// <summary>
+        /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
+        /// </summary>
+        public override List<CommunityDto> Citizenships
+        {
+            get
+            {
+                List<CommunityDto> citizenships = [];
+                foreach (HomeOwnershipDto ho in HomeOwnerships) citizenships.AddRange(ho.HomeDto.Citizenships);
+                citizenships.AddRange(NonResidentialCitizenIn);
+                citizenships.AddRange(ResidentOfHomes.SelectMany(home => home.Citizenships));
+                return citizenships.Distinct().ToList();
+            }
+        }
+        /// <summary>
+        /// A list where UserDto shows up on HomeDto.Residents
+        /// </summary>
+        public List<HomeDto> ResidentOfHomes { get; set; } = [];
+        #endregion
         public static UserDto ReturnUserDtoFromUser(User user)
         {
             UserDto userDto = new()
@@ -75,9 +99,9 @@ namespace PluginDemocracy.DTOs
                 DateOfBirth = user.DateOfBirth,
                 Culture = user.Culture,
                 Admin = user.Admin,
-                //TODO: ADDROLES
-                //TODO: Add List<CommunityDto> Citizenships
-                //TODO: Add List<CommunityDto> AssociatedCommunities
+
+                Roles = user.Roles,
+                Proposals = user.Proposals,
             };
 
             return userDto;

@@ -50,9 +50,9 @@ namespace PluginDemocracy.Models
                 return age;
             } 
         }
-        public string _cultureCode { get; private set; } = "en-US";
+        public string CultureCode { get; private set; } = "en-US";
         [NotMapped]
-        public CultureInfo Culture { get => new(_cultureCode); set => _cultureCode = value.Name; }
+        public CultureInfo Culture { get => new(CultureCode); set => CultureCode = value.Name; }
         public bool Admin { get; set; }
         public List<Role> Roles { get; set; }
         /// <summary>
@@ -63,7 +63,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                List<Proposal> allAssociatedProposals = new();
+                List<Proposal> allAssociatedProposals = [];
                 foreach (Community community in Citizenships) allAssociatedProposals.AddRange(community.Proposals);
                 foreach (Community associatedCommunity in AssociatedCommunities)
                 {
@@ -80,7 +80,7 @@ namespace PluginDemocracy.Models
         { 
             get 
             {
-                List<Community> citizenships = new();
+                List<Community> citizenships = [];
                 foreach(HomeOwnership ho in HomeOwnerships) citizenships.AddRange(ho.Home.Citizenships);
                 citizenships.AddRange(NonResidentialCitizenIn);
                 citizenships.AddRange(ResidentOfHomes.SelectMany(h => h.Citizenships));
@@ -100,8 +100,8 @@ namespace PluginDemocracy.Models
             HashedPassword = string.Empty;
             Culture = new CultureInfo("en-US");
             Admin = admin;
-            Roles = new();
-            ResidentOfHomes = new();
+            Roles = [];
+            ResidentOfHomes = [];
         }
         public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
@@ -115,8 +115,9 @@ namespace PluginDemocracy.Models
             Address = address;
             DateOfBirth = dateOfBirth;
             Culture = culture;
-            Roles = new();
-            ResidentOfHomes = new();
+
+            Roles = [];
+            ResidentOfHomes = [];
         }
         public void AddRole(Role role)
         {
