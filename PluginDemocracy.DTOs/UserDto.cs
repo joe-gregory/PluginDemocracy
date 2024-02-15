@@ -59,8 +59,8 @@ namespace PluginDemocracy.DTOs
         public bool? Admin { get; set; }
         //TODO: List of RolesDto, List of ProposalsDto, Citizenships (List<CommunityDto>), AssociatedCommunities (List<CommunityDto>), ResidentOfHomes (List<HomeDto>)
         #region TODO
-        public List<RoleDto> Roles { get; set; } = [];
-        public List<ProposalDto> Proposals { get; set; } = [];
+        //public List<Role> Roles { get; set; } = [];
+        //public List<Proposal> Proposals { get; set; } = [];
 
         /// <summary>
         /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
@@ -70,7 +70,7 @@ namespace PluginDemocracy.DTOs
             get
             {
                 List<CommunityDto> citizenships = [];
-                foreach (HomeOwnershipDto ho in HomeOwnerships) citizenships.AddRange(ho.HomeDto.Citizenships);
+                foreach (HomeOwnershipDto homeOwnershipDto in HomeOwnerships) citizenships.AddRange(homeOwnershipDto.Home?.Citizenships ?? []);
                 citizenships.AddRange(NonResidentialCitizenIn);
                 citizenships.AddRange(ResidentOfHomes.SelectMany(home => home.Citizenships));
                 return citizenships.Distinct().ToList();
@@ -100,8 +100,8 @@ namespace PluginDemocracy.DTOs
                 Culture = user.Culture,
                 Admin = user.Admin,
 
-                Roles = user.Roles,
-                Proposals = user.Proposals,
+                //Roles = user.Roles,
+                //Proposals = user.Proposals,
             };
 
             return userDto;

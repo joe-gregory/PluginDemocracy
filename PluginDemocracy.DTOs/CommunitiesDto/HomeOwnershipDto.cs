@@ -8,5 +8,6 @@ namespace PluginDemocracy.DTOs
 {
     public class HomeOwnershipDto
     {
+        public HomeDto? Home { get; set; }
     }
 }

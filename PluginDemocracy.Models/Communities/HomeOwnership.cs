@@ -11,8 +11,10 @@ namespace PluginDemocracy.Models
     {
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
-        private int HomeId { get; set; }
         [ForeignKey("HomeId")]
+#pragma warning disable IDE0051 // Remove unused private members because it is used by EFCore
+        private int HomeId { get; set; }
+#pragma warning restore IDE0051 // Remove unused private members
         public virtual Home Home { get; set; }
         [NotMapped]
         public virtual BaseCitizen Owner { 

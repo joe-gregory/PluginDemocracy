@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HomeDto
+    public class HomeDto : BaseCitizenDto
     {
+        public override string? FullName => throw new NotImplementedException();
+
+        public override List<CommunityDto> Citizenships => throw new NotImplementedException();
     }
 }
