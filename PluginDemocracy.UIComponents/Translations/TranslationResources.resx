@@ -165,6 +165,9 @@
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Join an existing community</value>
   </data>
+  <data name="JoinCommunity" xml:space="preserve">
+    <value>Join a community</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -219,6 +222,9 @@
   <data name="RegisterANewCommunity" xml:space="preserve">
     <value>Register a new community</value>
   </data>
+  <data name="RegisterCommunity" xml:space="preserve">
+    <value>Register a community</value>
+  </data>
   <data name="Required" xml:space="preserve">
     <value>Required</value>
   </data>
@@ -257,5 +263,8 @@
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
+  </data>
+  <data name="YouHaveNoCommunities" xml:space="preserve">
+    <value>You have not joined any communities. Join an existing community or register a new community. </value>
   </data>
 </root>

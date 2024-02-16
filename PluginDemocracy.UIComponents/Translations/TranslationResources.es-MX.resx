@@ -165,6 +165,9 @@
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Unirse a una comunidad registrada</value>
   </data>
+  <data name="JoinCommunity" xml:space="preserve">
+    <value>Unete a una comunidad</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Lenguaje</value>
   </data>
@@ -219,6 +222,9 @@
   <data name="RegisterANewCommunity" xml:space="preserve">
     <value>Registrar una comunidad nueva</value>
   </data>
+  <data name="RegisterCommunity" xml:space="preserve">
+    <value>Registra una comunidad</value>
+  </data>
   <data name="Required" xml:space="preserve">
     <value>Requerido</value>
   </data>
@@ -257,5 +263,8 @@
   </data>
   <data name="User" xml:space="preserve">
     <value>Usuario</value>
+  </data>
+  <data name="YouHaveNoCommunities" xml:space="preserve">
+    <value>No te has unido a ninguna comunidad. Únete a una comunidad existente o registra una nueva comunidad.</value>
   </data>
 </root>

@@ -12,7 +12,7 @@ namespace PluginDemocracy.Models
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
         [ForeignKey("HomeId")]
-#pragma warning disable IDE0051 // Remove unused private members because it is used by EFCore
+#pragma warning disable IDE0051 // Remove unused private members warning because this field is indeed use but by EFCore
         private int HomeId { get; set; }
 #pragma warning restore IDE0051 // Remove unused private members
         public virtual Home Home { get; set; }

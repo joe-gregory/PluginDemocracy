@@ -19,5 +19,8 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string UpdateProfilePicture = "UpdateProfilePicture";
         public const string PleaseSelectAFile = "PleaseSelectAFile";
         public const string Select = "Select";
+        public const string YouHaveNoCommunities = "YouHaveNoCommunities";
+        public const string JoinCommunity = "JoinCommunity";
+        public const string RegisterCommunity = "RegisterCommunity";
     }
 }

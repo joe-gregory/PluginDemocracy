@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
@@ -11,7 +12,24 @@ namespace PluginDemocracy.Models
         public string? Name { get; set; }
         public override string? FullName => string.Join(" ", Name, Address);
         public string OfficialCurrency { get; set; } = "USD";
-        public List<string> OfficialLanguages { get; set; }
+        /// <summary>
+        /// Ideally this property should be private. However, EFCore requires it to be public... for now. 
+        /// </summary>
+        public List<string> OfficialLanguagesCodes { get; private set; }
+        [NotMapped]
+        public List<CultureInfo> OfficialLanguages 
+        { 
+            get 
+            { 
+                List<CultureInfo> cultures = [];
+                foreach (string code in OfficialLanguagesCodes) cultures.Add(new CultureInfo(code));
+                return cultures;
+            }
+            set 
+            {                 
+                OfficialLanguagesCodes = value.Select(culture => culture.Name).ToList();
+            }
+        }
         public string? Description { get; set; }
         /// <summary>
         /// The Communities that this Home belongs to. Like to which Home owners association or Privada does this belong to. 
@@ -89,7 +107,7 @@ namespace PluginDemocracy.Models
         public List<Post> Posts { get; }
         public Community()
         {
-            OfficialLanguages = [];
+            OfficialLanguagesCodes = [];
             Homes = [];
             _communityNonResidentialCitizens = [];
             _userNonResidentialCitizens = [];

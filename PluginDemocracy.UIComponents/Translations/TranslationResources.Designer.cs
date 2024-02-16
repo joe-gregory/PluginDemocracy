@@ -205,6 +205,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Join a community.
+        /// </summary>
+        internal static string JoinCommunity {
+            get {
+                return ResourceManager.GetString("JoinCommunity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         internal static string Language {
@@ -367,6 +376,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Register a community.
+        /// </summary>
+        internal static string RegisterCommunity {
+            get {
+                return ResourceManager.GetString("RegisterCommunity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Required.
         /// </summary>
         internal static string Required {
@@ -480,6 +498,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have not joined any communities. Join an existing community or register a new community. .
+        /// </summary>
+        internal static string YouHaveNoCommunities {
+            get {
+                return ResourceManager.GetString("YouHaveNoCommunities", resourceCulture);
             }
         }
     }
