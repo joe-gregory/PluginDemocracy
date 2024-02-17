@@ -14,6 +14,7 @@ namespace PluginDemocracy.DTOs
                 return [];
             }
         }
+        public string Description { get; set; } = string.Empty;
         //    virtual public List<BaseCitizenDto> Citizens
     }
 }

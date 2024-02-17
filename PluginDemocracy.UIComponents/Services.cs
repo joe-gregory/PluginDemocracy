@@ -61,7 +61,7 @@ namespace PluginDemocracy.UIComponents
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
             //Add JWT to request if available
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+            using HttpRequestMessage request = new(HttpMethod.Post, url);
             if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT); 
             //Add request content if the data is not null
             if(data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
@@ -132,6 +132,7 @@ namespace PluginDemocracy.UIComponents
         /// <returns>PDAPIResponse extracted from response</returns>
         private async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
+            //TODO This should only be in development
             if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
 
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();

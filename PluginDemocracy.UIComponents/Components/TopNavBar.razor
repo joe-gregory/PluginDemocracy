@@ -45,7 +45,7 @@
 
 <MudDrawer @bind-Open="@communityMenuOpen" Elevation="25" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl" Height="100vh">
     <MudDrawerHeader>
-        <MudText Typo="Typo.h6">@AppState.Translate("Community")</MudText>
+        <MudText @onclick='() => NavMan.NavigateTo(FrontEndPages.Community)' Typo="Typo.h6">@AppState.Translate("Community")</MudText>
         </MudDrawerHeader>
         @if (UserHasCommunity)
     {

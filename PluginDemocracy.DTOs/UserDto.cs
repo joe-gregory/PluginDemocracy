@@ -53,7 +53,7 @@ namespace PluginDemocracy.DTOs
                 return age;
             }
         }
-        public string _cultureCode = "en-US";
+        public string _cultureCode { get; set; } = "en-US";
         [JsonIgnore]
         public CultureInfo Culture { get => new(_cultureCode); set => _cultureCode = value.Name; }
         public bool? Admin { get; set; }
