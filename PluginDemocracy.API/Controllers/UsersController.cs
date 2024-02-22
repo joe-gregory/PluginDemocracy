@@ -228,7 +228,7 @@ namespace PluginDemocracy.API.Controllers
             return Ok(response);
         }
         #endregion
-        #region AUTHRORIZE ENDPOINTS
+        #region AUTHRORIZED ENDPOINTS
         [Authorize]
         [HttpPost("toggleuserculture")]
         public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture()
@@ -372,7 +372,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
-        #endregion
+        #endregion AUTHORIZED ENDPOINTS
         #region SCAFFOLDING
         // GET: api/Users
         [HttpGet]

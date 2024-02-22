@@ -10,6 +10,7 @@ namespace PluginDemocracy.Models
     {
         //Basic information
         public string? Name { get; set; }
+        [NotMapped]
         public override string? FullName => string.Join(" ", Name, Address);
         public string OfficialCurrency { get; set; } = "USD";
         /// <summary>
@@ -25,14 +26,10 @@ namespace PluginDemocracy.Models
                 foreach (string code in OfficialLanguagesCodes) cultures.Add(new CultureInfo(code));
                 return cultures;
             }
-            set 
-            {                 
-                OfficialLanguagesCodes = value.Select(culture => culture.Name).ToList();
-            }
         }
         public string? Description { get; set; }
         /// <summary>
-        /// The Communities that this Home belongs to. Like to which Home owners association or Privada does this belong to. 
+        /// The Communities that this Community belongs to. Like to which Home owners association or Privada does this belong to. 
         /// </summary>
         [NotMapped]
         public override List<Community> Citizenships
@@ -43,6 +40,19 @@ namespace PluginDemocracy.Models
                 return citizenships.Distinct().ToList();
             }
         }
+        public bool CanHaveHomes { get; set; }
+        public List<Home> Homes { get; private set; }
+        /// <summary>
+        /// Can Citizens be added if they don't belong to a home
+        /// </summary>
+        public bool CanHaveNonResidentialCitizens { get; set; }
+        public readonly List<Community> _communityNonResidentialCitizens;
+        public readonly List<User> _userNonResidentialCitizens;
+        /// <summary>
+        /// Citizens that don't live in a home
+        /// </summary>
+        [NotMapped]
+        public virtual List<BaseCitizen> NonResidentialCitizens { get => _communityNonResidentialCitizens.Cast<BaseCitizen>().Concat(_userNonResidentialCitizens).ToList(); }
         /// <summary>
         /// Represents all the individuals associated with a community regardless of voting ability
         /// </summary>
@@ -56,19 +66,7 @@ namespace PluginDemocracy.Models
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
-        public bool CanHaveHomes { get; set; }
-        public List<Home> Homes { get; private set; }
-        /// <summary>
-        /// Can Citizens be added if they don't belong to a home
-        /// </summary>
-        public bool CanHaveNonResidentialCitizens { get; set; }
-        /// <summary>
-        /// Citizens that don't live in a home
-        /// </summary>
-        [NotMapped]
-        public virtual List<BaseCitizen> NonResidentialCitizens { get => _communityNonResidentialCitizens.Cast<BaseCitizen>().Concat(_userNonResidentialCitizens).ToList(); }
-        public readonly List<Community> _communityNonResidentialCitizens;
-        public readonly List<User> _userNonResidentialCitizens;
+        
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
@@ -105,6 +103,7 @@ namespace PluginDemocracy.Models
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
         public List<Post> Posts { get; }
+        #region METHODS
         public Community()
         {
             OfficialLanguagesCodes = [];
@@ -125,6 +124,14 @@ namespace PluginDemocracy.Models
         /// Adding a non residential citizen involves adding the citizen to this community's NonResidentialCitizens AND adding this community to the
         /// list of citizen.NonResidentialCitizenIn.
         /// </summary>
+        internal void AddOfficialLanguage(CultureInfo culture)
+        {
+            OfficialLanguagesCodes.Add(culture.Name);
+        }
+        internal void RemoveOfficialLanguage(CultureInfo culture)
+        {
+            OfficialLanguagesCodes.Remove(culture.Name);
+        }   
         public virtual void AddNonResidentialCitizen(BaseCitizen citizen)
         {
             if (!CanHaveNonResidentialCitizens) throw new InvalidOperationException("Unable to add NonResidentialCitizens when CanHaveNonResidentialCitizens is set to false.");
@@ -227,7 +234,8 @@ namespace PluginDemocracy.Models
             foreach (var proposal in Proposals) proposal.Update();
             foreach (var role in Roles) role.Update();
         }
-        //UTILITY METHODS: 
+
+        #region UTILITY METHODS
         private protected virtual void PropagateProposal(Proposal parentProposal)
         {
 
@@ -278,7 +286,7 @@ namespace PluginDemocracy.Models
         }
         public void RemovePost(Post post)
         {
-            if (Posts.Contains(post)) Posts.Remove(post);
+            Posts.Remove(post);
         }
         static private void GetAllNestedUsers(Community community, HashSet<User> allUsers)
         {
@@ -288,6 +296,8 @@ namespace PluginDemocracy.Models
                 else if (citizen is Community nestedCommunity) GetAllNestedUsers(nestedCommunity, allUsers);
             }
         }
+        #endregion
+        #endregion
     }
 }
 

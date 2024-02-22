@@ -5,6 +5,7 @@ namespace PluginDemocracy.Models
     public class Home : BaseCitizen
     {
         public Community? ParentCommunity { get; set; }
+        public ICollection<HomeOwnership> Ownerships { get; set; }
         [NotMapped]
         public override string FullName
         {
@@ -24,10 +25,9 @@ namespace PluginDemocracy.Models
                 else return [];
             }
         }
+        public string InternalAddress { get; set; }
         [NotMapped]
         public override string Address { get => InternalAddress + "/n" + ParentCommunity?.Address; }
-        public string InternalAddress { get; set; }
-        public ICollection<HomeOwnership> Ownerships { get; set; }
         [NotMapped]
         public Dictionary<BaseCitizen, double> Owners
         {

@@ -10,4 +10,8 @@
     <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="VotingStrategiesDto\" />
+  </ItemGroup>
+
 </Project>

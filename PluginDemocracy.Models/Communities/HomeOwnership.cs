@@ -9,15 +9,20 @@ namespace PluginDemocracy.Models
 {
     public class HomeOwnership
     {
+        #region PROPERTIES
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
         [ForeignKey("HomeId")]
-#pragma warning disable IDE0051 // Remove unused private members warning because this field is indeed use but by EFCore
+#pragma warning disable IDE0051 // Remove unused private members warning because this field is used but by EFC
         private int HomeId { get; set; }
 #pragma warning restore IDE0051 // Remove unused private members
         public virtual Home Home { get; set; }
+        //Todo, these should also be private User and Community owners.
+        public User? _userOwner;
+        public Community? _communityOwner;
         [NotMapped]
-        public virtual BaseCitizen Owner { 
+        public virtual BaseCitizen Owner 
+        { 
             get 
             { 
                 if (_userOwner != null) return _userOwner;
@@ -25,8 +30,8 @@ namespace PluginDemocracy.Models
                 throw new InvalidOperationException("Owner is neither User nor Community");
             } 
         }
-        public User? _userOwner;
-        public Community? _communityOwner;
+        #endregion
+        #region METHODS
         /// <summary>
         /// Required by EFC
         /// </summary>
@@ -53,5 +58,6 @@ namespace PluginDemocracy.Models
 
             OwnershipPercentage = percentage;
         }
+        #endregion
     }
 }
