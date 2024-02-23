@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\RegisterCommunity.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Icons\CommunityIcon.svg" />
   </ItemGroup>
 
@@ -70,10 +74,19 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\ConfirmEmail.razor" />
     <_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
+    <_ContentIncludedByDefault Remove="Pages\RegisterCommunity.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\ConfirmEmail.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\RegisterCommunity.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\RegisterCommunity.razor" />
   </ItemGroup>
 
 </Project>

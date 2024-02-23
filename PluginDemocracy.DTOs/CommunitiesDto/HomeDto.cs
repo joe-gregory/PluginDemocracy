@@ -52,5 +52,7 @@ namespace PluginDemocracy.DTOs
         {
             get => Owners.Keys.Union(Residents).ToList();
         }
+        #region METHODS
+        #endregion
     }
 }

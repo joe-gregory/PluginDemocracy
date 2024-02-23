@@ -82,7 +82,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                if (VotingStrategy == null) return new Dictionary<BaseCitizen, double>();
+                if (VotingStrategy == null) return [];
                 else return VotingStrategy.ReturnVotingWeights(this);
             }
         }
