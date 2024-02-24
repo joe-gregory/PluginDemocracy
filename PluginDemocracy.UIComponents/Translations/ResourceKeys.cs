@@ -22,5 +22,13 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string YouHaveNoCommunities = "YouHaveNoCommunities";
         public const string JoinCommunity = "JoinCommunity";
         public const string RegisterCommunity = "RegisterCommunity";
+        public const string OfficialCurrency = "OfficialCurrency";
+        public const string Name = "Name";
+        public const string Description = "Description";
+        public const string SelectAllOfficialLanguages = "SelectAllOfficialLanguages";
+        public const string English = "English";
+        public const string Spanish = "Spanish";
+        public const string Required = "Required";
+        public const string Register = "Register";
     }
 }

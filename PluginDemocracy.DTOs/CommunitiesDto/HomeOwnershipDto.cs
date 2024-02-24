@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PluginDemocracy.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,18 @@ namespace PluginDemocracy.DTOs
                 if(_communityOwner != null) return _communityOwner;
                 return null;
             }
+        }
+        public static HomeOwnershipDto ReturnHomeOwnershipDtoFromHomeOwnership(HomeOwnership homeOwnership)
+        {
+            HomeOwnershipDto newHomeOwnershipDto = new()
+            {
+                Id = homeOwnership.Id,
+                OwnershipPercentage = homeOwnership.OwnershipPercentage,
+                Home = HomeDto.ReturnHomeDtoFromHome(homeOwnership.Home),
+                _userOwner = homeOwnership._userOwner != null ? UserDto.ReturnUserDtoFromUser(homeOwnership._userOwner) : null,
+                _communityOwner = homeOwnership._communityOwner != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(homeOwnership._communityOwner) : null,
+            };
+            return newHomeOwnershipDto;
         }
     }
 }

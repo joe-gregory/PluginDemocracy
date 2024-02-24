@@ -142,6 +142,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to English.
         /// </summary>
         internal static string English {
@@ -259,11 +268,29 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input New Password.
         /// </summary>
         internal static string NewPasswordTitle {
             get {
                 return ResourceManager.GetString("NewPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Official currency.
+        /// </summary>
+        internal static string OfficialCurrency {
+            get {
+                return ResourceManager.GetString("OfficialCurrency", resourceCulture);
             }
         }
         
@@ -417,6 +444,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string Select {
             get {
                 return ResourceManager.GetString("Select", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select all official languages.
+        /// </summary>
+        internal static string SelectAllOfficialLanguages {
+            get {
+                return ResourceManager.GetString("SelectAllOfficialLanguages", resourceCulture);
             }
         }
         

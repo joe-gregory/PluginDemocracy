@@ -1,10 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
 <MudThemeProvider Theme="PluginDemocracyTheme.Theme" />
-<MudDialogProvider />
+<MudDialogProvider @rendermode="InteractiveServer" />
 <MudSnackbarProvider @rendermode="InteractiveServer"/>
 
-<MudLayout>
+<MudLayout >
 
     <TopNavBar @rendermode="InteractiveServer" />
     <MudMainContent>

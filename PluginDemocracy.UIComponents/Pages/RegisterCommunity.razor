@@ -3,8 +3,55 @@
 
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.RegisterCommunity)</MudText>
 
+<MudForm Model="@communityDto" @bind-IsValid="@success" @bind-Errors="@errors">
+    <MudPaper Class="pa-4" Elevation="25">
+        <MudTextField @bind-Value="@communityDto.Name" T="string" Label="@AppState.Translate(ResourceKeys.Name)" Required="true" RequiredError="@AppState.Translate(ResourceKeys.Required)" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="@communityDto.Address" T="string" Label="@AppState.Translate(ResourceKeys.Name)" Required="true" RequiredError="@AppState.Translate(ResourceKeys.Required)" Variant="Variant.Outlined" />
 
+        <MudSwitch T="bool" ValueChanged="onCurrencySwitch" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.AttachMoney" >@AppState.Translate(ResourceKeys.OfficialCurrency) <img src="@selectedFlagCurrency" height="14" class="mr-1" /></MudSwitch>
+        
+      
+        <MudText>@AppState.Translate(ResourceKeys.SelectAllOfficialLanguages)</MudText>
+        
+        <MudCheckBox @bind-Value="@officialLanguageEnglish" Color="Color.Info" Label="@AppState.Translate(ResourceKeys.English)" />
+        <MudCheckBox @bind-Value="@officialLanguageSpanish" Color="Color.Success" Label="@AppState.Translate(ResourceKeys.Spanish)" />
+        
+        <MudTextField @bind-Value="@communityDto.Description" T="string" Label="@AppState.Translate(ResourceKeys.Description)" Required="true" RequiredError="@AppState.Translate(ResourceKeys.Required)" Variant="Variant.Outlined" />
+        
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || disableButton)" Class="mt-5" OnClick="postForm">@AppState.Translate(ResourceKeys.Register)</MudButton>
+    </MudPaper>
+</MudForm>
 
-@code {
+    @code {
+    private string _officialCurrency = "USD";
+    private CommunityDto communityDto = new CommunityDto()
+        {
+            CanHaveHomes = true,
+            ProposalsExpirationDays = 30,
+        };
+    private bool success;
+    string[] errors = [];
 
+    private bool currencyBool; //false is USD, true is MXN
+    private string selectedFlagCurrency = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+    private string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+    private string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
+
+    bool disableButton = true;
+
+    bool officialLanguageEnglish = false;
+    bool officialLanguageSpanish = false;
+    /// <summary>
+    /// If false, USA, if true, MXN
+    /// </summary>
+    private void onCurrencySwitch()
+    {
+        currencyBool = !currencyBool;
+        if(!currencyBool) selectedFlagCurrency = usaFlag;
+        else selectedFlagCurrency = mxnFlag;
+    }
+    private void postForm()
+    {
+        
+    }
 }

@@ -66,7 +66,7 @@
     {
         <MudNavMenu>
             <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
+                <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
             </MudNavMenu>
     }
 </MudDrawer>

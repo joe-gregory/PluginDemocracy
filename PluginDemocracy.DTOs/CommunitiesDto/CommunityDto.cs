@@ -100,44 +100,33 @@ namespace PluginDemocracy.DTOs
         }
         public CommunityDto(Community community)
         {
+            //BaseCitizenDto Properties
+            Id = community.Id;
+            Address = community.Address;
+            ProfilePicture = community.ProfilePicture;
+            NonResidentialCitizenIn = community.NonResidentialCitizenIn.Select(c => ReturnSimpleCommunityDtoFromCommunity(c)).ToList();
+            foreach (HomeOwnership homeOwnership in community.HomeOwnerships) HomeOwnerships.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
+            //CommunityDto Properties
             Name = community.Name;
             OfficialCurrency = community.OfficialCurrency;
-            OfficialLanguagesCodes = community.OfficialLanguages.Select(culture => culture.Name).ToList();
+            foreach (string language in community.OfficialLanguagesCodes) OfficialLanguagesCodes.Add(language);
             Description = community.Description;
             CanHaveHomes = community.CanHaveHomes;
-
-            //HOMES
-            //TODO ME FALTAN LAS BASECITIZEN STUFF LIKE ID AND PROFILE PICTURE
-            Homes = [];
-            foreach(Home home in community.Homes)
-            {
-                HomeDto newHomeDto = new()
-                {
-                    Id = home.Id,
-                    ParentCommunity = this,
-                    InternalAddress = home.InternalAddress,
-                };
-                //Ownerships
-                foreach(HomeOwnership homeOwnership in home.Ownerships)
-                {
-                    HomeOwnershipDto newHomeOwnershipDto = new()
-                    {
-                        Id = homeOwnership.Id,
-                        OwnershipPercentage = homeOwnership.OwnershipPercentage,
-                        Home = newHomeDto,
-                    };
-                    if(homeOwnership.Owner is User userOwner) newHomeOwnershipDto._userOwner = UserDto.ReturnUserDtoFromUser(userOwner);
-                    if(homeOwnership.Owner is Community communityOwner) 
-                    {
-                        if(communityOwner.Id == this.Id) newHomeOwnershipDto._communityOwner = this;
-                        else newHomeOwnershipDto._communityOwner = CommunityDto.ReturnSimpleCommunityDtoFromCommunity(communityOwner);
-                    }
-                    newHomeDto.Ownerships.Add(newHomeOwnershipDto);
-                }
-                //Residents
-                foreach (User resident in home.Residents) newHomeDto.Residents.Add(UserDto.ReturnUserDtoFromUser(resident));
-                Homes.Add(newHomeDto);
-            }
+            foreach(Home home in community.Homes) Homes?.Add(HomeDto.ReturnHomeDtoFromHome(home));
+            CanHaveNonResidentialCitizens = community.CanHaveNonResidentialCitizens;
+            foreach (Community communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
+            foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDto.ReturnUserDtoFromUser(userNonResidentialCitizen));
+            ProposalsExpirationDays = community.ProposalsExpirationDays;
+            VotingStrategy = community.VotingStrategy;
+            TotalVotes = community.TotalVotes;
+            Constitution = community.Constitution;
+            Proposals = community.Proposals;
+            Accounting = community.Accounting;
+            Dictamens = community.Dictamens;
+            Roles = community.Roles;
+            Projects = community.Projects;
+            RedFlags = community.RedFlags;
+            Posts = community.Posts;
         }
         /// <summary>
         /// This will return a CommunityDto basic properties. It is most likely used with Home.Ownerships reference outside communities for 
@@ -158,5 +147,4 @@ namespace PluginDemocracy.DTOs
         }   
         #endregion
     }
-
 }

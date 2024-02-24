@@ -15,10 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\RegisterCommunity.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Icons\CommunityIcon.svg" />
   </ItemGroup>
 
@@ -83,10 +79,6 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\RegisterCommunity.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\RegisterCommunity.razor" />
   </ItemGroup>
 
 </Project>

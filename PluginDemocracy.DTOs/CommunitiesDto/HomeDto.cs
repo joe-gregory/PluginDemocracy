@@ -12,6 +12,7 @@ namespace PluginDemocracy.DTOs
 {
     public class HomeDto : BaseCitizenDto
     {
+        #region PROPERTIES
         public CommunityDto? ParentCommunity { get; set; }
         public HashSet<HomeOwnershipDto> Ownerships { get; set; } = [];
         [JsonIgnore]
@@ -42,6 +43,7 @@ namespace PluginDemocracy.DTOs
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
         public List<UserDto> Residents { get; set; } = [];
+        #endregion
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
         /// Citizen.Citizenships can be updated for both the GatedCommunity and the Home. The Home doesn't have access to its parent GatedCommunity, so it must be done in the
@@ -53,6 +55,24 @@ namespace PluginDemocracy.DTOs
             get => Owners.Keys.Union(Residents).ToList();
         }
         #region METHODS
+        public static HomeDto ReturnHomeDtoFromHome(Home home)
+        {
+            HomeDto newHomeDto = new()
+            {
+                //BaseCitizenDto Properties
+                Id = home.Id,
+                Address = home.Address,
+                ProfilePicture = home.ProfilePicture,
+                NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDto.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
+                HomeOwnerships = home.HomeOwnerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
+                //HomeDto Properties
+                ParentCommunity = home.ParentCommunity != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
+                Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
+                InternalAddress = home.InternalAddress,
+                Residents = home.Residents.Select(r => UserDto.ReturnUserDtoFromUser(r)).ToList(),
+            };
+            return newHomeDto;
+        }
         #endregion
     }
 }

@@ -144,6 +144,9 @@
   <data name="DateOfBirth" xml:space="preserve">
     <value>Fecha de nacimiento</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
   <data name="English" xml:space="preserve">
     <value>Ingles</value>
   </data>
@@ -183,8 +186,14 @@
   <data name="MiddleName" xml:space="preserve">
     <value>Segundo nombre</value>
   </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
   <data name="NewPasswordTitle" xml:space="preserve">
     <value>Inserte Nueva Contraseña</value>
+  </data>
+  <data name="OfficialCurrency" xml:space="preserve">
+    <value>Moneda oficial</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
@@ -236,6 +245,9 @@
   </data>
   <data name="Select" xml:space="preserve">
     <value>Seleccionar</value>
+  </data>
+  <data name="SelectAllOfficialLanguages" xml:space="preserve">
+    <value>Seleccione todos los idiomas oficiales</value>
   </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Seleccionar cultura</value>
