@@ -35,7 +35,7 @@ namespace PluginDemocracy.DTOs
             }
         }
         public bool CanHaveHomes { get; set; }
-        public List<HomeDto> Homes { get; set; }
+        public List<HomeDto> Homes { get; set; } = [];
         /// <summary>
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
