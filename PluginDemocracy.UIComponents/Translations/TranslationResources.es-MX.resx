@@ -132,6 +132,9 @@
   <data name="AddHomesAutomaticallyDescription" xml:space="preserve">
     <value>En esta sección, puedes agregar múltiples viviendas rápidamente para evitar tener que añadir una por una. Si es necesario, puedes agregar varias viviendas y luego editar la información individual de cada una de ellas a continuación.</value>
   </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -165,6 +168,9 @@
   <data name="ForgotPassword?" xml:space="preserve">
     <value>Olvido su contraseña?</value>
   </data>
+  <data name="Generate" xml:space="preserve">
+    <value>Generar</value>
+  </data>
   <data name="History" xml:space="preserve">
     <value>Historia</value>
   </data>
@@ -178,7 +184,7 @@
     <value>Número de dirección con el que comienzan los hogares</value>
   </data>
   <data name="InternalAddress" xml:space="preserve">
-    <value>Dirección interior (si hay una)</value>
+    <value>Dirección interior</value>
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>No válido</value>
@@ -209,6 +215,9 @@
   </data>
   <data name="NewPasswordTitle" xml:space="preserve">
     <value>Inserte Nueva Contraseña</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Numero</value>
   </data>
   <data name="OfficialCurrency" xml:space="preserve">
     <value>Moneda oficial</value>

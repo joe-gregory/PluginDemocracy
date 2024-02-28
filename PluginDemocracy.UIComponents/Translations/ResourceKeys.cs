@@ -36,5 +36,8 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string HomesEndingNumber = "HomesEndingNumber";
         public const string InternalAddress = "InternalAddress";
         public const string Add = "Add";
+        public const string Number = "Number";
+        public const string Generate = "Generate";
+        public const string Address = "Address";
     }
 }

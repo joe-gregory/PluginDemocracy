@@ -64,7 +64,10 @@ namespace PluginDemocracy.DTOs
         public override bool Equals(object? obj)
         {
 
-            if (GetType() == obj?.GetType()) return Id == ((HomeDto)obj).Id;
+            if (GetType() == obj?.GetType()) 
+            { 
+                return Id == ((HomeDto)obj).Id && Number == ((HomeDto)obj).Number && InternalAddress == ((HomeDto)obj).InternalAddress;
+            }
             else return false;
         }
         /// <summary>

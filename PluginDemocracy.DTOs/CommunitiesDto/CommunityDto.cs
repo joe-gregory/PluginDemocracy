@@ -136,6 +136,10 @@ namespace PluginDemocracy.DTOs
                 Homes.Add(home);
             }
         }
+        public void RemoveHome(HomeDto home)
+        {
+            Homes.Remove(home);
+        }   
         /// <summary>
         /// This will return a CommunityDto basic properties. It is most likely used with Home.Ownerships reference outside communities for 
         /// which not a lot of extensive informaiton is needed. 

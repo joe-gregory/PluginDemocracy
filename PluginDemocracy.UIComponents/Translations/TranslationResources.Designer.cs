@@ -106,6 +106,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Address.
+        /// </summary>
+        internal static string Address {
+            get {
+                return ResourceManager.GetString("Address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
         internal static string ChangePassword {
@@ -205,6 +214,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate.
+        /// </summary>
+        internal static string Generate {
+            get {
+                return ResourceManager.GetString("Generate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to History.
         /// </summary>
         internal static string History {
@@ -241,7 +259,7 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Internal address (if there is one).
+        ///   Looks up a localized string similar to Internal address.
         /// </summary>
         internal static string InternalAddress {
             get {
@@ -336,6 +354,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string NewPasswordTitle {
             get {
                 return ResourceManager.GetString("NewPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number.
+        /// </summary>
+        internal static string Number {
+            get {
+                return ResourceManager.GetString("Number", resourceCulture);
             }
         }
         
