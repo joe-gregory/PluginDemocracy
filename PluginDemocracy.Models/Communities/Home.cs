@@ -25,9 +25,10 @@ namespace PluginDemocracy.Models
                 else return [];
             }
         }
+        public int Number { get; set; }
         public string InternalAddress { get; set; }
         [NotMapped]
-        public override string Address { get => InternalAddress + "/n" + ParentCommunity?.Address; }
+        public override string Address { get => Number + " " + InternalAddress + "/n" + ParentCommunity?.Address; }
         [NotMapped]
         public Dictionary<BaseCitizen, double> Owners
         {

@@ -126,6 +126,12 @@
   <data name="Accounting" xml:space="preserve">
     <value>Contabilidad</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="AddHomesAutomaticallyDescription" xml:space="preserve">
+    <value>En esta sección, puedes agregar múltiples viviendas rápidamente para evitar tener que añadir una por una. Si es necesario, puedes agregar varias viviendas y luego editar la información individual de cada una de ellas a continuación.</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -161,6 +167,18 @@
   </data>
   <data name="History" xml:space="preserve">
     <value>Historia</value>
+  </data>
+  <data name="Homes" xml:space="preserve">
+    <value>Hogares</value>
+  </data>
+  <data name="HomesEndingNumber" xml:space="preserve">
+    <value>Número de dirección con el que terminan los hogares</value>
+  </data>
+  <data name="HomesStartingNumber" xml:space="preserve">
+    <value>Número de dirección con el que comienzan los hogares</value>
+  </data>
+  <data name="InternalAddress" xml:space="preserve">
+    <value>Dirección interior (si hay una)</value>
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>No válido</value>

@@ -88,6 +88,24 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        internal static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This section helps you add multitple homes quickly so you don&apos;t have to add a home one by one. If you need to, you can add multiple homes and then edit the individual information of each home below. .
+        /// </summary>
+        internal static string AddHomesAutomaticallyDescription {
+            get {
+                return ResourceManager.GetString("AddHomesAutomaticallyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
         internal static string ChangePassword {
@@ -192,6 +210,42 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string History {
             get {
                 return ResourceManager.GetString("History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Homes.
+        /// </summary>
+        internal static string Homes {
+            get {
+                return ResourceManager.GetString("Homes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Homes&apos;s ending address number.
+        /// </summary>
+        internal static string HomesEndingNumber {
+            get {
+                return ResourceManager.GetString("HomesEndingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Homes&apos; starting address number.
+        /// </summary>
+        internal static string HomesStartingNumber {
+            get {
+                return ResourceManager.GetString("HomesStartingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal address (if there is one).
+        /// </summary>
+        internal static string InternalAddress {
+            get {
+                return ResourceManager.GetString("InternalAddress", resourceCulture);
             }
         }
         

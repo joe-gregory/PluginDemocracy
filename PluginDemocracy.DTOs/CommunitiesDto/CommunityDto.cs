@@ -128,6 +128,14 @@ namespace PluginDemocracy.DTOs
             RedFlags = community.RedFlags;
             Posts = community.Posts;
         }
+        public void AddHome(HomeDto home)
+        {
+            if (!Homes.Contains(home)) 
+            {
+                home.ParentCommunity = this;
+                Homes.Add(home);
+            }
+        }
         /// <summary>
         /// This will return a CommunityDto basic properties. It is most likely used with Home.Ownerships reference outside communities for 
         /// which not a lot of extensive informaiton is needed. 

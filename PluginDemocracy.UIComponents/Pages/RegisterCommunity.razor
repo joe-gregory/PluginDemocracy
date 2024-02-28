@@ -18,10 +18,28 @@
         
         <MudTextField @bind-Value="@communityDto.Description" T="string" Label="@AppState.Translate(ResourceKeys.Description)" Required="true" RequiredError="@AppState.Translate(ResourceKeys.Required)" Variant="Variant.Outlined" />
         
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || disableButton)" Class="mt-5" OnClick="postForm">@AppState.Translate(ResourceKeys.Register)</MudButton>
+        <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Disabled="@(!success || disableButton)" Class="mt-5 mr-5" StartIcon="@Icons.Material.Filled.Save" OnClick="postForm">@AppState.Translate(ResourceKeys.Register)</MudButton>
+        
+        <!--HOMES PORTION-->
+        <MudPaper Class="pa-4 ma-3" Elevation="25">
+            <MudText Typo="Typo.h5" Align="Align.Left" Color="Color.Primary">@AppState.Translate(ResourceKeys.Homes)</MudText>
+
+            <MudPaper Class="pa-4 ma-3" Elevation="25"><!--AUTOMATIC ADDITION OF HOMES-->
+                <MudText>@AppState.Translate(ResourceKeys.AddHomesAutomaticallyDescription)</MudText>
+                <MudTextField T="int" @bind-Value="@startingNumberAHA" Label="@AppState.Translate(ResourceKeys.HomesStartingNumber)" Variant="Variant.Outlined" />
+                <MudTextField T="int" @bind-Value="@endingNumberAHA" Label="@AppState.Translate(ResourceKeys.HomesEndingNumber)" Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="@internalAddressAHA" T="string" Label="@AppState.Translate(ResourceKeys.InternalAddress)" Variant="Variant.Outlined" />
+                <MudButton Variant="Variant.Filled" OnClick="@AutomaticallyAddHomes">@AppState.Translate(ResourceKeys.Add)</MudButton>
+            </MudPaper> <!--END AUTOMATIC ADDITION OF HOMES-->
+            
+        
+        </MudPaper>
+        <!--DISPLAYING THE HOMES ALLOWING EDITING, ADDING AND REMOVING-->
+        <!--END DISPLAYING THE HOMES ALLOWING EDITING, ADDING AND REMOVING-->
+        <!--END HOMES PORTION-->
+        
     </MudPaper>
 </MudForm>
-
     @code {
     private CommunityDto communityDto = new CommunityDto()
         {
@@ -40,6 +58,13 @@
 
     bool officialLanguageEnglish = false;
     bool officialLanguageSpanish = false;
+
+    #region AUTOMATIC HOMES ADDITION VARIABLES
+    private int startingNumberAHA;
+    private int endingNumberAHA;
+    private string internalAddressAHA = string.Empty;
+    #endregion
+
     /// <summary>
     /// If false, USA, if true, MXN
     /// </summary>
@@ -48,6 +73,35 @@
         currencyBool = !currencyBool;
         if(!currencyBool) selectedFlagCurrency = usaFlag;
         else selectedFlagCurrency = mxnFlag;
+    }
+    /// <summary>
+    /// This is part of the automatic homes addition box. It will add homes automatically to the community.
+    /// It needs to ensure that the initial number is lower than the final number and that neither are negative.
+    /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number
+    /// </summary>
+    private void AutomaticallyAddHomes()
+    {
+        if(startingNumberAHA < 0 || endingNumberAHA < 0 || startingNumberAHA > endingNumberAHA)
+        {
+            errors = new string[]{"starting and ending number cannot be negative and starting number cannot be smaller than ending number."};
+            return;
+        }
+        for(int i = startingNumberAHA; i <= endingNumberAHA; i++)
+        {
+            HomeDto newHome = new();
+            newHome.Id = i;
+            newHome.Number = i;
+            newHome.InternalAddress = internalAddressAHA;
+            communityDto.AddHome(newHome);
+        }
+    }
+    /// <summary>
+    /// It checks the highest HomeDto.Number and assigns the next number to the new home.
+    /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number
+    /// </summary>
+    private void AddIndividualHome()
+    {
+        
     }
     private void postForm()
     {

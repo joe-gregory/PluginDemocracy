@@ -30,5 +30,11 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Spanish = "Spanish";
         public const string Required = "Required";
         public const string Register = "Register";
+        public const string Homes = "Homes";
+        public const string AddHomesAutomaticallyDescription = "AddHomesAutomaticallyDescription";
+        public const string HomesStartingNumber = "HomesStartingNumber";
+        public const string HomesEndingNumber = "HomesEndingNumber";
+        public const string InternalAddress = "InternalAddress";
+        public const string Add = "Add";
     }
 }

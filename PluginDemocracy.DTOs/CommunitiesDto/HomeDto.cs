@@ -34,16 +34,16 @@ namespace PluginDemocracy.DTOs
                 else return [];
             }
         }
+        public int Number { get; set; }
         public string InternalAddress { get; set; } = string.Empty;
         [JsonIgnore]
-        public override string Address => InternalAddress + "/n" + ParentCommunity?.Address;
+        public override string Address => Number + " " + InternalAddress + "/n" + ParentCommunity?.Address;
         [JsonIgnore]
         public Dictionary<BaseCitizenDto, double> Owners
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
         public List<UserDto> Residents { get; set; } = [];
-        #endregion
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
         /// Citizen.Citizenships can be updated for both the GatedCommunity and the Home. The Home doesn't have access to its parent GatedCommunity, so it must be done in the
@@ -54,7 +54,27 @@ namespace PluginDemocracy.DTOs
         {
             get => Owners.Keys.Union(Residents).ToList();
         }
+        #endregion
         #region METHODS
+        /// <summary>
+        /// Overriding DTO Equals method to compare Ids because more than one DTO object may be created for the same entity.
+        /// </summary>
+        /// <param name="obj">The object being compared to</param>
+        /// <returns>true if both are HomeDto type and Id matches</returns>
+        public override bool Equals(object? obj)
+        {
+
+            if (GetType() == obj?.GetType()) return Id == ((HomeDto)obj).Id;
+            else return false;
+        }
+        /// <summary>
+        /// Get hash code is overridden to match the overridden Equals method because some collection types rely on hash codes such as dictionaries and hash sets.
+        /// </summary>
+        /// <returns>Id as a hash code</returns>
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
         public static HomeDto ReturnHomeDtoFromHome(Home home)
         {
             HomeDto newHomeDto = new()

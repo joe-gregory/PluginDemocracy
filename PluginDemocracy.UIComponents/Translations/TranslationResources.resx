@@ -126,6 +126,12 @@
   <data name="Accounting" xml:space="preserve">
     <value>Accounting</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddHomesAutomaticallyDescription" xml:space="preserve">
+    <value>This section helps you add multitple homes quickly so you don't have to add a home one by one. If you need to, you can add multiple homes and then edit the individual information of each home below. </value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
@@ -161,6 +167,18 @@
   </data>
   <data name="History" xml:space="preserve">
     <value>History</value>
+  </data>
+  <data name="Homes" xml:space="preserve">
+    <value>Homes</value>
+  </data>
+  <data name="HomesEndingNumber" xml:space="preserve">
+    <value>Homes's ending address number</value>
+  </data>
+  <data name="HomesStartingNumber" xml:space="preserve">
+    <value>Homes' starting address number</value>
+  </data>
+  <data name="InternalAddress" xml:space="preserve">
+    <value>Internal address (if there is one)</value>
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>Invalid</value>
