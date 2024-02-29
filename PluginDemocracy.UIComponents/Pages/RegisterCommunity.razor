@@ -22,13 +22,13 @@
                 <MudTextField T="int" @bind-Value="@startingNumberAHA" Label="@AppState.Translate(ResourceKeys.HomesStartingNumber)" Variant="Variant.Outlined" />
                 <MudTextField T="int" @bind-Value="@endingNumberAHA" Label="@AppState.Translate(ResourceKeys.HomesEndingNumber)" Variant="Variant.Outlined" />
                 <MudTextField @bind-Value="@internalAddressAHA" T="string" Label="@AppState.Translate(ResourceKeys.InternalAddress)" Variant="Variant.Outlined" Required="false" />
-                <MudButton Variant="Variant.Filled" Class="mt-5 mr-5" OnClick="@AutomaticallyAddHomes">@AppState.Translate(ResourceKeys.Generate)</MudButton>
+                <MudButton Variant="Variant.Filled" Class="mt-5 mr-5" OnClick="@automaticallyAddHomes">@AppState.Translate(ResourceKeys.Generate)</MudButton>
             </MudPaper> 
             <!--END AUTOMATIC ADDITION OF HOMES-->
             <!--DISPLAYING THE HOMES ALLOWING EDITING, ADDING AND REMOVING-->
             <CommunityDtoHomesDataGrid Community="@communityDto" />
             <div class="d-flex justify-center mt-5 mb-5">
-                <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddIndividualHome" aria-label="Add home"/>
+                <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="@addIndividualHome" aria-label="Add home"/>
             </div>
             <!--END DISPLAYING THE HOMES ALLOWING EDITING, ADDING AND REMOVING-->
 
@@ -83,7 +83,7 @@
     /// It needs to ensure that the initial number is lower than the final number and that neither are negative.
     /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number
     /// </summary>
-    private void AutomaticallyAddHomes()
+    private void automaticallyAddHomes()
     {
         if(startingNumberAHA < 0 || endingNumberAHA < 0 || startingNumberAHA > endingNumberAHA || startingNumberAHA == 0 || endingNumberAHA == 0)
         {
@@ -108,7 +108,7 @@
     /// It checks the highest HomeDto.Number and assigns the next number to the new home.
     /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number
     /// </summary>
-    private void AddIndividualHome()
+    private void addIndividualHome()
     {
         int highestNumber = 0;
         if(communityDto.Homes!=null && communityDto.Homes.Count > 0) highestNumber = communityDto.Homes.Max(home => home.Number);
@@ -117,12 +117,46 @@
         newHome.Number = highestNumber + 1;
         communityDto.AddHome(newHome);
     }
-    private void FinalCheckBeforePosting()
+    private bool finalCheckBeforePosting()
     {
-        
+        bool finalCheck = true;  // Start with the assumption of success
+
+        if (string.IsNullOrEmpty(communityDto.Name))
+        {
+            Services.AddSnackBarMessage("error", "Community name cannot be empty.");
+            finalCheck = false;
+        }
+        if (string.IsNullOrEmpty(communityDto.Address))
+        {
+            Services.AddSnackBarMessage("error", "Community address cannot be empty.");
+            finalCheck = false;
+        }
+        if (!officialLanguageEnglish && !officialLanguageSpanish)
+        {
+            Services.AddSnackBarMessage("error", "At least one official language must be selected.");
+            finalCheck = false;
+        }
+        if (communityDto.Homes.Count == 0)
+        {
+            Services.AddSnackBarMessage("error", "There are no homes registered for the community.");
+            finalCheck = false;
+        }
+        if (communityDto.Homes.GroupBy(home => home.Number).Any(group => group.Count() > 1))
+        {
+            Services.AddSnackBarMessage("error", "There are duplicated homes in the community.");
+            finalCheck = false;
+        }
+        return finalCheck;
     }
-    private void postForm()
+    private async void postForm()
     {
-        
+        //Assign language if all looks good
+        if (finalCheckBeforePosting())
+        {
+            if (officialLanguageEnglish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("en-US"));
+            if (officialLanguageSpanish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("es-MX"));
+            await Services.PostDataAsync<CommunityDto>(ApiEndPoints.RegisterCommunity, communityDto);
+        }
+        else return;
     }
 }
