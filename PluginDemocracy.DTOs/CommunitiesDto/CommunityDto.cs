@@ -13,14 +13,14 @@ namespace PluginDemocracy.DTOs
         [JsonIgnore]
         public override string? FullName => string.Join(" ", Name, Address);
         public string OfficialCurrency { get; set; } = "USD";
-        public List<string> OfficialLanguagesCodes { get; set; } = [];
+        public List<string> _officialLanguagesCodes { get; set; } = [];
         [JsonIgnore]
         public List<CultureInfo> OfficialLanguages
         {
             get
             {
                 List<CultureInfo> cultures = [];
-                foreach (string code in OfficialLanguagesCodes) cultures.Add(new CultureInfo(code));
+                foreach (string code in _officialLanguagesCodes) cultures.Add(new CultureInfo(code));
                 return cultures;
             }
         }
@@ -109,7 +109,7 @@ namespace PluginDemocracy.DTOs
             //CommunityDto Properties
             Name = community.Name;
             OfficialCurrency = community.OfficialCurrency;
-            foreach (string language in community.OfficialLanguagesCodes) OfficialLanguagesCodes.Add(language);
+            foreach (string language in community._officialLanguagesCodes) _officialLanguagesCodes.Add(language);
             Description = community.Description;
             CanHaveHomes = community.CanHaveHomes;
             foreach(Home home in community.Homes) Homes?.Add(HomeDto.ReturnHomeDtoFromHome(home));
@@ -128,6 +128,7 @@ namespace PluginDemocracy.DTOs
             RedFlags = community.RedFlags;
             Posts = community.Posts;
         }
+       
         public void AddHome(HomeDto home)
         {
             if (!Homes.Contains(home)) 
@@ -153,7 +154,7 @@ namespace PluginDemocracy.DTOs
                 Name = community.Name,
                 OfficialCurrency = community.OfficialCurrency,
                 Address = community.Address,
-                OfficialLanguagesCodes = community.OfficialLanguages.Select(culture => culture.Name).ToList(),
+                _officialLanguagesCodes = community.OfficialLanguages.Select(culture => culture.Name).ToList(),
                 Description = community.Description,
             };
         }   

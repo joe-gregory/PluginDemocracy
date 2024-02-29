@@ -16,14 +16,14 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Ideally this property should be private. However, EFCore requires it to be public... for now. 
         /// </summary>
-        public List<string> OfficialLanguagesCodes { get; private set; }
+        public List<string> _officialLanguagesCodes { get; private set; }
         [NotMapped]
         public List<CultureInfo> OfficialLanguages 
         { 
             get 
             { 
                 List<CultureInfo> cultures = [];
-                foreach (string code in OfficialLanguagesCodes) cultures.Add(new CultureInfo(code));
+                foreach (string code in _officialLanguagesCodes) cultures.Add(new CultureInfo(code));
                 return cultures;
             }
         }
@@ -66,11 +66,11 @@ namespace PluginDemocracy.Models
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
-        
+
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
-        public int ProposalsExpirationDays { get; set; }
+        public int ProposalsExpirationDays { get; set; } = 30;
         public BaseVotingStrategy? VotingStrategy { get; set; }
         /// <summary>
         /// CitizensVotingValue is an int to protect against rounding errors.
@@ -86,6 +86,7 @@ namespace PluginDemocracy.Models
                 else return VotingStrategy.ReturnVotingWeights(this);
             }
         }
+        [NotMapped]
         public double TotalVotes => CitizensVotingValue.Values.Sum();
         public Constitution Constitution { get; private set; }
         public List<Proposal> Proposals { get; private set; }
@@ -106,13 +107,12 @@ namespace PluginDemocracy.Models
         #region METHODS
         public Community()
         {
-            OfficialLanguagesCodes = [];
+            _officialLanguagesCodes = [];
             Homes = [];
             _communityNonResidentialCitizens = [];
             _userNonResidentialCitizens = [];
             Constitution = new();
             Proposals = [];
-            ProposalsExpirationDays = 30;
             Accounting = new(this);
             Dictamens = [];
             Roles = [];
@@ -124,13 +124,13 @@ namespace PluginDemocracy.Models
         /// Adding a non residential citizen involves adding the citizen to this community's NonResidentialCitizens AND adding this community to the
         /// list of citizen.NonResidentialCitizenIn.
         /// </summary>
-        internal void AddOfficialLanguage(CultureInfo culture)
+        public void AddOfficialLanguage(CultureInfo culture)
         {
-            OfficialLanguagesCodes.Add(culture.Name);
+            _officialLanguagesCodes.Add(culture.Name);
         }
-        internal void RemoveOfficialLanguage(CultureInfo culture)
+        public void RemoveOfficialLanguage(CultureInfo culture)
         {
-            OfficialLanguagesCodes.Remove(culture.Name);
+            _officialLanguagesCodes.Remove(culture.Name);
         }   
         public virtual void AddNonResidentialCitizen(BaseCitizen citizen)
         {
