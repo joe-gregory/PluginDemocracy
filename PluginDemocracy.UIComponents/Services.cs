@@ -7,6 +7,7 @@ using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PluginDemocracy.UIComponents
@@ -62,9 +63,9 @@ namespace PluginDemocracy.UIComponents
             string url = _appState.BaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Post, url);
-            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT); 
+            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             //Add request content if the data is not null
-            if(data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data, options), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {

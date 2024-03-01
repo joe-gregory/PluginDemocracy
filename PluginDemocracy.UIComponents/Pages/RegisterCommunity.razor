@@ -81,7 +81,8 @@
     /// <summary>
     /// This is part of the automatic homes addition box. It will add homes automatically to the community.
     /// It needs to ensure that the initial number is lower than the final number and that neither are negative.
-    /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number
+    /// FOR PURPOSES OF THIS FORM ONLY HomeDto.Id = HomeDto.Number.
+    ///Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method 
     /// </summary>
     private void automaticallyAddHomes()
     {
@@ -102,6 +103,7 @@
                 return;
             }
             communityDto.AddHome(newHome);
+            newHome.ParentCommunity = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
         }
     }
     /// <summary>
@@ -116,6 +118,7 @@
         newHome.Id = highestNumber + 1;
         newHome.Number = highestNumber + 1;
         communityDto.AddHome(newHome);
+        newHome.ParentCommunity = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
     }
     private bool finalCheckBeforePosting()
     {
