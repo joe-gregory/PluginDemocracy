@@ -92,7 +92,7 @@
         }
         else
         {
-            <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink>
+            @* <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink> *@
             <MudNavLink OnClick="@(Services.LogOutAndRedirectHome)" Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
         }
     <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/settings">@AppState.Translate("Settings")</MudNavLink>
