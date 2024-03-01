@@ -65,7 +65,7 @@ namespace PluginDemocracy.UIComponents
             using HttpRequestMessage request = new(HttpMethod.Post, url);
             if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             //Add request content if the data is not null
-            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data, options), Encoding.UTF8, "application/json");
+            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {

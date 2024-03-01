@@ -128,7 +128,10 @@ namespace PluginDemocracy.DTOs
             RedFlags = community.RedFlags;
             Posts = community.Posts;
         }
-       
+        public void AddOfficialLanguage(CultureInfo culture)
+        {
+            _officialLanguagesCodes.Add(culture.Name);
+        }
         public void AddHome(HomeDto home)
         {
             if (!Homes.Contains(home)) 

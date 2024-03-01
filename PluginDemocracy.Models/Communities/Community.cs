@@ -8,6 +8,7 @@ namespace PluginDemocracy.Models
     /// </summary>
     public class Community : BaseCitizen
     {
+        #region PROPERTIES
         //Basic information
         public string? Name { get; set; }
         [NotMapped]
@@ -104,6 +105,7 @@ namespace PluginDemocracy.Models
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
         public List<Post> Posts { get; }
+        #endregion
         #region METHODS
         public Community()
         {
