@@ -49,6 +49,7 @@ namespace PluginDemocracy.API.Controllers
             Community newCommunity = new()
             {
                 Name = communityDto.Name,
+                Address = communityDto.Address,
                 OfficialCurrency = communityDto.OfficialCurrency,
                 Description = communityDto.Description,
                 CanHaveHomes = true,
@@ -84,6 +85,7 @@ namespace PluginDemocracy.API.Controllers
                 List<Community> communities = await _context.Communities.ToListAsync();
                 foreach (Community community in communities) response.AllCommunities.Add(new CommunityDto()
                 {
+                    Id = community.Id,
                     Name = community.Name,
                     Description = community.Description,
                     Address = community.Address,
