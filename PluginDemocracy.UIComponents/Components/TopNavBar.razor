@@ -52,22 +52,24 @@
 
         <MudNavMenu>
             <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Feed")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Create Proposal")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
-                <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink>
-            </MudNavMenu>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Create Proposal")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
+            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
+        </MudNavMenu>
     }
     else
     {
         <MudNavMenu>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
-                <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
-            </MudNavMenu>
+            <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
+        </MudNavMenu>
     }
 </MudDrawer>
 <MudDrawer @bind-Open="@userMenuOpen" Elevation="25" Breakpoint="Breakpoint.Xl" Height="100vh" >

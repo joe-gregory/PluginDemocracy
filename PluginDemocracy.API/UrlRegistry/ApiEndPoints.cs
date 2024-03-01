@@ -2,7 +2,7 @@
 {
     public static class ApiEndPoints
     {
-        public static readonly string Base = "/api/";
+        public const string Base = "/api/";
         #region Test
         public static readonly string TestController = Base + "test/";
         public static readonly string GetTestMessagesPage = TestController + "testmessagespage";
@@ -19,8 +19,9 @@
         public static readonly string UpdateProfilePicture = UsersController + "updateprofilepicture";
         #endregion
         #region Community
-        public static readonly string CommunityController = Base + "community/";
-        public static readonly string RegisterCommunity = CommunityController + "registercommunity";
+        public const string CommunityController = Base + "community/";
+        public const string RegisterCommunity = CommunityController + "registercommunity";
+        public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         #endregion
     }
 }

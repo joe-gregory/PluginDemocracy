@@ -20,9 +20,9 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string PleaseSelectAFile = "PleaseSelectAFile";
         public const string Select = "Select";
         public const string YouHaveNoCommunities = "YouHaveNoCommunities";
-        public const string JoinCommunity = "JoinCommunity";
         public const string RegisterCommunity = "RegisterCommunity";
         public const string OfficialCurrency = "OfficialCurrency";
+
         public const string Name = "Name";
         public const string Description = "Description";
         public const string SelectAllOfficialLanguages = "SelectAllOfficialLanguages";
@@ -39,5 +39,9 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Number = "Number";
         public const string Generate = "Generate";
         public const string Address = "Address";
+
+        public const string JoinCommunity = "JoinCommunity";
+        public const string SelectCommunityFromDropDown = "SelectCommunityFromDropDown";
+
     }
 }

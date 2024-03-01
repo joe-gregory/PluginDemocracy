@@ -1,0 +1,16 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunity)</MudText>
+
+@code {
+    private List<CommunityDto> communitiesDtos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        //Make get request to get list of communities
+        PDAPIResponse response = await Services.GetDataAsync(ApiEndPoints.GetListOfAllCommunities);
+        communitiesDtos = response.AllCommunities;
+    }
+}

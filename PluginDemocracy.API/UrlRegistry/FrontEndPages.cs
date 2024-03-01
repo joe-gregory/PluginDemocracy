@@ -12,7 +12,7 @@
         public const string ResetPassword = "/resetpassword";
 
         public const string Community = "/community";
-        public const string JoinCommunity = "/joincommunity";
         public const string RegisterCommunity = "/registercommunity";
+        public const string JoinCommunity = "/joincommunity";
     }
 }

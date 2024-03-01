@@ -9,6 +9,7 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
+        public List<CommunityDto> AllCommunities { get; set; } = [];
         #endregion
         #region METHODS
         /// <summary>

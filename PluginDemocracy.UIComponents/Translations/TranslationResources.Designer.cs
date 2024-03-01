@@ -538,6 +538,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select an existing community from the dropdown menu.
+        /// </summary>
+        internal static string SelectCommunityFromDropDown {
+            get {
+                return ResourceManager.GetString("SelectCommunityFromDropDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select culture.
         /// </summary>
         internal static string SelectCulture {

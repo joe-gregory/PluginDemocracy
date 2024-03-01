@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
@@ -29,7 +30,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "Community address is required");
                 return BadRequest(response);
             }
-            if(string.IsNullOrEmpty(communityDto.OfficialCurrency))
+            if (string.IsNullOrEmpty(communityDto.OfficialCurrency))
             {
                 response.AddAlert("error", "Community official currency is required");
                 return BadRequest(response);
@@ -39,7 +40,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "Community official languages are required");
                 return BadRequest(response);
             }
-            if(communityDto.Homes.Count == 0)
+            if (communityDto.Homes.Count == 0)
             {
                 response.AddAlert("error", "Community has no registered homes");
                 return BadRequest(response);
@@ -53,7 +54,7 @@ namespace PluginDemocracy.API.Controllers
                 CanHaveHomes = true,
             };
             foreach (CultureInfo language in communityDto.OfficialLanguages) newCommunity.AddOfficialLanguage(language);
-            foreach(HomeDto homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
+            foreach (HomeDto homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
             {
                 ParentCommunity = newCommunity,
                 Number = homeDTO.Number,
@@ -66,6 +67,27 @@ namespace PluginDemocracy.API.Controllers
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", "Community created successfully");
                 response.RedirectTo = FrontEndPages.JoinCommunity;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
+        }
+        [HttpGet(ApiEndPoints.GetListOfAllCommunities)]
+        public async Task<ActionResult<List<CommunityDto>>> GetListOfAllCommunities()
+        {
+            PDAPIResponse response = new();
+            try
+            {
+                List<Community> communities = await _context.Communities.ToListAsync();
+                foreach (Community community in communities) response.AllCommunities.Add(new CommunityDto()
+                {
+                    Name = community.Name,
+                    Description = community.Description,
+                    Address = community.Address,
+                });
                 return Ok(response);
             }
             catch (Exception ex)

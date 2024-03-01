@@ -276,6 +276,9 @@
   <data name="SelectAllOfficialLanguages" xml:space="preserve">
     <value>Seleccione todos los idiomas oficiales</value>
   </data>
+  <data name="SelectCommunityFromDropDown" xml:space="preserve">
+    <value>Por favor selecciona una Comunidad del menu</value>
+  </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Seleccionar cultura</value>
   </data>
