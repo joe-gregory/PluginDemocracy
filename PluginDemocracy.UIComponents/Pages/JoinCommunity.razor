@@ -4,12 +4,12 @@
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunity)</MudText>
 <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
-<MudGrid Class="mt-10 mb-10">
+<MudGrid Class="mt-5 mb-10">
     <MudItem>
         <MudRadioGroup @bind-Value="selectedCommunityDto">
             @foreach (CommunityDto communityDtoOption in communitiesDtos)
             {
-                <MudRadio Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
+                <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
             }
         </MudRadioGroup>
     </MudItem>
