@@ -42,6 +42,11 @@ namespace PluginDemocracy.UIComponents.Translations
 
         public const string JoinCommunity = "JoinCommunity";
         public const string SelectCommunityFromDropDown = "SelectCommunityFromDropDown";
-
+        public const string SelectHomeDescriptionInJoinCommunity = "SelectHomeDescriptionInJoinCommunity";
+        public const string JoinAHome = "JoinAHome";
+        public const string Residents = "Residents";
+        public const string HomeOwners = "HomeOwners";
+        public const string Join = "Join";
+        public const string AreYouJoiningAsAHomeOwnerOrResidentDialogContent = "AreYouJoiningAsAHomeOwnerOrResidentDialogContent";
     }
 }

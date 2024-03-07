@@ -104,7 +104,7 @@ namespace PluginDemocracy.API.Controllers
         /// <param name="commuityId">The Id of the community to search for</param>
         /// <returns>PDAPIResponse and the list of HomeDtos is located in PDAPIResponse.Community.Homes</returns>
         [HttpGet(ApiEndPoints.GetListOfHomesForCommunity)]
-        public async Task<ActionResult<PDAPIResponse>> GetListOfHomesForCommunity(int communityId)
+        public async Task<ActionResult<PDAPIResponse>> GetListOfHomesForCommunity([FromQuery] int communityId)
         {
             PDAPIResponse response = new();
             try

@@ -1,12 +1,13 @@
 ﻿@inject BaseAppState AppState
 @inject Services Services
+@inject IDialogService DialogService
 
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunity)</MudText>
 <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
 <MudGrid Class="mt-5 mb-10">
     <MudItem>
-        <MudRadioGroup ValueChanged="OnSelectCommunityDtoChanged" Value="selectedCommunityDto">
+        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
             @foreach (CommunityDto communityDtoOption in communitiesDtos)
             {
                 <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
@@ -15,9 +16,71 @@
     </MudItem>
 </MudGrid>
 
-<MudText>Selected: @selectedCommunityDto.Name</MudText>
-
-@code 
+@if(homesDtosFromSelectedCommunity.Count > 0)
 {
-    
+    <MudPaper Elevation="25" Class="mt-10 mb-10">
+        <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">@AppState.Translate(ResourceKeys.JoinAHome)</MudText>
+        <MudText Class="ma-3">@AppState.Translate(ResourceKeys.SelectHomeDescriptionInJoinCommunity)</MudText>
+        <MudTable T="HomeDto" Items="@homesDtosFromSelectedCommunity" Hover="true">
+            <HeaderContent>
+                <MudTh>@AppState.Translate(ResourceKeys.Homes)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.Residents)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.HomeOwners)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.Join)</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Homes)">@context.Address</MudTd>
+                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Residents)">
+                    <MudAvatarGroup>
+                        @foreach (UserDto user in context.Residents)
+                        {
+                            if (!string.IsNullOrEmpty(user.ProfilePicture))
+                            {
+                                <MudAvatar><MudImage Src="@user.ProfilePicture" /></MudAvatar>
+                            }
+                            else
+                            {
+                                <MudAvatar>@user.Initials</MudAvatar>
+                            }
+                        }
+                    </MudAvatarGroup>
+                </MudTd>
+                <MudTd DataLabel="@AppState.Translate(ResourceKeys.HomeOwners)">
+                    @foreach(UserDto owner in context.Owners.Keys)
+                    {
+                        if (!string.IsNullOrEmpty(owner.ProfilePicture))
+                        {
+                            <MudAvatar><MudImage Src="@owner.ProfilePicture" /></MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar>@owner.Initials</MudAvatar>
+                        }
+                    }
+                </MudTd>
+                <MudTd><MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => SelectedHome(context.Id)" /></MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
 }
+<MudDialog @bind-IsVisible="isJoinHomeDialogVisible" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@AppState.Translate(ResourceKeys.JoinAHome)</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>@AppState.Translate(ResourceKeys.AreYouJoiningAsAHomeOwnerOrResidentDialogContent)</MudText>
+        <MudRadioGroup Value="">
+            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="true">@AppState.Translate(ResourceKeys.HomeOwner)</MudRadio>
+            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="false">@AppState.Translate(ResourceKeys.Resident)</MudRadio>
+        </MudRadioGroup>
+    </DialogContent>
+</MudDialog>
+
+<MudText>TEST AREA</MudText>
+<MudText>Selected: @selectedCommunityDto?.Name</MudText>
+@foreach (HomeDto home in homesDtosFromSelectedCommunity)
+{
+    <MudText>@home.Address</MudText>
+}
+
+

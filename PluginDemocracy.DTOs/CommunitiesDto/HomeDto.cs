@@ -37,7 +37,7 @@ namespace PluginDemocracy.DTOs
         public int Number { get; set; }
         public string InternalAddress { get; set; } = string.Empty;
         [JsonIgnore]
-        public override string Address => Number + " " + InternalAddress + "/n" + ParentCommunity?.Address;
+        public override string Address => Number + " " + InternalAddress + " " + ParentCommunity?.Address;
         [JsonIgnore]
         public Dictionary<BaseCitizenDto, double> Owners
         {
@@ -91,6 +91,7 @@ namespace PluginDemocracy.DTOs
                 //HomeDto Properties
                 ParentCommunity = home.ParentCommunity != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
+                Number = home.Number,
                 InternalAddress = home.InternalAddress,
                 Residents = home.Residents.Select(r => UserDto.ReturnUserDtoFromUser(r)).ToList(),
             };

@@ -115,6 +115,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select whether you are joining as a home owner or a resident. If joining as a home owner, you will need to specify your ownership percentage. If there are already homeowners registered, the total value of ownership over the house cannot exceed 100%. In communities where the voting power is in home owners, your percentage of ownership over the home will be reflected in equal percentage on your home&apos;s vote on proposals. .
+        /// </summary>
+        internal static string AreYouJoiningAsAHomeOwnerOrResidentDialogContent {
+            get {
+                return ResourceManager.GetString("AreYouJoiningAsAHomeOwnerOrResidentDialogContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
         internal static string ChangePassword {
@@ -232,6 +241,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home owners.
+        /// </summary>
+        internal static string HomeOwners {
+            get {
+                return ResourceManager.GetString("HomeOwners", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Homes.
         /// </summary>
         internal static string Homes {
@@ -273,6 +291,24 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string Invalid {
             get {
                 return ResourceManager.GetString("Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join.
+        /// </summary>
+        internal static string Join {
+            get {
+                return ResourceManager.GetString("Join", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join a Home.
+        /// </summary>
+        internal static string JoinAHome {
+            get {
+                return ResourceManager.GetString("JoinAHome", resourceCulture);
             }
         }
         
@@ -502,6 +538,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Residents.
+        /// </summary>
+        internal static string Residents {
+            get {
+                return ResourceManager.GetString("Residents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Roles.
         /// </summary>
         internal static string Roles {
@@ -552,6 +597,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string SelectCulture {
             get {
                 return ResourceManager.GetString("SelectCulture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the list of homes for this community. Please select which home you belong to as either a resident or a homeowner. Select the appropiate option. After selecting, and posting this form, a request will be sent. Your request will be approved depending on your community&apos;s bylaws. This is done to prevent individuals from claiming they are a part of the community when they are not. Community members can change their community&apos;s member verification process by making a proposal and passing it. If your commun [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SelectHomeDescriptionInJoinCommunity {
+            get {
+                return ResourceManager.GetString("SelectHomeDescriptionInJoinCommunity", resourceCulture);
             }
         }
         

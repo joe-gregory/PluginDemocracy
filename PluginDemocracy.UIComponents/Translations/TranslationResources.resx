@@ -135,6 +135,9 @@
   <data name="Address" xml:space="preserve">
     <value>Address</value>
   </data>
+  <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
+    <value>Select whether you are joining as a home owner or a resident. If joining as a home owner, you will need to specify your ownership percentage. If there are already homeowners registered, the total value of ownership over the house cannot exceed 100%. In communities where the voting power is in home owners, your percentage of ownership over the home will be reflected in equal percentage on your home's vote on proposals. </value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="History" xml:space="preserve">
     <value>History</value>
   </data>
+  <data name="HomeOwners" xml:space="preserve">
+    <value>Home owners</value>
+  </data>
   <data name="Homes" xml:space="preserve">
     <value>Homes</value>
   </data>
@@ -188,6 +194,12 @@
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>Invalid</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Join</value>
+  </data>
+  <data name="JoinAHome" xml:space="preserve">
+    <value>Join a Home</value>
   </data>
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Join an existing community</value>
@@ -264,6 +276,9 @@
   <data name="Required" xml:space="preserve">
     <value>Required</value>
   </data>
+  <data name="Residents" xml:space="preserve">
+    <value>Residents</value>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
   </data>
@@ -281,6 +296,9 @@
   </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Select culture</value>
+  </data>
+  <data name="SelectHomeDescriptionInJoinCommunity" xml:space="preserve">
+    <value>This is the list of homes for this community. Please select which home you belong to as either a resident or a homeowner. Select the appropiate option. After selecting, and posting this form, a request will be sent. Your request will be approved depending on your community's bylaws. This is done to prevent individuals from claiming they are a part of the community when they are not. Community members can change their community's member verification process by making a proposal and passing it. If your community has not voted on a verification process for members, then the default behavior is that the community's administrator (community's president) does the verification process or an application administrator. </value>
   </data>
   <data name="SendPasswordResetLink" xml:space="preserve">
     <value>Send Password Reset Link</value>

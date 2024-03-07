@@ -135,6 +135,9 @@
   <data name="Address" xml:space="preserve">
     <value>Dirección</value>
   </data>
+  <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
+    <value>Seleccione si se une como propietario o como residente. Si se une como propietario, deberá especificar su porcentaje de propiedad. Si ya hay propietarios registrados, el valor total de la propiedad sobre la casa no puede exceder el 100%. En las comunidades donde el poder de voto pertenece a los propietarios, su porcentaje de propiedad correspondera a su porcentage del voto de su casa en propuestas. </value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="History" xml:space="preserve">
     <value>Historia</value>
   </data>
+  <data name="HomeOwners" xml:space="preserve">
+    <value>Propietarios</value>
+  </data>
   <data name="Homes" xml:space="preserve">
     <value>Hogares</value>
   </data>
@@ -188,6 +194,12 @@
   </data>
   <data name="Invalid" xml:space="preserve">
     <value>No válido</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Unirse</value>
+  </data>
+  <data name="JoinAHome" xml:space="preserve">
+    <value>Únete a un Hogar</value>
   </data>
   <data name="JoinAnExistingCommunity" xml:space="preserve">
     <value>Unirse a una comunidad registrada</value>
@@ -264,6 +276,9 @@
   <data name="Required" xml:space="preserve">
     <value>Requerido</value>
   </data>
+  <data name="Residents" xml:space="preserve">
+    <value>Residentes</value>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
   </data>
@@ -281,6 +296,9 @@
   </data>
   <data name="SelectCulture" xml:space="preserve">
     <value>Seleccionar cultura</value>
+  </data>
+  <data name="SelectHomeDescriptionInJoinCommunity" xml:space="preserve">
+    <value>Esta es la lista de hogares de esta comunidad. Por favor seleccione a cuál hogar pertenece, ya sea como residente o propietario. Seleccione la opción apropiada. Después de seleccionar y enviar este formulario, se enviará una solicitud. Su solicitud será aprobada dependiendo de los estatutos de su comunidad. Esto se hace para evitar que individuos afirmen ser parte de la comunidad cuando no lo son. Los miembros de la comunidad pueden cambiar el proceso de verificación de miembros de la comunidad haciendo una propuesta y aprobándola. Si su comunidad no ha votado sobre un proceso de verificación para los miembros, entonces el comportamiento predeterminado es que el administrador de la comunidad (presidente de la comunidad) realice el proceso de verificación o un administrador de la aplicación.</value>
   </data>
   <data name="SendPasswordResetLink" xml:space="preserve">
     <value>Enviar Link Para Nueva Contraseña</value>
