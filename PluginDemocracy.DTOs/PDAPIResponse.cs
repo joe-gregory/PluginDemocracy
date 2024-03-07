@@ -10,6 +10,7 @@
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
         public List<CommunityDto> AllCommunities { get; set; } = [];
+        public CommunityDto? Community { get; set; }
         #endregion
         #region METHODS
         /// <summary>

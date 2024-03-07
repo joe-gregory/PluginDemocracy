@@ -6,7 +6,7 @@
 
 <MudGrid Class="mt-5 mb-10">
     <MudItem>
-        <MudRadioGroup @bind-Value="selectedCommunityDto">
+        <MudRadioGroup ValueChanged="OnSelectCommunityDtoChanged" Value="selectedCommunityDto">
             @foreach (CommunityDto communityDtoOption in communitiesDtos)
             {
                 <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
@@ -17,15 +17,7 @@
 
 <MudText>Selected: @selectedCommunityDto.Name</MudText>
 
-    @code {
-    private List<CommunityDto> communitiesDtos = new();
-    private CommunityDto selectedCommunityDto = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        //Make get request to get list of communities
-        PDAPIResponse response = await Services.GetDataAsync(ApiEndPoints.GetListOfAllCommunities);
-        communitiesDtos = response.AllCommunities;
-    }
+@code 
+{
+    
 }

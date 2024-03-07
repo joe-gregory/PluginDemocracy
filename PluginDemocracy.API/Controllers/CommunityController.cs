@@ -77,7 +77,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         [HttpGet(ApiEndPoints.GetListOfAllCommunities)]
-        public async Task<ActionResult<List<CommunityDto>>> GetListOfAllCommunities()
+        public async Task<ActionResult<PDAPIResponse>> GetListOfAllCommunities()
         {
             PDAPIResponse response = new();
             try
@@ -98,6 +98,32 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
-
+        /// <summary>
+        /// Used in JoinCommunity page to get list of homes for a community after a community is selected from the radio group
+        /// </summary>
+        /// <param name="commuityId">The Id of the community to search for</param>
+        /// <returns>PDAPIResponse and the list of HomeDtos is located in PDAPIResponse.Community.Homes</returns>
+        [HttpGet(ApiEndPoints.GetListOfHomesForCommunity)]
+        public async Task<ActionResult<PDAPIResponse>> GetListOfHomesForCommunity(int communityId)
+        {
+            PDAPIResponse response = new();
+            try
+            {
+                Community? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+                if (community == null)
+                {
+                    response.AddAlert("error", "Community not found");
+                    return BadRequest(response);
+                }
+                response.Community = CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community);
+                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDto.ReturnHomeDtoFromHome(home));
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
+        }
     }
 }
