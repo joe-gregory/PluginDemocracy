@@ -21,6 +21,8 @@ namespace PluginDemocracy.UIComponents.Pages
             DisableBackdropClick = true,
         };
         private HomeDto? selectedHomeDto;
+        //false is resident, true is owner
+        private bool residentOrOwner = false;
 
         protected override async Task OnInitializedAsync()
         {

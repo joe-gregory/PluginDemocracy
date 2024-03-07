@@ -177,6 +177,9 @@
   <data name="History" xml:space="preserve">
     <value>Historia</value>
   </data>
+  <data name="HomeOwner" xml:space="preserve">
+    <value>Propietario</value>
+  </data>
   <data name="HomeOwners" xml:space="preserve">
     <value>Propietarios</value>
   </data>
@@ -275,6 +278,9 @@
   </data>
   <data name="Required" xml:space="preserve">
     <value>Requerido</value>
+  </data>
+  <data name="Resident" xml:space="preserve">
+    <value>Residente</value>
   </data>
   <data name="Residents" xml:space="preserve">
     <value>Residentes</value>

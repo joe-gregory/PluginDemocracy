@@ -48,5 +48,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string HomeOwners = "HomeOwners";
         public const string Join = "Join";
         public const string AreYouJoiningAsAHomeOwnerOrResidentDialogContent = "AreYouJoiningAsAHomeOwnerOrResidentDialogContent";
+        public const string Resident = "Resident";
+        public const string HomeOwner = "HomeOwner";
     }
 }

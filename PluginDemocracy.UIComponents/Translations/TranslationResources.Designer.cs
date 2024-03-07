@@ -241,6 +241,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home owner.
+        /// </summary>
+        internal static string HomeOwner {
+            get {
+                return ResourceManager.GetString("HomeOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Home owners.
         /// </summary>
         internal static string HomeOwners {
@@ -534,6 +543,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string Required {
             get {
                 return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resident.
+        /// </summary>
+        internal static string Resident {
+            get {
+                return ResourceManager.GetString("Resident", resourceCulture);
             }
         }
         

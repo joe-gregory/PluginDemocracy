@@ -69,9 +69,9 @@
     </TitleContent>
     <DialogContent>
         <MudText>@AppState.Translate(ResourceKeys.AreYouJoiningAsAHomeOwnerOrResidentDialogContent)</MudText>
-        <MudRadioGroup Value="">
-            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="true">@AppState.Translate(ResourceKeys.HomeOwner)</MudRadio>
+        <MudRadioGroup Value="residentOrOwner">
             <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="false">@AppState.Translate(ResourceKeys.Resident)</MudRadio>
+            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="true">@AppState.Translate(ResourceKeys.HomeOwner)</MudRadio>
         </MudRadioGroup>
     </DialogContent>
 </MudDialog>
