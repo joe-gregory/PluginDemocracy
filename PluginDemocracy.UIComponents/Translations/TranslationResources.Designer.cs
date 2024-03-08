@@ -124,6 +124,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Available ownership.
+        /// </summary>
+        internal static string AvailableOwnership {
+            get {
+                return ResourceManager.GetString("AvailableOwnership", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
         internal static string ChangePassword {
@@ -633,6 +642,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string SendPasswordResetLink {
             get {
                 return ResourceManager.GetString("SendPasswordResetLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Request.
+        /// </summary>
+        internal static string SendRequest {
+            get {
+                return ResourceManager.GetString("SendRequest", resourceCulture);
             }
         }
         

@@ -15,14 +15,14 @@ namespace PluginDemocracy.UIComponents.Pages
         private CommunityDto? selectedCommunityDto;
         private List<HomeDto> homesDtosFromSelectedCommunity = [];
         private bool isJoinHomeDialogVisible = false;
-        private DialogOptions dialogOptions = new()
+        private readonly DialogOptions dialogOptions = new()
         {
             CloseButton = true,
             DisableBackdropClick = true,
         };
         private HomeDto? selectedHomeDto;
         //false is resident, true is owner
-        private bool residentOrOwner = false;
+        private bool? residentOrOwner = null;
 
         protected override async Task OnInitializedAsync()
         {
@@ -55,6 +55,11 @@ namespace PluginDemocracy.UIComponents.Pages
             if (homeId == null) return;
             selectedHomeDto = homesDtosFromSelectedCommunity.FirstOrDefault(h => h.Id == homeId);
             isJoinHomeDialogVisible = true;
+        }
+        
+        private async Task SendRequest()
+        {
+
         }
     }
 }

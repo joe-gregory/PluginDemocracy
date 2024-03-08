@@ -138,6 +138,9 @@
   <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
     <value>Seleccione si se une como propietario o como residente. Si se une como propietario, deberá especificar su porcentaje de propiedad. Si ya hay propietarios registrados, el valor total de la propiedad sobre la casa no puede exceder el 100%. En las comunidades donde el poder de voto pertenece a los propietarios, su porcentaje de propiedad correspondera a su porcentage del voto de su casa en propuestas. </value>
   </data>
+  <data name="AvailableOwnership" xml:space="preserve">
+    <value>Propiedad disponible</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -308,6 +311,9 @@
   </data>
   <data name="SendPasswordResetLink" xml:space="preserve">
     <value>Enviar Link Para Nueva Contraseña</value>
+  </data>
+  <data name="SendRequest" xml:space="preserve">
+    <value>Enviar Solicitud</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>

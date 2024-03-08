@@ -50,5 +50,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string AreYouJoiningAsAHomeOwnerOrResidentDialogContent = "AreYouJoiningAsAHomeOwnerOrResidentDialogContent";
         public const string Resident = "Resident";
         public const string HomeOwner = "HomeOwner";
+        public const string SendRequest = "SendRequest";
+        public const string AvailableOwnership = "AvailableOwnership";
     }
 }

@@ -138,6 +138,9 @@
   <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
     <value>Select whether you are joining as a home owner or a resident. If joining as a home owner, you will need to specify your ownership percentage. If there are already homeowners registered, the total value of ownership over the house cannot exceed 100%. In communities where the voting power is in home owners, your percentage of ownership over the home will be reflected in equal percentage on your home's vote on proposals. </value>
   </data>
+  <data name="AvailableOwnership" xml:space="preserve">
+    <value>Available ownership</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
@@ -308,6 +311,9 @@
   </data>
   <data name="SendPasswordResetLink" xml:space="preserve">
     <value>Send Password Reset Link</value>
+  </data>
+  <data name="SendRequest" xml:space="preserve">
+    <value>Send Request</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>

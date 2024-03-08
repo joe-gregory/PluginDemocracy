@@ -1,4 +1,5 @@
-﻿using PluginDemocracy.Models;
+﻿using PluginDemocracy.DTOs.CommunitiesDto;
+using PluginDemocracy.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -43,6 +44,14 @@ namespace PluginDemocracy.DTOs
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
+        [JsonIgnore]
+        public double AvailableOwnerships 
+        { 
+            get
+            {
+                return 100 - Owners.Values.Sum();
+            } 
+        }
         public List<UserDto> Residents { get; set; } = [];
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
@@ -77,6 +86,10 @@ namespace PluginDemocracy.DTOs
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+        public JoinHomeRequestDto JoinHome()
+        {
+
         }
         public static HomeDto ReturnHomeDtoFromHome(Home home)
         {
