@@ -165,6 +165,9 @@
   <data name="English" xml:space="preserve">
     <value>Ingles</value>
   </data>
+  <data name="ErrorMessageJoinHomeWrongPercentage" xml:space="preserve">
+    <value>El porcentaje de propiedad debe estar entre 1 y 100 y no puede ser mayor que lo que está disponible.</value>
+  </data>
   <data name="Feed" xml:space="preserve">
     <value>Muro</value>
   </data>
@@ -245,6 +248,9 @@
   </data>
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Las contraseñas no coinciden</value>
+  </data>
+  <data name="Percentage" xml:space="preserve">
+    <value>Porcentage</value>
   </data>
   <data name="PhoneNumber" xml:space="preserve">
     <value>Número de teléfono</value>

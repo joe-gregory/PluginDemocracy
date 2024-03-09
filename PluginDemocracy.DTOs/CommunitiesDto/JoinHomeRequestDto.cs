@@ -12,19 +12,8 @@ namespace PluginDemocracy.DTOs.CommunitiesDto
         public int CommunityId { get; set; }
         public int HomeId { get; set; }
         public int UserId { get; set; }
-        public bool joiningAsOwner { get; private set }
-        [JsonIgnore]
-        public bool JoiningAsOwner { 
-            get 
-            {
-                return joiningAsOwner;
-            } 
-            set 
-            { 
-            } 
-        }
-        public bool joiningAsResident;
-        [JsonIgnore]
-        public bool JoiningAsResident { get; set { } }
+        public bool JoiningAsOwner { get; set; }
+        public bool JoiningAsResident { get; set; }
+        public double OwnershipPercentage { get; set; }
     }
 }

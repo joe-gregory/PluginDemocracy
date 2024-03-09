@@ -1,13 +1,6 @@
 ﻿using PluginDemocracy.DTOs.CommunitiesDto;
 using PluginDemocracy.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs
 {
@@ -44,6 +37,9 @@ namespace PluginDemocracy.DTOs
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
+        /// <summary>
+        /// The percentage of ownership that is available to be owned by new owners. This is calculated by subtracting the sum of the ownership percentages of the current owners from 100.
+        /// </summary>
         [JsonIgnore]
         public double AvailableOwnerships 
         { 
@@ -87,9 +83,30 @@ namespace PluginDemocracy.DTOs
         {
             return Id.GetHashCode();
         }
-        public JoinHomeRequestDto JoinHome()
+        public JoinHomeRequestDto JoinHome(UserDto user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
-
+            if (joiningAsOwner)
+            {
+                if (ownershipPercentage > AvailableOwnerships || ownershipPercentage <= 0 || ownershipPercentage > 100) throw new Exception("ErrorMessageJoinHomeWrongPercentage");
+            }
+            JoinHomeRequestDto request = new()
+            {
+                CommunityId = ParentCommunity?.Id ?? 0,
+                HomeId = Id ?? 0,
+                UserId = user.Id ?? 0
+            };
+            if (joiningAsOwner)
+            {
+                request.JoiningAsResident = false;
+                request.JoiningAsOwner = true;
+                request.OwnershipPercentage = ownershipPercentage;
+            }
+            else 
+            { 
+                request.JoiningAsResident = true; 
+                request.JoiningAsOwner = false;
+            }
+            return request;
         }
         public static HomeDto ReturnHomeDtoFromHome(Home home)
         {

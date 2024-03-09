@@ -16,7 +16,7 @@
     </MudItem>
 </MudGrid>
 
-@if(homesDtosFromSelectedCommunity.Count > 0)
+@if (homesDtosFromSelectedCommunity.Count > 0)
 {
     <MudPaper Elevation="25" Class="mt-10 mb-10">
         <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">@AppState.Translate(ResourceKeys.JoinAHome)</MudText>
@@ -46,7 +46,7 @@
                     </MudAvatarGroup>
                 </MudTd>
                 <MudTd DataLabel="@AppState.Translate(ResourceKeys.HomeOwners)">
-                    @foreach(UserDto owner in context.Owners.Keys)
+                    @foreach (UserDto owner in context.Owners.Keys)
                     {
                         if (!string.IsNullOrEmpty(owner.ProfilePicture))
                         {
@@ -69,17 +69,26 @@
     </TitleContent>
     <DialogContent>
         <MudText>@AppState.Translate(ResourceKeys.AreYouJoiningAsAHomeOwnerOrResidentDialogContent)</MudText>
-        <MudRadioGroup Value="residentOrOwner">
-            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="false">@AppState.Translate(ResourceKeys.Resident)</MudRadio>
-            <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="true">@AppState.Translate(ResourceKeys.HomeOwner)</MudRadio>
-        </MudRadioGroup>
-        @if (residentOrOwner == true)
+        <MudForm>
+            <MudRadioGroup T="bool" @bind-Value="residentOrOwner">
+                <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="false">@AppState.Translate(ResourceKeys.Resident)</MudRadio>
+                <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="true">@AppState.Translate(ResourceKeys.HomeOwner)</MudRadio>
+            </MudRadioGroup>
+            @if (residentOrOwner == true)
+            {
+                <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDto?.AvailableOwnerships}%")</MudText>
+                <MudNumericField T="double" @bind-Value="selectedOwnership" Immediate="false" Label="@AppState.Translate(ResourceKeys.Percentage)" />
+            }
+        </MudForm>
+        @if (displayDialogErrorMessage)
         {
-            <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDto?.Owners.Values.Sum()}%")</MudText>
-
+            <MudText Color="Color.Error">@dialogErrorMessage</MudText>
         }
-        <MudButton Disabled="@(residentOrOwner != null)" Color="Color.Primary" Variant="Variant.Filled" Class="mt-5 mb-5" OnClick="SendRequest">@AppState.Translate(ResourceKeys.SendRequest)</MudButton>
+        
     </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-5 mb-5" OnClick="SendRequest">@AppState.Translate(ResourceKeys.SendRequest)</MudButton>
+    </DialogActions>
 </MudDialog>
 
 

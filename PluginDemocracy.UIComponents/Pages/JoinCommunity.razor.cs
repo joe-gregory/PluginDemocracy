@@ -1,6 +1,8 @@
-﻿using MudBlazor;
+﻿using Humanizer.Localisation;
+using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
+using PluginDemocracy.DTOs.CommunitiesDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +21,15 @@ namespace PluginDemocracy.UIComponents.Pages
         {
             CloseButton = true,
             DisableBackdropClick = true,
+            CloseOnEscapeKey = true,
         };
         private HomeDto? selectedHomeDto;
         //false is resident, true is owner
-        private bool? residentOrOwner = null;
+        private bool residentOrOwner = false;
+        private double ownershipPercentage = 0;
+        private bool displayDialogErrorMessage = false;
+        private string dialogErrorMessage = string.Empty;
+        private double selectedOwnership = 0;
 
         protected override async Task OnInitializedAsync()
         {
@@ -54,12 +61,34 @@ namespace PluginDemocracy.UIComponents.Pages
         {
             if (homeId == null) return;
             selectedHomeDto = homesDtosFromSelectedCommunity.FirstOrDefault(h => h.Id == homeId);
+            displayDialogErrorMessage = false;
+            dialogErrorMessage = string.Empty;
             isJoinHomeDialogVisible = true;
         }
         
         private async Task SendRequest()
         {
-
+            displayDialogErrorMessage = false;
+            dialogErrorMessage = string.Empty;
+            JoinHomeRequestDto joinRequest;
+            if (AppState.User != null && selectedHomeDto != null)
+            {
+                try
+                {
+                    joinRequest = selectedHomeDto.JoinHome(AppState.User, residentOrOwner, selectedOwnership);
+                    displayDialogErrorMessage = false;
+                    dialogErrorMessage = string.Empty;
+                    //THIS IS NEXT:
+                    //PDAPIResponse response = await Services.PostDataAsync(ApiEndPoints.JoinHome, joinRequest);
+                }
+                catch
+                {
+                    displayDialogErrorMessage = true;
+                    dialogErrorMessage = AppState.Translate(Translations.ResourceKeys.ErrorMessageJoinHomeWrongPercentage);
+                    return;
+                }
+                
+            }
         }
     }
 }

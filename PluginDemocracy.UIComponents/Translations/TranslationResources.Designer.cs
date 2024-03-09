@@ -205,6 +205,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ownership percentage must be between 1 and 100 and can&apos;t be bigger that what is available..
+        /// </summary>
+        internal static string ErrorMessageJoinHomeWrongPercentage {
+            get {
+                return ResourceManager.GetString("ErrorMessageJoinHomeWrongPercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feed.
         /// </summary>
         internal static string Feed {
@@ -444,6 +453,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         internal static string PasswordsDoNotMatch {
             get {
                 return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Percentage.
+        /// </summary>
+        internal static string Percentage {
+            get {
+                return ResourceManager.GetString("Percentage", resourceCulture);
             }
         }
         

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,5 +53,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string HomeOwner = "HomeOwner";
         public const string SendRequest = "SendRequest";
         public const string AvailableOwnership = "AvailableOwnership";
+        public const string Percentage = "Percentage";
+        public const string ErrorMessageJoinHomeWrongPercentage = "ErrorMessageJoinHomeWrongPercentage";
     }
 }
