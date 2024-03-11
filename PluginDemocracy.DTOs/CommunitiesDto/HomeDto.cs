@@ -41,7 +41,7 @@ namespace PluginDemocracy.DTOs
         /// The percentage of ownership that is available to be owned by new owners. This is calculated by subtracting the sum of the ownership percentages of the current owners from 100.
         /// </summary>
         [JsonIgnore]
-        public double AvailableOwnerships 
+        public double AvailableOwnershipPercentage 
         { 
             get
             {
@@ -83,13 +83,13 @@ namespace PluginDemocracy.DTOs
         {
             return Id.GetHashCode();
         }
-        public JoinHomeRequestDto JoinHome(UserDto user, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public JoinCommunityRequestDto JoinHome(UserDto user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             if (joiningAsOwner)
             {
-                if (ownershipPercentage > AvailableOwnerships || ownershipPercentage <= 0 || ownershipPercentage > 100) throw new Exception("ErrorMessageJoinHomeWrongPercentage");
+                if (ownershipPercentage > AvailableOwnershipPercentage || ownershipPercentage <= 0 || ownershipPercentage > 100) throw new Exception("ErrorMessageJoinHomeWrongPercentage");
             }
-            JoinHomeRequestDto request = new()
+            JoinCommunityRequestDto request = new()
             {
                 CommunityId = ParentCommunity?.Id ?? 0,
                 HomeId = Id ?? 0,

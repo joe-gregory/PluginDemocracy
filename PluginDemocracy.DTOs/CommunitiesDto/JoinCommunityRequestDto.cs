@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs.CommunitiesDto
 {
-    public class JoinHomeRequestDto
+    public class JoinCommunityRequestDto
     {
         public int CommunityId { get; set; }
         public int HomeId { get; set; }
