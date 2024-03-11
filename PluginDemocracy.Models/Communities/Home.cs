@@ -34,6 +34,22 @@ namespace PluginDemocracy.Models
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
+        [NotMapped]
+        public double CurrentlyOwnedPercentage
+        {
+            get
+            {
+                return Owners.Values.Sum();
+            }
+        }
+        [NotMapped]
+        public double AvailableOwnershipPercentage
+        {
+            get
+            {
+                return 100 - Owners.Values.Sum();
+            }
+        }
         public List<User> Residents { get; set; }
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
@@ -62,8 +78,7 @@ namespace PluginDemocracy.Models
         {
             if (citizen == null) throw new ArgumentException("citizen cannot be null");
             if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100");
-            double currentTotalPercentage = Owners.Values.Sum();
-            if (currentTotalPercentage + percentage > 100) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
+            if (percentage > AvailableOwnershipPercentage) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
             HomeOwnership newHomeOwnership = new(this, citizen, percentage);
             Ownerships.Add(newHomeOwnership);
             citizen.HomeOwnerships.Add(newHomeOwnership);
