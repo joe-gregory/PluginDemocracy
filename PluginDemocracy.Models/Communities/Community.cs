@@ -67,7 +67,7 @@ namespace PluginDemocracy.Models
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
-
+        public List<JoinCommunityRequest> JoinCommunityRequests { get; set; } = [];
         /// <summary>
         /// Policy for how long a proposal remains open for after it publishes. It's an int representing days.
         /// </summary>
@@ -171,6 +171,40 @@ namespace PluginDemocracy.Models
                 user.NonResidentialCitizenIn.Remove(this);
             }
         }
+        public void AddHome(Home home)
+        {
+            if (!CanHaveHomes) throw new InvalidOperationException("Cannot add Homes when CanHaveHomes is set to false");
+            if (home == null) throw new ArgumentNullException("Home cannot be null");
+
+            if (!Homes.Contains(home))
+            {
+                Homes.Add(home);
+                home.ParentCommunity = this;
+            }
+        }
+        public void RemoveHome(Home home)
+        {
+            if (Homes.Contains(home))
+            {
+                Homes.Remove(home);
+                home.ParentCommunity = null;
+            }
+        }
+        public void AddJoinCommunityRequest(JoinCommunityRequest request)
+        {
+            //Validate:
+            //Does the home exist in the current community?
+            if(!Homes.Any(h => h.Id == request.HomeId)) throw new ArgumentException("Home not found in this community");
+            //If user is joining as owner, ensure that the ownership percentage is valid
+            if(request.JoiningAsOwner)
+            {
+                if (request.OwnershipPercentage <= 0) throw new ArgumentException("Ownership cannot be less than 0.");
+                if(request.OwnershipPercentage > 100) throw new ArgumentException("Ownership cannot be more than 100.");
+                if(request.OwnershipPercentage > Homes.First(h => h.Id == request.HomeId).AvailableOwnershipPercentage) throw new ArgumentException("Ownership percentage exceeds available ownership percentage.");
+            }
+            //At this point, if I didn't throw any exceptions, the request must be good
+            JoinCommunityRequests.Add(request);
+        }
         public void PublishProposal(Proposal proposal, bool skipAssigningExpirationDate = false)
         {
             if (VotingStrategy == null) throw new InvalidOperationException("VotingStrategy is null");
@@ -197,26 +231,6 @@ namespace PluginDemocracy.Models
             Proposals.Add(proposal);
             if (VotingStrategy.ShouldProposalPropagate(proposal)) PropagateProposal(proposal);
 
-        }
-
-        public void AddHome(Home home)
-        {
-            if (!CanHaveHomes) throw new InvalidOperationException("Cannot add Homes when CanHaveHomes is set to false");
-            if (home == null) throw new ArgumentNullException("Home cannot be null");
-
-            if (!Homes.Contains(home)) 
-            {
-                Homes.Add(home);
-                home.ParentCommunity = this;
-            }
-        }
-        public void RemoveHome(Home home)
-        {
-            if (Homes.Contains(home)) 
-            {
-                Homes.Remove(home);
-                home.ParentCommunity = null;
-            }
         }
         public bool IssueDictamen(BaseDictamen dictamen)
         {
