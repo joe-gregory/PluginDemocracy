@@ -34,6 +34,7 @@ namespace PluginDemocracy.Models
         public string Email { get; set; }
         public string? EmailConfirmationToken { get; set; }
         public bool EmailConfirmed { get; set; } = false;
+        public List<Notification> Notifications { get; set; } = [];
         [Required]
         public string HashedPassword { get; set; }
         public string? PhoneNumber { get; set; } = null;
