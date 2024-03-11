@@ -76,8 +76,8 @@
             </MudRadioGroup>
             @if (residentOrOwner == true)
             {
-                <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDto?.AvailableOwnerships}%")</MudText>
-                <MudNumericField T="double" @bind-Value="selectedOwnership" Immediate="false" Label="@AppState.Translate(ResourceKeys.Percentage)" />
+                <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDto?.AvailableOwnershipPercentage}%")</MudText>
+                <MudNumericField T="double" @bind-Value="selectedOwnershipPercentage" Immediate="false" Label="@AppState.Translate(ResourceKeys.Percentage)" />
             }
         </MudForm>
         @if (displayDialogErrorMessage)

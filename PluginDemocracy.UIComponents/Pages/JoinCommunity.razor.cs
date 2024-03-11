@@ -26,11 +26,10 @@ namespace PluginDemocracy.UIComponents.Pages
         private HomeDto? selectedHomeDto;
         //false is resident, true is owner
         private bool residentOrOwner = false;
-        private double ownershipPercentage = 0;
         private bool displayDialogErrorMessage = false;
         private string dialogErrorMessage = string.Empty;
-        private double selectedOwnership = 0;
-
+        private double selectedOwnershipPercentage = 0;
+        
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -70,16 +69,15 @@ namespace PluginDemocracy.UIComponents.Pages
         {
             displayDialogErrorMessage = false;
             dialogErrorMessage = string.Empty;
-            JoinHomeRequestDto joinRequest;
+            JoinCommunityRequestDto joinRequest;
             if (AppState.User != null && selectedHomeDto != null)
             {
                 try
                 {
-                    joinRequest = selectedHomeDto.JoinHome(AppState.User, residentOrOwner, selectedOwnership);
+                    joinRequest = selectedHomeDto.JoinHome(AppState.User, residentOrOwner, selectedOwnershipPercentage);
                     displayDialogErrorMessage = false;
                     dialogErrorMessage = string.Empty;
-                    //THIS IS NEXT:
-                    //PDAPIResponse response = await Services.PostDataAsync(ApiEndPoints.JoinHome, joinRequest);
+                    await Services.PostDataAsync(ApiEndPoints.JoinCommunityRequest, joinRequest);
                 }
                 catch
                 {
