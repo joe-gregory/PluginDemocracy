@@ -46,7 +46,7 @@ namespace PluginDemocracy.API
         }
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            using SmtpClient smtpClient = new SmtpClient(smtpHost, smtpPort);
+            using SmtpClient smtpClient = new(smtpHost, smtpPort);
             smtpClient.Credentials = new NetworkCredential(mailJetApiKey, mailJetSecretKey);
             smtpClient.EnableSsl = true;
 
@@ -62,8 +62,9 @@ namespace PluginDemocracy.API
 
             await smtpClient.SendMailAsync(mailMessage);
         }
-        public string Translate(string text, CultureInfo culture)
+        public string Translate(string text, CultureInfo? culture = null)
         {
+            culture ??= new CultureInfo("en-US");
             return TranslationResources.ResourceManager.GetObject(text, culture) as string ?? "No matching translation found";
         }
         public string GetAllTranslationsInNewLines(string text)
