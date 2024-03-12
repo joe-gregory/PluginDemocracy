@@ -12,7 +12,10 @@
         /// Person who has this role assigned to them
         /// </summary>
         public Community Community { get; }
-        public User? Assignee { get; set; }
+        /// <summary>
+        /// The person that holds the Role
+        /// </summary>
+        public User? Holder { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public bool Active { get; set; }
         public RolePowers Powers { get; }
@@ -24,7 +27,7 @@
         {
             Community = new();
             Powers = new();
-            RedFlags = new();
+            RedFlags = [];
         }
         public Role(string title, string description, Community community)
         {
@@ -33,13 +36,13 @@
             Community = community;
             Active = true;
             Powers = new();
-            RedFlags = new();
+            RedFlags = [];
         }
         public void Update()
         {
             bool prevActiveValue = Active;
             if (ExpirationDate.HasValue && ExpirationDate.Value < DateTime.UtcNow) Active = false;
-            if (Assignee != null && prevActiveValue == true && Active == false) Assignee.RemoveRole(this);
+            if (Holder != null && prevActiveValue == true && Active == false) Holder.RemoveRole(this);
         }
     }
 }
