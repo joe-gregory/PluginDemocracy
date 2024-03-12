@@ -30,16 +30,18 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public override string Address { get => Number + " " + InternalAddress + "/n" + ParentCommunity?.Address; }
         [NotMapped]
-        public Dictionary<BaseCitizen, double> Owners
+        public Dictionary<BaseCitizen, double> OwnersWithOwnership
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
+        [NotMapped]
+        public List<BaseCitizen> Owners => [.. OwnersWithOwnership.Keys];
         [NotMapped]
         public double CurrentlyOwnedPercentage
         {
             get
             {
-                return Owners.Values.Sum();
+                return OwnersWithOwnership.Values.Sum();
             }
         }
         [NotMapped]
@@ -47,7 +49,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                return 100 - Owners.Values.Sum();
+                return 100 - OwnersWithOwnership.Values.Sum();
             }
         }
         public List<User> Residents { get; set; }
@@ -59,7 +61,7 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public List<BaseCitizen> Citizens
         {
-            get => Owners.Keys.Union(Residents).ToList();
+            get => OwnersWithOwnership.Keys.Union(Residents).ToList();
         }
         public Home() : base()
         {

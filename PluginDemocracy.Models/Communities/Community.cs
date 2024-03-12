@@ -62,7 +62,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? [];
+                List<BaseCitizen> homeOwners = Homes?.SelectMany(home => home.OwnersWithOwnership.Keys).ToList() ?? [];
                 List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
