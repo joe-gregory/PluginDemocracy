@@ -128,5 +128,9 @@ namespace PluginDemocracy.Models
         {
             Roles.Remove(role);
         }
+        public void AddNotification(string title, string message)
+        {
+            Notifications.Add(new Notification(title, message));
+        }
     }
 }

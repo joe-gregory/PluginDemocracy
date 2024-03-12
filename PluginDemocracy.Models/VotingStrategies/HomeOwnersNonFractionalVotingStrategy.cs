@@ -38,14 +38,14 @@ namespace PluginDemocracy.Models
             foreach (Home home in homesThatHaventVoted)
             {
                 // Collect votes from homeowners only
-                var homeownerVotes = proposal.Votes.Where(vote => home.Owners.ContainsKey(vote.Citizen));
+                var homeownerVotes = proposal.Votes.Where(vote => home.OwnersWithOwnership.ContainsKey(vote.Citizen));
 
                 // Sum up total value votes in favor
                 List<Vote> homeownerVotesInFavor = homeownerVotes.Where(vote => vote.InFavor == true).ToList();
                 double totalValueVotesInFavor = 0;
                 foreach(Vote vote in homeownerVotesInFavor)
                 {
-                    totalValueVotesInFavor += home.Owners[vote.Citizen];
+                    totalValueVotesInFavor += home.OwnersWithOwnership[vote.Citizen];
                 }
                 
                 //Sum votes against
@@ -53,7 +53,7 @@ namespace PluginDemocracy.Models
                 double totalValueVotesAgainst = 0;
                 foreach(Vote vote in homeownerVotesAgainst)
                 {
-                    totalValueVotesAgainst += home.Owners[vote.Citizen];
+                    totalValueVotesAgainst += home.OwnersWithOwnership[vote.Citizen];
                 }
                 
                 //Add vote accordingly

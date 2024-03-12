@@ -139,7 +139,7 @@ namespace PluginDemocracy.Models.Tests
             home.AddResident(owner);
 
             //Assert
-            Assert.Contains(owner, home.Owners.Keys);
+            Assert.Contains(owner, home.OwnersWithOwnership.Keys);
             Assert.Contains(owner, home.Citizens);
             Assert.Contains(resident, home.Citizens);
             Assert.Contains(owner, gatedCommunity.Citizens);
@@ -155,7 +155,7 @@ namespace PluginDemocracy.Models.Tests
             home.RemoveOwner(owner);
 
             //Assert
-            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.DoesNotContain(owner, home.OwnersWithOwnership.Keys);
             Assert.Contains(owner, home.Citizens);
             Assert.Contains(owner, home.Residents);
             Assert.Contains(owner, gatedCommunity.Citizens);
@@ -167,7 +167,7 @@ namespace PluginDemocracy.Models.Tests
             home.RemoveResident(owner);
 
             //Assert
-            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.DoesNotContain(owner, home.OwnersWithOwnership.Keys);
             Assert.DoesNotContain(owner, home.Residents);
             Assert.DoesNotContain(owner, home.Citizens);
             Assert.DoesNotContain(owner, gatedCommunity.Citizens);
@@ -179,7 +179,7 @@ namespace PluginDemocracy.Models.Tests
             home.RemoveResident(resident);
 
             //Assert
-            Assert.DoesNotContain(owner, home.Owners.Keys);
+            Assert.DoesNotContain(owner, home.OwnersWithOwnership.Keys);
             Assert.DoesNotContain(owner, home.Residents);
             Assert.DoesNotContain(owner, home.Citizens);
             Assert.DoesNotContain(owner, gatedCommunity.Citizens);

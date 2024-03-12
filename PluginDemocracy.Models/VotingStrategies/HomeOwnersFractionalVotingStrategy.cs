@@ -26,16 +26,16 @@ namespace PluginDemocracy.Models
             var ownersVotingValue = new Dictionary<BaseCitizen, double>();
             foreach (Home home in community.Homes)
             {
-                foreach (BaseCitizen owner in home.Owners.Keys)
+                foreach (BaseCitizen owner in home.OwnersWithOwnership.Keys)
                 {
                     //an owner may own more than 1 home in the same gated community
                     if (ownersVotingValue.ContainsKey(owner))
                     {
-                        ownersVotingValue[owner] += home.Owners[owner];
+                        ownersVotingValue[owner] += home.OwnersWithOwnership[owner];
                     }
                     else
                     {
-                        ownersVotingValue[owner] = home.Owners[owner];
+                        ownersVotingValue[owner] = home.OwnersWithOwnership[owner];
                     }
                 }
             }
