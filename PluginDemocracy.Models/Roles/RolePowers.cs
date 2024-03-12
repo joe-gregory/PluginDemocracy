@@ -2,13 +2,9 @@
 {
     public class RolePowers
     {
-        public bool CanJoinCitizen { get; set; }
-        public bool CanRemoveCitizen { get; set; }
-        public bool CanJoinResident { get; set; }
-        public bool CanRemoveResident { get; set; }
-        public bool CanCreateRole { get; set; }
-        public bool CanVerifyHomeOwnership { get; set; }
-        public bool CanAccounting { get; set; }
+        public bool CanEditHomeOwnership { get; set; }
+        public bool CanEditResidency { get; set; }
+        public bool CanModifyAccounting { get; set; }
 
     }
 }
