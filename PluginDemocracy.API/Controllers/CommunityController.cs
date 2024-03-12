@@ -13,10 +13,11 @@ namespace PluginDemocracy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommunityController(PluginDemocracyContext context, APIUtilityClass utilityClass) : ControllerBase
+    public class CommunityController(PluginDemocracyContext context, APIUtilityClass utilityClass, IConfiguration configuration) : ControllerBase
     {
         private readonly PluginDemocracyContext _context = context;
         private readonly APIUtilityClass _utilityClass = utilityClass;
+        private readonly IConfiguration _configuration = configuration;
 
         [HttpPost("registercommunity")]
         public async Task<ActionResult<PDAPIResponse>> Register(CommunityDto communityDto)
@@ -168,14 +169,48 @@ namespace PluginDemocracy.API.Controllers
             {
                 JoinCommunityRequest request = new(requestDto.HomeId, requestDto.UserId, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
                 community.AddJoinCommunityRequest(request);
-                //At this point the request should be validated. It can be saved to database. 
-                _context.SaveChanges();
+                Home homeToJoin = community.Homes.First(h => h.Id == requestDto.HomeId);
+
                 //Send notifications to the corresponding parties
-                    //Send notification to role that has the capability to accept new home owners
-                    //Send notification to app admin for now as well? 
-                //How will notifications work? When you open up your app OnInitialized, lookup notifications for you.
-                //In the common processing check if new notifications occurred, add bubble to topnavbar that you have notifications
-                //Can notifications contain a link?
+                //Send notification to role that has the capability to accept new home owners. Lookup all the Roles that have CanEditHomeOwnership and CanEditResidency
+                //Search for all the roles that have CanEditHomeOwnership and CanEditResidency in the Community
+                //If user is joining as home owner, send notification to Roles with corresponding powers. If role is not there, default send notification to app admin.
+                List<User?> roleHoldersWithJoinPower = community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
+                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {homeToJoin.FullName} in community {community.FullName}";
+                string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
+                if (request.JoiningAsOwner)
+                {
+                    foreach (User? user in roleHoldersWithJoinPower)
+                    {
+                        if (user != null)
+                        {
+                            string title = _utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture);
+                            user.AddNotification(title, body);
+                            await _utilityClass.SendEmailAsync(user.Email, title, body);
+                        }
+                    }
+                    if (roleHoldersWithJoinPower.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
+                }
+                //If user is joining as resident, send notification to home owner AND roles with powers, default to app admin otherwise. 
+                else
+                {
+                    List<User> usersToEmail = [];
+                    foreach (BaseCitizen baseCitizen in homeToJoin.Owners) if (baseCitizen is User user) usersToEmail.Add(user);
+                    foreach (User? user in roleHoldersWithJoinPower) if (user != null) usersToEmail.Add(user);
+                    //send the emails and add the notifications
+                    foreach (User user in usersToEmail)
+                    {
+                        user.AddNotification(_utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
+                        await _utilityClass.SendEmailAsync(user.Email, _utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
+                    }
+                    if (homeToJoin.Owners.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
+                }
+                //The emails and notifications have been sent.
+
+                //At this point the request should be validated and the notifications sent. It can be saved to database. 
+                _context.SaveChanges();
+                response.AddAlert("success", "Request sent successfully");
+                return Ok(response);
             }
             catch (Exception exception)
             {
