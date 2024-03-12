@@ -159,6 +159,9 @@ The Plugin Democracy Team </value>
   <data name="EmailTokenNoMatchTitle" xml:space="preserve">
     <value>The token does not match</value>
   </data>
+  <data name="NewJoinRequest" xml:space="preserve">
+    <value>New join community request</value>
+  </data>
   <data name="NewPasswordSuccess" xml:space="preserve">
     <value>New password has been successfully set</value>
   </data>

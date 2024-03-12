@@ -159,6 +159,9 @@ El equipo de Democracia Conectada</value>
   <data name="EmailTokenNoMatchTitle" xml:space="preserve">
     <value>El token no coincide</value>
   </data>
+  <data name="NewJoinRequest" xml:space="preserve">
+    <value>Nueva solicitud para unirse a la comunidad</value>
+  </data>
   <data name="NewPasswordSuccess" xml:space="preserve">
     <value>La nueva contraseña ha sido exitosamente guardada</value>
   </data>

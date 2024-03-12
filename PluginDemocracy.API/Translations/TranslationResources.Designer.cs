@@ -175,6 +175,15 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New join community request.
+        /// </summary>
+        public static string NewJoinRequest {
+            get {
+                return ResourceManager.GetString("NewJoinRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New password has been successfully set.
         /// </summary>
         public static string NewPasswordSuccess {

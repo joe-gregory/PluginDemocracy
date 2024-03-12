@@ -30,5 +30,6 @@
         public static string AccountUpdatedSuccessfully => "AccountUpdatedSuccessfully";
         public static string CultureUpdatedSuccessfully => "CultureUpdatedSuccessfully";
         public static string ProfilePictureUpdated => "ProfilePictureUpdated";
+        public static string NewJoinRequest => "NewJoinRequest";
     }
 }
