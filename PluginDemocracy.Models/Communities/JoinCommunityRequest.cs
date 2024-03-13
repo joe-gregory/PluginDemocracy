@@ -8,6 +8,7 @@ namespace PluginDemocracy.Models
 {
     public class JoinCommunityRequest
     {
+        public int Id { get; set; }
         public int HomeId { get; set; }
         public int UserId { get; set; }
         public bool JoiningAsOwner { get; set; }
