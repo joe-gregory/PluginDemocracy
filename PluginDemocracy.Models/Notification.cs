@@ -12,6 +12,7 @@ namespace PluginDemocracy.Models
         public string Title { get; set; } = string.Empty;   
         public string Message { get; set; } = string.Empty;
         public bool Read { get; set; } = false; 
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         public Notification() { }
         public Notification(string title, string message)
         {
