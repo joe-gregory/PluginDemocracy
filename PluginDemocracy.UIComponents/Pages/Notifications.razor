@@ -1,0 +1,31 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.Notifications)</MudText>
+<MudText>Number of Notifications: @AppState.User?.HowManyUnreadNotifications</MudText>
+
+<MudTable T="NotificationDto" Items="@AppState.User?.Notifications" OnRowClick="RowClickEvent">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDto, object>(x => x.Date)">@AppState.Translate(ResourceKeys.Date)</MudTableSortLabel></MudTh>
+        <MudTh>@AppState.Translate(ResourceKeys.Title)</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDto, object>(x => x.Read)">@AppState.Translate(ResourceKeys.Read)</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="@AppState.Translate(ResourceKeys.Date)">@context.Date</MudTd>
+        <MudTd DataLabel="@AppState.Translate(ResourceKeys.Title)">@context.Title</MudTd>
+        <MudTd DataLabel="@AppState.Translate(ResourceKeys.Read)">
+            <MudIcon Icon="@(context.Read ? Icons.Material.Filled.MarkEmailRead : Icons.Material.Filled.MarkEmailUnread)" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code{
+    private async Task RowClickEvent(TableRowClickEventArgs<NotificationDto> tableRowClickEventArgs)
+    {
+        //This gives me access to the item (NotificationDto) tableRowClickEventArgs.Item.
+        //Make get request to mark this notification as read
+        //Make Get request for the notification details
+        string endpoint = ApiEndPoints.GetNotification + $"?notificationId={tableRowClickEventArgs.Item.Id}";
+        await Services.GetDataAsync(endpoint);
+    }
+}
