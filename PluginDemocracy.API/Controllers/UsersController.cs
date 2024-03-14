@@ -65,7 +65,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse apiResponse = new();
 
             //Look up user by email
-            User? existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
+            User? existingUser = await _context.Users.Include(u => u.Notifications).FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
             if (existingUser == null)
             {
                 apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
@@ -371,6 +371,32 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
                 return BadRequest(response);
             }
+        }
+        [Authorize]
+        [HttpGet("getnotification")]
+        public async Task<ActionResult<PDAPIResponse>> GetNotification([FromQuery] int notificationId)
+        {
+            //Create response object
+            PDAPIResponse response = new();
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null) return BadRequest(response);
+            existingUser = _context.Users.Include(u => u.Notifications).FirstOrDefault(u => u.Id == existingUser.Id);
+            if (existingUser == null) return BadRequest(response);
+            //Ensure that the notification belongs to the user
+            Notification? notification = existingUser.Notifications.FirstOrDefault(n => n.Id == notificationId);
+            if (notification == null)
+            {
+                response.AddAlert("error", "Notification does not belong to user");
+                return BadRequest(response);
+            }
+            //Mark notification as read
+            notification.Read = true;
+            response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+            response.RedirectTo = FrontEndPages.GenericMessage;
+            response.RedirectParameters["Title"] = notification.Title;
+            response.RedirectParameters["Body"] = notification.Message;
+            return Ok(response);
         }
         #endregion AUTHORIZED ENDPOINTS
     }
