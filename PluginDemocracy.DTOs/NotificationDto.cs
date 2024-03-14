@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PluginDemocracy.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,15 @@ namespace PluginDemocracy.DTOs
         public string Message { get; set; } = string.Empty;
         public bool Read { get; set; } = false;
         public DateTime Date { get; set; }
+        public NotificationDto() { }
+        public NotificationDto(Notification notification)
+        {
+            Id = notification.Id;
+            Title = notification.Title;
+            Message = notification.Message;
+            Read = notification.Read;
+            Date = notification.Date;
+
+        }
     }
 }
