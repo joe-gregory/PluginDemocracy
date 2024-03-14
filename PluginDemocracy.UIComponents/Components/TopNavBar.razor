@@ -18,36 +18,38 @@
                 <MudIcon Icon="@Icons.Material.Filled.Power" Color="Color.Primary" />
             }
         }
-        
+
     </MudAvatar>
     <MudText @onclick='() => NavMan.NavigateTo("/")'>@AppState.Translate("PluginDemocracy")</MudText>
-        <MudSpacer />
+    <MudSpacer />
+    <MudBadge Visible="@(AppState.User != null && AppState.User.AnyUnreadNotifications)" Icon="@Icons.Material.Filled.Email" Color="Color.Info" Overlap="true" Bordered="true">
         <MudAvatar @onclick="@ToggleUserMenu" Class="@(UserMenuButtonDisabled ? "mud-avatar-disabled" : "")">
+
             @if (AppState.User != null)
-        {
-            if (!string.IsNullOrEmpty(AppState.User.ProfilePicture))
             {
-                <MudImage Src=@AppState.User.ProfilePicture />
+                if (!string.IsNullOrEmpty(AppState.User.ProfilePicture))
+                {
+                    <MudImage Src=@AppState.User.ProfilePicture />
+                }
+                else
+                {
+                    <MudText Color="Color.Primary">@AppState.User.Initials</MudText>
+                }
             }
             else
             {
-                <MudText Color="Color.Primary">@AppState.User.Initials</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
             }
+        </MudAvatar>
+    </MudBadge>
 
-        }
-        else
-        {
-            <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
-
-        }
-    </MudAvatar>
 </MudAppBar>
 
 <MudDrawer @bind-Open="@communityMenuOpen" Elevation="25" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl" Height="100vh">
     <MudDrawerHeader>
         <MudText @onclick='() => NavMan.NavigateTo(FrontEndPages.Community)' Typo="Typo.h6">@AppState.Translate("Community")</MudText>
-        </MudDrawerHeader>
-        @if (UserHasCommunity)
+    </MudDrawerHeader>
+    @if (UserHasCommunity)
     {
 
         <MudNavMenu>
@@ -72,7 +74,7 @@
         </MudNavMenu>
     }
 </MudDrawer>
-<MudDrawer @bind-Open="@userMenuOpen" Elevation="25" Breakpoint="Breakpoint.Xl" Height="100vh" >
+<MudDrawer @bind-Open="@userMenuOpen" Elevation="25" Breakpoint="Breakpoint.Xl" Height="100vh">
     <MudDrawerHeader>
         <MudIcon Icon="@Icons.Material.Filled.Person" />
         <MudSpacer />
@@ -86,15 +88,21 @@
     <MudNavMenu>
         @if (!UserLoggedIn)
         {
-            <MudNavLink Href="@FrontEndPages.Login" >@AppState.Translate("LogIn")</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.Login">@AppState.Translate("LogIn")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.SignUp">@AppState.Translate("SignUp")</MudNavLink>
 
         }
         else
         {
             @* <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink> *@
+            <MudNavLink Href="@FrontEndPages.Notifications">
+                @AppState.Translate(ResourceKeys.Notifications)
+                <MudBadge Visible="@(AppState.User != null && AppState.User.AnyUnreadNotifications)" Content="@AppState.User?.HowManyUnreadNotifications" Overlap="true" Bordered="true" Color="Color.Info">
+                    <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Default"  />
+                </MudBadge>
+            </MudNavLink>
             <MudNavLink OnClick="@(Services.LogOutAndRedirectHome)" Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
         }
-    <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/settings">@AppState.Translate("Settings")</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/settings">@AppState.Translate("Settings")</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
