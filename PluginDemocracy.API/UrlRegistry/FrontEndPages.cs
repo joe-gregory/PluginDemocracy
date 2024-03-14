@@ -10,6 +10,7 @@
         public const string ConfirmEmail = "/confirmemail";
         public const string ForgotPassword = "/forgotpassword";
         public const string ResetPassword = "/resetpassword";
+        public const string Notifications = "/notifications";
 
         public const string Community = "/community";
         public const string RegisterCommunity = "/registercommunity";
