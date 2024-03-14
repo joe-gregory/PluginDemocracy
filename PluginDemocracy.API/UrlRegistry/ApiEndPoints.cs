@@ -17,6 +17,7 @@
         public static readonly string PostToggleUserCulture = UsersController + "toggleuserculture";
         public static readonly string PostUpdateAccount = UsersController + "updateaccount";
         public static readonly string UpdateProfilePicture = UsersController + "updateprofilepicture";
+        public static readonly string GetNotification = UsersController + "getnotification";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
