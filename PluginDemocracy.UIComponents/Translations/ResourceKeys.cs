@@ -23,6 +23,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string YouHaveNoCommunities = "YouHaveNoCommunities";
         public const string RegisterCommunity = "RegisterCommunity";
         public const string OfficialCurrency = "OfficialCurrency";
+        public const string Notifications = "Notifications";
 
         public const string Name = "Name";
         public const string Description = "Description";
@@ -55,5 +56,8 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string AvailableOwnership = "AvailableOwnership";
         public const string Percentage = "Percentage";
         public const string ErrorMessageJoinHomeWrongPercentage = "ErrorMessageJoinHomeWrongPercentage";
+        public const string Date = "Date";
+        public const string Title = "Title";
+        public const string Read = "Read";
     }
 }

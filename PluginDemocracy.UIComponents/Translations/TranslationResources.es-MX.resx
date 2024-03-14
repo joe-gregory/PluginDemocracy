@@ -156,6 +156,9 @@
   <data name="CreateProposal" xml:space="preserve">
     <value>Crear Propuesta</value>
   </data>
+  <data name="Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
   <data name="DateOfBirth" xml:space="preserve">
     <value>Fecha de nacimiento</value>
   </data>
@@ -237,6 +240,9 @@
   <data name="NewPasswordTitle" xml:space="preserve">
     <value>Inserte Nueva Contraseña</value>
   </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
   <data name="Number" xml:space="preserve">
     <value>Numero</value>
   </data>
@@ -272,6 +278,9 @@
   </data>
   <data name="Proposals" xml:space="preserve">
     <value>Propuestas</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>Leído</value>
   </data>
   <data name="RedFlags" xml:space="preserve">
     <value>Banderas Rojas</value>
@@ -329,6 +338,9 @@
   </data>
   <data name="Spanish" xml:space="preserve">
     <value>Español</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Título</value>
   </data>
   <data name="Update" xml:space="preserve">
     <value>Actualizar</value>
