@@ -35,6 +35,10 @@ namespace PluginDemocracy.Models
         public string? EmailConfirmationToken { get; set; }
         public bool EmailConfirmed { get; set; } = false;
         public List<Notification> Notifications { get; set; } = [];
+        [NotMapped]
+        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
+        [NotMapped]
+        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         [Required]
         public string HashedPassword { get; set; }
         public string? PhoneNumber { get; set; } = null;
