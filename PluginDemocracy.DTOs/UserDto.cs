@@ -35,6 +35,11 @@ namespace PluginDemocracy.DTOs
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         public bool? EmailConfirmed { get; set; }
+        public List<NotificationDto> Notifications { get; set; } = [];
+        [JsonIgnore]
+        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
+        [JsonIgnore]
+        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         //Password field is used by create account in frontend
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
@@ -103,7 +108,7 @@ namespace PluginDemocracy.DTOs
                 //Roles = user.Roles,
                 //Proposals = user.Proposals,
             };
-
+            foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDto(notification));
             return userDto;
         }
         public static User ReturnUserFromUserDto(UserDto userDto)
