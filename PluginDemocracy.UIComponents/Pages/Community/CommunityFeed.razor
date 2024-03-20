@@ -1,15 +1,21 @@
 ﻿@inject Services Services
 @inject BaseAppState AppState
 
+@foreach (CommunityDto community in AppState.User?.Citizenships ?? new List<CommunityDto>())
+{
+    <MudText>Community: @community.FullName</MudText>
+}
 
 @code {
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        //make get request to get all of user's communities
+        await base.OnInitializedAsync();
+        //make get request to get all of user's communities to update list in case of out of sync
+        await Services.GetDataAsync(ApiEndPoints.GetUserCommunities);
 
         //If user doesn't have any communities, redirect to JoinOrRegisterCommunity page
+        if (AppState.User?.Citizenships.Count == 0) Services.NavigateTo(FrontEndPages.JoinOrRegisterCommunity);
 
     }
 
