@@ -89,7 +89,7 @@ namespace PluginDemocracy.API.Controllers
                 //Send a SessionJWT to the client so that they can maintain a session
                 apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
                 //Redirect to home feed after login in or join community page if no community
-                apiResponse.RedirectTo = FrontEndPages.Community;
+                apiResponse.RedirectTo = FrontEndPages.CommunityFeed;
                 return Ok(apiResponse);
             }
         }

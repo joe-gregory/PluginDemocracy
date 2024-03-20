@@ -1,0 +1,9 @@
+﻿@inject BaseAppState AppState
+
+<MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.YouHaveNoCommunities)</MudText>
+<div>
+    <MudLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate(ResourceKeys.JoinCommunity)</MudLink>
+</div>
+<div>
+    <MudLink Href="@FrontEndPages.RegisterCommunity">@AppState.Translate(ResourceKeys.RegisterCommunity)</MudLink>
+</div>

@@ -26,6 +26,7 @@
         public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
+        public const string GetUserCommunities = CommunityController + "getusercommunities";
         #endregion
     }
 }

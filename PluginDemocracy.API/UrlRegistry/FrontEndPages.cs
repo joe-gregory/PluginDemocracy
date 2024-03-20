@@ -2,9 +2,11 @@
 {
     public static class FrontEndPages
     {
+        //Generic pages
         public const string Home = "/";
         public const string GenericMessage = "/message";
 
+        //User pages
         public const string Login = "/login";
         public const string SignUp = "/signup";
         public const string ConfirmEmail = "/confirmemail";
@@ -12,7 +14,8 @@
         public const string ResetPassword = "/resetpassword";
         public const string Notifications = "/notifications";
 
-        public const string Community = "/community";
+        //Community pages
+        public const string CommunityFeed = "/communityfeed";
         public const string RegisterCommunity = "/registercommunity";
         public const string JoinCommunity = "/joincommunity";
     }
