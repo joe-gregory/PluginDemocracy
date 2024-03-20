@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PluginDemocracy.UIComponents.Pages
+namespace PluginDemocracy.UIComponents.Pages.Community
 {
     public partial class JoinCommunity
     {
@@ -29,7 +29,7 @@ namespace PluginDemocracy.UIComponents.Pages
         private bool displayDialogErrorMessage = false;
         private string dialogErrorMessage = string.Empty;
         private double selectedOwnershipPercentage = 0;
-        
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -42,7 +42,7 @@ namespace PluginDemocracy.UIComponents.Pages
         {
             selectedCommunityDto = newValue;
             //Now load the homes for the selected community
-            if(selectedCommunityDto!= null)
+            if (selectedCommunityDto != null)
             {
                 await LoadHomesForSelectedCommunity();
             }
@@ -53,7 +53,7 @@ namespace PluginDemocracy.UIComponents.Pages
             if (selectedCommunityDto == null) return;
             string fullUrl = ApiEndPoints.GetListOfHomesForCommunity + $"?communityId={selectedCommunityDto.Id}";
             PDAPIResponse response = await Services.GetDataAsync(fullUrl);
-            if(response.Community != null) homesDtosFromSelectedCommunity = response.Community.Homes;
+            if (response.Community != null) homesDtosFromSelectedCommunity = response.Community.Homes;
         }
 
         private void SelectedHome(int? homeId)
@@ -64,7 +64,7 @@ namespace PluginDemocracy.UIComponents.Pages
             dialogErrorMessage = string.Empty;
             isJoinHomeDialogVisible = true;
         }
-        
+
         private async Task SendRequest()
         {
             displayDialogErrorMessage = false;
@@ -85,7 +85,7 @@ namespace PluginDemocracy.UIComponents.Pages
                     dialogErrorMessage = AppState.Translate(Translations.ResourceKeys.ErrorMessageJoinHomeWrongPercentage);
                     return;
                 }
-                
+
             }
         }
     }

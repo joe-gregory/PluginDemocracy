@@ -4,7 +4,7 @@
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.Notifications)</MudText>
 <MudText>Number of Notifications: @AppState.User?.HowManyUnreadNotifications</MudText>
 
-<MudTable T="NotificationDto" Items="@AppState.User?.Notifications" OnRowClick="RowClickEvent">
+<MudTable T="NotificationDto" Items="@AppState.User?.Notifications" OnRowClick="RowClickEvent" Hover="true">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<NotificationDto, object>(x => x.Date)">@AppState.Translate(ResourceKeys.Date)</MudTableSortLabel></MudTh>
         <MudTh>@AppState.Translate(ResourceKeys.Title)</MudTh>

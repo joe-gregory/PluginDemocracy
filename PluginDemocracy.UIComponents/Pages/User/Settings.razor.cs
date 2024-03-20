@@ -4,7 +4,7 @@ using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Drawing;
 
-namespace PluginDemocracy.UIComponents.Pages
+namespace PluginDemocracy.UIComponents.Pages.User
 {
     public partial class Settings
     {
