@@ -1,0 +1,27 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary">Plugin Democracy Application Administrator Panel</MudText>
+<MudText Align="Align.Center" Typo="Typo.subtitle1" Class="mt-5 mb-5">With great power comes great responsability</MudText>
+
+@foreach (CommunityDto communityDto in CommunitiesDto ?? [])
+{
+    <MudText Class="mb-2">@communityDto.FullName</MudText>
+}
+<MudText>Select Community</MudText>
+
+@code
+{
+    private List<CommunityDto>? CommunitiesDto = [];
+    private CommunityDto? SelectedCommunity = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        //Make sure current user is admin if not, redirect to home page
+        bool isUserAdmin = await Services.GetDataAsyncGeneric<bool>(ApiEndPoints.IsCurrentUserAdmin);
+        if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
+        //Get a list of all the communities
+        CommunitiesDto = await Services.GetDataAsyncGeneric<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
+    }
+}
