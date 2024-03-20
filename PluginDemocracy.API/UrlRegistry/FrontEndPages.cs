@@ -18,5 +18,9 @@
         public const string CommunityFeed = "/communityfeed";
         public const string RegisterCommunity = "/registercommunity";
         public const string JoinCommunity = "/joincommunity";
+        public const string JoinOrRegisterCommunity = "/joinorregistercommunity";
+
+        //Admin pages
+        public const string AppAdmin = "/appadmin";
     }
 }
