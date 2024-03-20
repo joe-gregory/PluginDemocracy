@@ -49,6 +49,35 @@ namespace PluginDemocracy.UIComponents
                 _appState.IsLoading = false;
                 return new();
             }
+                    }
+        /// <summary>
+        /// This is a generic version of GetDataAsync. It is used to get data from the server and deserialize it into a generic type.
+        /// This allows to obtain different types of data from the server than just PDAPIResponse.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        public async Task<T?> GetDataAsyncGeneric<T>(string endpoint)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + endpoint;
+
+            using HttpRequestMessage request = new(HttpMethod.Get, url);
+            // Add the JWT as a Bearer token in the Authorization header if it's available
+            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            try
+            {
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                _appState.IsLoading = false;
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                _appState.IsLoading = false;
+                return default;
+            }
         }
         /// <summary>
         /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
