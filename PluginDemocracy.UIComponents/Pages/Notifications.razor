@@ -20,6 +20,11 @@
 </MudTable>
 
 @code{
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await Services.GetDataAsync(ApiEndPoints.UpdateNotifications);
+    }
     private async Task RowClickEvent(TableRowClickEventArgs<NotificationDto> tableRowClickEventArgs)
     {
         //This gives me access to the item (NotificationDto) tableRowClickEventArgs.Item.
