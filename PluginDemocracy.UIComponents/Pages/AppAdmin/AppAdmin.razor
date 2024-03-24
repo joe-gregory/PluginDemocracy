@@ -10,6 +10,13 @@
 }
 <MudText>Select Community</MudText>
 
+<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
+    @foreach (CommunityDto communityDtoOption in CommunitiesDto ?? new())
+    {
+        <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
+    }
+</MudRadioGroup>
+
 @code
 {
     private List<CommunityDto>? CommunitiesDto = [];
@@ -23,5 +30,14 @@
         if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
         //Get a list of all the communities
         CommunitiesDto = await Services.GetDataAsyncGeneric<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
+    }
+    private async Task OnSelectCommunityDtoChanged(CommunityDto newValue)
+    {
+        SelectedCommunity = newValue;
+        //Now load the requests for the selected community
+        if (SelectedCommunity != null)
+        {
+            //await LoadHomesForSelectedCommunity();
+        }
     }
 }

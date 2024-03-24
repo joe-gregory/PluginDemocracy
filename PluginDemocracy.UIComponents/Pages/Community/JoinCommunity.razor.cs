@@ -74,6 +74,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             {
                 try
                 {
+                    selectedHomeDto.ParentCommunity = selectedCommunityDto;
                     joinRequest = selectedHomeDto.JoinHome(AppState.User, residentOrOwner, selectedOwnershipPercentage);
                     displayDialogErrorMessage = false;
                     dialogErrorMessage = string.Empty;
