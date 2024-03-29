@@ -9,20 +9,23 @@ namespace PluginDemocracy.Models
     public class JoinCommunityRequest
     {
         public int Id { get; set; }
-        public int HomeId { get; set; }
-        public int UserId { get; set; }
+        public Community Community { get; set; }
+        public Home Home { get; set; }
+        public User? User { get; set; }
         public bool JoiningAsOwner { get; set; }
         public bool JoiningAsResident { get; set; }
         public double OwnershipPercentage { get; set; }
-        public bool? Approved { get; set; } = null;
+        public bool? Approved { get; internal set; } = null;
         protected JoinCommunityRequest()
         {
-
+            Home = new();
+            Community = new();
         }
-        public JoinCommunityRequest(int homeId, int userId, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public JoinCommunityRequest(Community community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
-            HomeId = homeId;
-            UserId = userId;
+            Community = community; 
+            Home = home;
+            User = user;
             JoiningAsOwner = joiningAsOwner;
             if (!joiningAsOwner) JoiningAsResident = true;
             else JoiningAsResident = false;
