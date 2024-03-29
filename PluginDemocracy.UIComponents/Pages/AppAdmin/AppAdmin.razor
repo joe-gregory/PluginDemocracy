@@ -10,7 +10,7 @@
 }
 <MudText>Select Community</MudText>
 
-<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
+<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
     @foreach (CommunityDto communityDtoOption in CommunitiesDto ?? new())
     {
         <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
