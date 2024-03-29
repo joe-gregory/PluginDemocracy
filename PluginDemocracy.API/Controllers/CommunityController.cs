@@ -166,7 +166,8 @@ namespace PluginDemocracy.API.Controllers
             }
             try
             {
-                JoinCommunityRequest request = new(requestDto.HomeId, requestDto.UserId, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
+                Home home = community.Homes.First(h => h.Id == requestDto.HomeId);
+                JoinCommunityRequest request = new(community, home, existingUser, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
                 community.AddJoinCommunityRequest(request);
                 Home homeToJoin = community.Homes.First(h => h.Id == requestDto.HomeId);
 
