@@ -194,16 +194,40 @@ namespace PluginDemocracy.Models
         {
             //Validate:
             //Does the home exist in the current community?
-            if(!Homes.Any(h => h.Id == request.HomeId)) throw new ArgumentException("Home not found in this community");
+            if(!Homes.Any(h => h.Id == request.Home?.Id)) throw new ArgumentException("Home not found in this community");
             //If user is joining as owner, ensure that the ownership percentage is valid
             if(request.JoiningAsOwner)
             {
                 if (request.OwnershipPercentage <= 0) throw new ArgumentException("Ownership cannot be less than 0.");
                 if(request.OwnershipPercentage > 100) throw new ArgumentException("Ownership cannot be more than 100.");
-                if(request.OwnershipPercentage > Homes.First(h => h.Id == request.HomeId).AvailableOwnershipPercentage) throw new ArgumentException("Ownership percentage exceeds available ownership percentage.");
+                if(request.OwnershipPercentage > Homes.First(h => h.Id == request.Home?.Id).AvailableOwnershipPercentage) throw new ArgumentException("Ownership percentage exceeds available ownership percentage.");
             }
             //At this point, if I didn't throw any exceptions, the request must be good
             JoinCommunityRequests.Add(request);
+        }
+        /// <summary>
+        /// Call to approve a JoinCommunityRequest.This joins the community to the home as owner or resident accordingly. 
+        /// Pass the request that you want to approve. It should be located in the Community.JoinCommunityRequests list.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void ApproveJoinCommunityRequest(JoinCommunityRequest request)
+        {
+            if(request.User == null) throw new ArgumentException("Request.User is null");
+            if (!JoinCommunityRequests.Contains(request)) throw new ArgumentException("Request not found in Community.JoinCommunityRequests");
+            //Make sure the home belongs to this community
+            if(Homes.FirstOrDefault(h => h.Id == request.Home.Id) == null) throw new ArgumentException("Home does not belong to this community");
+
+            ////////
+            if (request.JoiningAsOwner)
+            {
+                //Ensure that the user 
+            }
+            else
+            {
+                Homes.First(h => h.Id == request.Home.Id).AddResident(request.User);
+            }
+            request.Approved = true;
         }
         public void PublishProposal(Proposal proposal, bool skipAssigningExpirationDate = false)
         {
