@@ -1,13 +1,6 @@
-﻿using Humanizer.Localisation;
-using MudBlazor;
+﻿using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
-using PluginDemocracy.DTOs.CommunitiesDto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PluginDemocracy.UIComponents.Pages.Community
 {

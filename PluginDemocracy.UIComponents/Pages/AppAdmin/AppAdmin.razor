@@ -21,6 +21,7 @@
 {
     private List<CommunityDto>? CommunitiesDto = [];
     private CommunityDto? SelectedCommunity = null;
+    private List<JoinCommunityRequestDto>? JoinCommunityRequests = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,7 +38,8 @@
         //Now load the requests for the selected community
         if (SelectedCommunity != null)
         {
-            //await LoadHomesForSelectedCommunity();
+            //Load JoinCommunityRequests for that community. 
+
         }
     }
 }
