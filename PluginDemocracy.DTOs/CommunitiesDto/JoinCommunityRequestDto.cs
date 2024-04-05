@@ -1,19 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using PluginDemocracy.Models;
 
-namespace PluginDemocracy.DTOs.CommunitiesDto
+namespace PluginDemocracy.DTOs
 {
     public class JoinCommunityRequestDto
     {
-        public int CommunityId { get; set; }
-        public int HomeId { get; set; }
-        public int UserId { get; set; }
-        public bool JoiningAsOwner { get; set; }
-        public bool JoiningAsResident { get; set; }
-        public double OwnershipPercentage { get; set; }
+        public int Id { get; set; } = 0;
+        public CommunityDto? CommunityDto { get; set; }
+        public HomeDto? HomeDto { get; set; } 
+        public UserDto? UserDto { get; set; }
+        public bool JoiningAsOwner { get; set; } = false;
+        public bool JoiningAsResident { get; set; } = false;
+        public double OwnershipPercentage { get; set; } = 0;
+        public JoinCommunityRequestDto() { }
+        public JoinCommunityRequestDto(JoinCommunityRequest jcr)
+        {
+            Id = jcr.Id;
+            CommunityDto = CommunityDto.ReturnSimpleCommunityDtoFromCommunity(jcr.Community);
+            HomeDto = HomeDto.ReturnHomeDtoFromHome(jcr.Home);
+            UserDto = jcr.User != null ? DTOs.UserDto.ReturnUserDtoFromUser(jcr.User) : null;
+            JoiningAsOwner = jcr.JoiningAsOwner;
+            JoiningAsResident = jcr.JoiningAsResident;
+            OwnershipPercentage = jcr.OwnershipPercentage;
+        }
     }
 }
