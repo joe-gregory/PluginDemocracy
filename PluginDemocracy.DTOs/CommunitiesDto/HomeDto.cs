@@ -1,4 +1,4 @@
-﻿using PluginDemocracy.DTOs.CommunitiesDto;
+﻿using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
 using System.Text.Json.Serialization;
 
@@ -91,9 +91,9 @@ namespace PluginDemocracy.DTOs
             }
             JoinCommunityRequestDto request = new()
             {
-                CommunityId = ParentCommunity?.Id ?? 0,
-                HomeId = Id ?? 0,
-                UserId = user.Id ?? 0
+                CommunityDto = ParentCommunity,
+                HomeDto = this,
+                UserDto = user,
             };
             if (joiningAsOwner)
             {
