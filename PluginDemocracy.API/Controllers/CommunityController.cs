@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
-using PluginDemocracy.DTOs.CommunitiesDto;
 using PluginDemocracy.Models;
 using System.Globalization;
 
@@ -152,24 +151,41 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //Does the user from claims match the user in the request?
-            if (existingUser.Id != requestDto.UserId)
+            if(requestDto.UserDto == null)
+            {
+                response.AddAlert("error", "UserDto is null");
+                return BadRequest(response);
+            }
+            if (existingUser.Id != requestDto.UserDto.Id)
             {
                 response.AddAlert("error", "User from claims does not match user in request");
                 return BadRequest(response);
             }
             //Does the community exist?
-            Community? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityId);
+            if(requestDto.CommunityDto == null)
+            {
+                response.AddAlert("error", "CommunityDto is null");
+                return BadRequest(response);
+            }
+            Community? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
                 return BadRequest(response);
             }
+            if(requestDto.JoiningAsOwner == false && requestDto.JoiningAsResident == false)
+            {
+                response.AddAlert("error", "Both Request.JoiningAsOwner and Request.JoiningAsResident can't be false.");
+                return BadRequest(response);
+            }
             try
             {
-                Home home = community.Homes.First(h => h.Id == requestDto.HomeId);
+                Home home = community.Homes.First(h => h.Id == requestDto.HomeDto?.Id);
+                if(requestDto.JoiningAsResident == true) requestDto.JoiningAsOwner = false;
+                //at this point requestDto.JoiningAsOwner should not be null, so I am going to go ahead and add this bool variable
                 JoinCommunityRequest request = new(community, home, existingUser, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
                 community.AddJoinCommunityRequest(request);
-                Home homeToJoin = community.Homes.First(h => h.Id == requestDto.HomeId);
+                Home homeToJoin = community.Homes.First(h => h.Id == requestDto.HomeDto?.Id);
 
                 //Send notifications to the corresponding parties
                 //Send notification to role that has the capability to accept new home owners. Lookup all the Roles that have CanEditHomeOwnership and CanEditResidency
