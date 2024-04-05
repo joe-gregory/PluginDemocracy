@@ -7,6 +7,7 @@ namespace PluginDemocracy.Data
     {
         public PluginDemocracyContext(DbContextOptions<PluginDemocracyContext> options) : base(options) { }
         public DbSet<Community> Communities { get; set; }
+        public DbSet<JoinCommunityRequest> JoinCommunityRequests { get; set; }
         public DbSet<Home> Homes { get; set; }
         public DbSet<HomeOwnership> HomeOwnership { get; set; }
         public DbSet<User> Users { get; set; }
