@@ -45,5 +45,24 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+        [HttpGet("getlistofjoincommunityrequests")]
+        public async Task<ActionResult<List<JoinCommunityRequestDto>>> GetListOfJoinCommunityRequests([FromQuery] int communityId)
+        {
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null) return Unauthorized();
+            try
+            {
+                if(user == null) return BadRequest();
+                if (user.Admin == false) return Unauthorized();
+                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Where(j => j.Community.Id == communityId).ToListAsync();
+                List<JoinCommunityRequestDto> joinCommunityRequestDtos = [];
+                foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDto(joinCommunityRequest));
+                return Ok(joinCommunityRequestDtos);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
     }
 }
