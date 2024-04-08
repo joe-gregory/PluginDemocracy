@@ -15,7 +15,7 @@ namespace PluginDemocracy.Models
         public bool JoiningAsOwner { get; set; }
         public bool JoiningAsResident { get; set; }
         public double OwnershipPercentage { get; set; }
-        public bool? Approved { get; internal set; } = null;
+        public bool? Approved { get; set; } = null;
         protected JoinCommunityRequest()
         {
             Home = new();
