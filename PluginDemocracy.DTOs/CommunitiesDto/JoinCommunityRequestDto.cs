@@ -11,6 +11,7 @@ namespace PluginDemocracy.DTOs
         public bool JoiningAsOwner { get; set; } = false;
         public bool JoiningAsResident { get; set; } = false;
         public double OwnershipPercentage { get; set; } = 0;
+        public bool? Approved { get; internal set; } = null;
         public JoinCommunityRequestDto() { }
         public JoinCommunityRequestDto(JoinCommunityRequest jcr)
         {
@@ -21,6 +22,7 @@ namespace PluginDemocracy.DTOs
             JoiningAsOwner = jcr.JoiningAsOwner;
             JoiningAsResident = jcr.JoiningAsResident;
             OwnershipPercentage = jcr.OwnershipPercentage;
+            Approved = jcr.Approved;
         }
     }
 }
