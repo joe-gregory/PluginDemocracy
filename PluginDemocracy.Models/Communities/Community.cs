@@ -216,16 +216,18 @@ namespace PluginDemocracy.Models
             if(request.User == null) throw new ArgumentException("Request.User is null");
             if (!JoinCommunityRequests.Contains(request)) throw new ArgumentException("Request not found in Community.JoinCommunityRequests");
             //Make sure the home belongs to this community
-            if(Homes.FirstOrDefault(h => h.Id == request.Home.Id) == null) throw new ArgumentException("Home does not belong to this community");
-
-            ////////
+            Home? home = Homes.FirstOrDefault(h => h.Id == request.Home.Id) ?? throw new ArgumentException("Home does not belong to this community");
             if (request.JoiningAsOwner)
             {
-                //Ensure that the user 
+                home.AddOwner(request.User, request.OwnershipPercentage);
+            }
+            else if(request.JoiningAsResident)
+            {
+                home.AddResident(request.User);
             }
             else
             {
-                Homes.First(h => h.Id == request.Home.Id).AddResident(request.User);
+                throw new ArgumentException("JoiningAsOwner and JoiningAsResident are both false. At least one must be true.");
             }
             request.Approved = true;
         }
