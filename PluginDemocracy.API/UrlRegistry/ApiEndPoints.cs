@@ -31,7 +31,10 @@
         #region Admin
         public const string AdminController = Base + "admin/";
         public const string AdminGetListOfAllSimpleCommunitiesDtos = AdminController + "getlistofallsimplecommunitiesdtos";
-        public const string IsCurrentUserAdmin = AdminController +"iscurrentuseradmin";
+        public const string AdminIsCurrentUserAdmin = AdminController +"iscurrentuseradmin";
+        public const string AdminGetJoinCommunityRequests = AdminController + "getjoincommunityrequests"; 
+        public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
+        public const string AdminAcceptJoinRequest = AdminController + "acceptjoinrequest";
         #endregion
     }
 }
