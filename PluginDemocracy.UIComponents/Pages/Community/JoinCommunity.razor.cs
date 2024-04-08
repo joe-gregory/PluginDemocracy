@@ -72,6 +72,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     displayDialogErrorMessage = false;
                     dialogErrorMessage = string.Empty;
                     await Services.PostDataAsync(ApiEndPoints.JoinCommunityRequest, joinRequest);
+                    isJoinHomeDialogVisible = false;
                 }
                 catch
                 {
