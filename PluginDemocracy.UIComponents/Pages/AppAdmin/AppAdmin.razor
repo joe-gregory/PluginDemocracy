@@ -4,11 +4,7 @@
 <MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary">Plugin Democracy Application Administrator Panel</MudText>
 <MudText Align="Align.Center" Typo="Typo.subtitle1" Class="mt-5 mb-5">With great power comes great responsability</MudText>
 
-@foreach (CommunityDto communityDto in CommunitiesDto ?? [])
-{
-    <MudText Class="mb-2">@communityDto.FullName</MudText>
-}
-<MudText>Select Community</MudText>
+<MudText Typo="Typo.h5">Select Community</MudText>
 
 <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
     @foreach (CommunityDto communityDtoOption in CommunitiesDto ?? new())
@@ -16,6 +12,43 @@
         <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
     }
 </MudRadioGroup>
+@if (SelectedCommunity != null)
+{
+    <MudText Typo="Typo.h5" Class="mt-10">Join Community Requests</MudText>
+    @foreach (JoinCommunityRequestDto request in JoinCommunityRequests ?? [])
+    {
+        <MudText>@request.UserDto?.Email</MudText>
+    }
+    <MudText>Selected Community: @SelectedCommunity.FullName</MudText>
+    <MudDataGrid Items="JoinCommunityRequests" Bordered="true">
+        <Columns>
+            @* //Request Info  *@
+          <PropertyColumn Property="request => request.Id" Title="Request Id" />
+            <PropertyColumn Property="request => request.JoiningAsResident" Title="Joining As Resident" />
+            <PropertyColumn Property="request => request.JoiningAsOwner" Title="Joining As Owner" />
+            <PropertyColumn Property="request => request.OwnershipPercentage" Title="Ownership Claimed" />
+            <PropertyColumn Property="request => request.Approved" Title="Approved" />
+            @* //Home Info: *@
+            <PropertyColumn Property="request => request.HomeDto != null ? request.HomeDto.Address : null" Title="Home Address" />
+            <PropertyColumn Property="request=> request.HomeDto != null ? request.HomeDto.Owners : null" Title="Current owners" />
+            @* //User info: *@ 
+            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.FirstName : null" />
+            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.Age : null" />
+            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.Email : null" Title="User Email" />
+            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.PhoneNumber : null" Title="Phone Number" />
+            <TemplateColumn CellClass="d-flex justify-end" IsEditable="false">
+                <CellTemplate>
+                    @if (context.Item.Approved != null)
+                    {
+                        <MudIconButton Disabled="@(context.Item.Approved != null)" Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" OnClick="() => ApproveJoinRequest(context.Item)" />
+                        <MudIconButton Disabled="@(context.Item.Approved != null)" Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" OnClick="() => RejectJoinRequest(context.Item)" />
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+
 
 @code
 {
@@ -27,7 +60,7 @@
     {
         await base.OnInitializedAsync();
         //Make sure current user is admin if not, redirect to home page
-        bool isUserAdmin = await Services.GetDataAsyncGeneric<bool>(ApiEndPoints.IsCurrentUserAdmin);
+        bool isUserAdmin = await Services.GetDataAsyncGeneric<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
         if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
         //Get a list of all the communities
         CommunitiesDto = await Services.GetDataAsyncGeneric<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
@@ -38,8 +71,22 @@
         //Now load the requests for the selected community
         if (SelectedCommunity != null)
         {
-            //Load JoinCommunityRequests for that community. 
-
+            //Make a Get request for the JoinCommunityRequests for that community. 
+            JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
         }
+    }
+    private async Task ApproveJoinRequest(JoinCommunityRequestDto request)
+    {
+        //Make a post request to approve the request
+        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminAcceptJoinRequest, request);
+        //Reload the requests
+        JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+    }
+    private async Task RejectJoinRequest(JoinCommunityRequestDto request)
+    {
+        //Make a post request to reject the request
+        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminRejectJoinRequest, request);
+        //Reload the requests
+        JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
     }
 }
