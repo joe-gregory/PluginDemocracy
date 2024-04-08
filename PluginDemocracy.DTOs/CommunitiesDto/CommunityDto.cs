@@ -154,6 +154,7 @@ namespace PluginDemocracy.DTOs
         {
             return new CommunityDto()
             {
+                Id = community.Id,
                 Name = community.Name,
                 OfficialCurrency = community.OfficialCurrency,
                 Address = community.Address,
