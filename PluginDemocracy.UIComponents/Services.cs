@@ -162,9 +162,9 @@ namespace PluginDemocracy.UIComponents
         /// <returns>PDAPIResponse extracted from response</returns>
         private async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
-            //TODO This should only be in development
+            #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
             if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
-
+            #endif
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
 
             if (apiResponse == null)
