@@ -75,7 +75,7 @@ namespace PluginDemocracy.DTOs
             get
             {
                 List<CommunityDto> citizenships = [];
-                foreach (HomeOwnershipDto homeOwnershipDto in HomeOwnerships) citizenships.AddRange(homeOwnershipDto.Home?.Citizenships ?? []);
+                foreach (HomeOwnershipDto homeOwnershipDto in HomeOwnershipsDto) citizenships.AddRange(homeOwnershipDto.Home?.Citizenships ?? []);
                 citizenships.AddRange(NonResidentialCitizenIn);
                 citizenships.AddRange(ResidentOfHomes.SelectMany(home => home.Citizenships));
                 return citizenships.Distinct().ToList();
@@ -109,6 +109,9 @@ namespace PluginDemocracy.DTOs
                 //Proposals = user.Proposals,
             };
             foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDto(notification));
+            foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
+            foreach(Community community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
             return userDto;
         }
         public static User ReturnUserFromUserDto(UserDto userDto)

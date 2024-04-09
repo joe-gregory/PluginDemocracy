@@ -9,7 +9,7 @@
         public string? ProfilePicture { get; set; }
         public abstract List<CommunityDto> Citizenships { get; }
         public List<CommunityDto> NonResidentialCitizenIn { get; set; }
-        public List<HomeOwnershipDto> HomeOwnerships { get; set; }
+        public List<HomeOwnershipDto> HomeOwnershipsDto { get; set; } = [];
         #endregion
         #region METHODS
         /// <summary>
@@ -34,7 +34,7 @@
         }
         public BaseCitizenDto()
         {
-            HomeOwnerships = [];
+            HomeOwnershipsDto = [];
             NonResidentialCitizenIn = [];
         }
         #endregion
