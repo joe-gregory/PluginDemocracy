@@ -210,4 +210,16 @@ El equipo de Democracia Conectada</value>
   <data name="YourEmailHasBeenConfirmedBody" xml:space="preserve">
     <value>¡Gracias por confirmar tu dirección de correo electrónico! Estamos encantados de tenerte a bordo.</value>
   </data>
+  <data name="YourJoinRequestHasBeenApprovedBody" xml:space="preserve">
+    <value>Tu solicitud para unirte a una comunidad ha sido aprobada. Deberías poder empezar a hacer propuestas para esta comunidad. Vaya a la sección de la comunidad. Comunidad:</value>
+  </data>
+  <data name="YourJoinRequestHasBeenApprovedTitle" xml:space="preserve">
+    <value>Su solicitud ha sido aprobada. Comunidad: </value>
+  </data>
+  <data name="YourJoinRequestHasBeenRejectedBody" xml:space="preserve">
+    <value>Su solicitud para unirse a esta comunidad ha sido rechazada. Puede ponerse en contacto con los administradores de la comunidad para obtener más información. Comunidad:</value>
+  </data>
+  <data name="YourJoinRequestHasBeenRejectedTitle" xml:space="preserve">
+    <value>Su solicitud para unirse a la comunidad ha sido rechazada. Comunidad: </value>
+  </data>
 </root>

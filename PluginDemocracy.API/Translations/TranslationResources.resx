@@ -213,4 +213,16 @@ The Plugin Democracy Team </value>
   <data name="YourEmailHasBeenConfirmedBody" xml:space="preserve">
     <value>Thank you for confirming your email address! We're thrilled to have you on board.</value>
   </data>
+  <data name="YourJoinRequestHasBeenApprovedBody" xml:space="preserve">
+    <value>Your request to join a community has been approved. You should be able to start making proposals for this community. Navigate to the community section. Community: </value>
+  </data>
+  <data name="YourJoinRequestHasBeenApprovedTitle" xml:space="preserve">
+    <value>Your request has been approved. Community: </value>
+  </data>
+  <data name="YourJoinRequestHasBeenRejectedBody" xml:space="preserve">
+    <value>Your request to join this community has been rejected. You may contact the community's admins for more information. Community: </value>
+  </data>
+  <data name="YourJoinRequestHasBeenRejectedTitle" xml:space="preserve">
+    <value>Your request has been rejected. Community: </value>
+  </data>
 </root>
