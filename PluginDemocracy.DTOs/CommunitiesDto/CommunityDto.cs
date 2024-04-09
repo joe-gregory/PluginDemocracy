@@ -105,7 +105,7 @@ namespace PluginDemocracy.DTOs
             Address = community.Address;
             ProfilePicture = community.ProfilePicture;
             NonResidentialCitizenIn = community.NonResidentialCitizenIn.Select(c => ReturnSimpleCommunityDtoFromCommunity(c)).ToList();
-            foreach (HomeOwnership homeOwnership in community.HomeOwnerships) HomeOwnerships.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
+            foreach (HomeOwnership homeOwnership in community.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
             //CommunityDto Properties
             Name = community.Name;
             OfficialCurrency = community.OfficialCurrency;
