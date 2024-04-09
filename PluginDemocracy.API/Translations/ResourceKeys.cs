@@ -31,5 +31,9 @@
         public static string CultureUpdatedSuccessfully => "CultureUpdatedSuccessfully";
         public static string ProfilePictureUpdated => "ProfilePictureUpdated";
         public static string NewJoinRequest => "NewJoinRequest";
+        public static string YourJoinRequestHasBeenApprovedTitle => "YourJoinRequestHasBeenApprovedTitle";
+        public static string YourJoinRequestHasBeenApprovedBody => "YourJoinRequestHasBeenApprovedBody";
+        public static string YourJoinRequestHasBeenRejectedTitle => "YourJoinRequestHasBeenRejectedTitle";
+        public static string YourJoinRequestHasBeenRejectedBody => "YourJoinRequestHasBeenRejectedBody";
     }
 }
