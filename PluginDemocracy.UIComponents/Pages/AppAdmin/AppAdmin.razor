@@ -14,47 +14,61 @@
 </MudRadioGroup>
 @if (SelectedCommunity != null)
 {
-    <MudText Typo="Typo.h5" Class="mt-10">Join Community Requests</MudText>
-    @foreach (JoinCommunityRequestDto request in JoinCommunityRequests ?? [])
-    {
-        <MudText>@request.UserDto?.Email</MudText>
-    }
+    <MudText Typo="Typo.h5" Class="mt-10">Pending Join Community Requests</MudText>
     <MudText>Selected Community: @SelectedCommunity.FullName</MudText>
-    <MudDataGrid Items="JoinCommunityRequests" Bordered="true">
+    <MudDataGrid Items="PendingJoinCommunityRequests" Bordered="true" T="JoinCommunityRequestDto" ReadOnly="true" Elevation="25" RowClick="(e) => OnRowClicked(e.Item)">
         <Columns>
             @* //Request Info  *@
-          <PropertyColumn Property="request => request.Id" Title="Request Id" />
+            <PropertyColumn Property="request => request.Id" Title="Request Id" />
             <PropertyColumn Property="request => request.JoiningAsResident" Title="Joining As Resident" />
             <PropertyColumn Property="request => request.JoiningAsOwner" Title="Joining As Owner" />
             <PropertyColumn Property="request => request.OwnershipPercentage" Title="Ownership Claimed" />
-            <PropertyColumn Property="request => request.Approved" Title="Approved" />
             @* //Home Info: *@
             <PropertyColumn Property="request => request.HomeDto != null ? request.HomeDto.Address : null" Title="Home Address" />
-            <PropertyColumn Property="request=> request.HomeDto != null ? request.HomeDto.Owners : null" Title="Current owners" />
-            @* //User info: *@ 
-            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.FirstName : null" />
-            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.Age : null" />
-            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.Email : null" Title="User Email" />
-            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.PhoneNumber : null" Title="Phone Number" />
-            <TemplateColumn CellClass="d-flex justify-end" IsEditable="false">
-                <CellTemplate>
-                    @if (context.Item.Approved != null)
-                    {
-                        <MudIconButton Disabled="@(context.Item.Approved != null)" Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" OnClick="() => ApproveJoinRequest(context.Item)" />
-                        <MudIconButton Disabled="@(context.Item.Approved != null)" Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" OnClick="() => RejectJoinRequest(context.Item)" />
-                    }
-                </CellTemplate>
-            </TemplateColumn>
+            @* //User info: *@
+           <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.FullName : null" Title="Name"/>
         </Columns>
     </MudDataGrid>
 }
-
+<MudDialog @bind-IsVisible="IsDialogOpen">
+    <DialogContent>
+        <MudText>Approve or Reject Join Request</MudText>
+        <MudText>Details about applicant:</MudText>
+        <MudText>Name: @SelectedJoinRequest?.UserDto?.FullName</MudText>
+        <MudText>Age: @SelectedJoinRequest?.UserDto?.Age</MudText>
+        <MudText>Email: @SelectedJoinRequest?.UserDto?.Email</MudText>
+        <MudText>Cel: @SelectedJoinRequest?.UserDto?.PhoneNumber</MudText>
+        <MudText>Details about request:</MudText>
+        <MudText>Applying as: @(SelectedJoinRequest?.JoiningAsOwner == true ? "Owner" : "Resident")</MudText>
+        @if (SelectedJoinRequest?.JoiningAsOwner == true)
+        {
+            <MudText>Ownership Claimed: @SelectedJoinRequest?.OwnershipPercentage</MudText>
+        }
+        <MudText>Details about home: </MudText>
+        <MudText>Current owners: </MudText>
+        @foreach(var pair in SelectedJoinRequest?.HomeDto?.Owners ?? [])
+        {
+            <MudLink Href=@($"/user/{pair.Key.Id}")>Owner: @pair.Key.FullName Ownership: @($"{pair.Value}%")</MudLink>
+        }
+        <MudText>Current Residents:</MudText>
+        @foreach(BaseCitizenDto resident in SelectedJoinRequest?.HomeDto?.Residents ?? [])
+        {
+            <MudLink Href=@($"/user/{resident.Id}")>Resident: @resident.FullName</MudLink>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudIconButton Disabled="AppState.IsLoading" Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" OnClick="() => ApproveJoinRequest()" />
+        <MudIconButton Disabled="AppState.IsLoading" Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" OnClick="() => RejectJoinRequest()" />
+    </DialogActions>
+</MudDialog>
 
 @code
 {
     private List<CommunityDto>? CommunitiesDto = [];
     private CommunityDto? SelectedCommunity = null;
-    private List<JoinCommunityRequestDto>? JoinCommunityRequests = null;
+    private List<JoinCommunityRequestDto>? PendingJoinCommunityRequests = null;
+    private bool IsDialogOpen = false;
+    private JoinCommunityRequestDto? SelectedJoinRequest = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,22 +85,33 @@
         //Now load the requests for the selected community
         if (SelectedCommunity != null)
         {
-            //Make a Get request for the JoinCommunityRequests for that community. 
-            JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
+            //Make a Get request for the JoinCommunityRequests for that community.
+            PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
         }
     }
-    private async Task ApproveJoinRequest(JoinCommunityRequestDto request)
+    private async Task ApproveJoinRequest()
     {
         //Make a post request to approve the request
-        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminAcceptJoinRequest, request);
+        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminAcceptJoinRequest, SelectedJoinRequest);
         //Reload the requests
-        JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        
+        await CommonDecision();
     }
-    private async Task RejectJoinRequest(JoinCommunityRequestDto request)
+    private async Task RejectJoinRequest()
     {
         //Make a post request to reject the request
-        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminRejectJoinRequest, request);
+        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminRejectJoinRequest, SelectedJoinRequest);
         //Reload the requests
-        JoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        await CommonDecision();
+    }
+    private async Task CommonDecision()
+    {
+        PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        IsDialogOpen = false; 
+    }
+    private void OnRowClicked(JoinCommunityRequestDto request)
+    {
+        SelectedJoinRequest = request;
+        IsDialogOpen = true;
     }
 }
