@@ -117,7 +117,7 @@ namespace PluginDemocracy.DTOs
                 Address = home.Address,
                 ProfilePicture = home.ProfilePicture,
                 NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDto.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
-                HomeOwnerships = home.HomeOwnerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
+                HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
                 //HomeDto Properties
                 ParentCommunity = home.ParentCommunity != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
