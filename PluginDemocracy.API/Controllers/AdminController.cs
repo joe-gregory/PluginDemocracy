@@ -6,6 +6,7 @@ using Azure;
 using PluginDemocracy.Models;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
+using PluginDemocracy.API.Translations;
 
 
 namespace PluginDemocracy.API.Controllers
@@ -46,6 +47,11 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+        /// <summary>
+        /// This gets the pending requests, so requests where request.Approved == null
+        /// </summary>
+        /// <param name="communityId"></param>
+        /// <returns></returns>
         [HttpGet("getjoincommunityrequests")]
         public async Task<ActionResult<List<JoinCommunityRequestDto>>> GetJoinCommunityRequests([FromQuery] int? communityId)
         {
@@ -55,7 +61,7 @@ namespace PluginDemocracy.API.Controllers
             if (communityId == null) return BadRequest();
             try
             {
-                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Where(j => j.Community.Id == communityId).ToListAsync();
+                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.Home).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
                 List<JoinCommunityRequestDto> joinCommunityRequestDtos = [];
                 foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDto(joinCommunityRequest));
                 return Ok(joinCommunityRequestDtos);
@@ -74,16 +80,27 @@ namespace PluginDemocracy.API.Controllers
             if (user == null) return BadRequest();
             if (user.Admin == false) return Unauthorized();
             //Get the original Models.JoinCommunityRequest
-            JoinCommunityRequest? originalRequest = _context.JoinCommunityRequests.FirstOrDefault(j => j.Id == request.Id);
+            JoinCommunityRequest? originalRequest = _context.JoinCommunityRequests.Include(r => r.Community).Include(r => r.Home).Include(r => r.User).FirstOrDefault(j => j.Id == request.Id);
+
+            
             if (originalRequest == null)
             {
                 response.AddAlert("error", "Join request not found in DB");
+                return BadRequest(response);
+            }
+            if (originalRequest.Approved != null)
+            {
+                response.AddAlert("error", "A decision had already been made on this request. Please submit a new request.");
                 return BadRequest(response);
             }
             // I already have a method in community to deal with accepted join requests
             try
             {
                 originalRequest.Community.ApproveJoinCommunityRequest(originalRequest);
+                
+                //Give a notification to the user
+                originalRequest.User?.AddNotification($"{_utilityClass.Translate(ResourceKeys.YourJoinRequestHasBeenApprovedTitle, originalRequest.User.Culture)} {originalRequest.Community.FullName}", $"{_utilityClass.Translate(ResourceKeys.YourJoinRequestHasBeenApprovedBody, originalRequest.User.Culture)} {originalRequest.Community.FullName}");
+                
                 _context.SaveChanges();
                 response.AddAlert("success", "Join request accepted");
                 return Ok(response);
@@ -104,16 +121,23 @@ namespace PluginDemocracy.API.Controllers
             if (user == null) return BadRequest();
             if (user.Admin == false) return Unauthorized();
 
-            JoinCommunityRequest? originalRequest = _context.JoinCommunityRequests.FirstOrDefault(j => j.Id == request.Id);
+            JoinCommunityRequest? originalRequest = _context.JoinCommunityRequests.Include(r => r.Community).Include(r => r.User).FirstOrDefault(j => j.Id == request.Id);
             if (originalRequest == null)
             {
                 response.AddAlert("error", "Join request not found in DB");
                 return BadRequest(response);
             }
-
-            originalRequest.Approved = false;
+            if (originalRequest.Approved != null)
+            {
+                response.AddAlert("error", "A decision had already been made on this request. Please submit a new request.");
+                return BadRequest(response);
+            }
+            
             try
             {
+                originalRequest.Approved = false;
+                //Give a notification to the user
+                originalRequest.User?.AddNotification($"{_utilityClass.Translate(ResourceKeys.YourJoinRequestHasBeenRejectedTitle, originalRequest.User.Culture)} {originalRequest.Community.FullName}", $"{_utilityClass.Translate(ResourceKeys.YourJoinRequestHasBeenRejectedBody, originalRequest.User.Culture)} {originalRequest.Community.FullName}");
                 _context.SaveChanges();
                 response.AddAlert("success", "Join request rejected");
                 return Ok(response);
