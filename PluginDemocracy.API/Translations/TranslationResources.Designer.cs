@@ -335,5 +335,41 @@ namespace PluginDemocracy.API.Translations {
                 return ResourceManager.GetString("YourEmailHasBeenConfirmedBody", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request to join a community has been approved. You should be able to start making proposals for this community. Navigate to the community section. Community: .
+        /// </summary>
+        public static string YourJoinRequestHasBeenApprovedBody {
+            get {
+                return ResourceManager.GetString("YourJoinRequestHasBeenApprovedBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request has been approved. Community: .
+        /// </summary>
+        public static string YourJoinRequestHasBeenApprovedTitle {
+            get {
+                return ResourceManager.GetString("YourJoinRequestHasBeenApprovedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request to join this community has been rejected. You may contact the community&apos;s admins for more information. Community: .
+        /// </summary>
+        public static string YourJoinRequestHasBeenRejectedBody {
+            get {
+                return ResourceManager.GetString("YourJoinRequestHasBeenRejectedBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request has been rejected. Community: .
+        /// </summary>
+        public static string YourJoinRequestHasBeenRejectedTitle {
+            get {
+                return ResourceManager.GetString("YourJoinRequestHasBeenRejectedTitle", resourceCulture);
+            }
+        }
     }
 }
