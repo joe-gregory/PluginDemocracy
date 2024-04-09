@@ -65,7 +65,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse apiResponse = new();
 
             //Look up user by email
-            User? existingUser = await _context.Users.Include(u => u.Notifications).FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
+            User? existingUser = await _context.Users.Include(u => u.Notifications).Include(u => u.ResidentOfHomes).Include(u => u.NonResidentialCitizenIn).Include(u => u.HomeOwnerships).FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
             if (existingUser == null)
             {
                 apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
@@ -228,7 +228,7 @@ namespace PluginDemocracy.API.Controllers
             return Ok(response);
         }
         #endregion
-        #region AUTHRORIZED ENDPOINTS
+        #region AUTHORIZED ENDPOINTS
         [Authorize]
         [HttpPost("toggleuserculture")]
         public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture()
