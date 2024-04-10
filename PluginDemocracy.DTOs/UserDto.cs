@@ -86,6 +86,30 @@ namespace PluginDemocracy.DTOs
         /// </summary>
         public List<HomeDto> ResidentOfHomes { get; set; } = [];
         #endregion
+        public UserDto() { }
+        public UserDto(User user)
+        {
+            Id = user.Id;
+            ProfilePicture = user.ProfilePicture;
+            FirstName = user.FirstName;
+            MiddleName = user.MiddleName;
+            LastName = user.LastName;
+            SecondLastName = user.SecondLastName;
+            Email = user.Email;
+            EmailConfirmed = user.EmailConfirmed;
+            PhoneNumber = user.PhoneNumber;
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+            Address = user.Address;
+            DateOfBirth = user.DateOfBirth;
+            Culture = user.Culture;
+            Admin = user.Admin;
+            foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDto(notification));
+            foreach (Community community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community));
+
+            foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
+            foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
+        }
+        [Obsolete("This method can lead to infinite recursions like when loggin in")]
         public static UserDto ReturnUserDtoFromUser(User user)
         {
             UserDto userDto = new()
@@ -112,6 +136,27 @@ namespace PluginDemocracy.DTOs
             foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
             foreach(Community community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community));
             foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
+            return userDto;
+        }
+        public static UserDto ReturnSimpleUserDtoFromUser(User user)
+        {
+            UserDto userDto = new()
+            {
+                Id = user.Id,
+                ProfilePicture = user.ProfilePicture,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                SecondLastName = user.SecondLastName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                Address = user.Address,
+                DateOfBirth = user.DateOfBirth,
+                Culture = user.Culture,
+                Admin = user.Admin,
+            };
             return userDto;
         }
         public static User ReturnUserFromUserDto(UserDto userDto)

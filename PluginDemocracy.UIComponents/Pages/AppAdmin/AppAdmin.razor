@@ -86,7 +86,7 @@
         if (SelectedCommunity != null)
         {
             //Make a Get request for the JoinCommunityRequests for that community.
-            PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
+            PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
         }
     }
     private async Task ApproveJoinRequest()
@@ -106,7 +106,7 @@
     }
     private async Task CommonDecision()
     {
-        PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
         IsDialogOpen = false; 
     }
     private void OnRowClicked(JoinCommunityRequestDto request)

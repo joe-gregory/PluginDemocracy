@@ -65,12 +65,31 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse apiResponse = new();
 
             //Look up user by email
-            User? existingUser = await _context.Users.Include(u => u.Notifications).Include(u => u.ResidentOfHomes).Include(u => u.NonResidentialCitizenIn).Include(u => u.HomeOwnerships).FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
-            if (existingUser == null)
+            User? existingUser;
+            try
             {
-                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
-                return BadRequest(apiResponse);
+                existingUser = await _context.Users
+                    .Include(u => u.Notifications)
+                    .Include(u => u.ResidentOfHomes)
+                        .ThenInclude(h => h.ParentCommunity)
+                    .Include(u => u.NonResidentialCitizenIn)
+                    .Include(u => u.HomeOwnerships)
+                        .ThenInclude(ho => ho.Home)
+                            .ThenInclude(h => h.ParentCommunity)
+                    .FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
+                if (existingUser == null)
+                {
+                    apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
+                    return BadRequest(apiResponse);
+                }
+                await _context.Entry(existingUser).Collection(u => u.HomeOwnerships).Query().Include(ho => ho.Home).LoadAsync();
             }
+            catch (Exception ex)
+            {
+                apiResponse.AddAlert("error", $"Unable to look up user by email\nError:\n{ex.Message}");
+                return StatusCode(500, apiResponse);
+            }
+            
             loginInfo.Password ??= string.Empty;
 
             //Compare passwords
@@ -85,7 +104,8 @@ namespace PluginDemocracy.API.Controllers
             {
                 apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
                 //Convert User to UserDto
-                apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                apiResponse.User = new(existingUser);
+                //apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
                 //Send a SessionJWT to the client so that they can maintain a session
                 apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
                 //Redirect to home feed after login in or join community page if no community
@@ -124,6 +144,8 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
                     apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
                     apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                    //Send a SessionJWT to the client so that they can maintain a session
+                    apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
 
                     //Send an email saying that the email address has been confirmed
                     try
@@ -134,7 +156,7 @@ namespace PluginDemocracy.API.Controllers
                     catch (Exception ex)
                     {
                         apiResponse.AddAlert("error", $"Unable to send thank you for confirming email\nError:\n{ex.Message}");
-                        return Ok(apiResponse);
+                        return StatusCode(500, apiResponse);
                     }
                 }
                 catch (Exception ex)

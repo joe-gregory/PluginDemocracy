@@ -123,7 +123,7 @@ namespace PluginDemocracy.DTOs
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
                 Number = home.Number,
                 InternalAddress = home.InternalAddress,
-                Residents = home.Residents.Select(r => UserDto.ReturnUserDtoFromUser(r)).ToList(),
+                Residents = home.Residents.Select(r => UserDto.ReturnSimpleUserDtoFromUser(r)).ToList(),
             };
             return newHomeDto;
         }

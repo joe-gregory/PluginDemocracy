@@ -31,10 +31,19 @@ namespace PluginDemocracy.DTOs
             {
                 Id = homeOwnership.Id,
                 OwnershipPercentage = homeOwnership.OwnershipPercentage,
-                Home = HomeDto.ReturnHomeDtoFromHome(homeOwnership.Home),
-                _userOwner = homeOwnership._userOwner != null ? UserDto.ReturnUserDtoFromUser(homeOwnership._userOwner) : null,
+                _userOwner = homeOwnership._userOwner != null ? UserDto.ReturnSimpleUserDtoFromUser(homeOwnership._userOwner) : null,
                 _communityOwner = homeOwnership._communityOwner != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(homeOwnership._communityOwner) : null,
             };
+            HomeDto homeDto = new()
+            {
+                Id = homeOwnership.Home.Id,
+                Address = homeOwnership.Home.Address,
+                ProfilePicture = homeOwnership.Home.ProfilePicture,
+                ParentCommunity = homeOwnership.Home.ParentCommunity != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(homeOwnership.Home.ParentCommunity) : null,
+                Number = homeOwnership.Home.Number,
+                InternalAddress = homeOwnership.Home.InternalAddress,
+            };
+            newHomeOwnershipDto.Home = homeDto;
             return newHomeOwnershipDto;
         }
     }

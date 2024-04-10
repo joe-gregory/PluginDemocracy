@@ -225,7 +225,7 @@ namespace PluginDemocracy.API.Controllers
 
                 //At this point the request should be validated and the notifications sent. It can be saved to database. 
                 _context.SaveChanges();
-                response.AddAlert("success", "Request sent successfully");
+                response.AddAlert("success", "Request sent successfully. La solicitud ha sido enviada.");
                 return Ok(response);
             }
             catch (Exception exception)

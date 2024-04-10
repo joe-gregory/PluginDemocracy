@@ -34,6 +34,21 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Community>()
                 .ToTable("Communities");
 
+            modelBuilder.Entity<HomeOwnership>()
+                .HasOne(ho => ho.Home)
+                .WithMany(h => h.Ownerships)
+                .HasForeignKey(ho => ho.HomeId);
+
+            modelBuilder.Entity<HomeOwnership>()
+                .HasOne(ho => ho._userOwner)
+                .WithMany()
+                .HasForeignKey("UserId");
+
+            modelBuilder.Entity<HomeOwnership>()
+                .HasOne(ho => ho._communityOwner)
+                .WithMany()
+                .HasForeignKey("CommunityId");
+
             //modelBuilder.Entity<Community>()
             //    .HasMany(typeof(User), "_userNonResidentialCitizens")
             //    .WithMany("NonResidentialCitizenIn");

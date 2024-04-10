@@ -14,7 +14,7 @@ namespace PluginDemocracy.Models
         public double OwnershipPercentage { get; set; }
         [ForeignKey("HomeId")]
 #pragma warning disable IDE0051 // Remove unused private members warning because this field is used but by EFC
-        private int HomeId { get; set; }
+        public int HomeId { get; set; }
 #pragma warning restore IDE0051 // Remove unused private members
         public virtual Home Home { get; set; }
         //Todo, these should also be private User and Community owners.

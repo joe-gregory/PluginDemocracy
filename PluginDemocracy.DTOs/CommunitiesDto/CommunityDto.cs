@@ -115,7 +115,7 @@ namespace PluginDemocracy.DTOs
             foreach(Home home in community.Homes) Homes?.Add(HomeDto.ReturnHomeDtoFromHome(home));
             CanHaveNonResidentialCitizens = community.CanHaveNonResidentialCitizens;
             foreach (Community communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
-            foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDto.ReturnUserDtoFromUser(userNonResidentialCitizen));
+            foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDto.ReturnSimpleUserDtoFromUser(userNonResidentialCitizen));
             ProposalsExpirationDays = community.ProposalsExpirationDays;
             VotingStrategy = community.VotingStrategy;
             TotalVotes = community.TotalVotes;

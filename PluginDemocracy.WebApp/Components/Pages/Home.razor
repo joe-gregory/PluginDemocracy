@@ -12,6 +12,8 @@
 <MudMainContent>
     <MudContainer MaxWidth="MaxWidth.Medium">
         <div style="margin:20px; align-content:center">
+            <MudText>Amount of Citizenships: @AppState?.User?.Citizenships.Count</MudText>
+            <MudText>First citizenship: @if(AppState.User != null && AppState.User.Citizenships != null && AppState.User.Citizenships.Count >= 1){@AppState.User.Citizenships[0].FullName}</MudText>
             <MudButton Color="@(AppState.HasInternet == true ? Color.Success : Color.Error)" @onclick="toggleInternetState" Variant="Variant.Filled">Internet: @(AppState.HasInternet == true ? "On" : "Off")</MudButton>
             <MudButton Color="@(AppState.User != null ? Color.Success : Color.Error)" @onclick="toggleLoggedInState" Variant="Variant.Filled" Disabled="@(!AppState.HasInternet)">LoggedIn: @(AppState.User != null ? "Logged In" : "Logged Off")</MudButton>
             <MudButton Color="@(AppState.User?.ProfilePicture != null ? Color.Success : Color.Error)" @onclick="toggleProfilePicture" Variant="Variant.Filled" Disabled="@(AppState.User == null)">@(AppState.User?.ProfilePicture != null ? "Profile Picture" : "No Profile Picture")</MudButton>

@@ -52,7 +52,7 @@ namespace PluginDemocracy.API.Controllers
         /// </summary>
         /// <param name="communityId"></param>
         /// <returns></returns>
-        [HttpGet("getjoincommunityrequests")]
+        [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequests)]
         public async Task<ActionResult<List<JoinCommunityRequestDto>>> GetJoinCommunityRequests([FromQuery] int? communityId)
         {
             User? user = await _utilityClass.ReturnUserFromClaims(User);
