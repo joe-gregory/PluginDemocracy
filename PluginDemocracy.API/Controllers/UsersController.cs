@@ -10,6 +10,7 @@ using Azure.Storage.Blobs;
 using Azure;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -82,7 +83,7 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
                     return BadRequest(apiResponse);
                 }
-                await _context.Entry(existingUser).Collection(u => u.HomeOwnerships).Query().Include(ho => ho.Home).LoadAsync();
+                //await _context.Entry(existingUser).Collection(u => u.HomeOwnerships).Query().Include(ho => ho.Home).LoadAsync();
             }
             catch (Exception ex)
             {
@@ -106,6 +107,7 @@ namespace PluginDemocracy.API.Controllers
                 //Convert User to UserDto
                 apiResponse.User = new(existingUser);
                 //apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                
                 //Send a SessionJWT to the client so that they can maintain a session
                 apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
                 //Redirect to home feed after login in or join community page if no community
@@ -251,6 +253,58 @@ namespace PluginDemocracy.API.Controllers
         }
         #endregion
         #region AUTHORIZED ENDPOINTS
+        /// <summary>
+        /// Refreshes PDAPIResponse data: Notifications, Community information, JWT
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet(ApiEndPoints.RefreshUserData)]
+        public async Task<ActionResult<PDAPIResponse>> RefreshUserData()
+        {
+            //Create response object
+            PDAPIResponse response = new();
+            //Extract userId from claims: 
+            System.Security.Claims.Claim? userIdClaim = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+            if (userIdClaim == null)
+            {
+                response.AddAlert("error", "Unable to find userId claim");
+                return BadRequest(response);
+            }
+            //Now use this extracted userIdClaim to find the user in the database
+            if(!int.TryParse(userIdClaim.Value, out int userId))
+            {
+                response.AddAlert("error", "Unable to parse userId from claims");
+                return BadRequest(response);
+            }
+            try
+            {
+                User? fullDataUser = await _context.Users
+                    .Include(u => u.Notifications)
+                    .Include(u => u.ResidentOfHomes)
+                        .ThenInclude(h => h.ParentCommunity)
+                    .Include(u => u.NonResidentialCitizenIn)
+                    .Include(u => u.HomeOwnerships)
+                        .ThenInclude(ho => ho.Home)
+                            .ThenInclude(h => h.ParentCommunity)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (fullDataUser == null) 
+                {
+                    response.AddAlert("error", "Unable to find user in database");
+                    return BadRequest(response); 
+                }
+                response.User = new(fullDataUser);
+                //Send a SessionJWT to the client so that they can maintain a session
+                response.SessionJWT = _utilityClass.CreateJWT(fullDataUser.Id, 7);
+                response.RedirectTo = null;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Error:\n{ex.Message}");
+                return StatusCode(500, response);
+            }
+        }
         [Authorize]
         [HttpPost("toggleuserculture")]
         public async Task<ActionResult<PDAPIResponse>> ToggleUserCulture()
