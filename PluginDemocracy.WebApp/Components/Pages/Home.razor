@@ -105,9 +105,14 @@
     }
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         AppState.OnChange += () => InvokeAsync(StateHasChanged);
     }
-
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (AppState.IsLoggedIn) await services.GetDataAsync(ApiEndPoints.RefreshUserData);
+    }
     public void Dispose()
     {
         AppState.OnChange -= () => InvokeAsync(StateHasChanged);
