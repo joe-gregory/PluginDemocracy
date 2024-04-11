@@ -7,7 +7,7 @@ namespace PluginDemocracy.UIComponents.Components
         private bool CommunityMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
         private bool UserMenuButtonDisabled => AppState != null ? !AppState.HasInternet : false;
         private bool UserLoggedIn => AppState.User != null;
-        private bool UserHasCommunity => AppState.User != null && AppState.User.Citizenships.Count != 0;
+        private bool UserHasCommunity => AppState?.User?.Citizenships.Count >= 1;
         private bool communityMenuOpen;
         private bool userMenuOpen;
         protected override void OnInitialized()
