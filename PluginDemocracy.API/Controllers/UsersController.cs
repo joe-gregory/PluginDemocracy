@@ -55,7 +55,7 @@ namespace PluginDemocracy.API.Controllers
             await _utilityClass.SendConfirmationEmail(newUser, apiResponse);
 
             //Attach user data to response object
-            apiResponse.User = UserDto.ReturnUserDtoFromUser(newUser);
+            apiResponse.User = new(newUser);
 
             return Ok(apiResponse);
         }
@@ -145,7 +145,7 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
                     apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
                     apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
-                    apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                    apiResponse.User = new(existingUser);
                     //Send a SessionJWT to the client so that they can maintain a session
                     apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
 
@@ -328,7 +328,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.CultureUpdatedSuccessfully, existingUser.Culture));
-                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                response.User = new(existingUser);
             }
             catch (Exception ex)
             {
@@ -388,7 +388,7 @@ namespace PluginDemocracy.API.Controllers
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.AccountUpdatedSuccessfully, existingUser.Culture));
                 //Attach user data to response object
-                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                response.User = new(existingUser);
             }
             catch (Exception ex)
             {
@@ -422,14 +422,14 @@ namespace PluginDemocracy.API.Controllers
             BlobContainerClient blobContainerClient = new(new Uri(blobSasURL));
 
             string blobName = $"user/profilepicture/{existingUser.Id}{fileExtension}";
-#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
+            #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
             string contentType = fileExtension switch
             {
                 ".jpg" => "image/jpeg",
                 ".jpeg" => "image/jpeg",
                 ".png" => "image/png",
             };
-#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
+            #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
 
             try
             {
@@ -439,7 +439,7 @@ namespace PluginDemocracy.API.Controllers
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
-                response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+                response.User = new(existingUser);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -469,7 +469,7 @@ namespace PluginDemocracy.API.Controllers
             //Mark notification as read
             notification.Read = true;
             await _context.SaveChangesAsync();
-            response.User = UserDto.ReturnUserDtoFromUser(existingUser);
+            response.User = new(existingUser);
             response.RedirectTo = FrontEndPages.GenericMessage;
             response.RedirectParameters["Title"] = notification.Title;
             response.RedirectParameters["Body"] = notification.Message;

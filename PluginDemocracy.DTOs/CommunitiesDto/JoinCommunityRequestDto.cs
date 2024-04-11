@@ -18,7 +18,7 @@ namespace PluginDemocracy.DTOs
             Id = jcr.Id;
             CommunityDto = CommunityDto.ReturnSimpleCommunityDtoFromCommunity(jcr.Community);
             HomeDto = HomeDto.ReturnHomeDtoFromHome(jcr.Home);
-            UserDto = jcr.User != null ? DTOs.UserDto.ReturnUserDtoFromUser(jcr.User) : null;
+            UserDto = jcr.User != null ? new(jcr.User) : null;
             JoiningAsOwner = jcr.JoiningAsOwner;
             JoiningAsResident = jcr.JoiningAsResident;
             OwnershipPercentage = jcr.OwnershipPercentage;
