@@ -22,19 +22,20 @@ namespace PluginDemocracy.UIComponents.Pages.User
         /// <summary>
         /// Checked true equals es-MX, not checked false = USA
         /// </summary>
-        protected override void OnInitialized()
+        protected override async void OnInitialized()
         {
             base.OnInitialized();
             if (AppState.Culture.Name == "es-MX") _checked = true;
             else if (AppState.Culture.Name == "en-US") _checked = false;
             else disabled = true;
             SetLook();
+            await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
             if (AppState.IsLoggedIn)
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
+                #pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
                 userDto.Id = AppState.User.Id;
                 userDto.FirstName = AppState.User.FirstName;
-#pragma warning restore CS8602 // Dereference of a possibly null reference..
+                #pragma warning restore CS8602 // Dereference of a possibly null reference..
                 userDto.MiddleName = AppState.User.MiddleName;
                 userDto.LastName = AppState.User.LastName;
                 userDto.SecondLastName = AppState.User.SecondLastName;
