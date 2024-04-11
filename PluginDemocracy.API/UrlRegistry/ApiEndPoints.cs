@@ -8,17 +8,18 @@
         public static readonly string GetTestMessagesPage = TestController + "testmessagespage";
         #endregion
         #region User
-        public static readonly string UsersController = Base + "users/";
-        public static readonly string PostSignUp = UsersController + "signup";
-        public static readonly string ConfirmEmail = UsersController + "confirmemail";
-        public static readonly string PostLogin = UsersController + "login";
-        public static readonly string PostSendForgotPasswordEmail = UsersController + "sendforgotpasswordemail";
-        public static readonly string PostResetPassword = UsersController + "resetpassword";
-        public static readonly string PostToggleUserCulture = UsersController + "toggleuserculture";
-        public static readonly string PostUpdateAccount = UsersController + "updateaccount";
-        public static readonly string UpdateProfilePicture = UsersController + "updateprofilepicture";
-        public static readonly string GetNotification = UsersController + "getnotification";
-        public static readonly string UpdateNotifications = UsersController + "UpdateNotifications";
+        public const string UsersController = Base + "users/";
+        public const string PostSignUp = UsersController + "signup";
+        public const string ConfirmEmail = UsersController + "confirmemail";
+        public const string PostLogin = UsersController + "login";
+        public const string PostSendForgotPasswordEmail = UsersController + "sendforgotpasswordemail";
+        public const string PostResetPassword = UsersController + "resetpassword";
+        public const string PostToggleUserCulture = UsersController + "toggleuserculture";
+        public const string PostUpdateAccount = UsersController + "updateaccount";
+        public const string UpdateProfilePicture = UsersController + "updateprofilepicture";
+        public const string GetNotification = UsersController + "getnotification";
+        public const string UpdateNotifications = UsersController + "UpdateNotifications";
+        public const string RefreshUserData = UsersController + "refreshuserdata";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";

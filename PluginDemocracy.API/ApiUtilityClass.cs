@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Azure;
 using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.API.Translations;
@@ -230,7 +231,7 @@ namespace PluginDemocracy.API
             }
         }
         /// <summary>
-        /// This method will extract the user from the claims in the userPrincipal. It will then use the userId to fetch the user from the database and return it.
+        /// This method will extract the user from the claims in the userPrincipal and then fetch it from database. 
         /// </summary>
         /// <param name="userPrincipal"></param>
         /// <param name="response"></param>
@@ -252,7 +253,8 @@ namespace PluginDemocracy.API
             }
             try
             {
-                var user = await _context.Users.FindAsync(userId);
+                User? user = await _context.Users.FindAsync(userId);
+
                 if (user == null)
                 {
                     response?.AddAlert("error", "User extracted from claims not found in database");
