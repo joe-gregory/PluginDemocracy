@@ -177,7 +177,7 @@ namespace PluginDemocracy.UIComponents
             //Add snackbar messages sent from API
             AddSnackBarMessages(apiResponse.Alerts);
             //Add latest API response to AppState
-            _appState.ApiResponse = apiResponse;
+            _appState.PDAPIResponse = apiResponse;
             //If API response includes a RedirectTo page, navigate to it
             if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
             //Stop loading spinner
