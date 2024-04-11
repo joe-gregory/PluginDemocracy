@@ -475,19 +475,6 @@ namespace PluginDemocracy.API.Controllers
             response.RedirectParameters["Body"] = notification.Message;
             return Ok(response);
         }
-        [Authorize]
-        [HttpGet("UpdateNotifications")]
-        public async Task<ActionResult<PDAPIResponse>> UpdateNotifications()
-        {
-            PDAPIResponse response = new();
-            //Extract User from claims
-            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
-            if (existingUser == null) return BadRequest(response);
-            existingUser = _context.Users.Include(u => u.Notifications).FirstOrDefault(u => u.Id == existingUser.Id);
-            if (existingUser == null) return BadRequest(response);
-            response.User = UserDto.ReturnUserDtoFromUser(existingUser);
-            return Ok(response);
-        }
         #endregion AUTHORIZED ENDPOINTS
     }
 }
