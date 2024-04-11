@@ -234,29 +234,5 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
-        [Authorize]
-        [HttpGet(ApiEndPoints.GetUserCommunities)]
-        public async Task<ActionResult<PDAPIResponse>> GetUserCommunities()
-        {
-            PDAPIResponse response = new();
-            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
-            if (existingUser == null) return BadRequest(response);
-            try
-            {
-                User? user = await _context.Users.Include(u => u.HomeOwnerships).Include(u => u.NonResidentialCitizenIn).Include(u => u.ResidentOfHomes).FirstOrDefaultAsync(u => u.Id == existingUser.Id);
-                if (user == null)
-                {
-                    response.AddAlert("error", "User not found");
-                    return BadRequest(response);
-                }
-                response.User = UserDto.ReturnUserDtoFromUser(user);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.AddAlert("error", ex.Message);
-                return BadRequest(response);
-            }
-        }
     }
 }

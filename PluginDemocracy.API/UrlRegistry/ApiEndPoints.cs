@@ -26,7 +26,6 @@
         public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
-        public const string GetUserCommunities = CommunityController + "getusercommunities";
         #endregion
         #region Admin
         public const string AdminController = Base + "admin/";
