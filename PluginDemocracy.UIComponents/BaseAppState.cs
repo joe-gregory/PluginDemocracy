@@ -29,7 +29,7 @@ namespace PluginDemocracy.UIComponents
                 NotifyStateChanged();
             } 
         } 
-        public PDAPIResponse ApiResponse { get; set; }
+        public PDAPIResponse PDAPIResponse { get; set; }
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:
         public event Action? OnChange;
@@ -46,7 +46,7 @@ namespace PluginDemocracy.UIComponents
             _serviceProvider = serviceProvider;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
-            ApiResponse = new();
+            PDAPIResponse = new();
         }
         #region PROTECTED METHODS
         protected void NotifyStateChanged() => OnChange?.Invoke();
