@@ -5,6 +5,7 @@
         #region PROPERTIES
         public UserDto? User { get; set; }
         public List<Alert> Alerts { get; set; }
+        public DateTime LastRefreshed { get; set; } 
         public string? RedirectTo { get; set; }
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
@@ -20,6 +21,7 @@
         {
             Alerts = [];
             RedirectParameters = [];
+            LastRefreshed = DateTime.UtcNow;
         }
         public void AddAlert(string severity, string message)
         {
