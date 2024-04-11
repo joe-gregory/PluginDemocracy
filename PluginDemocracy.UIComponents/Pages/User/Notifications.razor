@@ -23,7 +23,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await Services.GetDataAsync(ApiEndPoints.UpdateNotifications);
+        await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
     }
     private async Task RowClickEvent(TableRowClickEventArgs<NotificationDto> tableRowClickEventArgs)
     {
