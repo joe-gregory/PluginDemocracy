@@ -18,7 +18,7 @@ namespace PluginDemocracy.UIComponents.Pages
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Parameters = AppState.ApiResponse.RedirectParameters;
+            Parameters = AppState.PDAPIResponse.RedirectParameters;
             if(Parameters != null)
             {
                 Parameters.TryGetValue("Title", out string? title);
