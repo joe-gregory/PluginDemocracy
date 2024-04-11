@@ -17,7 +17,7 @@
         public const string PostToggleUserCulture = UsersController + "toggleuserculture";
         public const string PostUpdateAccount = UsersController + "updateaccount";
         public const string UpdateProfilePicture = UsersController + "updateprofilepicture";
-        public const string GetNotification = UsersController + "getnotification";
+        public const string MarkNotificationAsRead = UsersController + "marknotificationasread";
         public const string RefreshUserData = UsersController + "refreshuserdata";
         #endregion
         #region Community

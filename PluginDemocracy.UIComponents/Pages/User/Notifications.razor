@@ -18,19 +18,45 @@
         </MudTd>
     </RowTemplate>
 </MudTable>
+<MudDialog @bind-IsVisible="dialogIsOpen">
+    <DialogContent>
+        @if (selectedNotification != null)
+        {
+            <MudText Align="Align.Center"><b>@selectedNotification.Title</b></MudText>
+            <br/>
+            <MudText>@selectedNotification.Message</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudIconButton Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" OnClick="CloseDialog" />
+
+    </DialogActions>
+</MudDialog>
 
 @code{
+    bool dialogIsOpen = false;
+    NotificationDto? selectedNotification = null;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
+        dialogIsOpen = false;
     }
     private async Task RowClickEvent(TableRowClickEventArgs<NotificationDto> tableRowClickEventArgs)
     {
-        //This gives me access to the item (NotificationDto) tableRowClickEventArgs.Item.
-        //Make get request to mark this notification as read
-        //Make Get request for the notification details
-        string endpoint = ApiEndPoints.GetNotification + $"?notificationId={tableRowClickEventArgs.Item.Id}";
-        await Services.GetDataAsync(endpoint);
+        //This gives me access to the item NotificationDto (tableRowClickEventArgs.Item).
+        int notificationId = tableRowClickEventArgs.Item.Id;
+        //Make Put request to mark this notification as read
+        await Services.PutDataAsync<int>(ApiEndPoints.MarkNotificationAsRead, notificationId);
+        //Open pop up with the message
+        selectedNotification = tableRowClickEventArgs.Item;
+        dialogIsOpen = true;
+    }
+    private async Task CloseDialog()
+    {
+        dialogIsOpen = false;
+        selectedNotification = null;
+        await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
     }
 }

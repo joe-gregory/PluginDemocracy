@@ -448,32 +448,38 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
+        /// <summary>
+        /// Returns true if Notification.Read was successfully updated to true
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
-        [HttpGet("getnotification")]
-        public async Task<ActionResult<PDAPIResponse>> GetNotification([FromQuery] int notificationId)
+        [HttpPut(ApiEndPoints.MarkNotificationAsRead)]
+        public async Task<ActionResult<bool>> MarkNotificationAsRead([FromBody] int notificationId)
         {
-            //Create response object
-            PDAPIResponse response = new();
-            //Extract User from claims
-            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
-            if (existingUser == null) return BadRequest(response);
-            existingUser = _context.Users.Include(u => u.Notifications).FirstOrDefault(u => u.Id == existingUser.Id);
-            if (existingUser == null) return BadRequest(response);
-            //Ensure that the notification belongs to the user
-            Notification? notification = existingUser.Notifications.FirstOrDefault(n => n.Id == notificationId);
-            if (notification == null)
+            bool wasSuccessful = false;
+            
+            System.Security.Claims.Claim? userIdClaim = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+            if (userIdClaim == null) return BadRequest();
+            //Now use this extracted userIdClaim to find the user in the database
+            if (!int.TryParse(userIdClaim.Value, out int userId)) return BadRequest();
+            try
             {
-                response.AddAlert("error", "Notification does not belong to user");
-                return BadRequest(response);
+                User? userWithNotifications = await _context.Users
+                    .Include(u => u.Notifications)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+                if (userWithNotifications == null) return BadRequest();
+                Notification? notification = userWithNotifications.Notifications.FirstOrDefault(n => n.Id == notificationId);
+                if (notification == null) return BadRequest(wasSuccessful);
+                notification.Read = true;
+                await _context.SaveChangesAsync();
+                wasSuccessful = true;
+                return Ok(wasSuccessful);
             }
-            //Mark notification as read
-            notification.Read = true;
-            await _context.SaveChangesAsync();
-            response.User = new(existingUser);
-            response.RedirectTo = FrontEndPages.GenericMessage;
-            response.RedirectParameters["Title"] = notification.Title;
-            response.RedirectParameters["Body"] = notification.Message;
-            return Ok(response);
+            catch 
+            {
+                return StatusCode(500);
+            }
+
         }
         #endregion AUTHORIZED ENDPOINTS
     }

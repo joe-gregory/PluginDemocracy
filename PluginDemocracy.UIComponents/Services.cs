@@ -79,6 +79,31 @@ namespace PluginDemocracy.UIComponents
                 return default;
             }
         }
+        public async Task<bool> PutDataAsync<T>(string endpoint, T data)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + endpoint;
+
+            using HttpRequestMessage request = new(HttpMethod.Put, url);
+            // Add the JWT as a Bearer token in the Authorization header if it's available
+            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            // Add the data to the request
+            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+            try
+            {
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                bool success = response.IsSuccessStatusCode;
+                _appState.IsLoading = false;
+                return success;
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                return false;
+            }
+        }
         /// <summary>
         /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
         /// </summary>
