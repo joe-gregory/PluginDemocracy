@@ -104,7 +104,9 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
-        public List<Post> Posts { get; }
+        private readonly List<Post> posts;
+        public IReadOnlyList<Post> PostsByLatestActivity => posts.OrderByDescending(post => post.LatestComment ?? post.PublishedDate).ToList().AsReadOnly();
+        public IReadOnlyList<Post> PostsByPublishedDate => posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
         #endregion
         #region METHODS
         public Community()
@@ -120,7 +122,7 @@ namespace PluginDemocracy.Models
             Roles = [];
             Projects = [];
             RedFlags = [];
-            Posts = [];
+            posts = [];
         }
         /// <summary>
         /// Adding a non residential citizen involves adding the citizen to this community's NonResidentialCitizens AND adding this community to the
@@ -270,6 +272,20 @@ namespace PluginDemocracy.Models
             Dictamens.Add(dictamen);
             return true;
         }
+        public void RaiseRedFlag(User user, string description, BaseRedFlaggable itemFlagged)
+        {
+            RedFlag newRedFlag = new(this, user, description, itemFlagged);
+            RedFlags.Add(newRedFlag);
+        }
+        public void CreatePost(User user, string body)
+        {
+            Post newPost = new(user, body);
+            posts.Add(newPost);
+        }
+        public void RemovePost(Post post)
+        {
+            posts.Remove(post);
+        }
         public void Update()
         {
             Constitution.Update();
@@ -316,20 +332,7 @@ namespace PluginDemocracy.Models
             GetAllNestedUsers(this, allUsers);
             return [.. allUsers];
         }
-        public void RaiseRedFlag(User user, string description, BaseRedFlaggable itemFlagged)
-        {
-            RedFlag newRedFlag = new(this, user, description, itemFlagged);
-            RedFlags.Add(newRedFlag);
-        }
-        public void CreatePost(User user, string body)
-        {
-            Post newPost = new(user, body);
-            Posts.Add(newPost);
-        }
-        public void RemovePost(Post post)
-        {
-            Posts.Remove(post);
-        }
+
         static private void GetAllNestedUsers(Community community, HashSet<User> allUsers)
         {
             foreach (var citizen in community.Citizens)
