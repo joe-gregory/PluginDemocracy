@@ -86,7 +86,7 @@ namespace PluginDemocracy.DTOs
         [NotMapped]
         public List<Project>? ActiveProjects => Projects?.Where(project => project.Active).ToList();
         public List<RedFlag>? RedFlags { get; }
-        public List<Post>? Posts { get; }
+        public IReadOnlyList<Post>? Posts { get; set; }
         #endregion
         #region METHODS
         public CommunityDto()
@@ -126,7 +126,7 @@ namespace PluginDemocracy.DTOs
             Roles = community.Roles;
             Projects = community.Projects;
             RedFlags = community.RedFlags;
-            Posts = community.Posts;
+            Posts = community.PostsByLatestActivity;
         }
         public void AddOfficialLanguage(CultureInfo culture)
         {
