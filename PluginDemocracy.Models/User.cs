@@ -97,7 +97,7 @@ namespace PluginDemocracy.Models
         /// A list where User shows up on Home.Residents
         /// </summary>
         public List<Home> ResidentOfHomes { get; set; }
-        protected User(bool admin = false)
+        internal User(bool admin = false)
         {
             FirstName = string.Empty;
             LastName = string.Empty;
