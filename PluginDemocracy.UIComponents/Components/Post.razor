@@ -1,11 +1,50 @@
-﻿<MudCard>
-    <MudCardHeader>
+﻿<MudCard Elevation="25">
+    <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
-            <MudAvatar></MudAvatar>
+            <MudAvatar>
+                @if (!string.IsNullOrEmpty(PostDto?.Author?.ProfilePicture))
+                {
+                    <MudImage Src="@PostDto.Author.ProfilePicture" />
+                }
+                else
+                {
+                   @PostDto?.Author?.Initials
+                }
+            </MudAvatar>
         </CardHeaderAvatar>
     </MudCardHeader>
+    @if (PostDto?.Images.Count == 1)
+    {
+        <MudCardMedia Image="@PostDto.Images[0]" />
+    }
+    else if(PostDto?.Images.Count > 1)
+    {
+        <MudCarousel Class="mud-width-full" Style="height:500px;" ItemsSource="PostDto.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
+            <ItemTemplate>
+                <div class="d-flex flex-column flex-column justify-center mt-10 mb-10" style="height:100%">
+                    <MudImage Src="@context"/>
+                </div>
+            </ItemTemplate>
+        </MudCarousel>
+    }
+    <MudCardContent>
+        <MudText Typo="Typo.body2">@PostDto?.Body</MudText>
+    </MudCardContent>
+    <MudCardActions Style="background-color:#008644">
+        @*like button, dislike button (what look for this app) and share button*@
+        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" OnClick="LikePost" /> 
+        <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" OnClick="DislikePost" />
+    </MudCardActions>
 </MudCard>
 
 @code{
     [Parameter]
-    public PostDto PostDto {get; set;}
+    public PostDto? PostDto {get; set;}
+
+    private void LikePost()
+    {
+    }
+    private void DislikePost()
+    {
+    }
+}
