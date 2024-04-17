@@ -10,6 +10,16 @@
 <PageTitle>Home</PageTitle>
 
 <MudMainContent>
+    <MudCarousel style="height:500px" ItemsSource="imagesList">
+        <MudCarouselItem >
+            <MudImage Height="500" Src="https://www.w3schools.com/w3images/lights.jpg"/>
+        </MudCarouselItem>
+    </MudCarousel>
+
+    <MudText Typo="Typo.h1">Posts examples: </MudText>
+    <MudText>Images count: @postDto.Images.Count</MudText>
+    <MudLink Href="@postDto.Images[0]">Image 1: @postDto.Images[0]</MudLink>
+    <Post PostDto="postDto"/>
     <MudContainer MaxWidth="MaxWidth.Medium">
         <div style="margin:20px; align-content:center">
             <MudText>Amount of Citizenships: @AppState?.User?.Citizenships.Count</MudText>
@@ -36,7 +46,24 @@
     </MudMainContent>
 
     @code {
+    public List<string> imagesList = new() { "https://www.w3schools.com/w3images/lights.jpg"};
 
+    private PostDto postDto = new()
+    {
+        Author = new UserDto()
+        {
+            FirstName = "Joseph",
+            LastName = "Gregory",
+        },
+        Body = "This is a test post",
+        Images = new List<string>()
+        {
+            "https://www.w3schools.com/w3images/lights.jpg",
+            "https://www.w3schools.com/w3images/nature.jpg",
+            "https://www.w3schools.com/w3images/mountains.jpg"
+        }
+    };
+    
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
     public UserDto aUser = new ()
