@@ -105,7 +105,7 @@ namespace PluginDemocracy.Models
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
         private readonly List<Post> posts;
-        public IReadOnlyList<Post> PostsByLatestActivity => posts.OrderByDescending(post => post.LatestComment ?? post.PublishedDate).ToList().AsReadOnly();
+        public IReadOnlyList<Post> PostsByLatestActivity => posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
         public IReadOnlyList<Post> PostsByPublishedDate => posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
         #endregion
         #region METHODS
