@@ -19,6 +19,7 @@ namespace PluginDemocracy.Data
         public DbSet<BaseDictamen> Dictamens { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostComment> PostComments { get; set; }  // This allows direct operations on PostComments
+        public DbSet<PostReaction> PostReactions { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<RedFlag> RedFlags { get; set; }
         public DbSet<Role> Roles { get; set; }
