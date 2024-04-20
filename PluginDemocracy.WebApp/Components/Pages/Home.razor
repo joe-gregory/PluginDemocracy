@@ -9,21 +9,15 @@
 
 <PageTitle>Home</PageTitle>
 
-<MudMainContent>
-    <MudCarousel style="height:500px" ItemsSource="imagesList">
-        <MudCarouselItem >
-            <MudImage Height="500" Src="https://www.w3schools.com/w3images/lights.jpg"/>
-        </MudCarouselItem>
-    </MudCarousel>
 
-    <MudText Typo="Typo.h1">Posts examples: </MudText>
-    <MudText>Images count: @postDto.Images.Count</MudText>
-    <MudLink Href="@postDto.Images[0]">Image 1: @postDto.Images[0]</MudLink>
-    <Post PostDto="postDto"/>
-    <MudContainer MaxWidth="MaxWidth.Medium">
-        <div style="margin:20px; align-content:center">
-            <MudText>Amount of Citizenships: @AppState?.User?.Citizenships.Count</MudText>
-            <MudText>First citizenship: @if(AppState.User != null && AppState.User.Citizenships != null && AppState.User.Citizenships.Count >= 1){@AppState.User.Citizenships[0].FullName}</MudText>
+<Post PostDto="postDto" />
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <div style="margin:20px; align-content:center">
+        <MudText>Amount of Citizenships: @AppState?.User?.Citizenships.Count</MudText>
+        <MudText>First citizenship: @if (AppState.User != null && AppState.User.Citizenships != null && AppState.User.Citizenships.Count >= 1)
+            {
+                @AppState.User.Citizenships[0].FullName
+            }</MudText>
             <MudButton Color="@(AppState.HasInternet == true ? Color.Success : Color.Error)" @onclick="toggleInternetState" Variant="Variant.Filled">Internet: @(AppState.HasInternet == true ? "On" : "Off")</MudButton>
             <MudButton Color="@(AppState.User != null ? Color.Success : Color.Error)" @onclick="toggleLoggedInState" Variant="Variant.Filled" Disabled="@(!AppState.HasInternet)">LoggedIn: @(AppState.User != null ? "Logged In" : "Logged Off")</MudButton>
             <MudButton Color="@(AppState.User?.ProfilePicture != null ? Color.Success : Color.Error)" @onclick="toggleProfilePicture" Variant="Variant.Filled" Disabled="@(AppState.User == null)">@(AppState.User?.ProfilePicture != null ? "Profile Picture" : "No Profile Picture")</MudButton>
@@ -34,39 +28,71 @@
             <MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
             <MudText Class="mb-4">Current count: @currentCount</MudText>
             <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
-            <MudIcon Icon="PluginDemocracyIcons.CommunityIcon" Color="Color.Primary"/>
+            <MudIcon Icon="PluginDemocracyIcons.CommunityIcon" Color="Color.Primary" />
             <MudText>AppState.BaseUrl: @AppState.BaseUrl</MudText>
             <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="goTo">Testing Navitation</MudButton>
             <MudButton Color="Color.Surface" Variant="Variant.Filled" OnClick="changeIsLoading">ChangeIsLoading</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="createTestSnackBars">
-                    Open Snackbar
-                </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="createTestSnackBars">
+                Open Snackbar
+            </MudButton>
         </div>
-        </MudContainer>
-    </MudMainContent>
+    </MudContainer>
 
     @code {
-    public List<string> imagesList = new() { "https://www.w3schools.com/w3images/lights.jpg"};
+    public List<string> imagesList = new() { "https://www.w3schools.com/w3images/lights.jpg" };
 
     private PostDto postDto = new()
-    {
-        Author = new UserDto()
         {
-            FirstName = "Joseph",
-            LastName = "Gregory",
-        },
-        Body = "This is a test post",
-        Images = new List<string>()
+            Author = new UserDto()
+            {
+                FirstName = "Joseph",
+                LastName = "Gregory",
+            },
+            Body = "This is a test post. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            Images = new List<string>()
         {
             "https://www.w3schools.com/w3images/lights.jpg",
             "https://www.w3schools.com/w3images/nature.jpg",
             "https://www.w3schools.com/w3images/mountains.jpg"
+        },
+            Comments = new List<PostCommentDto>()
+        {
+            new PostCommentDto()
+            {
+                Author = new UserDto()
+                {
+                    FirstName = "Joseph",
+                    LastName = "Gregory",
+                },
+                Comment = "This is a test comment. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                PublishedDate = DateTime.Now
+            },
+            new PostCommentDto()
+            {
+                Author = new UserDto()
+                {
+                    FirstName = "Joseph",
+                    LastName = "Gregory",
+                },
+                Comment = "This is a test comment. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                PublishedDate = DateTime.Now
+            },
+            new PostCommentDto()
+            {
+                Author = new UserDto()
+                {
+                    FirstName = "Joseph",
+                    LastName = "Gregory",
+                },
+                Comment = "This is a test comment. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                PublishedDate = DateTime.Now
+            }
         }
-    };
-    
+        };
+
     private const string AmericanFlag = "\U0001F1FA\U0001F1F8"; // 🇺🇸
     private const string MexicanFlag = "\U0001F1F2\U0001F1FD"; // 🇲🇽
-    public UserDto aUser = new ()
+    public UserDto aUser = new()
         {
             FirstName = "Joseph",
             LastName = "Gregory",
