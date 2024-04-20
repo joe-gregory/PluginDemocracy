@@ -1,0 +1,167 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@inject BaseAppState AppState
+@inject Services Services
+
+<MudDialog @bind-IsVisible="contributeToCommunityDialogVisible">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Contribute to your Community
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudNavMenu>
+            <MudNavLink Class="mb-1"><MudIcon Icon="@Icons.Material.Filled.Description" /> Proposal</MudNavLink>
+            <MudNavLink OnClick="OpenCreatePost" ><MudIcon Icon="@Icons.Material.Filled.PostAdd"/> Post</MudNavLink>
+        </MudNavMenu>
+    </DialogContent>
+</MudDialog>
+
+<MudDialog @bind-IsVisible="createPostDialogVisible">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Create a Post
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="postText" T="string" Label="Description" Variant="Variant.Outlined" AutoGrow="true" Lines="10"/>
+        @if (files.Count > 0)
+        {
+            <MudList>
+                @foreach(var file in fileDisplays)
+                {
+                    <MudListItem>
+                        <MudImage Fluid="true" Src="@file.ImageDataUrl" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => RemoveFile(file))" />
+                    </MudListItem>
+                }
+            </MudList>
+        }
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>" Accept=".png, .jpg, .jpeg" FilesChanged="PostFiledAdded">
+            <ButtonTemplate>
+                <MudFab Disabled="@isImageUploadLoading" HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Image" Label="Load Pictures" for="@context.Id"> Upload images</MudFab>
+            </ButtonTemplate>
+        </MudFileUpload>
+        @if (isImageUploadLoading)
+        {
+            <MudProgressLinear Class="mt-1" Indeterminate="true" Color="Color.Secondary" />
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreatePost">Create Post</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="25">
+    <MudSpacer />
+    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="ContributeToCommunity" Size="Size.Large"/>
+    <MudSpacer />
+</MudAppBar>
+
+@code
+{
+    private bool contributeToCommunityDialogVisible = false;
+    private bool createPostDialogVisibleInternal = false;
+    public bool createPostDialogVisible 
+    { 
+        get
+        {
+            return createPostDialogVisibleInternal;
+        }
+
+        set
+        {
+            if (value == false)
+            { 
+                files.Clear();
+                fileDisplays.Clear();
+                postText = null;
+            }
+            createPostDialogVisibleInternal = value;
+        } 
+    }
+    private bool isImageUploadLoading = false;
+
+    private string? postText =  null;
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    List<FileDisplay> fileDisplays = [];
+
+    private void ContributeToCommunity()
+    {
+        contributeToCommunityDialogVisible = !contributeToCommunityDialogVisible;
+    }
+
+    private void OpenCreatePost()
+    {
+        contributeToCommunityDialogVisible = false;
+        createPostDialogVisible = true;
+    }
+    private async Task PostFiledAdded(IReadOnlyList<IBrowserFile> files)
+    {
+        isImageUploadLoading = true;
+        long maxSize = 5 * 1024 * 1024; //5 MB
+        foreach(IBrowserFile file in files)
+        {
+            if(file.Size > maxSize)
+            {
+                Services.AddSnackBarMessage("error", $"File is too big. Keep below 5 MB");
+                return;
+            }
+
+            string imageUrl = await GetBase64Image(file, maxSize);
+            if(!string.IsNullOrEmpty(imageUrl))
+            {
+                this.files.Add(file);
+                fileDisplays.Add(new FileDisplay(file.Name, imageUrl));
+            }
+        }
+        isImageUploadLoading = false;
+
+    }
+    private async Task<string> GetBase64Image(IBrowserFile file, long maxSize)
+    {
+        if (file.Size > maxSize) 
+        { 
+            Services.AddSnackBarMessage("error", $"File is too big for Base64Image");
+            return string.Empty;
+        }
+        var buffer = new byte[file.Size];
+        try
+        {
+            using var stream = file.OpenReadStream(maxSize);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream); // Copy the file stream to a memory stream
+            var base64String = Convert.ToBase64String(memoryStream.ToArray());
+            string mimeType = file.ContentType.ToLower();
+
+            return $"data:{mimeType};base64,{base64String}"; // Use the correct MIME type
+        }
+        catch (Exception e)
+        {
+            Services.AddSnackBarMessage("error", $"Error reading file: {e.Message}");
+            files.Remove(file);
+            return string.Empty;
+        }
+        // return $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+    }
+
+    public class FileDisplay(string name, string imageDataUrl)
+    {
+        public string Name { get; set; } = name;
+        public string ImageDataUrl { get; set; } = imageDataUrl;
+    }
+    private void RemoveFile(FileDisplay file)
+    {
+        IBrowserFile? originalFile = files.FirstOrDefault(f => f.Name == file.Name);
+        if (originalFile != null)
+        {
+            fileDisplays.Remove(file);
+            files.Remove(originalFile);
+        }
+    }
+    private void CreatePost()
+    {
+        files.Clear();
+        fileDisplays.Clear();
+        postText = null;
+    }
+}
