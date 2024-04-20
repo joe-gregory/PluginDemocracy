@@ -5,14 +5,13 @@
         public int Id { get; set; }
         public User? Author { get; private set; }
         public string? Body { get; private set; }
-        public DateTime PublishedDate { get; private set; }
+        public DateTime PublishedDate { get; } = DateTime.UtcNow;
         public readonly List<PostComment> Comments;
         public DateTime? LatestActivity { get; private set; } = null;
         public List<string> Images { get; set; }
-        public List<Reaction> Reactions { get; set; }
+        public List<PostReaction> Reactions { get; set; }
         protected Post() 
         {
-            PublishedDate = DateTime.UtcNow;
             Comments = [];
             Images = [];
             Reactions = [];
@@ -21,7 +20,6 @@
         {
             Author = user;
             Body = body;
-            PublishedDate = DateTime.UtcNow;
             Comments = [];
             Images = [];
             Reactions = [];

@@ -6,19 +6,20 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
-    public class Reaction
+    public class PostReaction
     {
         public int Id { get; set; }
-        public User Author { get; private set; }
+        public User User { get; private set; }
         public ReactionType ReactionType { get; set; }
-        protected Reaction()
+        public DateTime CreatedDate { get; protected set; } = DateTime.UtcNow;
+        protected PostReaction()
         {
-            Author = new();
+            User = new();
             ReactionType = ReactionType.Like;
         }
-        public Reaction(User user, ReactionType reaction)
+        public PostReaction(User user, ReactionType reaction)
         {
-            Author = user;
+            User = user;
             ReactionType = reaction;
         }
     }

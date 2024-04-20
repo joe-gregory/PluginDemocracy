@@ -11,7 +11,7 @@ namespace PluginDemocracy.Models
         public int Id { get; set; }
         public User Author { get; private set; }
         public string Comment { get; private set; }
-        public DateTime PublishedDate { get; private set; } = DateTime.UtcNow;
+        public DateTime PublishedDate { get; protected set; } = DateTime.UtcNow;
         protected PostComment()
         {
             Comment = string.Empty;
