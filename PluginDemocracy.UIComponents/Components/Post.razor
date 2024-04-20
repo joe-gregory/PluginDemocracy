@@ -1,4 +1,7 @@
-﻿<MudCard Elevation="25">
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudCard Elevation="25" Class="mt-5 mb-5">
     <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
             <MudAvatar>
@@ -12,14 +15,24 @@
                 }
             </MudAvatar>
         </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Style="color:white">@PostDto?.Author?.FullName</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudText Style="color:white">@PostDto?.PublishedDate</MudText>
+        </CardHeaderActions>
     </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@PostDto?.Body</MudText>
+    </MudCardContent>
     @if (PostDto?.Images.Count == 1)
     {
-        <MudCardMedia Image="@PostDto.Images[0]" />
+        <img src="@PostDto.Images[0]" class="full-image-fit" />
+        @* <MudCardMedia Class="full-image-fit" Image="@PostDto.Images[0]" /> *@
     }
     else if(PostDto?.Images.Count > 1)
     {
-        <MudCarousel Class="mud-width-full" Style="height:500px;" ItemsSource="PostDto.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
+        <MudCarousel Class="mud-carousel-custom mb-5" ItemsSource="PostDto.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
             <ItemTemplate>
                 <div class="d-flex flex-column flex-column justify-center mt-10 mb-10" style="height:100%">
                     <MudImage Src="@context"/>
@@ -27,24 +40,125 @@
             </ItemTemplate>
         </MudCarousel>
     }
-    <MudCardContent>
-        <MudText Typo="Typo.body2">@PostDto?.Body</MudText>
-    </MudCardContent>
+
     <MudCardActions Style="background-color:#008644">
-        @*like button, dislike button (what look for this app) and share button*@
-        <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" OnClick="LikePost" /> 
-        <MudIconButton Icon="@Icons.Material.Filled.ThumbDown" OnClick="DislikePost" />
+        <MudBadge Content="thumbUpNumberOfReactions" Class="mr-3" Overlap="true" Color="Color.Success" Bordered="true">
+            <MudIconButton Color="thumbUpColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbUp" OnClick="LikePost" />
+        </MudBadge>
+        <MudBadge Content="thumbDownNumberOfReactions" Overlap="true" Color="Color.Error" Bordered="true">
+            <MudIconButton Color="thumbDownColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbDown" OnClick="DislikePost" />
+        </MudBadge>
     </MudCardActions>
+    @if (PostDto?.Comments.Count > 0)
+    {
+        <MudExpansionPanel Text="Comments">
+            @foreach(PostCommentDto comment in PostDto.Comments)
+            {
+                <PostComment CommentDto="@comment" />
+            }
+        </MudExpansionPanel>
+    }
+    <MudItem>
+        <MudTextField Class="ma-1" @bind-Value="newCommentText" Placeholder="Write a comment..." Variant="Variant.Outlined" Immediate="true" AutoGrow="true" />
+        <MudButton  Class="ma-1" OnClick="SubmitComment" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(string.IsNullOrEmpty(newCommentText))">Post Comment</MudButton>
+    </MudItem>
 </MudCard>
 
 @code{
     [Parameter]
     public PostDto? PostDto {get; set;}
+    private string? newCommentText;
 
+    private bool thumbUp = false;
+    private bool thumbDown = false;
+
+    private string cssThumb = "thumb-options-open";
+    const string cssOpenThumb = "thumb-options-open";
+    const string cssClosedThumb = "thumb-options-closed";
+
+    private Color thumbUpColor = Color.Default;
+    private bool thumbUpBadgeHidden = true;
+    private string thumbUpCssClass = "thumb-options-open";
+
+    private Color thumbDownColor = Color.Default;
+    private bool thumbDownBadgeHidden = true;
+    private string thumbDownCssClass = "thumb-options-open";
+
+    private int thumbUpNumberOfReactions = 0;
+    private int thumbDownNumberOfReactions = 0;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        //Check how many reactions to fill the badges
+        thumbUpNumberOfReactions = PostDto?.Reactions?.Where(r => r.ReactionType == ReactionType.Like).Count() ?? 0;
+        thumbDownNumberOfReactions = PostDto?.Reactions?.Where(r => r.ReactionType == ReactionType.Dislike).Count() ?? 0;
+        //Check if current user has already reacted to this post, color the corresponding thumb
+        if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Like) == true)
+        {
+            ThumbUp();
+        }
+        else if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Dislike) == true)
+        {
+            ThumbDown();
+        }
+    }
+    /// <summary>
+    /// Aesthetic changes to thumb up.   
+    /// </summary>
+    private void ThumbUp()
+    {
+        if (!thumbUp)
+        {
+            thumbUp = true;
+            thumbUpColor = Color.Success;
+            thumbUpNumberOfReactions++;
+            cssThumb = cssClosedThumb;
+        }
+        //if thumbUp was already pressed, unpress it and open options
+        else
+        {
+            thumbUp = false;
+            thumbUpColor = Color.Default;
+            thumbUpNumberOfReactions--;
+            cssThumb = cssOpenThumb;
+        }
+        thumbDown = false;
+        thumbDownColor = Color.Default;
+    }
+    /// <summary>
+    /// Aesthethic changes to thumb down
+    /// </summary>
+    private void ThumbDown()
+    {
+        if (!thumbDown)
+        {
+            thumbDown = true;
+            thumbDownColor = Color.Error;
+            thumbDownNumberOfReactions++;
+            cssThumb = cssClosedThumb;
+        }
+        else //if the button was already pressed, unpress it
+        {
+            thumbDown = false;
+            thumbDownColor = Color.Default;
+            thumbDownNumberOfReactions--;
+            cssThumb = cssOpenThumb;
+        }
+        thumbUp = false;
+        thumbUpColor = Color.Default;
+    }
     private void LikePost()
     {
+
+        ThumbUp();
     }
     private void DislikePost()
     {
+        ThumbDown();
+    }
+    private void SubmitComment()
+    {
+        newCommentText = null;
     }
 }
