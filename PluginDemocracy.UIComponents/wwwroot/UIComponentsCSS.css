@@ -8,3 +8,42 @@
 .PD-body {
     margin-top: 20px;
 }
+/*POSTS*/
+.thumb-options-open{
+    background-color: white;
+}
+.thumb-options-closed{
+    
+}
+.full-image-fit {
+    object-fit: contain; /* Ensures the whole image is visible, might add empty space around it */
+    width: 100%; /* Fit the width of the container */
+    height: 100%; /* Fit the height of the container */
+}
+
+/*EndPosts*/
+
+/*MudCarousel Adjustments so posts images are visible in different screens:*/
+/* Default mobile styles */
+.mud-carousel-custom {
+    height: 200px; /* height for mobile devices */
+}
+
+/* Tablet and above */
+@media (min-width: 600px) {
+    .mud-carousel-custom {
+        height: 300px; /* height for tablets */
+    }
+}
+
+/* Desktop and above */
+@media (min-width: 960px) {
+    .mud-carousel-custom {
+        height: 500px; /* height for desktops */
+    }
+}
+
+/*End MudCarousel Adjustments*/
+
+/*BottomBar Start*/
+/*BottomBar End*/
