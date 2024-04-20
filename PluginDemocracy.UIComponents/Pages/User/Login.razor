@@ -13,8 +13,8 @@
             </MudItem>
         </MudGrid>
 
-        <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="loginInfo.Email" Variant="Variant.Outlined" />
-        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="loginInfo.Password" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="loginInfo.Email" Variant="Variant.Outlined" Immediate="true"/>
+        <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="loginInfo.Password" Variant="Variant.Outlined" Immediate="true"/>
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5" OnClick="PostForm">Login</MudButton>
     </MudPaper>
