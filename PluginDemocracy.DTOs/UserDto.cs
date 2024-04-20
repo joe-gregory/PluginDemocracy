@@ -175,5 +175,19 @@ namespace PluginDemocracy.DTOs
 
             return user;
         }
+        /// <summary>
+        /// Two userDtos are equal if their Ids are equal
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is UserDto userDto) return Id == userDto.Id;
+            else return false;
+        }
+        public override int GetHashCode()
+        {
+            return Id?.GetHashCode() ?? 0;
+        }
     }
 }
