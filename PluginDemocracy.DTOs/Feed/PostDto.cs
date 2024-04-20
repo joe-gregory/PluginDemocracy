@@ -1,4 +1,5 @@
-﻿using PluginDemocracy.Models;
+﻿using PluginDemocracy.DTOs.CommunitiesDto;
+using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
@@ -11,6 +12,7 @@ namespace PluginDemocracy.DTOs
         public List<PostCommentDto> Comments { get; set; } = [];
         public DateTime? LatestActivity { get; set; }
         public List<string> Images { get; set; } = [];
+        public List<ReactionDto> Reactions { get; set; } = [];
         public PostDto()
         {
             Id = 0;

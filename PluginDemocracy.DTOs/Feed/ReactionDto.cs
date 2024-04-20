@@ -5,22 +5,22 @@ namespace PluginDemocracy.DTOs.CommunitiesDto
     public class ReactionDto
     {
         public int Id { get; set; }
-        public UserDto Author { get; private set; }
+        public UserDto User { get; private set; }
         public ReactionType ReactionType { get; set; }
         protected ReactionDto()
         {
-            Author = new();
+            User = new();
             ReactionType = ReactionType.Like;
         }
         public ReactionDto(UserDto user, ReactionType reaction)
         {
-            Author = user;
+            User = user;
             ReactionType = reaction;
         }
-        public ReactionDto(Reaction reaction)
+        public ReactionDto(PostReaction reaction)
         {
             Id = reaction.Id;
-            Author = new UserDto(reaction.Author);
+            User = new UserDto(reaction.User);
             ReactionType = reaction.ReactionType;
         }
     }
