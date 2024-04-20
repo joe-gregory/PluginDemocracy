@@ -1,0 +1,27 @@
+﻿<MudCard Elevation="25" Outlined="true" Class="ma-1">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar>
+                @if (!string.IsNullOrEmpty(commentDto?.Author?.ProfilePicture))
+                {
+                    <MudImage Src="@commentDto.Author.ProfilePicture" />
+                }
+                else
+                {
+                    @commentDto?.Author?.Initials
+                }
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText>@commentDto?.Comment</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            @commentDto?.PublishedDate
+        </CardHeaderActions>
+    </MudCardHeader>
+</MudCard>
+
+@code{
+    [Parameter]
+    public PostCommentDto? commentDto { get; set; }
+}
