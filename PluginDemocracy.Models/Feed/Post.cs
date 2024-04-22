@@ -16,12 +16,13 @@
             Images = [];
             Reactions = [];
         }
-        public Post(User user, string body)
+        public Post(User user, string body, List<string>? imagesLinks = null)
         {
             Author = user;
             Body = body;
             Comments = [];
-            Images = [];
+            if(imagesLinks != null) Images = imagesLinks;
+            else Images = [];
             Reactions = [];
         }
         public void AddComment(PostComment comment)
