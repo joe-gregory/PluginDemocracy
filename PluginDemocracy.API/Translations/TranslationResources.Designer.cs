@@ -220,6 +220,15 @@ namespace PluginDemocracy.API.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Post created successfully.
+        /// </summary>
+        public static string PostCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("PostCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile picture updated successfully.
         /// </summary>
         public static string ProfilePictureUpdated {

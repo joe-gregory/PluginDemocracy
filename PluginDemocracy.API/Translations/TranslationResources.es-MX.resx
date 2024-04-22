@@ -171,6 +171,9 @@ El equipo de Democracia Conectada</value>
   <data name="PasswordMismatch" xml:space="preserve">
     <value>La contraseña es incorrecta</value>
   </data>
+  <data name="PostCreatedSuccessfully" xml:space="preserve">
+    <value>Publicación creada con éxito</value>
+  </data>
   <data name="ProfilePictureUpdated" xml:space="preserve">
     <value>La foto de perfil se ha actualizado exitosamente</value>
   </data>

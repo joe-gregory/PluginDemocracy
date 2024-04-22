@@ -35,5 +35,6 @@
         public static string YourJoinRequestHasBeenApprovedBody => "YourJoinRequestHasBeenApprovedBody";
         public static string YourJoinRequestHasBeenRejectedTitle => "YourJoinRequestHasBeenRejectedTitle";
         public static string YourJoinRequestHasBeenRejectedBody => "YourJoinRequestHasBeenRejectedBody";
+        public static string PostCreatedSuccessfully => "PostCreatedSuccessfully";
     }
 }
