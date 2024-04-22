@@ -37,7 +37,7 @@ namespace PluginDemocracy.UIComponents
 
             using HttpRequestMessage request = new(HttpMethod.Get, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
-            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             try
             {
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
@@ -49,7 +49,7 @@ namespace PluginDemocracy.UIComponents
                 _appState.IsLoading = false;
                 return new();
             }
-                    }
+        }
         /// <summary>
         /// This is a generic version of GetDataAsync. It is used to get data from the server and deserialize it into a generic type.
         /// This allows to obtain different types of data from the server than just PDAPIResponse.
@@ -64,7 +64,7 @@ namespace PluginDemocracy.UIComponents
 
             using HttpRequestMessage request = new(HttpMethod.Get, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
-            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             try
             {
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
@@ -86,7 +86,7 @@ namespace PluginDemocracy.UIComponents
 
             using HttpRequestMessage request = new(HttpMethod.Put, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
-            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             // Add the data to the request
             if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
@@ -117,7 +117,7 @@ namespace PluginDemocracy.UIComponents
             string url = _appState.BaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Post, url);
-            if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             //Add request content if the data is not null
             if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
@@ -167,7 +167,7 @@ namespace PluginDemocracy.UIComponents
                     Content = content
                 };
                 //Add SessionJWT as a Bearer token in the Authorization header if it's available
-                if(!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+                if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
 
                 //Sending content to API
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
@@ -178,6 +178,73 @@ namespace PluginDemocracy.UIComponents
                 AddSnackBarMessage("error", ex.Message);
                 _appState.IsLoading = false;
                 return new();
+            }
+        }
+        public async Task<bool> UploadPostAsync(string apiEndpoint, string postBody, IEnumerable<IBrowserFile> photos, int communityId)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + apiEndpoint;
+            MultipartFormDataContent content = [];
+
+            //Add post text to the content
+            content.Add(new StringContent(postBody), "Body");
+            content.Add(new StringContent(communityId.ToString()), "CommunityId");
+
+            int maxMegaBytes = 10;
+            long maxFileSize = maxMegaBytes * 1024 * 1024; //10MB per file
+            foreach (IBrowserFile photo in photos)
+            {
+                if (photo.Size > maxFileSize)
+                {
+                    AddSnackBarMessage("error", $"File size exceeds {maxMegaBytes}MB for {photo.Name}");
+                    _appState.IsLoading = false;
+                    return false; // Ensure you exit the method if the file is too large
+                }
+                try
+                {
+                    await using Stream fileStream = photo.OpenReadStream(maxFileSize);
+                    StreamContent fileContent = new(fileStream);
+                    fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "Files",
+                        FileName = photo.Name
+                    };
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(photo.ContentType);
+                    content.Add(fileContent, "Files", photo.Name);
+                }
+                catch (Exception ex)
+                {
+                    #if DEBUG
+                    AddSnackBarMessage("error", ex.Message);
+                    #endif
+                    AddSnackBarMessage("error", $"Error uploading photos {photo.Name}");
+                    _appState.IsLoading = false;
+                    return false;
+                }
+            }
+            // Create HttpRequestMessage to include JWT in Authorization header
+            HttpRequestMessage request = new(HttpMethod.Post, url) { Content = content };
+            if (!string.IsNullOrEmpty(_appState.SessionJWT))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            }
+
+            //sending content to API
+            try
+            {
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                bool isSuccessStatusCode = response.IsSuccessStatusCode;
+                await CommunicationCommon(response);
+                return isSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                #if DEBUG
+                AddSnackBarMessage("error", ex.Message);
+                #endif
+                AddSnackBarMessage("error", $"Network or server error");
+                _appState.IsLoading = false;
+                return false;
             }
         }
         /// <summary>
@@ -205,18 +272,18 @@ namespace PluginDemocracy.UIComponents
             _appState.PDAPIResponse = apiResponse;
             //If API response includes a RedirectTo page, navigate to it
             if (!string.IsNullOrEmpty(apiResponse.RedirectTo)) NavigateTo(apiResponse.RedirectTo);
-            //Stop loading spinner
-            _appState.IsLoading = false;
             // If apiResponse.User is sent, log in user.
             if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
             //if apiResponse.SessionJWT is sent, set it in AppState
-            if(apiResponse.SessionJWT != null) _appState.SessionJWT = apiResponse.SessionJWT;
+            if (apiResponse.SessionJWT != null) _appState.SessionJWT = apiResponse.SessionJWT;
             //if apiResponse.LogOut is sent, log out user and redirect to home
             if (apiResponse.LogOut == true)
             {
                 _appState.LogOut();
                 NavigateTo(FrontEndPages.Login);
             }
+            //Stop loading spinner
+            _appState.IsLoading = false;
             return apiResponse;
         }
         public void NavigateTo(string page)
