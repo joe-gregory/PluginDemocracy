@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
@@ -233,6 +235,81 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", exception.Message);
                 return BadRequest(response);
             }
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.CreateNewPost)]
+        public async Task<ActionResult<PDAPIResponse>> CreateNewPost([FromForm] CreatePostRequestDto request)
+        {
+            PDAPIResponse response = new();
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            //Check the contents of the post
+            if (string.IsNullOrEmpty(request.Body))
+            {
+                response.AddAlert("error", "Post body was empty and as such no action was taken. There must either be a text body in the post, images or both.");
+                return response;
+            }
+            Post newPost = new(existingUser, request.Body);
+            Community? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            community.AddPost(newPost);
+            try
+            {
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"There was an internal error creating a new post. {ex.Message}");
+                return StatusCode(500, response);
+            }
+
+            //Handle image uploads
+            try
+            {
+                string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
+                if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
+                BlobContainerClient containerClient = new(new Uri(blobSasUrl));
+
+                foreach (IFormFile file in request.Files)
+                {
+                    string fileExtension = Path.GetExtension(file.FileName).ToLower();
+                    if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+                    {
+                        response.AddAlert("error", $"File type not supported. Only .jpg, .jpeg, and .png are supported. Filename: {file.Name}");
+                        return BadRequest(response);
+                    }
+
+                    Guid guid = Guid.NewGuid();
+                    string blobName = $"{newPost.Id}-{guid}";
+
+                    //Create a blob client for the image
+                    BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                    await using Stream filestream = file.OpenReadStream();
+                    //Upload the image
+                    await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
+                    newPost.Images.Add(blobClient.Uri.ToString());
+                }
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", _utilityClass.Translate(ResourceKeys.PostCreatedSuccessfully, existingUser.Culture));
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"There was an internal error creating a new post. {ex.Message}");
+                return StatusCode(500, response);
+            }
+
+            
         }
     }
 }

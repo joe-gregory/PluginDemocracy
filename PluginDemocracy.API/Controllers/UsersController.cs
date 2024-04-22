@@ -435,7 +435,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
                 await using var fileStream = file.OpenReadStream();
-                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType }); //aqui esta el error
+                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType }); 
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
