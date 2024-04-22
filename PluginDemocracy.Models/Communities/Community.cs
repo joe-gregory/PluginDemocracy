@@ -277,10 +277,9 @@ namespace PluginDemocracy.Models
             RedFlag newRedFlag = new(this, user, description, itemFlagged);
             RedFlags.Add(newRedFlag);
         }
-        public void CreatePost(User user, string body)
+        public void AddPost(Post post)
         {
-            Post newPost = new(user, body);
-            posts.Add(newPost);
+            posts.Add(post);
         }
         public void RemovePost(Post post)
         {
