@@ -53,7 +53,7 @@
 
 <MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="25">
     <MudSpacer />
-    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="ContributeToCommunity" Size="Size.Large"/>
+    <MudFab Color="Color.Success" Disabled="@(!AppState.IsLoggedIn)" StartIcon="@Icons.Material.Filled.Add" OnClick="ContributeToCommunity" Size="Size.Large"/>
     <MudSpacer />
 </MudAppBar>
 
@@ -158,10 +158,23 @@
             files.Remove(originalFile);
         }
     }
-    private void CreatePost()
+    private async Task CreatePost()
     {
-        files.Clear();
-        fileDisplays.Clear();
-        postText = null;
+        if (string.IsNullOrEmpty(postText))
+        {
+            Services.AddSnackBarMessage("error", "Please add text to your post");
+            return;
+        }
+        int communityId = 0;
+        communityId = AppState?.User?.Citizenships[0].Id ?? 0;
+        bool wasUploadSuccessful = await Services.UploadPostAsync(ApiEndPoints.CreateNewPost, postText, files, communityId);
+
+        //Determine if the post was successfully created before clearing everything
+        if (wasUploadSuccessful)
+        {
+            files.Clear();
+            fileDisplays.Clear();
+            postText = null;
+        }
     }
 }
