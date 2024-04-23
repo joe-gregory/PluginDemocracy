@@ -15,7 +15,7 @@
         public const string Notifications = "/notifications";
 
         //Community pages
-        public const string CommunityFeed = "/communityfeed";
+        public const string Feed = "/communityfeed";
         public const string RegisterCommunity = "/registercommunity";
         public const string JoinCommunity = "/joincommunity";
         public const string JoinOrRegisterCommunity = "/joinorregistercommunity";
