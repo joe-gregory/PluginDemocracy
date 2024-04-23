@@ -37,7 +37,7 @@ namespace PluginDemocracy.Data
                 .ToTable("Communities");
 
             modelBuilder.Entity<Community>()
-                .HasMany(typeof(Post), "posts")
+                .HasMany(typeof(Post), "Posts")
                 .WithOne()
                 .HasForeignKey("CommunityId")
                 .IsRequired();
