@@ -23,6 +23,15 @@
         </MudText>
     </TitleContent>
     <DialogContent>
+        @if (AppState?.User?.Citizenships.Count > 1)
+        {
+            <MudSelect @bind-Value="MudSelectCommunityId" T="int?" Label="@(AppState.Translate(ResourceKeys.Community))">
+                @foreach (CommunityDto community in AppState.User.Citizenships)
+                {
+                    <MudSelectItem Value="@community.Id">@community.Name</MudSelectItem>
+                }
+            </MudSelect>
+        }
         <MudTextField @bind-Value="postText" T="string" Label="Description" Variant="Variant.Outlined" AutoGrow="true" Lines="10"/>
         @if (files.Count > 0)
         {
@@ -50,12 +59,15 @@
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreatePost">Create Post</MudButton>
     </DialogActions>
 </MudDialog>
+@if (AppState.IsLoggedIn)
+{
+    <MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="25">
+        <MudSpacer />
+        <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="ContributeToCommunity" Size="Size.Large" />
+        <MudSpacer />
+    </MudAppBar>
+}
 
-<MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="25">
-    <MudSpacer />
-    <MudFab Color="Color.Success" Disabled="@(!AppState.IsLoggedIn)" StartIcon="@Icons.Material.Filled.Add" OnClick="ContributeToCommunity" Size="Size.Large"/>
-    <MudSpacer />
-</MudAppBar>
 
 @code
 {
@@ -72,19 +84,30 @@
         {
             if (value == false)
             { 
-                files.Clear();
-                fileDisplays.Clear();
-                postText = null;
+                ClearPostInfo();
             }
+            if (AppState.SelectedCommunityInFeed != null) MudSelectCommunityId = AppState.SelectedCommunityInFeed;
             createPostDialogVisibleInternal = value;
         } 
     }
     private bool isImageUploadLoading = false;
+    private int? MudSelectCommunityId;
 
     private string? postText =  null;
     IList<IBrowserFile> files = new List<IBrowserFile>();
     List<FileDisplay> fileDisplays = [];
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (AppState.SelectedCommunityInFeed != null) MudSelectCommunityId = AppState.SelectedCommunityInFeed;
+        AppState.OnChange += () => InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= () => InvokeAsync(StateHasChanged);
+    }
     private void ContributeToCommunity()
     {
         contributeToCommunityDialogVisible = !contributeToCommunityDialogVisible;
@@ -166,15 +189,37 @@
             return;
         }
         int communityId = 0;
-        communityId = AppState?.User?.Citizenships[0].Id ?? 0;
+        if (AppState?.User?.Citizenships.Count > 1)
+        {
+            if (MudSelectCommunityId == null)
+            {
+                Services.AddSnackBarMessage("error", "Please select a community");
+                return;
+            }
+            communityId = MudSelectCommunityId.Value;
+        }
+        else
+        {
+            communityId = AppState?.User?.Citizenships[0].Id ?? 0;
+        }
+        if (communityId == 0)
+        {
+            Services.AddSnackBarMessage("error", "Please select a community");
+            return;
+        }
         bool wasUploadSuccessful = await Services.UploadPostAsync(ApiEndPoints.CreateNewPost, postText, files, communityId);
 
         //Determine if the post was successfully created before clearing everything
         if (wasUploadSuccessful)
         {
-            files.Clear();
-            fileDisplays.Clear();
-            postText = null;
+            ClearPostInfo();
         }
+    }
+    private void ClearPostInfo()
+    {
+        files.Clear();
+        fileDisplays.Clear();
+        MudSelectCommunityId = null;
+        postText = null;
     }
 }
