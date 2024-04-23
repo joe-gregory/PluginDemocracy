@@ -104,9 +104,11 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public List<Project> ActiveProjects => Projects.Where(project => project.Active).ToList();
         public List<RedFlag> RedFlags { get; }
-        private readonly List<Post> posts;
-        public IReadOnlyList<Post> PostsByLatestActivity => posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
-        public IReadOnlyList<Post> PostsByPublishedDate => posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
+        public readonly List<Post> Posts;
+        [NotMapped]
+        public IReadOnlyList<Post> PostsByLatestActivity => Posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
+        [NotMapped]
+        public IReadOnlyList<Post> PostsByPublishedDate => Posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
         #endregion
         #region METHODS
         public Community()
@@ -122,7 +124,7 @@ namespace PluginDemocracy.Models
             Roles = [];
             Projects = [];
             RedFlags = [];
-            posts = [];
+            Posts = [];
         }
         /// <summary>
         /// Adding a non residential citizen involves adding the citizen to this community's NonResidentialCitizens AND adding this community to the
@@ -279,11 +281,11 @@ namespace PluginDemocracy.Models
         }
         public void AddPost(Post post)
         {
-            posts.Add(post);
+            Posts.Add(post);
         }
         public void RemovePost(Post post)
         {
-            posts.Remove(post);
+            Posts.Remove(post);
         }
         public void Update()
         {
