@@ -232,6 +232,7 @@ namespace PluginDemocracy.UIComponents
             //sending content to API
             try
             {
+                _httpClient.Timeout = TimeSpan.FromMinutes(5); // Adjust depending on needs
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 bool isSuccessStatusCode = response.IsSuccessStatusCode;
                 await CommunicationCommon(response);
@@ -276,6 +277,8 @@ namespace PluginDemocracy.UIComponents
             if (apiResponse.User != null) _appState.LogIn(apiResponse.User);
             //if apiResponse.SessionJWT is sent, set it in AppState
             if (apiResponse.SessionJWT != null) _appState.SessionJWT = apiResponse.SessionJWT;
+            //posts
+            if (apiResponse.Posts.Count > 0) _appState.Posts = apiResponse.Posts;
             //if apiResponse.LogOut is sent, log out user and redirect to home
             if (apiResponse.LogOut == true)
             {
@@ -306,7 +309,7 @@ namespace PluginDemocracy.UIComponents
             _appState.LogOut();
             NavigateTo(FrontEndPages.Home);
         }
-        public IEnumerable<string> PasswordStrength(string pw)
+        public static IEnumerable<string> PasswordStrength(string pw)
         {
             if (string.IsNullOrWhiteSpace(pw))
             {
