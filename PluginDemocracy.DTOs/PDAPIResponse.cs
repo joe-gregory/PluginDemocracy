@@ -12,6 +12,7 @@
         public bool? LogOut { get; set; }
         public List<CommunityDto> AllCommunities { get; set; } = [];
         public CommunityDto? Community { get; set; }
+        public List<PostDto> Posts { get; set; } = [];
         #endregion
         #region METHODS
         /// <summary>
