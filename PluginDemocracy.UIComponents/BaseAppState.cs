@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-using PluginDemocracy.Models;
-using System.Globalization;
+﻿using System.Globalization;
 using PluginDemocracy.DTOs;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor;
-using System.Net.Http.Json;
 
 namespace PluginDemocracy.UIComponents
 {
@@ -32,13 +26,33 @@ namespace PluginDemocracy.UIComponents
         public PDAPIResponse PDAPIResponse { get; set; }
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:
+        /// <summary>
+        /// Subscribe to this event whenever you want to know when the state of AppState has changed. This event is internally
+        /// triggered by AppState with the <see cref="NotifyStateChanged"/> method.
+        /// </summary>
         public event Action? OnChange;
         public abstract bool HasInternet { get; protected set; }
         public UserDto? User { get; protected set; }
+        protected int? _selectedCommunityInFeed;
+        public int? SelectedCommunityInFeed {
+            get
+            {
+                return _selectedCommunityInFeed;
+            }
+            set 
+            {
+                if (_selectedCommunityInFeed != value) // Only notify if the value actually changes
+                {
+                    _selectedCommunityInFeed = value;
+                    NotifyStateChanged(); // This will trigger any subscribed components to update
+                }
+            } 
+        }
         public bool IsLoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         public string? SessionJWT { get; set; }
+        public List<PostDto> Posts { get; set; } = [];
         //METHODS:
         #region METHODS
         public BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
@@ -49,22 +63,10 @@ namespace PluginDemocracy.UIComponents
             PDAPIResponse = new();
         }
         #region PROTECTED METHODS
-        protected void NotifyStateChanged() => OnChange?.Invoke();
         /// <summary>
-        /// TODO: THIS CAN PROBABLY BE DELETED
+        /// Notify that changes have been made to the App State
         /// </summary>
-        /// <param name="alerts"></param>
-        protected void AddSnackBarMessages(List<PDAPIResponse.Alert> alerts)
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var snackbar = scope.ServiceProvider.GetRequiredService<ISnackbar>();
-                foreach (PDAPIResponse.Alert alert in alerts)
-                {
-                    if (Enum.TryParse(alert.Severity.ToString(), true, out MudBlazor.Severity mudBlazorSeverity)) snackbar.Add(alert.Message, mudBlazorSeverity);
-                }
-            }
-        }
+        protected void NotifyStateChanged() => OnChange?.Invoke();
         #endregion
         #region PUBLIC METHODS
         public void LogIn(UserDto user)
@@ -72,12 +74,14 @@ namespace PluginDemocracy.UIComponents
             User = user;
             SetCulture(user.Culture);
             NotifyStateChanged();
+            Posts.Clear();
         }
         public void LogOut()
         {
             User = null;
             SessionJWT = null;
             NotifyStateChanged();
+            Posts.Clear();
         }
         //TODO: Change to protected later on cuando este implementando como checar el internet en diferentes devices
         public void SetInternetState(bool internetState)
