@@ -42,6 +42,8 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Generate = "Generate";
         public const string Address = "Address";
 
+        public const string Community = "Community";
+        public const string Feed = "Feed";
         public const string JoinCommunity = "JoinCommunity";
         public const string SelectCommunityFromDropDown = "SelectCommunityFromDropDown";
         public const string SelectHomeDescriptionInJoinCommunity = "SelectHomeDescriptionInJoinCommunity";
