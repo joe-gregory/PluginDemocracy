@@ -311,5 +311,27 @@ namespace PluginDemocracy.API.Controllers
 
             
         }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetFeed)]
+        public async Task<ActionResult<PDAPIResponse>> GetFeed([FromQuery] int communityId)
+        {
+            PDAPIResponse response = new();
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            Community? community = await _context.Communities.Include(c => c.Posts).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            
+            foreach (Post post in community.Posts) response.Posts.Add(new PostDto(post));
+            return Ok(response);
+        }
     }
 }
