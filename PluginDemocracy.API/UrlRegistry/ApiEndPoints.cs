@@ -28,6 +28,7 @@
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
+        public const string DeletePost = CommunityController + "deletepost";
         #endregion
         #region Admin
         public const string AdminController = Base + "admin/";
