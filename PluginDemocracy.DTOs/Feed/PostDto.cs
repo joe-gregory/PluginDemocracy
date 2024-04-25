@@ -24,6 +24,7 @@ namespace PluginDemocracy.DTOs
             Body = post.Body;
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;
+            Images = post.Images;
         }
 
     }
