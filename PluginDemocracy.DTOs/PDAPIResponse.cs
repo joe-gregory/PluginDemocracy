@@ -5,6 +5,7 @@
         #region PROPERTIES
         public UserDto? User { get; set; }
         public List<Alert> Alerts { get; set; }
+        public bool SuccessfulOperation { get; set; } = false;
         public DateTime LastRefreshed { get; set; } 
         public string? RedirectTo { get; set; }
         public Dictionary<string, string> RedirectParameters { get; set; }

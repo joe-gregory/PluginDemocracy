@@ -83,6 +83,11 @@ namespace PluginDemocracy.UIComponents
             NotifyStateChanged();
             Posts.Clear();
         }
+        public void DeletePost(PostDto post)
+        {
+            if (Posts.Contains(post)) Posts.Remove(post);
+            NotifyStateChanged();
+        }
         //TODO: Change to protected later on cuando este implementando como checar el internet en diferentes devices
         public void SetInternetState(bool internetState)
         {

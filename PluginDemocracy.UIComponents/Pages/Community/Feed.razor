@@ -34,6 +34,7 @@
         //If user has multiple communities, let the user select a community
         //If a community had been selected previously, default to that one
         if (AppState.SelectedCommunityInFeed != null) await OnCommunityChanged(AppState.SelectedCommunityInFeed);
+        AppState.OnChange += StateHasChangedSafe;
     }
 
     private async Task OnCommunityChanged(int? newCommunityId)
@@ -46,4 +47,9 @@
         string url = ApiEndPoints.GetFeed + $"?communityId={AppState.SelectedCommunityInFeed}";
         await Services.GetDataAsync(url);
     }
+    private void StateHasChangedSafe()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
 }

@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static PluginDemocracy.UIComponents.Components.BottomBar;
 
 namespace PluginDemocracy.UIComponents
 {
@@ -19,12 +17,14 @@ namespace PluginDemocracy.UIComponents
     /// <param name="snackbar">ISnackbar</param>
     /// <param name="httpClient">HttpClient for making API calls</param>
     /// <param name="appState">BaseAppState to track changes to App state</param>
-    public class Services(NavigationManager navigation, ISnackbar snackbar, HttpClient httpClient, BaseAppState appState)
+    public class Services(NavigationManager navigation, ISnackbar snackbar, HttpClient httpClient, BaseAppState appState, IHttpClientFactory httpClientFactory)
     {
         private readonly NavigationManager _navigation = navigation;
         private readonly ISnackbar _snackBar = snackbar;
         private readonly HttpClient _httpClient = httpClient;
         private readonly BaseAppState _appState = appState;
+        protected readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+
         /// <summary>
         /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
         /// </summary>
@@ -180,7 +180,7 @@ namespace PluginDemocracy.UIComponents
                 return new();
             }
         }
-        public async Task<bool> UploadPostAsync(string apiEndpoint, string postBody, IEnumerable<IBrowserFile> photos, int communityId)
+        public async Task<bool> UploadPostAsync(string apiEndpoint, string postBody, Dictionary<string, FileData> fileDataDictionary, int communityId)
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + apiEndpoint;
@@ -190,39 +190,17 @@ namespace PluginDemocracy.UIComponents
             content.Add(new StringContent(postBody), "Body");
             content.Add(new StringContent(communityId.ToString()), "CommunityId");
 
-            int maxMegaBytes = 10;
-            long maxFileSize = maxMegaBytes * 1024 * 1024; //10MB per file
-            foreach (IBrowserFile photo in photos)
+            foreach (FileData fileDataValue in fileDataDictionary.Values)
             {
-                if (photo.Size > maxFileSize)
+                StreamContent fileContent = new(fileDataValue.Stream);
+                fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
                 {
-                    AddSnackBarMessage("error", $"File size exceeds {maxMegaBytes}MB for {photo.Name}");
-                    _appState.IsLoading = false;
-                    return false; // Ensure you exit the method if the file is too large
-                }
-                try
-                {
-                    await using Stream fileStream = photo.OpenReadStream(maxFileSize);
-                    StreamContent fileContent = new(fileStream);
-                    fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
-                    {
-                        Name = "Files",
-                        FileName = photo.Name
-                    };
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(photo.ContentType);
-                    content.Add(fileContent, "Files", photo.Name);
-                }
-                catch (Exception ex)
-                {
-                    #if DEBUG
-                    AddSnackBarMessage("error", ex.Message);
-                    #endif
-                    AddSnackBarMessage("error", $"Error uploading photos {photo.Name}");
-                    _appState.IsLoading = false;
-                    return false;
-                }
+                    Name = "Files",
+                    FileName = fileDataValue.FileName
+                };
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(fileDataValue.ContentType);
+                content.Add(fileContent, "Files", fileDataValue.FileName);
             }
-            // Create HttpRequestMessage to include JWT in Authorization header
             HttpRequestMessage request = new(HttpMethod.Post, url) { Content = content };
             if (!string.IsNullOrEmpty(_appState.SessionJWT))
             {
@@ -232,22 +210,45 @@ namespace PluginDemocracy.UIComponents
             //sending content to API
             try
             {
-                _httpClient.Timeout = TimeSpan.FromMinutes(5); // Adjust depending on needs
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                HttpClient newHttpClient = CreateHttpClient();
+                //on this line the task is canceled if there are images
+                newHttpClient.Timeout = TimeSpan.FromMinutes(5);
+                HttpResponseMessage response = await newHttpClient.SendAsync(request);
                 bool isSuccessStatusCode = response.IsSuccessStatusCode;
                 await CommunicationCommon(response);
                 return isSuccessStatusCode;
             }
             catch (Exception ex)
             {
-                #if DEBUG
+#if DEBUG
                 AddSnackBarMessage("error", ex.Message);
-                #endif
+#endif
                 AddSnackBarMessage("error", $"Network or server error");
                 _appState.IsLoading = false;
                 return false;
             }
         }
+        public async Task<bool> DeletePostAsync(int postId)
+        {
+            HttpClient httpClient = CreateHttpClient();
+            string url = _appState.BaseUrl + ApiEndPoints.DeletePost + $"?postId={postId}";
+
+            HttpRequestMessage request = new(HttpMethod.Delete, url);
+            try
+            {
+                HttpResponseMessage response = await httpClient.SendAsync(request);
+                bool isSuccessStatusCode = response.IsSuccessStatusCode;
+                await CommunicationCommon(response);
+                return _appState.PDAPIResponse.SuccessfulOperation;
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                return false;
+            }
+        }
+
         /// <summary>
         /// Turns of _appState.IsLoading, extracts snackbar messages from the API response, and returns the API response. 
         /// </summary>
@@ -255,9 +256,9 @@ namespace PluginDemocracy.UIComponents
         /// <returns>PDAPIResponse extracted from response</returns>
         private async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
-            #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
+#if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
             if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
-            #endif
+#endif
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
 
             if (apiResponse == null)
@@ -324,6 +325,12 @@ namespace PluginDemocracy.UIComponents
             //     yield return "Password must contain at least one lowercase letter";
             // if (!Regex.IsMatch(pw, @"[0-9]"))
             //     yield return "Password must contain at least one digit";
+        }
+        internal HttpClient CreateHttpClient()
+        {
+            HttpClient client = _httpClientFactory.CreateClient();
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            return client;
         }
     }
 }

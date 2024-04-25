@@ -17,9 +17,14 @@
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Style="color:white">@PostDto?.Author?.FullName</MudText>
+            <MudText Style="color:white">@PostDto?.PublishedDate</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudText Style="color:white">@PostDto?.PublishedDate</MudText>
+            @if (AppState?.User?.Equals(PostDto?.Author) ?? false)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeletePost" />
+            }
+            @*  *@
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
@@ -160,5 +165,16 @@
     private void SubmitComment()
     {
         newCommentText = null;
+    }
+    private async void DeletePost()
+    {
+        if (PostDto != null) 
+        { 
+            bool success = await Services.DeletePostAsync(PostDto.Id);
+            if (success)
+            {
+                AppState.DeletePost(PostDto);
+            }
+        }
     }
 }
