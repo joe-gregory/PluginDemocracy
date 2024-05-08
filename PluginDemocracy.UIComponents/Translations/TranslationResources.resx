@@ -162,6 +162,12 @@
   <data name="DateOfBirth" xml:space="preserve">
     <value>Date of birth</value>
   </data>
+  <data name="DeletePost" xml:space="preserve">
+    <value>Delete Post</value>
+  </data>
+  <data name="DeletePostCannotBeUndone" xml:space="preserve">
+    <value>Once deleted it cannot be undone</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>

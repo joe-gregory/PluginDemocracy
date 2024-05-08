@@ -61,5 +61,7 @@ namespace PluginDemocracy.UIComponents.Translations
         public const string Date = "Date";
         public const string Title = "Title";
         public const string Read = "Read";
+        public const string DeletePost = "DeletePost";
+        public const string DeletePostCannotBeUndone = "DeletePostCannotBeUndone";
     }
 }

@@ -1,5 +1,6 @@
 ﻿@inject BaseAppState AppState
 @inject Services Services
+@inject IDialogService DialogService
 
 <MudCard Elevation="25" Class="mt-5 mb-5">
     <MudCardHeader Style="background-color:#008644">
@@ -169,11 +170,19 @@
     private async void DeletePost()
     {
         if (PostDto != null) 
-        { 
-            bool success = await Services.DeletePostAsync(PostDto.Id);
-            if (success)
+        {
+            bool? confirmation = await DialogService.ShowMessageBox(
+                AppState.Translate(ResourceKeys.DeletePost), 
+                AppState.Translate(ResourceKeys.DeletePostCannotBeUndone),
+                yesText: "Ok",
+                cancelText: "Cancel");
+            if (confirmation == true)
             {
-                AppState.DeletePost(PostDto);
+                bool success = await Services.DeletePostAsync(PostDto.Id);
+                if (success)
+                {
+                    AppState.DeletePost(PostDto);
+                }
             }
         }
     }

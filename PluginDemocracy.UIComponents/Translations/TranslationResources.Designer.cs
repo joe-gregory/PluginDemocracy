@@ -196,6 +196,24 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Post.
+        /// </summary>
+        internal static string DeletePost {
+            get {
+                return ResourceManager.GetString("DeletePost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Once deleted it cannot be undone.
+        /// </summary>
+        internal static string DeletePostCannotBeUndone {
+            get {
+                return ResourceManager.GetString("DeletePostCannotBeUndone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string Description {
