@@ -368,6 +368,27 @@ namespace PluginDemocracy.API.Controllers
             }
             try
             {
+                //If post has images in the blob storage, delete them
+                if (post.Images.Count != 0)
+                {
+                    string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
+                    BlobContainerClient containerClient = new(new Uri(blobSasUrl));
+
+                    //iterate through the images and delete them
+                    foreach (string imageUrl in post.Images)
+                    {
+                        Uri imageUri = new(imageUrl);
+                        string blobName = imageUri.Segments.Last(); //Extract the blob name from the URL
+
+                        //strip off any SAS token if present from image name: 
+                        int queryStartIndex = blobName.IndexOf('?');
+                        if (queryStartIndex != -1) blobName = blobName.Substring(0, queryStartIndex);
+
+                        BlobClient blobClient = containerClient.GetBlobClient(imageUrl);
+                        bool successfulDelete = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                        if (!successfulDelete) response.AddAlert("error", $"Image {blobName} could not be deleted");
+                    }
+                }
                 _context.Posts.Remove(post);
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", "Post deleted successfully");
