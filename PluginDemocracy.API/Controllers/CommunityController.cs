@@ -382,11 +382,10 @@ namespace PluginDemocracy.API.Controllers
 
                         //strip off any SAS token if present from image name: 
                         int queryStartIndex = blobName.IndexOf('?');
-                        if (queryStartIndex != -1) blobName = blobName.Substring(0, queryStartIndex);
+                        if (queryStartIndex != -1) blobName = blobName[..queryStartIndex];
 
-                        BlobClient blobClient = containerClient.GetBlobClient(imageUrl);
-                        bool successfulDelete = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
-                        if (!successfulDelete) response.AddAlert("error", $"Image {blobName} could not be deleted");
+                        BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                        Azure.Response successfulDelete = await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
                 }
                 _context.Posts.Remove(post);
