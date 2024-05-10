@@ -31,6 +31,7 @@ namespace PluginDemocracy.UIComponents
         /// triggered by AppState with the <see cref="NotifyStateChanged"/> method.
         /// </summary>
         public event Action? OnChange;
+        public event Func<Task>? OnPostCreatedAsync;
         public abstract bool HasInternet { get; protected set; }
         public UserDto? User { get; protected set; }
         protected int? _selectedCommunityInFeed;
@@ -67,6 +68,7 @@ namespace PluginDemocracy.UIComponents
         /// Notify that changes have been made to the App State
         /// </summary>
         protected void NotifyStateChanged() => OnChange?.Invoke();
+        public void NotifyPostCreation() => OnPostCreatedAsync?.Invoke();
         #endregion
         #region PUBLIC METHODS
         public void LogIn(UserDto user)
