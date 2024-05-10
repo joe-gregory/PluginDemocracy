@@ -30,5 +30,17 @@
             Comments.Add(comment);
             LatestActivity = DateTime.UtcNow;
         }
+        public void React(User user, ReactionType reaction)
+        {
+            //if the user already has a reaction of the same type, remove the reaction and return
+            if(Reactions.Any(r => r.User == user && r.ReactionType == reaction))
+            {
+                Reactions.RemoveAll(r => r.User == user && r.ReactionType == reaction);
+                return;
+            }
+            //If the user has already reacted to the post, remove the previous reaction
+            Reactions.RemoveAll(r => r.User == user);
+            Reactions.Add(new PostReaction(user, reaction));
+        }
     }
 }
