@@ -12,7 +12,9 @@ namespace PluginDemocracy.DTOs
         public List<PostCommentDto> Comments { get; set; } = [];
         public DateTime? LatestActivity { get; set; }
         public List<string> Images { get; set; } = [];
-        public List<ReactionDto> Reactions { get; set; } = [];
+        public List<PostReactionDto> Reactions { get; set; } = [];
+        public int NumberOfLikeReactions { get => Reactions.Where(r => r.ReactionType == ReactionType.Like).Count(); }
+        public int NumberOfDislikeReactions { get => Reactions.Where(r => r.ReactionType == ReactionType.Dislike).Count(); }
         public PostDto()
         {
             Id = 0;
@@ -25,6 +27,10 @@ namespace PluginDemocracy.DTOs
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;
             Images = post.Images;
+            foreach(PostReaction reaction in post.Reactions)
+            {
+                Reactions.Add(new(post.Id, new(reaction.User), reaction.ReactionType));
+            }
         }
 
     }
