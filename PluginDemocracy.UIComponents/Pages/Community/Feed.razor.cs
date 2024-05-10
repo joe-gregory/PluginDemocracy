@@ -1,4 +1,5 @@
-﻿using PluginDemocracy.API.UrlRegistry;
+﻿using Microsoft.AspNetCore.Components;
+using PluginDemocracy.API.UrlRegistry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace PluginDemocracy.UIComponents.Pages.Community
 {
     public partial class Feed: IDisposable
     {
-        public event Action? OnCommunitySelectChange;
+        [Inject]
+        public NavigationManager NavigationManager { get; set; } = default!;
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -24,8 +26,24 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             //If a community had been selected previously, default to that one
             if (AppState.SelectedCommunityInFeed != null) await OnCommunityChanged(AppState.SelectedCommunityInFeed);
             AppState.OnChange += StateHasChangedSafe;
+            AppState.OnPostCreatedAsync += RefreshFeed;
         }
+        private async Task RefreshFeed()
+        {
+            if (IsCurrentPageVisible()) // Assuming you have or will implement a method to check visibility
+            {
+                // Code to refresh the feed
+                await GetFeed();
+            }
+        }
+        private bool IsCurrentPageVisible()
+        {
+            // Code to check if the current page is visible
+            Uri uri = new(NavigationManager.Uri);
+            string path = uri.AbsolutePath;
 
+            return path.Equals(FrontEndPages.Feed, StringComparison.OrdinalIgnoreCase);
+        }
         private async Task OnCommunityChanged(int? newCommunityId)
         {
             if (newCommunityId != null) AppState.SelectedCommunityInFeed = newCommunityId;
@@ -44,6 +62,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         public void Dispose()
         {
             AppState.OnChange -= StateHasChanged;
+            AppState.OnPostCreatedAsync -= RefreshFeed;
             GC.SuppressFinalize(this); // Prevents finalizer from being called
         }
     }
