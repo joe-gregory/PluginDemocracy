@@ -74,10 +74,10 @@
     {
         await base.OnInitializedAsync();
         //Make sure current user is admin if not, redirect to home page
-        bool isUserAdmin = await Services.GetDataAsyncGeneric<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
+        bool isUserAdmin = await Services.GetDataGenericAsync<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
         if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
         //Get a list of all the communities
-        CommunitiesDto = await Services.GetDataAsyncGeneric<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
+        CommunitiesDto = await Services.GetDataGenericAsync<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
     }
     private async Task OnSelectCommunityDtoChanged(CommunityDto newValue)
     {
@@ -86,7 +86,7 @@
         if (SelectedCommunity != null)
         {
             //Make a Get request for the JoinCommunityRequests for that community.
-            PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
+            PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
         }
     }
     private async Task ApproveJoinRequest()
@@ -106,7 +106,7 @@
     }
     private async Task CommonDecision()
     {
-        PendingJoinCommunityRequests = await Services.GetDataAsyncGeneric<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
         IsDialogOpen = false; 
     }
     private void OnRowClicked(JoinCommunityRequestDto request)
