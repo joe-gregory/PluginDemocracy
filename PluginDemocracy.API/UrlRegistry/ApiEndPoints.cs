@@ -29,6 +29,7 @@
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
         public const string DeletePost = CommunityController + "deletepost";
+        public const string ReactToPost = CommunityController + "ReactToPost";
         #endregion
         #region Admin
         public const string AdminController = Base + "admin/";

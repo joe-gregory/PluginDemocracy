@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
+using PluginDemocracy.DTOs.CommunitiesDto;
 using PluginDemocracy.Models;
 using System.Globalization;
 
@@ -308,8 +309,6 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", $"There was an internal error creating a new post. {ex.Message}");
                 return StatusCode(500, response);
             }
-
-            
         }
         [Authorize]
         [HttpGet(ApiEndPoints.GetFeed)]
@@ -326,7 +325,15 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
-                Community? community = await _context.Communities.Include(c => c.Posts).ThenInclude(p => p.Author).FirstOrDefaultAsync(c => c.Id == communityId);
+                Community? community = await _context.Communities
+                    .Include(c => c.Posts)
+                        .ThenInclude(p => p.Author)
+                    .Include(c => c.Posts)
+                        .ThenInclude(p => p.Reactions)
+                    //.Include(c => c.Posts)
+                    //    .ThenInclude(p => p.Comments)
+                    //        .ThenInclude(c => c.Author)
+                    .FirstOrDefaultAsync(c => c.Id == communityId);
                 if (community == null)
                 {
                     response.AddAlert("error", "Community not found");
@@ -398,6 +405,29 @@ namespace PluginDemocracy.API.Controllers
             {
                 response.AddAlert("error", ex.Message);
                 return BadRequest(response);
+            }
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.ReactToPost)]
+        public async Task<ActionResult<List<PostReactionDto>>> LikePost(PostReactionDto reactionDto)
+        {
+            //Extract User from claims
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            
+            Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).FirstOrDefaultAsync(p => p.Id == reactionDto.PostId);
+            if (post == null) return BadRequest();
+
+            try
+            {
+                post.React(existingUser, reactionDto.ReactionType);
+                await _context.SaveChangesAsync();
+                PostDto postDto = new(post);
+                return Ok(postDto.Reactions);
+            }
+            catch
+            {
+                 return BadRequest();
             }
         }
     }
