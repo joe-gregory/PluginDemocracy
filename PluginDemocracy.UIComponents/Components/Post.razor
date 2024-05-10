@@ -1,8 +1,4 @@
-﻿@inject BaseAppState AppState
-@inject Services Services
-@inject IDialogService DialogService
-
-<MudCard Elevation="25" Class="mt-5 mb-5">
+﻿<MudCard Elevation="25" Class="mt-5 mb-5">
     <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
             <MudAvatar>
@@ -48,11 +44,11 @@
     }
 
     <MudCardActions Style="background-color:#008644">
-        <MudBadge Content="thumbUpNumberOfReactions" Class="mr-3" Overlap="true" Color="Color.Success" Bordered="true">
-            <MudIconButton Color="thumbUpColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbUp" OnClick="LikePost" />
+        <MudBadge Content="PostDto?.NumberOfLikeReactions" Class="mr-3" Overlap="true" Color="Color.Success" Bordered="true">
+            <MudIconButton Color="thumbUpColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbUp" OnClick="() => ReactToPost(ReactionType.Like)" />
         </MudBadge>
-        <MudBadge Content="thumbDownNumberOfReactions" Overlap="true" Color="Color.Error" Bordered="true">
-            <MudIconButton Color="thumbDownColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbDown" OnClick="DislikePost" />
+        <MudBadge Content="PostDto?.NumberOfDislikeReactions" Overlap="true" Color="Color.Error" Bordered="true">
+            <MudIconButton Color="thumbDownColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbDown" OnClick="() => ReactToPost(ReactionType.Dislike)" />
         </MudBadge>
     </MudCardActions>
     @if (PostDto?.Comments.Count > 0)
@@ -69,121 +65,3 @@
         <MudButton  Class="ma-1" OnClick="SubmitComment" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(string.IsNullOrEmpty(newCommentText))">Post Comment</MudButton>
     </MudItem>
 </MudCard>
-
-@code{
-    [Parameter]
-    public PostDto? PostDto {get; set;}
-    private string? newCommentText;
-
-    private bool thumbUp = false;
-    private bool thumbDown = false;
-
-    private string cssThumb = "thumb-options-open";
-    const string cssOpenThumb = "thumb-options-open";
-    const string cssClosedThumb = "thumb-options-closed";
-
-    private Color thumbUpColor = Color.Default;
-    private bool thumbUpBadgeHidden = true;
-    private string thumbUpCssClass = "thumb-options-open";
-
-    private Color thumbDownColor = Color.Default;
-    private bool thumbDownBadgeHidden = true;
-    private string thumbDownCssClass = "thumb-options-open";
-
-    private int thumbUpNumberOfReactions = 0;
-    private int thumbDownNumberOfReactions = 0;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        //Check how many reactions to fill the badges
-        thumbUpNumberOfReactions = PostDto?.Reactions?.Where(r => r.ReactionType == ReactionType.Like).Count() ?? 0;
-        thumbDownNumberOfReactions = PostDto?.Reactions?.Where(r => r.ReactionType == ReactionType.Dislike).Count() ?? 0;
-        //Check if current user has already reacted to this post, color the corresponding thumb
-        if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Like) == true)
-        {
-            ThumbUp();
-        }
-        else if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Dislike) == true)
-        {
-            ThumbDown();
-        }
-    }
-    /// <summary>
-    /// Aesthetic changes to thumb up.   
-    /// </summary>
-    private void ThumbUp()
-    {
-        if (!thumbUp)
-        {
-            thumbUp = true;
-            thumbUpColor = Color.Success;
-            thumbUpNumberOfReactions++;
-            cssThumb = cssClosedThumb;
-        }
-        //if thumbUp was already pressed, unpress it and open options
-        else
-        {
-            thumbUp = false;
-            thumbUpColor = Color.Default;
-            thumbUpNumberOfReactions--;
-            cssThumb = cssOpenThumb;
-        }
-        thumbDown = false;
-        thumbDownColor = Color.Default;
-    }
-    /// <summary>
-    /// Aesthethic changes to thumb down
-    /// </summary>
-    private void ThumbDown()
-    {
-        if (!thumbDown)
-        {
-            thumbDown = true;
-            thumbDownColor = Color.Error;
-            thumbDownNumberOfReactions++;
-            cssThumb = cssClosedThumb;
-        }
-        else //if the button was already pressed, unpress it
-        {
-            thumbDown = false;
-            thumbDownColor = Color.Default;
-            thumbDownNumberOfReactions--;
-            cssThumb = cssOpenThumb;
-        }
-        thumbUp = false;
-        thumbUpColor = Color.Default;
-    }
-    private void LikePost()
-    {
-
-        ThumbUp();
-    }
-    private void DislikePost()
-    {
-        ThumbDown();
-    }
-    private void SubmitComment()
-    {
-        newCommentText = null;
-    }
-    private async void DeletePost()
-    {
-        if (PostDto != null) 
-        {
-            bool? confirmation = await DialogService.ShowMessageBox(
-                AppState.Translate(ResourceKeys.DeletePost), 
-                AppState.Translate(ResourceKeys.DeletePostCannotBeUndone),
-                yesText: "Ok",
-                cancelText: "Cancel");
-            if (confirmation == true)
-            {
-                bool success = await Services.DeletePostAsync(PostDto.Id);
-                if (success)
-                {
-                    AppState.DeletePost(PostDto);
-                }
-            }
-        }
-    }
-}
