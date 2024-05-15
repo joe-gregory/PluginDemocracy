@@ -330,9 +330,9 @@ namespace PluginDemocracy.API.Controllers
                         .ThenInclude(p => p.Author)
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Reactions)
-                    //.Include(c => c.Posts)
-                    //    .ThenInclude(p => p.Comments)
-                    //        .ThenInclude(c => c.Author)
+                    .Include(c => c.Posts)
+                        .ThenInclude(p => p.Comments)
+                            .ThenInclude(c => c.Author)
                     .FirstOrDefaultAsync(c => c.Id == communityId);
                 if (community == null)
                 {
@@ -428,6 +428,53 @@ namespace PluginDemocracy.API.Controllers
             catch
             {
                  return BadRequest();
+            }
+        }
+        [HttpPost(ApiEndPoints.AddCommentToPost)]
+        public async Task<ActionResult<PostDto>> AddCommentToPost(PostCommentDto postCommentDto)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
+            if (post == null) return BadRequest();
+
+            PostComment newPostComment = new(existingUser, postCommentDto.Comment);
+            try
+            {
+                post.AddComment(newPostComment);
+                await _context.SaveChangesAsync();
+                PostDto postDto = new(post);
+                return Ok(postDto);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [HttpDelete(ApiEndPoints.DeleteComment)]
+        public async Task<ActionResult<PDAPIResponse>> DeleteComment(PostCommentDto postCommentDto)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
+            if (post == null) return BadRequest();
+
+            PostComment? comment = post.Comments.FirstOrDefault(c => c.Id == postCommentDto.Id);
+            if (comment == null) return BadRequest();
+
+            if (comment.Author.Id != existingUser.Id) return BadRequest();
+
+            try
+            {
+                post.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
             }
         }
     }
