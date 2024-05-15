@@ -52,11 +52,19 @@
     </MudCardActions>
     @if (PostDto?.Comments.Count > 0)
     {
-        <MudExpansionPanel Text="Comments">
-            @foreach(PostCommentDto comment in PostDto.Comments)
-            {
-                <PostComment PostCommentDto="@comment" OnDeleteComment="RemoveComment" />
-            }
+        <MudExpansionPanel>
+            <TitleContent>
+                <div class="d-flex">
+                    <MudIcon Icon="@Icons.Material.Filled.Comment" Color="Color.Primary"/>
+                    <MudText Color="Color.Primary" Class="ml-1">Comments</MudText>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                @foreach (PostCommentDto comment in PostDto.Comments)
+                {
+                    <PostComment PostCommentDto="@comment" OnDeleteComment="RemoveComment" />
+                }
+            </ChildContent>
         </MudExpansionPanel>
     }
     <MudItem>
