@@ -31,6 +31,10 @@ namespace PluginDemocracy.DTOs
             {
                 Reactions.Add(new(post.Id, new(reaction.User), reaction.ReactionType));
             }
+            foreach(PostComment comment in post.Comments)
+            {
+                Comments.Add(new(comment));
+            }
         }
 
     }
