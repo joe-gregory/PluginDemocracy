@@ -2,26 +2,26 @@
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar>
-                @if (!string.IsNullOrEmpty(commentDto?.Author?.ProfilePicture))
+                @if (!string.IsNullOrEmpty(PostCommentDto?.Author?.ProfilePicture))
                 {
-                    <MudImage Src="@commentDto.Author.ProfilePicture" />
+                    <MudImage Src="@PostCommentDto.Author.ProfilePicture" />
                 }
                 else
                 {
-                    @commentDto?.Author?.Initials
+                    @PostCommentDto?.Author?.Initials
                 }
             </MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText>@commentDto?.Comment</MudText>
+            <MudText>@PostCommentDto?.Comment</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            @commentDto?.PublishedDate
+            @PostCommentDto?.PublishedDate
+            @if (AppState?.User?.Equals(PostCommentDto?.Author) ?? false)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeleteComment" />
+            }
         </CardHeaderActions>
     </MudCardHeader>
 </MudCard>
 
-@code{
-    [Parameter]
-    public PostCommentDto? commentDto { get; set; }
-}

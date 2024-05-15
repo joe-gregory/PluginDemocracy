@@ -16,12 +16,15 @@ namespace PluginDemocracy.UIComponents.Components
         private Services Services { get; set; } = default!;
         [Inject]
         private IDialogService DialogService { get; set; } = default!;
+        /// <summary>
+        /// This is the Post to display
+        /// </summary>
         [Parameter]
         public PostDto? PostDto { get; set; }
+        /// <summary>
+        /// This is the bind value for writing a comment on the text box. 
+        /// </summary>
         private string? newCommentText;
-
-        private bool thumbUp = false;
-        private bool thumbDown = false;
 
         private string cssThumb = cssForUnpressedThumb;
         const string cssForUnpressedThumb = "thumb-options-open";
@@ -35,10 +38,6 @@ namespace PluginDemocracy.UIComponents.Components
             base.OnInitialized();
             RefreshLookOfThumbs();
         }
-        /// <summary>
-        /// Aesthetic changes to thumb up.   
-        /// </summary>
-        
         private async void ReactToPost(ReactionType reactionType)
         {
             if (AppState.User != null && PostDto != null)
@@ -98,9 +97,28 @@ namespace PluginDemocracy.UIComponents.Components
             thumbDownColor = Color.Default;
             cssThumb = cssForUnpressedThumb;
         }
-        private void SubmitComment()
+        private async void SubmitComment()
         {
-            newCommentText = null;
+            //Make post request to submit comment
+            if (AppState.User != null && PostDto != null && !string.IsNullOrEmpty(newCommentText))
+            {
+                PostCommentDto postComment = new(PostDto.Id, AppState.User, newCommentText);
+                //Update this Post with this request:
+                PostDto? refreshedPost = await Services.PostDataGenericAsync<PostCommentDto, PostDto>(ApiEndPoints.AddCommentToPost, postComment);
+                if (refreshedPost != null)
+                {
+                    //If successful, add comment to PostDto. which refreshing the post should do:
+                    PostDto = refreshedPost;
+                    //Clear the text box
+                    newCommentText = null;
+                    StateHasChanged();
+                }
+                else
+                {
+                    //If not successful, show error message
+                    Services.AddSnackBarMessage("error", "Error");
+                }
+            }
         }
         private async void DeletePost()
         {
@@ -119,6 +137,14 @@ namespace PluginDemocracy.UIComponents.Components
                         AppState.DeletePost(PostDto);
                     }
                 }
+            }
+        }
+        public void RemoveComment(PostCommentDto comment)
+        {
+            if (PostDto != null)
+            {
+                PostDto.Comments.Remove(comment);
+                StateHasChanged();
             }
         }
     }
