@@ -6,7 +6,7 @@
         public User? Author { get; private set; }
         public string? Body { get; private set; }
         public DateTime PublishedDate { get; } = DateTime.UtcNow;
-        public readonly List<PostComment> Comments;
+        public List<PostComment> Comments { get; private set; }
         public DateTime? LatestActivity { get; private set; } = null;
         public List<string> Images { get; set; }
         public List<PostReaction> Reactions { get; set; }
@@ -28,6 +28,7 @@
         public void AddComment(PostComment comment)
         {
             Comments.Add(comment);
+            comment.PostId = Id;
             LatestActivity = DateTime.UtcNow;
         }
         public void React(User user, ReactionType reaction)

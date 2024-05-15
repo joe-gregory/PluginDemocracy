@@ -9,6 +9,7 @@ namespace PluginDemocracy.Models
     public class PostComment
     {
         public int Id { get; set; }
+        public int PostId { get; set; }
         public User Author { get; private set; }
         public string Comment { get; private set; }
         public DateTime PublishedDate { get; protected set; } = DateTime.UtcNow;
