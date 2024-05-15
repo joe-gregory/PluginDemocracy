@@ -26,10 +26,14 @@
         public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
+        #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
         public const string DeletePost = CommunityController + "deletepost";
         public const string ReactToPost = CommunityController + "ReactToPost";
+        public const string AddCommentToPost = CommunityController + "addcommenttopost";
+        public const string DeleteComment = CommunityController + "deletecomment";
+        #endregion
         #endregion
         #region Admin
         public const string AdminController = Base + "admin/";
