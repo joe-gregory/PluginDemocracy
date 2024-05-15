@@ -167,6 +167,28 @@ namespace PluginDemocracy.UIComponents
                 return default;
             }
         }
+        public async Task<PDAPIResponse> DeleteDataAsync<TInput>(string endpoint, TInput data)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + endpoint;
+            //Add JWT to request if available
+            using HttpRequestMessage request = new(HttpMethod.Delete, url);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            //Add request content if the data is not null
+            try
+            {
+                if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+                else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                return await CommunicationCommon(response);
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                return new();
+            }
+        }
         public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
         {
             _appState.IsLoading = true;
@@ -214,6 +236,16 @@ namespace PluginDemocracy.UIComponents
                 return new();
             }
         }
+        /// <summary>
+        /// Method for uploading posts with images.
+        /// TODO: might delete this method and change to use a generic version in the razor component to keep the code cleaner 
+        /// and just have a method per http verb and perhaps another generic version as well. 
+        /// </summary>
+        /// <param name="apiEndpoint"></param>
+        /// <param name="postBody"></param>
+        /// <param name="fileDataDictionary"></param>
+        /// <param name="communityId"></param>
+        /// <returns></returns>
         public async Task<bool> UploadPostAsync(string apiEndpoint, string postBody, Dictionary<string, FileData> fileDataDictionary, int communityId)
         {
             _appState.IsLoading = true;
@@ -262,6 +294,12 @@ namespace PluginDemocracy.UIComponents
                 return false;
             }
         }
+        /// <summary>
+        /// Method for deleting posts. 
+        /// TODO: Might replace for generic DeleteDataAsync
+        /// </summary>
+        /// <param name="postId">The Id of the post to delete</param>
+        /// <returns>bool indicating if the operation was successful</returns>
         public async Task<bool> DeletePostAsync(int postId)
         {
             HttpClient httpClient = CreateHttpClient();
