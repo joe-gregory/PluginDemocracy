@@ -22,5 +22,8 @@
 
         //Admin pages
         public const string AppAdmin = "/appadmin";
+
+        //About pages
+        public const string AboutUser = "/aboutuser";
     }
 }
