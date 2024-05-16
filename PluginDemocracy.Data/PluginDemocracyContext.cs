@@ -113,6 +113,16 @@ namespace PluginDemocracy.Data
                .HasValue<HomeOwnersNonFractionalVotingStrategy>("HomeOwnersNonFractionalVotingStrategy")
                .HasValue<UsersVotingStrategy>("UsersVotingStrategy");
 
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Comments)
+                    .WithOne()
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Reactions)
+                    .WithOne()
+                    .OnDelete(DeleteBehavior.Cascade);
+
             // Specify precision for decimal properties
             modelBuilder.Entity<Project>()
                 .Property(p => p.FundingGoal)
