@@ -1,0 +1,24 @@
+﻿<MudPaper Elevation="25" Class="mt-5 mb-5 pa-4">
+    <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+        <MudAvatar Style="height:200px;width:200px;">
+            @if (User != null)
+            {
+                if (!string.IsNullOrEmpty(User.ProfilePicture))
+                {
+                    <MudImage Src=@User.ProfilePicture />
+                }
+                else
+                {
+                    @User.Initials
+                }
+            }
+        </MudAvatar>
+    </div>
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-5 mb-5">@User?.FullName</MudText>
+    <MudText Typo="Typo.h4" Class="mt-5 mb-5" Color="Color.Primary">@AppState.Translate(ResourceKeys.Communities):</MudText>
+    @foreach (CommunityDto community in User?.Citizenships ?? [])
+    {
+        <MudText Class="mt-5 mb-5">@community.FullName</MudText>
+    }
+
+</MudPaper>
