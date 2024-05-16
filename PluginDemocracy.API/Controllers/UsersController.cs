@@ -115,6 +115,20 @@ namespace PluginDemocracy.API.Controllers
                 return Ok(apiResponse);
             }
         }
+        [HttpGet(ApiEndPoints.AboutUser)]
+        public async Task<ActionResult<UserDto>> AboutUser([FromQuery] int userId)
+        {
+            User? existingUser = await _context.Users
+                .Include(u => u.ResidentOfHomes)
+                    .ThenInclude(h => h.ParentCommunity)
+                .Include(u => u.NonResidentialCitizenIn)
+                .Include(u => u.HomeOwnerships)
+                    .ThenInclude(ho => ho.Home)
+                        .ThenInclude(h => h.ParentCommunity)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (existingUser == null) return NotFound();
+            return Ok(new UserDto(existingUser));
+        }
         [HttpGet("confirmemail")]
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
         {
