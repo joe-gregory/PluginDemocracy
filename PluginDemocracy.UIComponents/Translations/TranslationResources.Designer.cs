@@ -142,6 +142,15 @@ namespace PluginDemocracy.UIComponents.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Communities.
+        /// </summary>
+        internal static string Communities {
+            get {
+                return ResourceManager.GetString("Communities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Community.
         /// </summary>
         internal static string Community {

@@ -144,6 +144,9 @@
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
+  <data name="Communities" xml:space="preserve">
+    <value>Communities</value>
+  </data>
   <data name="Community" xml:space="preserve">
     <value>Community</value>
   </data>
