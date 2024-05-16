@@ -61,7 +61,7 @@ namespace PluginDemocracy.API.Controllers
             if (communityId == null) return BadRequest();
             try
             {
-                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.Home).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
+                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.User).Include(j => j.Home).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
                 List<JoinCommunityRequestDto> joinCommunityRequestDtos = [];
                 foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDto(joinCommunityRequest));
                 return Ok(joinCommunityRequestDtos);
