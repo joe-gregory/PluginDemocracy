@@ -9,7 +9,6 @@ namespace PluginDemocracy.Models
         /// Basic information about the proposal
         /// </summary>
         public int Id { get; set; }
-        public Guid Guid { get; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public User Author { get; }
@@ -31,7 +30,7 @@ namespace PluginDemocracy.Models
             get
             {
                 if (Community != null && VotingStrategy != null) return VotingStrategy.ReturnVotingWeights(Community);
-                else return new Dictionary<BaseCitizen, double>();
+                else return [];
             }
         }
         /// <summary>
@@ -69,12 +68,11 @@ namespace PluginDemocracy.Models
         }
         public Proposal(Community community, User user)
         {
-            Guid = Guid.NewGuid();
             Author = user;
             Community = community;
-            AddressesRedFlags = new();
+            AddressesRedFlags = [];
             VotingStrategy = community.VotingStrategy;
-            _votes = new();
+            _votes = [];
             Passed = null;
         }
         /// <summary>
