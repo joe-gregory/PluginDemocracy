@@ -27,6 +27,7 @@
         public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
+        public const string ProposalCreate = CommunityController + "/proposal/create";
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";

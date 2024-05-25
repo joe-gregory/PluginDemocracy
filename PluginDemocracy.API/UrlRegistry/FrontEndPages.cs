@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.API.UrlRegistry
+﻿using PluginDemocracy.API.Controllers;
+
+namespace PluginDemocracy.API.UrlRegistry
 {
     public static class FrontEndPages
     {
@@ -19,6 +21,7 @@
         public const string RegisterCommunity = "/registercommunity";
         public const string JoinCommunity = "/joincommunity";
         public const string JoinOrRegisterCommunity = "/joinorregistercommunity";
+        public const string ProposalCreate = "/proposal/create";
 
         //Admin pages
         public const string AppAdmin = "/appadmin";
