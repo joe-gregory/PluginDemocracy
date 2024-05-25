@@ -4,7 +4,7 @@ using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using PluginDemocracy.DTOs.CommunitiesDto;
 using PluginDemocracy.Models;
-using PluginDemocracy.UIComponents.Translations;
+using PluginDemocracy.Translations; //I'd think this is not needed since it is in _Imports.razor but it is complaining. 
 
 namespace PluginDemocracy.UIComponents.Components
 {
