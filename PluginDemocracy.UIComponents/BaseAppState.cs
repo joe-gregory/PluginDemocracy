@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using PluginDemocracy.DTOs;
 using Microsoft.Extensions.Configuration;
+using PluginDemocracy.Translations;
 
 namespace PluginDemocracy.UIComponents
 {

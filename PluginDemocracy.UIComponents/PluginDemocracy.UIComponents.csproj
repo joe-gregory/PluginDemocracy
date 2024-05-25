@@ -37,6 +37,7 @@
     <ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
     <ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
     <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
+    <ProjectReference Include="..\PluginDemocracy.Translations\PluginDemocracy.Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,21 +46,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Translations\TranslationResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>TranslationResources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Translations\TranslationResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TranslationResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
