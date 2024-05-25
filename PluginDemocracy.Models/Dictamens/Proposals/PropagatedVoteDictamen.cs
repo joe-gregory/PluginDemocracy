@@ -5,8 +5,10 @@
     /// </summary>
     public class PropagatedVoteDictamen : BaseDictamen
     {
+        public override string? Title { get => string.Empty; set { } }
+        public override string? Description { get => string.Empty; set { } }
         public Proposal? ParentProposal { get; set; }
-        protected PropagatedVoteDictamen() 
+                protected PropagatedVoteDictamen() 
         {
         }
         /// <summary>

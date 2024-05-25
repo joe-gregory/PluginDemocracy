@@ -5,8 +5,14 @@ namespace PluginDemocracy.Models
     public abstract class BaseDictamen
     {
         public int Id { get; set; }
-        virtual public string? Title { get; set; }
-        virtual public string? Description { get; set; }
+        /// <summary>
+        /// This is the key used in PluginDemocracy.Translations on the frontend and not the actual Title of the Dictamen.
+        /// </summary>
+        abstract public string? Title { get; set; }
+        /// <summary>
+        /// This is the key used in PluginDemocracy.Translations on the frontend and not the actual Description of the Dictamen.
+        /// </summary>
+        abstract public string? Description { get; set; }
         public Community? Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }

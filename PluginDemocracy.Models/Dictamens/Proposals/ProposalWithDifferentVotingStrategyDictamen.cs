@@ -4,9 +4,9 @@ namespace PluginDemocracy.Models
     public class ProposalWithDifferentVotingStrategyDictamen : BaseDictamen
     {
         [NotMapped]
-        public override string Title => ProposalWithDifferentVotingStrategyDictamenResources.Title;
+        public override string? Title { get => ProposalWithDifferentVotingStrategyDictamenResources.Title; set { } }
         [NotMapped]
-        public override string Description => ProposalWithDifferentVotingStrategyDictamenResources.Description;
+        public override string? Description { get => ProposalWithDifferentVotingStrategyDictamenResources.Description; set { } }
         public Proposal? ProposalToCreate { get; set; }
         public override void Execute()
         {
