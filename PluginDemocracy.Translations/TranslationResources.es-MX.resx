@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutCommunity" xml:space="preserve">
+    <value>Informacion de Comunidad</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Cuenta</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Contabilidad</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="AddHomesAutomaticallyDescription" xml:space="preserve">
+    <value>En esta sección, puedes agregar múltiples viviendas rápidamente para evitar tener que añadir una por una. Si es necesario, puedes agregar varias viviendas y luego editar la información individual de cada una de ellas a continuación.</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
+    <value>Seleccione si se une como propietario o como residente. Si se une como propietario, deberá especificar su porcentaje de propiedad. Si ya hay propietarios registrados, el valor total de la propiedad sobre la casa no puede exceder el 100%. En las comunidades donde el poder de voto pertenece a los propietarios, su porcentaje de propiedad correspondera a su porcentage del voto de su casa en propuestas. </value>
+  </data>
+  <data name="AvailableOwnership" xml:space="preserve">
+    <value>Propiedad disponible</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar contraseña</value>
+  </data>
+  <data name="Communities" xml:space="preserve">
+    <value>Comunidades</value>
+  </data>
+  <data name="Community" xml:space="preserve">
+    <value>Comunidad</value>
+  </data>
+  <data name="Constution" xml:space="preserve">
+    <value>Constitución</value>
+  </data>
+  <data name="CountryCode" xml:space="preserve">
+    <value>Código de país</value>
+  </data>
+  <data name="CreateArticleDictamenDescription" xml:space="preserve">
+    <value>Este tipo de Dictamen crea un nuevo artículo o ley para esta comunidad. El artículo o ley especifica el comportamiento que los ciudadanos deben cumplir. Define las expectativas y normas que rigen las interacciones comunitarias y asegura que todos los miembros comprendan sus responsabilidades.</value>
+  </data>
+  <data name="CreateArticleDictamenTitle" xml:space="preserve">
+    <value>Crear un Nuevo Artículo para la Constitución</value>
+  </data>
+  <data name="CreateProposal" xml:space="preserve">
+    <value>Crear Propuesta</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Fecha de nacimiento</value>
+  </data>
+  <data name="DeletePost" xml:space="preserve">
+    <value>Eliminar Post</value>
+  </data>
+  <data name="DeletePostCannotBeUndone" xml:space="preserve">
+    <value>Una vez eliminado, no se puede deshacer.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Ingles</value>
+  </data>
+  <data name="ErrorMessageJoinHomeWrongPercentage" xml:space="preserve">
+    <value>El porcentaje de propiedad debe estar entre 1 y 100 y no puede ser mayor que lo que está disponible.</value>
+  </data>
+  <data name="Feed" xml:space="preserve">
+    <value>Muro</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="ForgotPassword?" xml:space="preserve">
+    <value>Olvido su contraseña?</value>
+  </data>
+  <data name="Generate" xml:space="preserve">
+    <value>Generar</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historia</value>
+  </data>
+  <data name="HomeOwner" xml:space="preserve">
+    <value>Propietario</value>
+  </data>
+  <data name="HomeOwners" xml:space="preserve">
+    <value>Propietarios</value>
+  </data>
+  <data name="Homes" xml:space="preserve">
+    <value>Hogares</value>
+  </data>
+  <data name="HomesEndingNumber" xml:space="preserve">
+    <value>Número de dirección con el que terminan los hogares</value>
+  </data>
+  <data name="HomesStartingNumber" xml:space="preserve">
+    <value>Número de dirección con el que comienzan los hogares</value>
+  </data>
+  <data name="InternalAddress" xml:space="preserve">
+    <value>Dirección interior</value>
+  </data>
+  <data name="Invalid" xml:space="preserve">
+    <value>No válido</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Unirse</value>
+  </data>
+  <data name="JoinAHome" xml:space="preserve">
+    <value>Únete a un Hogar</value>
+  </data>
+  <data name="JoinAnExistingCommunity" xml:space="preserve">
+    <value>Unirse a una comunidad registrada</value>
+  </data>
+  <data name="JoinCommunity" xml:space="preserve">
+    <value>Unete a una comunidad</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Lenguaje</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Inicia sesión</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>Segundo nombre</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NewPasswordTitle" xml:space="preserve">
+    <value>Inserte Nueva Contraseña</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Numero</value>
+  </data>
+  <data name="OfficialCurrency" xml:space="preserve">
+    <value>Moneda oficial</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Las contraseñas no coinciden</value>
+  </data>
+  <data name="Percentage" xml:space="preserve">
+    <value>Porcentage</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Número de teléfono</value>
+  </data>
+  <data name="PleaseConfirmEmailForFullFunctionality" xml:space="preserve">
+    <value>Favor de verificar su correo electronico para poder tener acceso a toda la aplicacion.</value>
+  </data>
+  <data name="PleaseSelectAFile" xml:space="preserve">
+    <value>Por favor seleccione un archivo</value>
+  </data>
+  <data name="PluginDemocracy" xml:space="preserve">
+    <value>Democracia Conectada</value>
+  </data>
+  <data name="PrimaryLanguageAndCulture" xml:space="preserve">
+    <value>Lenguaje y cultura principal</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Proyectos</value>
+  </data>
+  <data name="Proposals" xml:space="preserve">
+    <value>Propuestas</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>Leído</value>
+  </data>
+  <data name="RedFlags" xml:space="preserve">
+    <value>Banderas Rojas</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
+  <data name="RegisterANewCommunity" xml:space="preserve">
+    <value>Registrar una comunidad nueva</value>
+  </data>
+  <data name="RegisterCommunity" xml:space="preserve">
+    <value>Registra una comunidad</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Requerido</value>
+  </data>
+  <data name="Resident" xml:space="preserve">
+    <value>Residente</value>
+  </data>
+  <data name="Residents" xml:space="preserve">
+    <value>Residentes</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="SecondLastName" xml:space="preserve">
+    <value>Segundo apellido</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Seleccionar</value>
+  </data>
+  <data name="SelectAllOfficialLanguages" xml:space="preserve">
+    <value>Seleccione todos los idiomas oficiales</value>
+  </data>
+  <data name="SelectCommunityFromDropDown" xml:space="preserve">
+    <value>Por favor selecciona una Comunidad del menu</value>
+  </data>
+  <data name="SelectCulture" xml:space="preserve">
+    <value>Seleccionar cultura</value>
+  </data>
+  <data name="SelectHomeDescriptionInJoinCommunity" xml:space="preserve">
+    <value>Esta es la lista de hogares de esta comunidad. Por favor seleccione a cuál hogar pertenece, ya sea como residente o propietario. Seleccione la opción apropiada. Después de seleccionar y enviar este formulario, se enviará una solicitud. Su solicitud será aprobada dependiendo de los estatutos de su comunidad. Esto se hace para evitar que individuos afirmen ser parte de la comunidad cuando no lo son. Los miembros de la comunidad pueden cambiar el proceso de verificación de miembros de la comunidad haciendo una propuesta y aprobándola. Si su comunidad no ha votado sobre un proceso de verificación para los miembros, entonces el comportamiento predeterminado es que el administrador de la comunidad (presidente de la comunidad) realice el proceso de verificación o un administrador de la aplicación.</value>
+  </data>
+  <data name="SendPasswordResetLink" xml:space="preserve">
+    <value>Enviar Link Para Nueva Contraseña</value>
+  </data>
+  <data name="SendRequest" xml:space="preserve">
+    <value>Enviar Solicitud</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ajustes</value>
+  </data>
+  <data name="SignUp" xml:space="preserve">
+    <value>Registrate</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="UpdateAccountInformation" xml:space="preserve">
+    <value>Actualiza la informacion de tu cuenta</value>
+  </data>
+  <data name="UpdateProfilePicture" xml:space="preserve">
+    <value>Actualizar Foto de Perfil</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="YouHaveNoCommunities" xml:space="preserve">
+    <value>No te has unido a ninguna comunidad. Únete a una comunidad existente o registra una nueva comunidad.</value>
+  </data>
+</root>
