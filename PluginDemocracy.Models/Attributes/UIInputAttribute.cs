@@ -21,6 +21,20 @@ namespace PluginDemocracy.Models.Attributes
         /// This is the key to use in the translation resource files to obtain the description on front end.
         /// </summary>
         public string? DescriptionKey { get; } = descriptionKey;
+        /// <summary>
+        /// For type <see cref="UIInputType.Integer"/>, this is the minimum value that the input can have.
+        /// For type <see cref="UIInputType.String"/>, this is the minimum string length."/>
+        /// </summary>
+        public int? MinValue { get; }
+        /// <summary>
+        /// For type <see cref="UIInputType.Integer"/>, this is the maximum value that the input can have."/>
+        /// For type <see cref="UIInputType.String"/>, this is the maximum string length."/>
+        /// </summary>
+        public int? MaxValue { get; }
+        /// <summary>
+        /// For type <see cref="UIInputType.Date"/>, this indicates the date must be in the future.
+        /// </summary>
+        public bool MustBeFutureDate { get; }
 
     }
 }
