@@ -319,8 +319,8 @@ namespace PluginDemocracy.Models
 
             propagatedProposal.Dictamen = new PropagatedVoteDictamen(parentProposal)
             {
-                Title = $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>" + (parentProposal.Dictamen?.Title ?? "Error: missing."),
-                Description = $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>" + (parentProposal.Dictamen?.Description ?? "Error: missing."),
+                TitleKey = $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>" + (parentProposal.Dictamen?.TitleKey ?? "Error: missing."),
+                DescriptionKey = $"<br>for community/para comunidad: {parentProposal.Community.Name}.<br>" + (parentProposal.Dictamen?.DescriptionKey ?? "Error: missing."),
                 Proposal = propagatedProposal,
                 Community = propagatedCommunity,
             };
