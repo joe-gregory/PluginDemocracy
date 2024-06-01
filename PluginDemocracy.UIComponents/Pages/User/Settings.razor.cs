@@ -14,7 +14,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private string selectedFlag = string.Empty;
         private const string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
         private const string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
-        private UserDto userDto = new();
+        private UserDTO userDto = new();
         bool success = false;
         string[] errors = [];
         private bool disable = false;
@@ -69,7 +69,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             {
                 try
                 {
-                    await Services.PostDataAsync<UserDto>(ApiEndPoints.PostToggleUserCulture);
+                    await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostToggleUserCulture);
                     _checked = !_checked;
                 }
                 catch (Exception ex)
@@ -88,7 +88,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private async void PostForm()
         {
             disable = true;
-            await Services.PostDataAsync<UserDto>(ApiEndPoints.PostUpdateAccount, userDto);
+            await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostUpdateAccount, userDto);
             disable = false;
         }
         private async void UpdateProfilePicture()

@@ -3,7 +3,7 @@
     public class PDAPIResponse
     {
         #region PROPERTIES
-        public UserDto? User { get; set; }
+        public UserDTO? User { get; set; }
         public List<Alert> Alerts { get; set; }
         public bool SuccessfulOperation { get; set; } = false;
         public DateTime LastRefreshed { get; set; } 
@@ -11,8 +11,8 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
-        public List<CommunityDto> AllCommunities { get; set; } = [];
-        public CommunityDto? Community { get; set; }
+        public List<CommunityDTO> AllCommunities { get; set; } = [];
+        public CommunityDTO? Community { get; set; }
         public List<PostDto> Posts { get; set; } = [];
         #endregion
         #region METHODS

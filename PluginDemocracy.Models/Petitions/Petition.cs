@@ -81,18 +81,6 @@ namespace PluginDemocracy.Models
                 return _published ? _authors.AsReadOnly() : _authors;
             }
         }
-        protected List<string> _linksToSupportingDocuments = [];
-        /// <summary>
-        /// This documents will be stored in blob storage and the link to those documents will be stored here. 
-        /// </summary>
-        [NotMapped]
-        public IEnumerable<string> LinksToSupportingDocuments 
-        {
-            get
-            {
-                return _published ? _linksToSupportingDocuments.AsReadOnly() : _linksToSupportingDocuments;
-            } 
-        }
         /// <summary>
         /// A clear statement of what the petitioners want to happen as a result of the petition.
         /// </summary>
@@ -134,6 +122,18 @@ namespace PluginDemocracy.Models
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change deadline for response of a published petition.");
                 _deadlineForResponse = value;
+            }
+        }
+        protected List<string> _linksToSupportingDocuments = [];
+        /// <summary>
+        /// This documents will be stored in blob storage and the link to those documents will be stored here. 
+        /// </summary>
+        [NotMapped]
+        public IEnumerable<string> LinksToSupportingDocuments
+        {
+            get
+            {
+                return _published ? _linksToSupportingDocuments.AsReadOnly() : _linksToSupportingDocuments;
             }
         }
         /// <summary>

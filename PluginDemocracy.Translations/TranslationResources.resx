@@ -192,6 +192,12 @@
   <data name="CreateArticleDictamenTitle" xml:space="preserve">
     <value>Create a New Article for Constitution</value>
   </data>
+  <data name="CreatePetition" xml:space="preserve">
+    <value>Create a Petition</value>
+  </data>
+  <data name="CreatePetitionDescription" xml:space="preserve">
+    <value>A petition is a tool that allows homeowners like you to initiate changes or actions within our community. Whether you want to propose a new rule, request the addition of community amenities, use community funds for a particular project, or call for the removal of a board member, a petition is the process by which you can achieve this. You first create a petition by filling out all the required fields. You can add other authors so they can also edit the petition. Once you are satisfied with the petition, you can publish it. When the petition is published, it becomes publicly available and other neighbors can e-sign the petition. However, don't forget to share it as much as possible. It will also show up on your community's feed. Once you've gathered enough signatures for your petition, you can send it to the board members of your community. If the board members use the platform, the petition will be automatically sent to them with all the signatures. A petition passes if it has the majority of homeowners' signatures according to the HOA’s bylaws.</value>
+  </data>
   <data name="CreateProposal" xml:space="preserve">
     <value>Create Proposal</value>
   </data>

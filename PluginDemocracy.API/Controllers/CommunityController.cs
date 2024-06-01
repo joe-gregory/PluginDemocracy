@@ -21,7 +21,7 @@ namespace PluginDemocracy.API.Controllers
         private readonly IConfiguration _configuration = configuration;
 
         [HttpPost("registercommunity")]
-        public async Task<ActionResult<PDAPIResponse>> Register(CommunityDto communityDto)
+        public async Task<ActionResult<PDAPIResponse>> Register(CommunityDTO communityDto)
         {
             PDAPIResponse response = new();
             if (string.IsNullOrEmpty(communityDto.Name))
@@ -87,7 +87,7 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 List<Community> communities = await _context.Communities.ToListAsync();
-                foreach (Community community in communities) response.AllCommunities.Add(new CommunityDto()
+                foreach (Community community in communities) response.AllCommunities.Add(new CommunityDTO()
                 {
                     Id = community.Id,
                     Name = community.Name,
@@ -119,7 +119,7 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "Community not found");
                     return BadRequest(response);
                 }
-                response.Community = CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community);
+                response.Community = CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community);
                 foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDto.ReturnHomeDtoFromHome(home));
                 return Ok(response);
             }

@@ -85,5 +85,10 @@ namespace PluginDemocracy.Translations
 
         public const string ArticleExpirationDateUIInputLabel = "ArticleExpirationDateUIInputLabel";
         public const string ArticleExpirationDateUIInputDescription = "ArticleExpirationDateUIInputDescription";
+
+        #region Petition
+        public const string CreatePetition = "CreatePetition";
+        public const string CreatePetitionDescription = "CreatePetitionDescription";
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ namespace PluginDemocracy.DTOs
     public class PostDto
     {
         public int Id { get; set; }
-        public UserDto? Author { get; set; }
+        public UserDTO? Author { get; set; }
         public string? Body { get; set; }
         public DateTime PublishedDate { get; set; }
         public List<PostCommentDto> Comments { get; set; } = [];

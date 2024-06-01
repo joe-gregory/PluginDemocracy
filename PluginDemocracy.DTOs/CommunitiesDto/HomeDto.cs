@@ -7,7 +7,7 @@ namespace PluginDemocracy.DTOs
     public class HomeDto : BaseCitizenDto
     {
         #region PROPERTIES
-        public CommunityDto? ParentCommunity { get; set; }
+        public CommunityDTO? ParentCommunity { get; set; }
         public HashSet<HomeOwnershipDto> Ownerships { get; set; } = [];
         [JsonIgnore]
         public override string? FullName
@@ -20,7 +20,7 @@ namespace PluginDemocracy.DTOs
             }
         }
         [JsonIgnore]
-        public override List<CommunityDto> Citizenships
+        public override List<CommunityDTO> Citizenships
         {
             get
             {
@@ -48,7 +48,7 @@ namespace PluginDemocracy.DTOs
                 return 100 - Owners.Values.Sum();
             } 
         }
-        public List<UserDto> Residents { get; set; } = [];
+        public List<UserDTO> Residents { get; set; } = [];
         /// <summary>
         /// You are a Citizen of this home if you are either an owner or a resident of Home. home.AddOwner, AddResident, etc need to happen in the GatedCommunity so that
         /// Citizen.Citizenships can be updated for both the GatedCommunity and the Home. The Home doesn't have access to its parent GatedCommunity, so it must be done in the
@@ -83,7 +83,7 @@ namespace PluginDemocracy.DTOs
         {
             return Id.GetHashCode();
         }
-        public JoinCommunityRequestDto JoinHome(UserDto user, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public JoinCommunityRequestDto JoinHome(UserDTO user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             if (joiningAsOwner)
             {
@@ -116,14 +116,14 @@ namespace PluginDemocracy.DTOs
                 Id = home.Id,
                 Address = home.Address,
                 ProfilePicture = home.ProfilePicture,
-                NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDto.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
+                NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
                 HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
                 //HomeDto Properties
-                ParentCommunity = home.ParentCommunity != null ? CommunityDto.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
+                ParentCommunity = home.ParentCommunity != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
                 Number = home.Number,
                 InternalAddress = home.InternalAddress,
-                Residents = home.Residents.Select(r => UserDto.ReturnSimpleUserDtoFromUser(r)).ToList(),
+                Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDtoFromUser(r)).ToList(),
             };
             return newHomeDto;
         }

@@ -22,7 +22,7 @@ namespace PluginDemocracy.API.Controllers
         private readonly APIUtilityClass _utilityClass = utilityClass;
         #region PUBLIC ENDPOINTS
         [HttpPost("signup")]
-        public async Task<ActionResult<PDAPIResponse>> SignUp(UserDto registeringUser)
+        public async Task<ActionResult<PDAPIResponse>> SignUp(UserDTO registeringUser)
         {
             //Create response object
             PDAPIResponse apiResponse = new();
@@ -31,7 +31,7 @@ namespace PluginDemocracy.API.Controllers
             if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
 
             //Create new User object
-            User newUser = UserDto.ReturnUserFromUserDto(registeringUser);
+            User newUser = UserDTO.ReturnUserFromUserDto(registeringUser);
 
             //hash password && assign
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
@@ -116,7 +116,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         [HttpGet(ApiEndPoints.AboutUser)]
-        public async Task<ActionResult<UserDto>> AboutUser([FromQuery] int userId)
+        public async Task<ActionResult<UserDTO>> AboutUser([FromQuery] int userId)
         {
             User? existingUser = await _context.Users
                 .Include(u => u.ResidentOfHomes)
@@ -127,7 +127,7 @@ namespace PluginDemocracy.API.Controllers
                         .ThenInclude(h => h.ParentCommunity)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (existingUser == null) return NotFound();
-            return Ok(new UserDto(existingUser));
+            return Ok(new UserDTO(existingUser));
         }
         [HttpGet("confirmemail")]
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
@@ -353,7 +353,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost("updateaccount")]
-        public async Task<ActionResult<PDAPIResponse>> UpdateAccount(UserDto userDto)
+        public async Task<ActionResult<PDAPIResponse>> UpdateAccount(UserDTO userDto)
         {
             //Create response object
             PDAPIResponse response = new();

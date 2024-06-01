@@ -192,6 +192,12 @@
   <data name="CreateArticleDictamenTitle" xml:space="preserve">
     <value>Crear un Nuevo Artículo para la Constitución</value>
   </data>
+  <data name="CreatePetition" xml:space="preserve">
+    <value>Crear una Petición</value>
+  </data>
+  <data name="CreatePetitionDescription" xml:space="preserve">
+    <value>Una petición es una herramienta que permite a los propietarios como tú iniciar cambios o acciones dentro de nuestra comunidad. Ya sea que desees proponer una nueva regla, solicitar la adición de comodidades comunitarias, usar fondos comunitarios para un proyecto en particular o pedir la destitución de un miembro de la junta, una petición es el proceso mediante el cual puedes lograr esto. Primero, creas una petición llenando todos los campos requeridos. Puedes agregar otros autores para que también puedan editar la petición. Una vez que estés satisfecho con la petición, puedes publicarla. Cuando la petición se publica, se hace disponible públicamente y otros vecinos pueden firmarla electrónicamente. Sin embargo, no olvides compartirla tanto como sea posible. También aparecerá en el feed de tu comunidad. Una vez que hayas reunido suficientes firmas para tu petición, puedes enviarla a los miembros de la junta de tu comunidad. Si los miembros de la junta utilizan la plataforma, la petición se les enviará automáticamente con todas las firmas. Una petición se aprueba si tiene la mayoría de las firmas de los propietarios según los estatutos de la HOA.</value>
+  </data>
   <data name="CreateProposal" xml:space="preserve">
     <value>Crear Propuesta</value>
   </data>

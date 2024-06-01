@@ -21,7 +21,7 @@
     </MudPaper>
 </MudForm>
     @code {
-    private UserDto userDto = new UserDto()
+    private UserDTO userDto = new UserDTO()
         {
             Culture = new System.Globalization.CultureInfo("en-US"),
         };
@@ -123,6 +123,6 @@
     {
         disableButton = true;
         if (!string.IsNullOrEmpty(phoneNumber)) userDto.PhoneNumber = countryCode + phoneNumber;
-        await Services.PostDataAsync<UserDto>(ApiEndPoints.PostSignUp, userDto);
+        await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostSignUp, userDto);
     }
 }

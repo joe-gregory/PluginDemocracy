@@ -13,12 +13,12 @@ namespace PluginDemocracy.DTOs.CommunitiesDto
         public int PostId { get; set; } 
         [JsonPropertyName("user")]
 
-        public UserDto User { get; private set; } 
+        public UserDTO User { get; private set; } 
         [JsonPropertyName("reactionType")]
 
         public ReactionType ReactionType { get; set; } 
         [JsonConstructor]
-        public PostReactionDto(int postId, UserDto user, ReactionType reactionType)
+        public PostReactionDto(int postId, UserDTO user, ReactionType reactionType)
         {
             PostId = postId;
             User = user;

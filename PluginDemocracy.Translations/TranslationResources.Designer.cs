@@ -286,6 +286,24 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a Petition.
+        /// </summary>
+        internal static string CreatePetition {
+            get {
+                return ResourceManager.GetString("CreatePetition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A petition is a tool that allows homeowners like you to initiate changes or actions within our community. Whether you want to propose a new rule, request the addition of community amenities, use community funds for a particular project, or call for the removal of a board member, a petition is the process by which you can achieve this. You first create a petition by filling out all the required fields. You can add other authors so they can also edit the petition. Once you are satisfied with the petition, you [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CreatePetitionDescription {
+            get {
+                return ResourceManager.GetString("CreatePetitionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Proposal.
         /// </summary>
         internal static string CreateProposal {

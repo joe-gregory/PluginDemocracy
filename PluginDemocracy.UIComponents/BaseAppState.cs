@@ -34,7 +34,7 @@ namespace PluginDemocracy.UIComponents
         public event Action? OnChange;
         public event Func<Task>? OnPostCreatedAsync;
         public abstract bool HasInternet { get; protected set; }
-        public UserDto? User { get; protected set; }
+        public UserDTO? User { get; protected set; }
         protected int? _selectedCommunityInFeed;
         public int? SelectedCommunityInFeed {
             get
@@ -72,7 +72,7 @@ namespace PluginDemocracy.UIComponents
         public void NotifyPostCreation() => OnPostCreatedAsync?.Invoke();
         #endregion
         #region PUBLIC METHODS
-        public void LogIn(UserDto user)
+        public void LogIn(UserDTO user)
         {
             User = user;
             SetCulture(user.Culture);

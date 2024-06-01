@@ -1,0 +1,8 @@
+﻿@inject Services Services
+@inject BaseAppState AppState
+
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.CreatePetition)</MudText>
+
+<MudText>@AppState.Translate(ResourceKeys.CreatePetitionDescription)</MudText>
+
+<MudTextField @bind-Value="_petition.Title" Label="@AppState.Translate()" Variant="Variant.Outlined" Class="mt-5" />

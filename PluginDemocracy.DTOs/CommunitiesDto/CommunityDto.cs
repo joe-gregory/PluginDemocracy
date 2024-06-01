@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class CommunityDto : BaseCitizenDto
+    public class CommunityDTO : BaseCitizenDto
     {
         #region PROPERTIES
         public string? Name { get; set; }
@@ -26,11 +26,11 @@ namespace PluginDemocracy.DTOs
         }
         public string? Description { get; set; } = string.Empty;
         [JsonIgnore]
-        public override List<CommunityDto> Citizenships
+        public override List<CommunityDTO> Citizenships
         {
             get
             {
-                List<CommunityDto> citizenships = [.. NonResidentialCitizenIn];
+                List<CommunityDTO> citizenships = [.. NonResidentialCitizenIn];
                 return citizenships.Distinct().ToList();
             }
         }
@@ -40,8 +40,8 @@ namespace PluginDemocracy.DTOs
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
         public bool CanHaveNonResidentialCitizens { get; set; }
-        public readonly List<CommunityDto> _communityNonResidentialCitizens = [];
-        public readonly List<UserDto> _userNonResidentialCitizens = [];
+        public readonly List<CommunityDTO> _communityNonResidentialCitizens = [];
+        public readonly List<UserDTO> _userNonResidentialCitizens = [];
         /// <summary>
         /// Citizens that don't live in a home
         /// </summary>
@@ -54,7 +54,7 @@ namespace PluginDemocracy.DTOs
             get
             {
                 List<BaseCitizenDto> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? [];
-                List<UserDto> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
+                List<UserDTO> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
         }
@@ -89,7 +89,7 @@ namespace PluginDemocracy.DTOs
         public IReadOnlyList<Post>? Posts { get; set; }
         #endregion
         #region METHODS
-        public CommunityDto()
+        public CommunityDTO()
         {
             Homes = [];
             Dictamens = [];
@@ -98,7 +98,7 @@ namespace PluginDemocracy.DTOs
             RedFlags = [];
             Posts = [];
         }
-        public CommunityDto(Community community)
+        public CommunityDTO(Community community)
         {
             //BaseCitizenDto Properties
             Id = community.Id;
@@ -115,7 +115,7 @@ namespace PluginDemocracy.DTOs
             foreach(Home home in community.Homes) Homes?.Add(HomeDto.ReturnHomeDtoFromHome(home));
             CanHaveNonResidentialCitizens = community.CanHaveNonResidentialCitizens;
             foreach (Community communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
-            foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDto.ReturnSimpleUserDtoFromUser(userNonResidentialCitizen));
+            foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDTO.ReturnSimpleUserDtoFromUser(userNonResidentialCitizen));
             ProposalsExpirationDays = community.ProposalsExpirationDays;
             VotingStrategy = community.VotingStrategy;
             TotalVotes = community.TotalVotes;
@@ -150,9 +150,9 @@ namespace PluginDemocracy.DTOs
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        public static CommunityDto ReturnSimpleCommunityDtoFromCommunity(Community community)
+        public static CommunityDTO ReturnSimpleCommunityDtoFromCommunity(Community community)
         {
-            return new CommunityDto()
+            return new CommunityDTO()
             {
                 Id = community.Id,
                 Name = community.Name,

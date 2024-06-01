@@ -6,8 +6,8 @@
 
 <MudText Typo="Typo.h5">Select Community</MudText>
 
-<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDto>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
-    @foreach (CommunityDto communityDtoOption in CommunitiesDto ?? new())
+<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
+    @foreach (CommunityDTO communityDtoOption in CommunitiesDto ?? new())
     {
         <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
     }
@@ -64,8 +64,8 @@
 
 @code
 {
-    private List<CommunityDto>? CommunitiesDto = [];
-    private CommunityDto? SelectedCommunity = null;
+    private List<CommunityDTO>? CommunitiesDto = [];
+    private CommunityDTO? SelectedCommunity = null;
     private List<JoinCommunityRequestDto>? PendingJoinCommunityRequests = null;
     private bool IsDialogOpen = false;
     private JoinCommunityRequestDto? SelectedJoinRequest = null;
@@ -77,9 +77,9 @@
         bool isUserAdmin = await Services.GetDataGenericAsync<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
         if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
         //Get a list of all the communities
-        CommunitiesDto = await Services.GetDataGenericAsync<List<CommunityDto>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
+        CommunitiesDto = await Services.GetDataGenericAsync<List<CommunityDTO>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
     }
-    private async Task OnSelectCommunityDtoChanged(CommunityDto newValue)
+    private async Task OnSelectCommunityDtoChanged(CommunityDTO newValue)
     {
         SelectedCommunity = newValue;
         //Now load the requests for the selected community

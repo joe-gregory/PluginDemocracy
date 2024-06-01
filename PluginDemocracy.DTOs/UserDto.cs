@@ -5,7 +5,7 @@ using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
-    public class UserDto : BaseCitizenDto
+    public class UserDTO : BaseCitizenDto
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;
@@ -70,11 +70,11 @@ namespace PluginDemocracy.DTOs
         /// <summary>
         /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
         /// </summary>
-        public override List<CommunityDto> Citizenships
+        public override List<CommunityDTO> Citizenships
         {
             get
             {
-                List<CommunityDto> citizenships = [];
+                List<CommunityDTO> citizenships = [];
                 foreach (HomeOwnershipDto homeOwnershipDto in HomeOwnershipsDto) citizenships.AddRange(homeOwnershipDto.Home?.Citizenships ?? []);
                 citizenships.AddRange(NonResidentialCitizenIn);
                 citizenships.AddRange(ResidentOfHomes.SelectMany(home => home.Citizenships));
@@ -86,8 +86,8 @@ namespace PluginDemocracy.DTOs
         /// </summary>
         public List<HomeDto> ResidentOfHomes { get; set; } = [];
         #endregion
-        public UserDto() { }
-        public UserDto(User user)
+        public UserDTO() { }
+        public UserDTO(User user)
         {
             Id = user.Id;
             ProfilePicture = user.ProfilePicture;
@@ -104,15 +104,15 @@ namespace PluginDemocracy.DTOs
             Culture = user.Culture;
             Admin = user.Admin;
             foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDto(notification));
-            foreach (Community community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach (Community community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
 
             foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
             foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
         }
         [Obsolete("This method can lead to infinite recursions like when loggin in")]
-        public static UserDto ReturnUserDtoFromUser(User user)
+        public static UserDTO ReturnUserDtoFromUser(User user)
         {
-            UserDto userDto = new()
+            UserDTO userDto = new()
             {
                 Id = user.Id,
                 ProfilePicture = user.ProfilePicture,
@@ -134,13 +134,13 @@ namespace PluginDemocracy.DTOs
             };
             foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDto(notification));
             foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
-            foreach(Community community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDto.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach(Community community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
             return userDto;
         }
-        public static UserDto ReturnSimpleUserDtoFromUser(User user)
+        public static UserDTO ReturnSimpleUserDtoFromUser(User user)
         {
-            UserDto userDto = new()
+            UserDTO userDto = new()
             {
                 Id = user.Id,
                 ProfilePicture = user.ProfilePicture,
@@ -159,7 +159,7 @@ namespace PluginDemocracy.DTOs
             };
             return userDto;
         }
-        public static User ReturnUserFromUserDto(UserDto userDto)
+        public static User ReturnUserFromUserDto(UserDTO userDto)
         {
             User user = new(
                 firstName: userDto.FirstName,
@@ -182,7 +182,7 @@ namespace PluginDemocracy.DTOs
         /// <returns></returns>
         public override bool Equals(object? obj)
         {
-            if (obj is UserDto userDto) return Id == userDto.Id;
+            if (obj is UserDTO userDto) return Id == userDto.Id;
             else return false;
         }
         public override int GetHashCode()

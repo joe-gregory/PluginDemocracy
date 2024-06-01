@@ -12,13 +12,13 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private BaseAppState AppState { get; set; } = default!;
         [SupplyParameterFromQuery(Name = "userId")]
         public int? UserId { get; set; }
-        UserDto? User { get; set; }
+        UserDTO? User { get; set; }
         protected override async Task OnInitializedAsync()
         {
             base.OnInitialized();
             //Make get request for user base of user id
             string url = ApiEndPoints.AboutUser + "?userId=" + UserId;
-            if (UserId.HasValue) User = await Services.GetDataGenericAsync<UserDto>(url);
+            if (UserId.HasValue) User = await Services.GetDataGenericAsync<UserDTO>(url);
 
         }
     }

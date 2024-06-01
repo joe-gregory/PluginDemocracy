@@ -38,7 +38,7 @@
     </MudPaper>
 </MudForm>
     @code {
-    private CommunityDto communityDto = new CommunityDto()
+    private CommunityDTO communityDto = new CommunityDTO()
         {
             CanHaveHomes = true,
             ProposalsExpirationDays = 30,
@@ -158,7 +158,7 @@
         {
             if (officialLanguageEnglish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("en-US"));
             if (officialLanguageSpanish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("es-MX"));
-            await Services.PostDataAsync<CommunityDto>(ApiEndPoints.RegisterCommunity, communityDto);
+            await Services.PostDataAsync<CommunityDTO>(ApiEndPoints.RegisterCommunity, communityDto);
         }
         else return;
     }

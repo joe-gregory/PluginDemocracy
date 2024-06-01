@@ -6,8 +6,8 @@ namespace PluginDemocracy.UIComponents.Pages.Community
 {
     public partial class JoinCommunity
     {
-        private List<CommunityDto> communitiesDtos = [];
-        private CommunityDto? selectedCommunityDto;
+        private List<CommunityDTO> communitiesDtos = [];
+        private CommunityDTO? selectedCommunityDto;
         private List<HomeDto> homesDtosFromSelectedCommunity = [];
         private bool isJoinHomeDialogVisible = false;
         private readonly DialogOptions dialogOptions = new()
@@ -31,7 +31,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             communitiesDtos = response.AllCommunities;
         }
 
-        private async Task OnSelectCommunityDtoChanged(CommunityDto newValue)
+        private async Task OnSelectCommunityDtoChanged(CommunityDTO newValue)
         {
             selectedCommunityDto = newValue;
             //Now load the homes for the selected community
