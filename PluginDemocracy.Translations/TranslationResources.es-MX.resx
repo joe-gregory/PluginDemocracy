@@ -138,6 +138,36 @@
   <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
     <value>Seleccione si se une como propietario o como residente. Si se une como propietario, deberá especificar su porcentaje de propiedad. Si ya hay propietarios registrados, el valor total de la propiedad sobre la casa no puede exceder el 100%. En las comunidades donde el poder de voto pertenece a los propietarios, su porcentaje de propiedad correspondera a su porcentage del voto de su casa en propuestas. </value>
   </data>
+  <data name="ArticleBodyUIInputDescription" xml:space="preserve">
+    <value>Este es el cuerpo del artículo. Este es el artículo/ley en sí.</value>
+  </data>
+  <data name="ArticleBodyUIInputLabel" xml:space="preserve">
+    <value>Cuerpo del artículo. </value>
+  </data>
+  <data name="ArticleExpirationDateUIInputDescription" xml:space="preserve">
+    <value>Si esto se establece, el artículo vencerá en la fecha dada y será eliminado de la constitución.</value>
+  </data>
+  <data name="ArticleExpirationDateUIInputLabel" xml:space="preserve">
+    <value>Fecha de vencimiento del artículo</value>
+  </data>
+  <data name="ArticleNumberDescription" xml:space="preserve">
+    <value>Esto es para seleccionar el número que tomará el artículo en la constitución. Si no se selecciona ningún número, el artículo se agrega como el número más reciente en la constitución. Si se selecciona un número y la propuesta pasa, el artículo tendrá este número y los artículos anteriores con este número o mayor se moverán un número hacia arriba.</value>
+  </data>
+  <data name="ArticleNumberLabel" xml:space="preserve">
+    <value>Número de Artículo</value>
+  </data>
+  <data name="ArticleTitleUIInputDescription" xml:space="preserve">
+    <value>Este es el título del artículo tal como aparecerá en la constitución de esta comunidad.</value>
+  </data>
+  <data name="ArticleTitleUIInputLabel" xml:space="preserve">
+    <value>Título del Artículo</value>
+  </data>
+  <data name="ArticleUIContainerDescription" xml:space="preserve">
+    <value>Esta es un artículo que se almacena en la constitución. Refleja las reglas y regulaciones que la comunidad sigue. Son determinadas por voto popular en la comunidad. Si se elige un número para el artículo, será colocado con ese número en la constitución y todos los demás artículos se desplazarán un número hacia arriba.</value>
+  </data>
+  <data name="ArticleUIContainerTitle" xml:space="preserve">
+    <value>Artículo de Constitución</value>
+  </data>
   <data name="AvailableOwnership" xml:space="preserve">
     <value>Propiedad disponible</value>
   </data>

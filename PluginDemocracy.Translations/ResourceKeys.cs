@@ -70,5 +70,20 @@ namespace PluginDemocracy.Translations
         //Translations from PluginDemocracy.Models.Dictamens keys such as labelKep and DescriptionKey of UIInputAttribute
         public const string CreateArticleDictamenTitle = "CreateArticleDictamenTitle";
         public const string CreateArticleDictamenDescription = "CreateArticleDictamenDescription";
+        
+        public const string ArticleUIContainerTitle = "ArticleUIContainerTitle";
+        public const string ArticleUIContainerDescription = "ArticleUIContainerDescription";
+        
+        public const string ArticleNumberDescription = "ArticleNumberDescription";
+        public const string ArticleNumberLabel = "ArticleNumberLabel";
+        
+        public const string ArticleTitleUIInputLabel = "ArticleTitleUIInputLabel";
+        public const string ArticleTitleUIInputDescription = "ArticleTitleUIInputDescription";
+        
+        public const string ArticleBodyUIInputLabel = "ArticleBodyUIInputLabel";
+        public const string ArticleBodyUIInputDescription = "ArticleBodyUIInputDescription";
+
+        public const string ArticleExpirationDateUIInputLabel = "ArticleExpirationDateUIInputLabel";
+        public const string ArticleExpirationDateUIInputDescription = "ArticleExpirationDateUIInputDescription";
     }
 }

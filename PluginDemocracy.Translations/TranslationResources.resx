@@ -138,6 +138,36 @@
   <data name="AreYouJoiningAsAHomeOwnerOrResidentDialogContent" xml:space="preserve">
     <value>Select whether you are joining as a home owner or a resident. If joining as a home owner, you will need to specify your ownership percentage. If there are already homeowners registered, the total value of ownership over the house cannot exceed 100%. In communities where the voting power is in home owners, your percentage of ownership over the home will be reflected in equal percentage on your home's vote on proposals. </value>
   </data>
+  <data name="ArticleBodyUIInputDescription" xml:space="preserve">
+    <value>This is the body of the Article. This is the actual Article/Law. </value>
+  </data>
+  <data name="ArticleBodyUIInputLabel" xml:space="preserve">
+    <value>Article's body</value>
+  </data>
+  <data name="ArticleExpirationDateUIInputDescription" xml:space="preserve">
+    <value>If this is set, the Article will expire and the given date and it will be removed from the constitution</value>
+  </data>
+  <data name="ArticleExpirationDateUIInputLabel" xml:space="preserve">
+    <value>Article's expiration date</value>
+  </data>
+  <data name="ArticleNumberDescription" xml:space="preserve">
+    <value>This is to select the number that the article will take in the constitution. If no number is selected, the Article is added as the newest number in the constitution. If a number is selected and the proposal passes, the Article will have this number and previous Articles with this number or higher will be pushed one number up. </value>
+  </data>
+  <data name="ArticleNumberLabel" xml:space="preserve">
+    <value>Article Number</value>
+  </data>
+  <data name="ArticleTitleUIInputDescription" xml:space="preserve">
+    <value>This is the title of the Article as it will show up on the constitution for this community</value>
+  </data>
+  <data name="ArticleTitleUIInputLabel" xml:space="preserve">
+    <value>Article's Title</value>
+  </data>
+  <data name="ArticleUIContainerDescription" xml:space="preserve">
+    <value>This is an article that is stored in the constitution. It reflects the rules and regulations that the community follow. They are determine by popular vote in the community. If a number is chosen for the article, it will be placed as that number in the constitution and all the other articles will be pushed one number up. </value>
+  </data>
+  <data name="ArticleUIContainerTitle" xml:space="preserve">
+    <value>Constitution Article</value>
+  </data>
   <data name="AvailableOwnership" xml:space="preserve">
     <value>Available ownership</value>
   </data>

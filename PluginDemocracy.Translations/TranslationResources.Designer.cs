@@ -124,6 +124,96 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is the body of the Article. This is the actual Article/Law. .
+        /// </summary>
+        internal static string ArticleBodyUIInputDescription {
+            get {
+                return ResourceManager.GetString("ArticleBodyUIInputDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Article&apos;s body.
+        /// </summary>
+        internal static string ArticleBodyUIInputLabel {
+            get {
+                return ResourceManager.GetString("ArticleBodyUIInputLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If this is set, the Article will expire and the given date and it will be removed from the constitution.
+        /// </summary>
+        internal static string ArticleExpirationDateUIInputDescription {
+            get {
+                return ResourceManager.GetString("ArticleExpirationDateUIInputDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Article&apos;s expiration date.
+        /// </summary>
+        internal static string ArticleExpirationDateUIInputLabel {
+            get {
+                return ResourceManager.GetString("ArticleExpirationDateUIInputLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is to select the number that the article will take in the constitution. If no number is selected, the Article is added as the newest number in the constitution. If a number is selected and the proposal passes, the Article will have this number and previous Articles with this number or higher will be pushed one number up. .
+        /// </summary>
+        internal static string ArticleNumberDescription {
+            get {
+                return ResourceManager.GetString("ArticleNumberDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Article Number.
+        /// </summary>
+        internal static string ArticleNumberLabel {
+            get {
+                return ResourceManager.GetString("ArticleNumberLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the title of the Article as it will show up on the constitution for this community.
+        /// </summary>
+        internal static string ArticleTitleUIInputDescription {
+            get {
+                return ResourceManager.GetString("ArticleTitleUIInputDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Article&apos;s Title.
+        /// </summary>
+        internal static string ArticleTitleUIInputLabel {
+            get {
+                return ResourceManager.GetString("ArticleTitleUIInputLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is an article that is stored in the constitution. It reflects the rules and regulations that the community follow. They are determine by popular vote in the community. If a number is chosen for the article, it will be placed as that number in the constitution and all the other articles will be pushed one number up. .
+        /// </summary>
+        internal static string ArticleUIContainerDescription {
+            get {
+                return ResourceManager.GetString("ArticleUIContainerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constitution Article.
+        /// </summary>
+        internal static string ArticleUIContainerTitle {
+            get {
+                return ResourceManager.GetString("ArticleUIContainerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Available ownership.
         /// </summary>
         internal static string AvailableOwnership {
