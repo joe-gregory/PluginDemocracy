@@ -126,6 +126,12 @@
   <data name="Accounting" xml:space="preserve">
     <value>Accounting</value>
   </data>
+  <data name="ActionRequested" xml:space="preserve">
+    <value>Action Requested</value>
+  </data>
+  <data name="ActionRequestedDescription" xml:space="preserve">
+    <value>A clear statement of what you want the board to do as a result of the petition</value>
+  </data>
   <data name="Add" xml:space="preserve">
     <value>Add</value>
   </data>
@@ -206,6 +212,12 @@
   </data>
   <data name="DateOfBirth" xml:space="preserve">
     <value>Date of birth</value>
+  </data>
+  <data name="DeadlineForResponse" xml:space="preserve">
+    <value>Deadline for response</value>
+  </data>
+  <data name="DeadlineForResponseDescription" xml:space="preserve">
+    <value>(Optional) A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board.</value>
   </data>
   <data name="DeletePost" xml:space="preserve">
     <value>Delete Post</value>
@@ -309,6 +321,12 @@
   <data name="Percentage" xml:space="preserve">
     <value>Percentage</value>
   </data>
+  <data name="PetitionDescription" xml:space="preserve">
+    <value>A detailed description of the issue, including why it is important and what changes or actions are being requested.</value>
+  </data>
+  <data name="PetitionTitle" xml:space="preserve">
+    <value>A clear and concise title that summarizes the purpose of the petition</value>
+  </data>
   <data name="PhoneNumber" xml:space="preserve">
     <value>Phone number</value>
   </data>
@@ -389,6 +407,18 @@
   </data>
   <data name="Spanish" xml:space="preserve">
     <value>Spanish</value>
+  </data>
+  <data name="SupportingArguments" xml:space="preserve">
+    <value>Supporting Arguments</value>
+  </data>
+  <data name="SupportingArgumentsDescription" xml:space="preserve">
+    <value>Points that support the petition's request, including any relevant facts, data, or testimonials.</value>
+  </data>
+  <data name="SupportingDocuments" xml:space="preserve">
+    <value>Supporting Documents</value>
+  </data>
+  <data name="SupportingDocumentsDescription" xml:space="preserve">
+    <value />
   </data>
   <data name="Title" xml:space="preserve">
     <value>Title</value>

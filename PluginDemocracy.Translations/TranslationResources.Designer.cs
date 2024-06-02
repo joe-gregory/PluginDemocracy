@@ -88,6 +88,24 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Action Requested.
+        /// </summary>
+        internal static string ActionRequested {
+            get {
+                return ResourceManager.GetString("ActionRequested", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A clear statement of what you want the board to do as a result of the petition.
+        /// </summary>
+        internal static string ActionRequestedDescription {
+            get {
+                return ResourceManager.GetString("ActionRequestedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         internal static string Add {
@@ -327,6 +345,24 @@ namespace PluginDemocracy.Translations {
         internal static string DateOfBirth {
             get {
                 return ResourceManager.GetString("DateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deadline for response.
+        /// </summary>
+        internal static string DeadlineForResponse {
+            get {
+                return ResourceManager.GetString("DeadlineForResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Optional) A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board..
+        /// </summary>
+        internal static string DeadlineForResponseDescription {
+            get {
+                return ResourceManager.GetString("DeadlineForResponseDescription", resourceCulture);
             }
         }
         
@@ -637,6 +673,24 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A detailed description of the issue, including why it is important and what changes or actions are being requested..
+        /// </summary>
+        internal static string PetitionDescription {
+            get {
+                return ResourceManager.GetString("PetitionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A clear and concise title that summarizes the purpose of the petition.
+        /// </summary>
+        internal static string PetitionTitle {
+            get {
+                return ResourceManager.GetString("PetitionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phone number.
         /// </summary>
         internal static string PhoneNumber {
@@ -876,6 +930,42 @@ namespace PluginDemocracy.Translations {
         internal static string Spanish {
             get {
                 return ResourceManager.GetString("Spanish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supporting Arguments.
+        /// </summary>
+        internal static string SupportingArguments {
+            get {
+                return ResourceManager.GetString("SupportingArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Points that support the petition&apos;s request, including any relevant facts, data, or testimonials..
+        /// </summary>
+        internal static string SupportingArgumentsDescription {
+            get {
+                return ResourceManager.GetString("SupportingArgumentsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supporting Documents.
+        /// </summary>
+        internal static string SupportingDocuments {
+            get {
+                return ResourceManager.GetString("SupportingDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string SupportingDocumentsDescription {
+            get {
+                return ResourceManager.GetString("SupportingDocumentsDescription", resourceCulture);
             }
         }
         

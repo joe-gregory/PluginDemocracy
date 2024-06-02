@@ -89,6 +89,16 @@ namespace PluginDemocracy.Translations
         #region Petition
         public const string CreatePetition = "CreatePetition";
         public const string CreatePetitionDescription = "CreatePetitionDescription";
+        public const string PetitionTitle = "PetitionTitle";
+        public const string PetitionDescription = "PetitionDescription";
+        public const string ActionRequested = "ActionRequested";
+        public const string ActionRequestedDescription = "ActionRequestedDescription";
+        public const string DeadlineForResponse = "DeadlineForResponse";
+        public const string DeadlineForResponseDescription = "DeadlineForResponseDescription";
+        public const string SupportingArguments = "SupportingArguments";
+        public const string SupportingArgumentsDescription = "SupportingArgumentsDescription";
+        public const string SupportingDocuments = "SupportingDocuments";
+        public const string SupportingDocumentsDescription = "SupportingDocumentsDescription";
         #endregion
     }
 }

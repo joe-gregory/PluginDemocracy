@@ -126,6 +126,12 @@
   <data name="Accounting" xml:space="preserve">
     <value>Contabilidad</value>
   </data>
+  <data name="ActionRequested" xml:space="preserve">
+    <value>Acción Solicitada</value>
+  </data>
+  <data name="ActionRequestedDescription" xml:space="preserve">
+    <value>Una declaración clara de lo que deseas que la junta haga como resultado de la petición.</value>
+  </data>
   <data name="Add" xml:space="preserve">
     <value>Agregar</value>
   </data>
@@ -206,6 +212,12 @@
   </data>
   <data name="DateOfBirth" xml:space="preserve">
     <value>Fecha de nacimiento</value>
+  </data>
+  <data name="DeadlineForResponse" xml:space="preserve">
+    <value>Fecha limite para la respuesta</value>
+  </data>
+  <data name="DeadlineForResponseDescription" xml:space="preserve">
+    <value>(Opcional) Un cronograma sugerido o requerido para cuándo la petición debe ser revisada y respondida por la junta de la HOA.</value>
   </data>
   <data name="DeletePost" xml:space="preserve">
     <value>Eliminar Post</value>
@@ -309,6 +321,12 @@
   <data name="Percentage" xml:space="preserve">
     <value>Porcentage</value>
   </data>
+  <data name="PetitionDescription" xml:space="preserve">
+    <value>Una descripción detallada del problema, incluyendo por qué es importante y qué cambios o acciones se están solicitando.</value>
+  </data>
+  <data name="PetitionTitle" xml:space="preserve">
+    <value>Un título claro y conciso que resuma el propósito de la petición.</value>
+  </data>
   <data name="PhoneNumber" xml:space="preserve">
     <value>Número de teléfono</value>
   </data>
@@ -389,6 +407,18 @@
   </data>
   <data name="Spanish" xml:space="preserve">
     <value>Español</value>
+  </data>
+  <data name="SupportingArguments" xml:space="preserve">
+    <value>Argumentos</value>
+  </data>
+  <data name="SupportingArgumentsDescrition" xml:space="preserve">
+    <value>Puntos que respaldan la solicitud de la petición, incluyendo cualquier dato relevante, hechos o testimonios.</value>
+  </data>
+  <data name="SupportingDocuments" xml:space="preserve">
+    <value>Documentos de Apoyo</value>
+  </data>
+  <data name="SupportingDocumentsDescription" xml:space="preserve">
+    <value />
   </data>
   <data name="Title" xml:space="preserve">
     <value>Título</value>
