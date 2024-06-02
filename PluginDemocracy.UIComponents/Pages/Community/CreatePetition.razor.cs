@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using PluginDemocracy.DTOs;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace PluginDemocracy.UIComponents.Pages.Community
 {
@@ -12,6 +11,13 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         {
             if (AppState?.User != null) Petition.Authors.Add(AppState.User);
             if (AppState?.User?.Citizenships.Count == 1) Petition.CommunityDTO = AppState.User.Citizenships[0];
+        }
+        private void UploadFiles(InputFileChangeEventArgs e)
+        {
+            foreach (var file in e.GetMultipleFiles())
+            {
+                files.Add(file);
+            }
         }
     }
 }

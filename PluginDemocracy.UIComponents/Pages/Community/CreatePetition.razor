@@ -1,5 +1,6 @@
 ﻿@inject Services Services
 @inject BaseAppState AppState
+@using Microsoft.AspNetCore.Components.Forms
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.CreatePetition)</MudText>
 <MudCard Elevation="25">
@@ -32,5 +33,16 @@
 
 <MudCard Elevation="25">
     <MudText Typo="Typo.h5" Class="mb-5">@AppState.Translate(ResourceKeys.SupportingDocuments)</MudText>
-
+    <MudText Class="m-1">@AppState.Translate(ResourceKeys.SupportingDocumentsDescription)</MudText>
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
+        <ButtonTemplate>
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                       for="@context.Id">
+                @AppState.Translate(ResourceKeys.SupportingDocuments)
+            </MudButton>
+        </ButtonTemplate>
+    </MudFileUpload>
 </MudCard>
