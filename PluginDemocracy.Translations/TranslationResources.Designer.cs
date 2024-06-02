@@ -961,7 +961,7 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Supporting documents provide additional information and evidence to strengthen your petition. These documents can include letters of endorsement, photographs, reports, meeting minutes, financial statements, or any other relevant materials that help clarify and justify the petition’s purpose..
         /// </summary>
         internal static string SupportingDocumentsDescription {
             get {
