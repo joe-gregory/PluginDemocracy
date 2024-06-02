@@ -7,7 +7,33 @@ namespace PluginDemocracy.Models
     public class Petition(User originalAuthor)
     {
         #region DATA
-        public int Id { get; set; }
+        /// <summary>
+        /// This is set by EFC
+        /// </summary>
+        public int Id { get; protected set; }
+        /// <summary>
+        /// Protected field that indicates whether the Petition has been published.
+        /// If the petition has been published, it cannot be unpublished, edited, or deleted.
+        /// </summary>
+        protected bool _published = false;
+        /// <summary>
+        /// The date at which the Petition was published, and thus made available for signatures.
+        /// Once published, it cannot be unpublished, edited, or deleted.
+        /// </summary>
+        public DateTime? PublishedDate { get; protected set; } = null;
+        /// <summary>
+        /// Returns the date of when the petition was published or the most recent e-signature was added.
+        /// Whatever is the most recent date.
+        /// </summary>
+        [NotMapped]
+        public DateTime? LastUpdated
+        {
+            get
+            {
+                ESignature? mostRecentSignature = _signatures.OrderByDescending(s => s.SignedDate).FirstOrDefault();
+                return mostRecentSignature != null && mostRecentSignature.SignedDate > PublishedDate ? mostRecentSignature.SignedDate : PublishedDate;
+            }
+        }
         protected Community? _community;
         /// <summary>
         /// The community for which this petition is being created.
@@ -25,16 +51,6 @@ namespace PluginDemocracy.Models
                 _community = value;
             }
         }
-        /// <summary>
-        /// Protected field that indicates whether the Petition has been published.
-        /// If the petition has been published, it cannot be unpublished, edited, or deleted.
-        /// </summary>
-        protected bool _published = false;
-        /// <summary>
-        /// The date at which the Petition was published, and thus made available for signatures.
-        /// Once published, it cannot be unpublished, edited, or deleted.
-        /// </summary>
-        public DateTime? PublishedDate { get; protected set; } = null;
         protected string? _title;
         /// <summary>
         /// A clear and concise title that summarizes the purpose of the petition.
@@ -69,18 +85,6 @@ namespace PluginDemocracy.Models
                 _description = value;
             }
         }
-        protected List<User> _authors = [originalAuthor];
-        /// <summary>
-        /// The name and contact information of the person or group who created the petition.
-        /// </summary>
-        [NotMapped]
-        public IEnumerable<User> Authors
-        {
-            get
-            {
-                return _published ? _authors.AsReadOnly() : _authors;
-            }
-        }
         /// <summary>
         /// A clear statement of what the petitioners want to happen as a result of the petition.
         /// </summary>
@@ -98,13 +102,18 @@ namespace PluginDemocracy.Models
                 _actionRequested = value;
             }
         }
-        protected List<ESignature> _signatures = [];
+        protected string? _supportingArguments;
         [NotMapped]
-        public IReadOnlyList<ESignature> Signatures
+        public string? SupportingArguments
         {
             get
             {
-                return _signatures.AsReadOnly();
+                return _supportingArguments;
+            }
+            set
+            {
+                if (_published) throw new System.InvalidOperationException("Cannot change supporting arguments of a published petition.");
+                _supportingArguments = value;
             }
         }
         protected DateTime? _deadlineForResponse;
@@ -136,17 +145,25 @@ namespace PluginDemocracy.Models
                 return _published ? _linksToSupportingDocuments.AsReadOnly() : _linksToSupportingDocuments;
             }
         }
+        protected List<User> _authors = [originalAuthor];
         /// <summary>
-        /// Returns the date of when the petition was published or the most recent e-signature was added.
-        /// Whatever is the most recent date.
+        /// The name and contact information of the person or group who created the petition.
         /// </summary>
         [NotMapped]
-        public DateTime? LastUpdated
+        public IEnumerable<User> Authors
         {
             get
             {
-                ESignature? mostRecentSignature = _signatures.OrderByDescending(s => s.SignedDate).FirstOrDefault();
-                return mostRecentSignature != null && mostRecentSignature.SignedDate > PublishedDate ? mostRecentSignature.SignedDate : PublishedDate;
+                return _published ? _authors.AsReadOnly() : _authors;
+            }
+        }
+        protected List<ESignature> _signatures = [];
+        [NotMapped]
+        public IReadOnlyList<ESignature> Signatures
+        {
+            get
+            {
+                return _signatures.AsReadOnly();
             }
         }
         #endregion
