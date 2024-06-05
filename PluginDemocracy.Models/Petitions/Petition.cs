@@ -16,7 +16,6 @@ namespace PluginDemocracy.Models
         /// If the petition has been published, it cannot be unpublished, edited, or deleted.
         /// </summary>
         protected bool _published = false;
-        [NotMapped]
         public bool Published
         {
             get
@@ -33,7 +32,6 @@ namespace PluginDemocracy.Models
         /// Returns the date of when the petition was published or the most recent e-signature was added.
         /// Whatever is the most recent date.
         /// </summary>
-        [NotMapped]
         public DateTime? LastUpdated
         {
             get
@@ -46,7 +44,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// The community for which this petition is being created.
         /// </summary>
-        [NotMapped]
         public Community? Community
         {
             get
@@ -63,7 +60,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// A clear and concise title that summarizes the purpose of the petition.
         /// </summary>
-        [NotMapped]
         public string? Title
         {
             get
@@ -80,7 +76,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// A detailed description of the issue, including why it is important and what changes or actions are being requested.
         /// </summary>
-        [NotMapped]
         public string? Description
         {
             get
@@ -97,7 +92,6 @@ namespace PluginDemocracy.Models
         /// A clear statement of what the petitioners want to happen as a result of the petition.
         /// </summary>
         protected string? _actionRequested;
-        [NotMapped]
         public string? ActionRequested
         {
             get
@@ -111,7 +105,6 @@ namespace PluginDemocracy.Models
             }
         }
         protected string? _supportingArguments;
-        [NotMapped]
         public string? SupportingArguments
         {
             get
@@ -128,7 +121,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board.
         /// </summary>
-        [NotMapped]
         public DateTime? DeadlineForResponse
         {
             get
@@ -142,6 +134,14 @@ namespace PluginDemocracy.Models
             }
         }
         protected List<string> _linksToSupportingDocuments = [];
+        /// <summary>
+        /// EF Core needs a property it can map to. It wont map protected fields. The property can be private/protected.
+        /// </summary>
+        protected string LinksToSupportingDocumentsSerialized
+        {
+            get => string.Join(';', _linksToSupportingDocuments);
+            set => _linksToSupportingDocuments = [.. value.Split(';', StringSplitOptions.RemoveEmptyEntries)];
+        }
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
@@ -157,7 +157,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// The name and contact information of the person or group who created the petition.
         /// </summary>
-        [NotMapped]
         public IEnumerable<User> Authors
         {
             get
@@ -166,7 +165,6 @@ namespace PluginDemocracy.Models
             }
         }
         protected List<User> _authorsReadyToPublish;
-        [NotMapped]
         public IEnumerable<User> AuthorsReadyToPublish
         {
             get
@@ -175,7 +173,6 @@ namespace PluginDemocracy.Models
             }
         }
         protected List<ESignature> _signatures = [];
-        [NotMapped]
         public IReadOnlyList<ESignature> Signatures
         {
             get
