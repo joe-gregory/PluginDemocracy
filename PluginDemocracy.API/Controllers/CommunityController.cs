@@ -487,8 +487,12 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            
-            Petition? petition = await _context.Petitions.Include(p => p.Authors).FirstOrDefaultAsync(p => p.Id == petitionDTO.Id);
+
+            Petition? petition = await _context.Petitions
+                .Include(p => p.Authors)
+                .Include(p => p.AuthorsReadyToPublish)
+                .Include(p => p.Signatures)
+                .FirstOrDefaultAsync(p => p.Id == petitionDTO.Id);
 
             //NEW PETITION: if the petition does not exist, or petitionDTO.Id = 0, it is a new petition. 
             if (petition == null)
