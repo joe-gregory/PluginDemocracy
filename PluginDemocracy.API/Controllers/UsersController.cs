@@ -326,6 +326,7 @@ namespace PluginDemocracy.API.Controllers
             //Create response object
             PDAPIResponse response = new();
             //Extract User from claims
+
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
             if (existingUser == null) return BadRequest(response);
 
@@ -495,6 +496,22 @@ namespace PluginDemocracy.API.Controllers
             }
 
         }
-        #endregion AUTHORIZED ENDPOINTS
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetUserDTOFromEmail)]
+        public async Task<ActionResult<UserDTO>> GetUserDTOByEmail([FromQuery] string email)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                return BadRequest("You are not logged in");
+            }
+            User? userToReturn = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (userToReturn == null)
+            {
+                return NotFound("User not found");
+            }
+            return Ok(new UserDTO(userToReturn));
+        }
+        #endregion
     }
 }
