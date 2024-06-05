@@ -97,6 +97,7 @@ namespace PluginDemocracy.Models
         public List<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Passed == false).ToList();
         [NotMapped]
         public List<Proposal> UndecidedProposals => Proposals.Where(proposal => proposal.Open == true).ToList();
+        public List<Petition> Petitions { get; protected set; }
         public Accounting Accounting { get; }
         public List<BaseDictamen> Dictamens { get; private set; }
         public List<Role> Roles { get; private set; }
@@ -119,6 +120,7 @@ namespace PluginDemocracy.Models
             _userNonResidentialCitizens = [];
             Constitution = new();
             Proposals = [];
+            Petitions = [];
             Accounting = new(this);
             Dictamens = [];
             Roles = [];
