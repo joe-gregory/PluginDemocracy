@@ -20,6 +20,7 @@
         public const string MarkNotificationAsRead = UsersController + "marknotificationasread";
         public const string RefreshUserData = UsersController + "refreshuserdata";
         public const string AboutUser = UsersController + "aboutuser";
+        public const string GetUserDTOFromEmail = UsersController + "getuserdtofromemail";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
@@ -28,6 +29,7 @@
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
         public const string ProposalCreate = CommunityController + "/proposal/create";
+        public const string SavePetitionDraft = CommunityController + "savepetitiondraft";
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
@@ -45,5 +47,6 @@
         public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
         public const string AdminAcceptJoinRequest = AdminController + "acceptjoinrequest";
         #endregion
+
     }
 }

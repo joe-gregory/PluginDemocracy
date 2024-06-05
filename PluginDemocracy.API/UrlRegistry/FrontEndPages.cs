@@ -22,6 +22,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string JoinCommunity = "/joincommunity";
         public const string JoinOrRegisterCommunity = "/joinorregistercommunity";
         public const string ProposalCreate = "/proposal/create";
+        public const string CreatePetition = "/createpetition";
 
         //Admin pages
         public const string AppAdmin = "/appadmin";
