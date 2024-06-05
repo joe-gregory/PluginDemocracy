@@ -174,6 +174,15 @@
   <data name="ArticleUIContainerTitle" xml:space="preserve">
     <value>Artículo de Constitución</value>
   </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Autores</value>
+  </data>
+  <data name="AuthorsDescription" xml:space="preserve">
+    <value>Si vas a agregar coautores a esta petición, por favor agrégales aquí utilizando la dirección de correo electrónico que usan para la aplicación Democracia Conectada. Ten en cuenta que, si hay más de un autor asociado con la petición, cada autor individual necesita publicar la petición para que esta se publique. Si un autor selecciono publicar y otro autor edita la petición, el autor necesitara volver a seleccionar publicar. La petición aún necesita ser guardada para que el autor sea agregado a la petición después de buscar.</value>
+  </data>
+  <data name="AuthorsReadyToPublish" xml:space="preserve">
+    <value>Autores listos para publicar</value>
+  </data>
   <data name="AvailableOwnership" xml:space="preserve">
     <value>Propiedad disponible</value>
   </data>
@@ -219,6 +228,9 @@
   <data name="DeadlineForResponseDescription" xml:space="preserve">
     <value>(Opcional) Un cronograma sugerido o requerido para cuándo la petición debe ser revisada y respondida por la junta de la HOA.</value>
   </data>
+  <data name="DeletePetitionDraft" xml:space="preserve">
+    <value>Eliminar Borrador De Petición</value>
+  </data>
   <data name="DeletePost" xml:space="preserve">
     <value>Eliminar Post</value>
   </data>
@@ -236,6 +248,9 @@
   </data>
   <data name="Feed" xml:space="preserve">
     <value>Muro</value>
+  </data>
+  <data name="FilesReadyToUpload" xml:space="preserve">
+    <value>Archivos listos para subir: (necesitas guardar el documento para subirlos)</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>Nombre</value>
@@ -324,6 +339,12 @@
   <data name="PetitionDescription" xml:space="preserve">
     <value>Una descripción detallada del problema, incluyendo por qué es importante y qué cambios o acciones se están solicitando.</value>
   </data>
+  <data name="PetitionSavedSuccessfully" xml:space="preserve">
+    <value>La petición fue guardada exitosamente</value>
+  </data>
+  <data name="PetitionSavedUnsuccessfully" xml:space="preserve">
+    <value>Hubo un error guardando la petición</value>
+  </data>
   <data name="PetitionTitle" xml:space="preserve">
     <value>Un título claro y conciso que resuma el propósito de la petición.</value>
   </data>
@@ -348,6 +369,9 @@
   <data name="Proposals" xml:space="preserve">
     <value>Propuestas</value>
   </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Publicar</value>
+  </data>
   <data name="Read" xml:space="preserve">
     <value>Leído</value>
   </data>
@@ -363,6 +387,9 @@
   <data name="RegisterCommunity" xml:space="preserve">
     <value>Registra una comunidad</value>
   </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
   <data name="Required" xml:space="preserve">
     <value>Requerido</value>
   </data>
@@ -374,6 +401,12 @@
   </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SearchUserByEmail" xml:space="preserve">
+    <value>Buscar usuario con correo electronico</value>
   </data>
   <data name="SecondLastName" xml:space="preserve">
     <value>Segundo apellido</value>
@@ -408,6 +441,9 @@
   <data name="Spanish" xml:space="preserve">
     <value>Español</value>
   </data>
+  <data name="SuccessAuthorRemoved" xml:space="preserve">
+    <value>Has sido eliminado como autor. ¡No olvides guardar los cambios para que surta efecto!</value>
+  </data>
   <data name="SupportingArguments" xml:space="preserve">
     <value>Argumentos</value>
   </data>
@@ -432,8 +468,20 @@
   <data name="UpdateProfilePicture" xml:space="preserve">
     <value>Actualizar Foto de Perfil</value>
   </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="UploadedFiles" xml:space="preserve">
+    <value>Archivos Subidos</value>
+  </data>
   <data name="User" xml:space="preserve">
     <value>Usuario</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="WarningRemoveYourselfAsAuthor" xml:space="preserve">
+    <value>Si te eliminas como autor, otro autor tendrá que agregarte de nuevo a la petición. Si eres el último autor en la petición, el borrador de la petición será eliminado. No olvides guardar los cambios para que tome efecto. </value>
   </data>
   <data name="YouHaveNoCommunities" xml:space="preserve">
     <value>No te has unido a ninguna comunidad. Únete a una comunidad existente o registra una nueva comunidad.</value>

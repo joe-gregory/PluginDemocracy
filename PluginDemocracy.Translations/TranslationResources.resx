@@ -174,6 +174,15 @@
   <data name="ArticleUIContainerTitle" xml:space="preserve">
     <value>Constitution Article</value>
   </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Authors</value>
+  </data>
+  <data name="AuthorsDescription" xml:space="preserve">
+    <value>If you are going to add co-authors to this petition, please add them here by the email address they use for the Plugin Democracy application. Please note, if there is more than one author associated with the petition, each single author needs to publish the petition for the petition to publish. If one of the authors selected publish and another author makes changes to the petition, the author will that selected publish will need to select publish again. The petition still needs to be saved for the author to be added to the petition after searching.</value>
+  </data>
+  <data name="AuthorsReadyToPublish" xml:space="preserve">
+    <value>Authors ready to publish</value>
+  </data>
   <data name="AvailableOwnership" xml:space="preserve">
     <value>Available ownership</value>
   </data>
@@ -219,6 +228,9 @@
   <data name="DeadlineForResponseDescription" xml:space="preserve">
     <value>(Optional) A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board.</value>
   </data>
+  <data name="DeletePetitionDraft" xml:space="preserve">
+    <value>Delete Petition Draft</value>
+  </data>
   <data name="DeletePost" xml:space="preserve">
     <value>Delete Post</value>
   </data>
@@ -236,6 +248,9 @@
   </data>
   <data name="Feed" xml:space="preserve">
     <value>Feed</value>
+  </data>
+  <data name="FilesReadyToUpload" xml:space="preserve">
+    <value>Files ready to upload: (you need to save the document to upload them)</value>
   </data>
   <data name="FirstName" xml:space="preserve">
     <value>First name</value>
@@ -324,6 +339,12 @@
   <data name="PetitionDescription" xml:space="preserve">
     <value>A detailed description of the issue, including why it is important and what changes or actions are being requested.</value>
   </data>
+  <data name="PetitionSavedSuccessfully" xml:space="preserve">
+    <value>The petition was saved successfully</value>
+  </data>
+  <data name="PetitionSavedUnsuccessfully" xml:space="preserve">
+    <value>There was an error saving the petition</value>
+  </data>
   <data name="PetitionTitle" xml:space="preserve">
     <value>A clear and concise title that summarizes the purpose of the petition</value>
   </data>
@@ -348,6 +369,9 @@
   <data name="Proposals" xml:space="preserve">
     <value>Proposals</value>
   </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Publish</value>
+  </data>
   <data name="Read" xml:space="preserve">
     <value>Read</value>
   </data>
@@ -363,6 +387,9 @@
   <data name="RegisterCommunity" xml:space="preserve">
     <value>Register a community</value>
   </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
   <data name="Required" xml:space="preserve">
     <value>Required</value>
   </data>
@@ -374,6 +401,12 @@
   </data>
   <data name="Roles" xml:space="preserve">
     <value>Roles</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SearchUserByEmail" xml:space="preserve">
+    <value>Search user by email</value>
   </data>
   <data name="SecondLastName" xml:space="preserve">
     <value>Second last name</value>
@@ -408,6 +441,9 @@
   <data name="Spanish" xml:space="preserve">
     <value>Spanish</value>
   </data>
+  <data name="SuccessAuthorRemoved" xml:space="preserve">
+    <value>You have been removed as an author. Don't forget to save so it takes effect!</value>
+  </data>
   <data name="SupportingArguments" xml:space="preserve">
     <value>Supporting Arguments</value>
   </data>
@@ -432,8 +468,20 @@
   <data name="UpdateProfilePicture" xml:space="preserve">
     <value>Update Profile Picture</value>
   </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="UploadedFiles" xml:space="preserve">
+    <value>Uploaded files</value>
+  </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="WarningRemoveYourselfAsAuthor" xml:space="preserve">
+    <value>If you remove yourself as author, another author will need to add you again to the petition. If you are the last author in the petition, the petition draft will be eliminated. Don't forget to save changes so this takes effect. </value>
   </data>
   <data name="YouHaveNoCommunities" xml:space="preserve">
     <value>You have not joined any communities. Join an existing community or register a new community. </value>

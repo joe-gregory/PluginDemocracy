@@ -99,6 +99,22 @@ namespace PluginDemocracy.Translations
         public const string SupportingArgumentsDescription = "SupportingArgumentsDescription";
         public const string SupportingDocuments = "SupportingDocuments";
         public const string SupportingDocumentsDescription = "SupportingDocumentsDescription";
+        public const string Upload = "Upload";
+        public const string FilesReadyToUpload = "FilesReadyToUpload";
+        public const string UploadedFiles = "UploadedFiles";
+        public const string Authors = "Authors";
+        public const string AuthorsDescription = "AuthorsDescription";
+        public const string SearchUserByEmail = "SearchUserByEmail";
+        public const string Warning = "Warning";
+        public const string WarningRemoveYourselfAsAuthor = "WarningRemoveYourselfAsAuthor";
+        public const string Remove = "Remove";
+        public const string SuccessAuthorRemoved = "SuccessAuthorRemoved";
+        public const string PetitionSavedSuccessfully = "PetitionSavedSuccessfully";
+        public const string PetitionSavedUnsuccessfully = "PetitionSavedUnsuccessfully";
+        public const string Save = "Save";
+        public const string DeletePetitionDraft = "DeletePetitionDraft";
+        public const string Publish = "Publish";
+        public const string AuthorsReadyToPublish = "AuthorsReadyToPublish";
         #endregion
     }
 }

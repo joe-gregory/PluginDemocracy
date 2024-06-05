@@ -232,6 +232,33 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authors.
+        /// </summary>
+        internal static string Authors {
+            get {
+                return ResourceManager.GetString("Authors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you are going to add co-authors to this petition, please add them here by the email address they use for the Plugin Democracy application. Please note, if there is more than one author associated with the petition, each single author needs to publish the petition for the petition to publish. If one of the authors selected publish and another author makes changes to the petition, the author will that selected publish will need to select publish again. The petition still needs to be saved for the author to [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string AuthorsDescription {
+            get {
+                return ResourceManager.GetString("AuthorsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authors ready to publish.
+        /// </summary>
+        internal static string AuthorsReadyToPublish {
+            get {
+                return ResourceManager.GetString("AuthorsReadyToPublish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Available ownership.
         /// </summary>
         internal static string AvailableOwnership {
@@ -367,6 +394,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Petition Draft.
+        /// </summary>
+        internal static string DeletePetitionDraft {
+            get {
+                return ResourceManager.GetString("DeletePetitionDraft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Post.
         /// </summary>
         internal static string DeletePost {
@@ -417,6 +453,15 @@ namespace PluginDemocracy.Translations {
         internal static string Feed {
             get {
                 return ResourceManager.GetString("Feed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files ready to upload: (you need to save the document to upload them).
+        /// </summary>
+        internal static string FilesReadyToUpload {
+            get {
+                return ResourceManager.GetString("FilesReadyToUpload", resourceCulture);
             }
         }
         
@@ -682,6 +727,24 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The petition was saved successfully.
+        /// </summary>
+        internal static string PetitionSavedSuccessfully {
+            get {
+                return ResourceManager.GetString("PetitionSavedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error saving the petition.
+        /// </summary>
+        internal static string PetitionSavedUnsuccessfully {
+            get {
+                return ResourceManager.GetString("PetitionSavedUnsuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A clear and concise title that summarizes the purpose of the petition.
         /// </summary>
         internal static string PetitionTitle {
@@ -754,6 +817,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Publish.
+        /// </summary>
+        internal static string Publish {
+            get {
+                return ResourceManager.GetString("Publish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Read.
         /// </summary>
         internal static string Read {
@@ -799,6 +871,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Required.
         /// </summary>
         internal static string Required {
@@ -831,6 +912,24 @@ namespace PluginDemocracy.Translations {
         internal static string Roles {
             get {
                 return ResourceManager.GetString("Roles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search user by email.
+        /// </summary>
+        internal static string SearchUserByEmail {
+            get {
+                return ResourceManager.GetString("SearchUserByEmail", resourceCulture);
             }
         }
         
@@ -934,6 +1033,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have been removed as an author. Don&apos;t forget to save so it takes effect!.
+        /// </summary>
+        internal static string SuccessAuthorRemoved {
+            get {
+                return ResourceManager.GetString("SuccessAuthorRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Supporting Arguments.
         /// </summary>
         internal static string SupportingArguments {
@@ -1006,11 +1114,47 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        internal static string Upload {
+            get {
+                return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded files.
+        /// </summary>
+        internal static string UploadedFiles {
+            get {
+                return ResourceManager.GetString("UploadedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         internal static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you remove yourself as author, another author will need to add you again to the petition. If you are the last author in the petition, the petition draft will be eliminated. Don&apos;t forget to save changes so this takes effect. .
+        /// </summary>
+        internal static string WarningRemoveYourselfAsAuthor {
+            get {
+                return ResourceManager.GetString("WarningRemoveYourselfAsAuthor", resourceCulture);
             }
         }
         
