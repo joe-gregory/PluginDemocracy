@@ -253,7 +253,15 @@ namespace PluginDemocracy.API
             }
             try
             {
-                User? user = await _context.Users.FindAsync(userId);
+                User? user = await _context.Users
+                    .Include(u => u.Notifications)
+                    .Include(u => u.ResidentOfHomes)
+                        .ThenInclude(h => h.ParentCommunity)
+                    .Include(u => u.NonResidentialCitizenIn)
+                    .Include(u => u.HomeOwnerships)
+                        .ThenInclude(ho => ho.Home)
+                            .ThenInclude(h => h.ParentCommunity)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)
                 {
