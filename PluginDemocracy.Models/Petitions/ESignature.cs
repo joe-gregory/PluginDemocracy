@@ -28,6 +28,21 @@ namespace PluginDemocracy.Models
         public string HashOfSignedDocument { get; protected set; }
         public DateTime SignedDate { get; protected set; } 
         public string Intent { get; protected set; } 
+        /// <summary>
+        /// This constructor is for use by EFC
+        /// </summary>
+        protected ESignature()
+        {
+            Signer = new();
+            IPAddress = string.Empty;
+            Petition = new(Signer);
+            SignatureImage = string.Empty;
+            DocumentHash = string.Empty;
+            HashOfSignedDocument = string.Empty;
+            SignedDate = DateTime.Now;
+            Intent = string.Empty;
+
+        }
         public ESignature(User signer, string ipAddress, Petition petition, string hashOfSignedDocument, string signatureImage, string intent)
         {
             Signer = signer;
