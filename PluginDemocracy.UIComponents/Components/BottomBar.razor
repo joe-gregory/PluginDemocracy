@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 @inject BaseAppState AppState
 @inject Services Services
+@using PluginDemocracy.API.UrlRegistry
 
 <MudDialog @bind-IsVisible="contributeToCommunityDialogVisible">
     <TitleContent>
@@ -10,7 +11,7 @@
     </TitleContent>
     <DialogContent>
         <MudNavMenu>
-            <MudNavLink Href="/post/create" Class="mb-1"><MudIcon Icon="@Icons.Material.Filled.Description" /> Proposal</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.CreatePetition" Class="mb-1"><MudIcon Icon="@Icons.Material.Filled.Description" /> @AppState.Translate(ResourceKeys.CreatePetition)</MudNavLink>
             <MudNavLink OnClick="OpenCreatePost"><MudIcon Icon="@Icons.Material.Filled.PostAdd" /> Post</MudNavLink>
         </MudNavMenu>
     </DialogContent>
