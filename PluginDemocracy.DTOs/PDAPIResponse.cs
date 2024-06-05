@@ -14,6 +14,7 @@
         public List<CommunityDTO> AllCommunities { get; set; } = [];
         public CommunityDTO? Community { get; set; }
         public List<PostDto> Posts { get; set; } = [];
+        public PetitionDTO? Petition { get; set; }
         #endregion
         #region METHODS
         /// <summary>
