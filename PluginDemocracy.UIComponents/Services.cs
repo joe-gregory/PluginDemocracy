@@ -21,7 +21,7 @@ namespace PluginDemocracy.UIComponents
     {
         private readonly NavigationManager _navigation = navigation;
         private readonly ISnackbar _snackBar = snackbar;
-        private readonly HttpClient _httpClient = httpClient;
+        public readonly HttpClient _httpClient = httpClient;
         private readonly BaseAppState _appState = appState;
         protected readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
@@ -236,6 +236,42 @@ namespace PluginDemocracy.UIComponents
                 return new();
             }
         }
+        public async Task<PDAPIResponse> UploadMultitpleFilesAsync(string apiEndpoint, IList<IBrowserFile> files)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + apiEndpoint;
+            MultipartFormDataContent content = [];
+            try
+            {
+                foreach (IBrowserFile file in files)
+                {
+                    await using Stream fileStream = file.OpenReadStream();
+                    StreamContent fileContent = new(fileStream);
+                    fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "file",
+                        FileName = file.Name
+                    };
+                    content.Add(fileContent, "file");
+                }
+                //Create HttpRequestMessage to include JWT in Authorization header
+                HttpRequestMessage request = new(HttpMethod.Post, url)
+                {
+                    Content = content
+                };
+                //Add SessionJWT as a Bearer token in the Authorization header if it's available
+                if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+                //Sending content to API
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                return await CommunicationCommon(response);
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                return new();
+            }
+        }
         /// <summary>
         /// Method for uploading posts with images.
         /// TODO: might delete this method and change to use a generic version in the razor component to keep the code cleaner 
@@ -286,9 +322,9 @@ namespace PluginDemocracy.UIComponents
             }
             catch (Exception ex)
             {
-#if DEBUG
+                #if DEBUG
                 AddSnackBarMessage("error", ex.Message);
-#endif
+                #endif
                 AddSnackBarMessage("error", $"Network or server error");
                 _appState.IsLoading = false;
                 return false;
@@ -326,7 +362,7 @@ namespace PluginDemocracy.UIComponents
         /// </summary>
         /// <param name="response">The response sent from the server</param>
         /// <returns>PDAPIResponse extracted from response</returns>
-        private async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
+        public async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
             #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
             if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
