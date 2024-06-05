@@ -430,6 +430,7 @@ namespace PluginDemocracy.API.Controllers
                  return BadRequest();
             }
         }
+        [Authorize]
         [HttpPost(ApiEndPoints.AddCommentToPost)]
         public async Task<ActionResult<PostDto>> AddCommentToPost(PostCommentDto postCommentDto)
         {
@@ -451,6 +452,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest();
             }
         }
+        [Authorize]
         [HttpDelete(ApiEndPoints.DeleteComment)]
         public async Task<ActionResult<PDAPIResponse>> DeleteComment(PostCommentDto postCommentDto)
         {
@@ -477,5 +479,172 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest();
             }
         }
+        #region PETITIONS
+        [Authorize]
+        [HttpPost(ApiEndPoints.SavePetitionDraft)]
+        public async Task<ActionResult<PDAPIResponse>> SavePetitionDraft(PetitionDTO petitionDTO)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).FirstOrDefaultAsync(p => p.Id == petitionDTO.Id);
+
+            //NEW PETITION: if the petition does not exist, or petitionDTO.Id = 0, it is a new petition. 
+            if (petition == null)
+            {
+                try
+                {
+                    petition = new(existingUser)
+                    {
+                        Title = petitionDTO.Title,
+                        Description = petitionDTO.Description,
+                        ActionRequested = petitionDTO.ActionRequested,
+                        SupportingArguments = petitionDTO.SupportingArguments,
+                        DeadlineForResponse = petitionDTO.DeadlineForResponse,
+                    };
+                    Community? petitionsCommunity = null;
+                    if (petitionDTO.CommunityDTO != null) petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTO.Id);
+                    if (petitionsCommunity != null) petition.Community = petitionsCommunity;
+                    //Authors should only be one and it should be the existing user. 
+                    _context.Petitions.Add(petition);
+                    existingUser.PetitionDrafts.Add(petition);  
+                    await _context.SaveChangesAsync();
+                    response.Petition = new PetitionDTO(petition);
+                    response.AddAlert("success", "New petition draft saved successfully");
+                    return Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    response.AddAlert("error", ex.Message);
+                    return BadRequest(response);
+                }
+            }
+            //EXISTING PETITION: The case where the petition already exists. petition is not null. 
+            else
+            {
+                //Compare the changes between petitionDTO and petition and update the petition.
+                //Do everything inside a try catch block because Domain models throw errors... as they should...
+                try
+                {
+                    // Ensure the petition is not published
+                    if (petition.Published)
+                    {
+                        response.AddAlert("error", "Cannot modify a published petition.");
+                        return BadRequest(response);
+                    }
+                    //Yes, you are correct. The 'as' keyword in C# attempts to cast an object to a specified type.
+                    //If the cast is successful, it returns the object as the specified type.
+                    //If the cast fails, it returns null instead of throwing an exception.
+                    //In your case, using as List<User> on petition.Authors attempts to cast the IEnumerable<User> returned by the
+                    //Authors property back to the List<User> that it is originally, allowing you to modify the original collection directly.
+                    List<User>? authorsList = petition.Authors as List<User>;
+                    // Check if the cast was successful
+                    if (authorsList == null)
+                    {
+                        response.AddAlert("error", "Unable to modify authors list. The petition may be published.");
+                        return BadRequest(response);
+                    }
+
+                    //Remove authors from petition that were removed from petitionDTO
+                    // Collect the authors to be removed in a separate list
+                    List<User> authorsToRemove = petition.Authors.Where(author => !petitionDTO.Authors.Any(a => a.Id == author.Id)).ToList();
+
+                    // Remove the collected authors from the original list
+                    foreach (User author in authorsToRemove)
+                    {
+                        authorsList.Remove(author);
+                        author.PetitionDrafts.Remove(petition);
+                        author.AddNotification("Petition draft removed", $"You have been removed as an author from the petition draft: {petition.Title}");
+                    }
+                    
+                    //Add new authors from the DTO
+                    // Add any new authors that are in petitionDTO.Authors but not in petition.Authors
+                    List<UserDTO> authorsToAddDTO = petitionDTO.Authors.Where(authorDTO => !petition.Authors.Any(a => a.Id == authorDTO.Id)).ToList();
+                    List<User> authorsToAdd = await _context.Users.Where(u => authorsToAddDTO.Any(a => a.Id == u.Id)).ToListAsync();
+                    foreach (User author in authorsToAdd)
+                    {
+                        authorsList.Add(author);
+                        author.AddNotification("New petition draft", $"You have been added as an author to the petition draft: {petition.Title}");
+                    }
+                    //if the petition doesn't have any authors now, delete it
+                    if (authorsList.Count == 0)
+                    {
+                        _context.Petitions.Remove(petition);
+                        await _context.SaveChangesAsync();
+                        response.AddAlert("success", "Petition draft deleted successfully");
+                        return Ok(response);
+                    }
+                    //Update the rest of the petition
+                    petition.Title = petitionDTO.Title;
+                    petition.Description = petitionDTO.Description;
+                    petition.ActionRequested = petitionDTO.ActionRequested;
+                    petition.SupportingArguments = petitionDTO.SupportingArguments;
+                    petition.DeadlineForResponse = petitionDTO.DeadlineForResponse;
+                    Community? petitionsCommunity = null;
+                    if (petitionDTO.CommunityDTO != null) petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTO.Id);
+                    if (petitionsCommunity != null) petition.Community = petitionsCommunity;
+
+                    //////BLOB STORAGE SUPPORTING DOCUMENTS
+                    List<string>? linksList = petition.LinksToSupportingDocuments as List<string>;
+                    if (linksList == null)
+                    {
+                        response.AddAlert("error", "Error: Unable to modify supporting documents list.");
+                        return BadRequest(response);
+                    }
+                    //Files to remove from blob storage
+                    //first, check which strings are present in petition but not in petitionDTO and remove them
+                    List<string>? linksToRemove = linksList?.Where(link => !petitionDTO.LinksToSupportingDocuments.Contains(link)).ToList();
+                    //Then, delete them from Blob storage
+                    string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
+                    if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
+                    BlobContainerClient containerClient = new(new Uri(blobSasUrl));
+                    if (linksToRemove != null && linksToRemove.Count > 0)
+                    {
+                        foreach (string link in linksToRemove)
+                        {
+                            Uri uri = new(link);
+                            string blobName = uri.Segments.Last();
+                            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                            bool successfullyDeleted = await blobClient.DeleteIfExistsAsync();
+                            //Remove them from petition.LinksToSupportingDocuments
+                            if (linksList == null)
+                            {
+                                response.AddAlert("error", "Error: Unable to remove from supporting documents list.");
+                                return BadRequest(response);
+                            }
+                            linksList.Remove(link);
+                        }
+                    }
+                    //Files to add to blob
+                    foreach (IFormFile file in petitionDTO.SupportingDocumentsToAdd)
+                    {
+                        string blobName = $"/petitiondocuments/{petition.Id}/{file.Name}";
+                        BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                        await using Stream filestream = file.OpenReadStream();
+                        //Upload the document
+                        await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
+                        if (linksList == null)
+                        {
+                            response.AddAlert("error", "Error: Unable to add to supporting documents list.");
+                            return BadRequest(response);
+}
+                            linksList.Add(blobClient.Uri.ToString());
+                    }
+                    await _context.SaveChangesAsync();
+                    response.AddAlert("success", "Petition draft updated successfully");
+                    response.Petition = new PetitionDTO(petition);
+                    response.SuccessfulOperation = true;
+                    return Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    response.AddAlert("error", ex.Message);
+                    response.SuccessfulOperation = false;
+                    return BadRequest(response);
+                }
+            }
+        }
+        #endregion
     }
 }
