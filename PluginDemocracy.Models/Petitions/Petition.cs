@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PluginDemocracy.Models
 {
-    public class Petition(User originalAuthor)
+    public class Petition
     {
         #region DATA
         /// <summary>
@@ -16,6 +16,14 @@ namespace PluginDemocracy.Models
         /// If the petition has been published, it cannot be unpublished, edited, or deleted.
         /// </summary>
         protected bool _published = false;
+        [NotMapped]
+        public bool Published
+        {
+            get
+            {
+                return _published;
+            }
+        }
         /// <summary>
         /// The date at which the Petition was published, and thus made available for signatures.
         /// Once published, it cannot be unpublished, edited, or deleted.
@@ -145,7 +153,7 @@ namespace PluginDemocracy.Models
                 return _published ? _linksToSupportingDocuments.AsReadOnly() : _linksToSupportingDocuments;
             }
         }
-        protected List<User> _authors = [originalAuthor];
+        protected List<User> _authors;
         /// <summary>
         /// The name and contact information of the person or group who created the petition.
         /// </summary>
@@ -155,6 +163,15 @@ namespace PluginDemocracy.Models
             get
             {
                 return _published ? _authors.AsReadOnly() : _authors;
+            }
+        }
+        protected List<User> _authorsReadyToPublish;
+        [NotMapped]
+        public IEnumerable<User> AuthorsReadyToPublish
+        {
+            get
+            {
+                return _published ? _authorsReadyToPublish.AsReadOnly() : _authorsReadyToPublish;
             }
         }
         protected List<ESignature> _signatures = [];
@@ -169,14 +186,34 @@ namespace PluginDemocracy.Models
         #endregion
         #region METHODS
         /// <summary>
+        /// This constructor is for use by EFC
+        /// </summary>
+        protected Petition()
+        {
+            _authors = [];
+            _authorsReadyToPublish = [];
+        }
+        public Petition(User originalAuthor)
+        {
+            _authors = [originalAuthor];
+            _authorsReadyToPublish = [];
+        }
+        /// <summary>
         /// When it is published, the petition is made available to the public for signatures.
         /// Once published, no more changes can be made to a petition. 
         /// </summary>
-        public void Publish()
+        protected void Publish()
         {
             IsGoodToPublish();
             _published = true;
             PublishedDate = DateTime.UtcNow;
+        }
+        public void Publish(User author)
+        {
+            IsGoodToPublish();
+            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can be published.");
+            _authorsReadyToPublish.Add(author);
+            if (_authorsReadyToPublish.Count == _authors.Count) Publish();
         }
         /// <summary>
         /// Throws exceptions if the petition is not ready to be published.
