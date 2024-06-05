@@ -77,6 +77,7 @@ namespace PluginDemocracy.Models
                 return allAssociatedProposals.Distinct().ToList();
             }
         }
+        public List<Petition> PetitionDrafts { get; set; }
         /// <summary>
         /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
         /// </summary>
@@ -106,6 +107,7 @@ namespace PluginDemocracy.Models
             Culture = new CultureInfo("en-US");
             Admin = admin;
             Roles = [];
+            PetitionDrafts = [];
             ResidentOfHomes = [];
         }
         public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
@@ -122,6 +124,7 @@ namespace PluginDemocracy.Models
             Culture = culture;
 
             Roles = [];
+            PetitionDrafts = [];
             ResidentOfHomes = [];
         }
         public void AddRole(Role role)
