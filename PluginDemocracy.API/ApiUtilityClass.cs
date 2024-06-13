@@ -109,7 +109,7 @@ namespace PluginDemocracy.API
             //Build confirmation link
             string emailConfirmationLink = $"{WebAppBaseUrl}{FrontEndPages.ConfirmEmail}?userId={user.Id}&token={user.EmailConfirmationToken}";
 
-            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{Translate(ResourceKeys.ConfirmEmailTitle, user.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{Translate(ResourceKeys.ConfirmEmailP1, user.Culture)}</p>\r\n<p style=\"text-align: center;\">{Translate(ResourceKeys.ConfirmEmailP2, user.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{Translate(ResourceKeys.ConfirmEmailLink, user.Culture)}</a></p>";
+            string emailBody = $"<h1 style=\"text-align: center; color:darkgreen\">{Translate(ResourceKeys.ConfirmEmailTitle, user.Culture)}</h1>\r\n<img src=\"https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer/UIAssets/PluginDemocracyImage.png\" style=\"max-height: 200px; margin-left: auto; margin-right: auto; display:block;\"/>\r\n<p style=\"text-align: center;\">{Translate(ResourceKeys.ConfirmEmailP1, user.Culture)}</p>\r\n<p style=\"text-align: center;\">{Translate(ResourceKeys.ConfirmEmailP2, user.Culture)}:</p>\r\n<p style=\"text-align: center;\"><a href={emailConfirmationLink}>{Translate(ResourceKeys.ConfirmEmailLink, user.Culture)}</a></p>";
             //Send Email
             try
             {
