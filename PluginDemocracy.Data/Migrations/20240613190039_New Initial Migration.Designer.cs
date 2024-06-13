@@ -12,8 +12,8 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    [Migration("20240419165150_PostReactions")]
-    partial class PostReactions
+    [Migration("20240613190039_New Initial Migration")]
+    partial class NewInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,36 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasIndex("ResidentsId");
 
                     b.ToTable("HomeUser");
+                });
+
+            modelBuilder.Entity("PetitionAuthors", b =>
+                {
+                    b.Property<int>("PetitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PetitionId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PetitionAuthors");
+                });
+
+            modelBuilder.Entity("PetitionAuthorsReadyToPublish", b =>
+                {
+                    b.Property<int>("PetitionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PetitionId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PetitionAuthorsReadyToPublish");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Accounting", b =>
@@ -99,7 +129,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<int?>("CommunityId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DictamenType")
@@ -113,7 +143,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<int>("ProposalId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("TitleKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -249,6 +279,53 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Constitutions");
+                });
+
+            modelBuilder.Entity("PluginDemocracy.Models.ESignature", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:Identity", "1, 1");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DocumentHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashOfSignedDocument")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IPAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Intent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PetitionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SignatureImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SignedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SignerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetitionId");
+
+                    b.HasIndex("SignerId");
+
+                    b.ToTable("ESignatures");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Home", b =>
@@ -402,6 +479,55 @@ namespace PluginDemocracy.Data.Migrations
                     b.ToTable("Notification");
                 });
 
+            modelBuilder.Entity("PluginDemocracy.Models.Petition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionRequested")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CommunityId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CommunityId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeadlineForResponse")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LinksToSupportingDocumentsSerialized")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("LinksToSupportingDocumentsSerialized");
+
+                    b.Property<DateTime?>("PublishedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SupportingArguments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
+
+                    b.HasIndex("CommunityId1");
+
+                    b.ToTable("Petitions");
+                });
+
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -419,12 +545,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<int>("CommunityId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CommunityId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CommunityId2")
-                        .HasColumnType("int");
-
                     b.Property<string>("Images")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -437,10 +557,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("CommunityId");
-
-                    b.HasIndex("CommunityId1");
-
-                    b.HasIndex("CommunityId2");
 
                     b.ToTable("Posts");
                 });
@@ -460,12 +576,17 @@ namespace PluginDemocracy.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PublishedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("PostComments");
                 });
@@ -842,6 +963,36 @@ namespace PluginDemocracy.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PetitionAuthors", b =>
+                {
+                    b.HasOne("PluginDemocracy.Models.Petition", null)
+                        .WithMany()
+                        .HasForeignKey("PetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PluginDemocracy.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PetitionAuthorsReadyToPublish", b =>
+                {
+                    b.HasOne("PluginDemocracy.Models.Petition", null)
+                        .WithMany()
+                        .HasForeignKey("PetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PluginDemocracy.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PluginDemocracy.Models.Accounting", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.Community", "Community")
@@ -902,6 +1053,25 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("Constitution");
 
                     b.Navigation("VotingStrategy");
+                });
+
+            modelBuilder.Entity("PluginDemocracy.Models.ESignature", b =>
+                {
+                    b.HasOne("PluginDemocracy.Models.Petition", "Petition")
+                        .WithMany("Signatures")
+                        .HasForeignKey("PetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PluginDemocracy.Models.User", "Signer")
+                        .WithMany()
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Petition");
+
+                    b.Navigation("Signer");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Home", b =>
@@ -984,6 +1154,19 @@ namespace PluginDemocracy.Data.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("PluginDemocracy.Models.Petition", b =>
+                {
+                    b.HasOne("PluginDemocracy.Models.Community", "Community")
+                        .WithMany()
+                        .HasForeignKey("CommunityId");
+
+                    b.HasOne("PluginDemocracy.Models.Community", null)
+                        .WithMany("Petitions")
+                        .HasForeignKey("CommunityId1");
+
+                    b.Navigation("Community");
+                });
+
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.User", "Author")
@@ -991,18 +1174,10 @@ namespace PluginDemocracy.Data.Migrations
                         .HasForeignKey("AuthorId");
 
                     b.HasOne("PluginDemocracy.Models.Community", null)
-                        .WithMany("posts")
+                        .WithMany("Posts")
                         .HasForeignKey("CommunityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PluginDemocracy.Models.Community", null)
-                        .WithMany("PostsByPublishedDate")
-                        .HasForeignKey("CommunityId1");
-
-                    b.HasOne("PluginDemocracy.Models.Community", null)
-                        .WithMany("PostsByLatestActivity")
-                        .HasForeignKey("CommunityId2");
 
                     b.Navigation("Author");
                 });
@@ -1015,6 +1190,12 @@ namespace PluginDemocracy.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PluginDemocracy.Models.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Author");
                 });
 
@@ -1022,7 +1203,8 @@ namespace PluginDemocracy.Data.Migrations
                 {
                     b.HasOne("PluginDemocracy.Models.Post", null)
                         .WithMany("Reactions")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("PluginDemocracy.Models.User", "User")
                         .WithMany()
@@ -1205,9 +1387,9 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.Navigation("NonResidentialCitizenIn");
 
-                    b.Navigation("PostsByLatestActivity");
+                    b.Navigation("Petitions");
 
-                    b.Navigation("PostsByPublishedDate");
+                    b.Navigation("Posts");
 
                     b.Navigation("Projects");
 
@@ -1216,8 +1398,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("RedFlags");
 
                     b.Navigation("Roles");
-
-                    b.Navigation("posts");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Constitution", b =>
@@ -1234,8 +1414,15 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("Ownerships");
                 });
 
+            modelBuilder.Entity("PluginDemocracy.Models.Petition", b =>
+                {
+                    b.Navigation("Signatures");
+                });
+
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Reactions");
                 });
 

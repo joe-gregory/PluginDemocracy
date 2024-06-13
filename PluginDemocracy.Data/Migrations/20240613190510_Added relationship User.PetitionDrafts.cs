@@ -5,7 +5,7 @@
 namespace PluginDemocracy.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class MadeChangesToJoinCommunityRequestsTable : Migration
+    public partial class AddedrelationshipUserPetitionDrafts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

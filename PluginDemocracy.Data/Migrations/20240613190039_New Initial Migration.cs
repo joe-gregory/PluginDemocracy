@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PluginDemocracy.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial2 : Migration
+    public partial class NewInitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,7 +28,8 @@ namespace PluginDemocracy.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Preamble = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,7 +120,7 @@ namespace PluginDemocracy.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OfficialCurrency = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OfficialLanguages = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    _officialLanguagesCodes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CanHaveHomes = table.Column<bool>(type: "bit", nullable: false),
                     CanHaveNonResidentialCitizens = table.Column<bool>(type: "bit", nullable: false),
@@ -160,6 +161,7 @@ namespace PluginDemocracy.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ParentCommunityId = table.Column<int>(type: "int", nullable: true),
+                    Number = table.Column<int>(type: "int", nullable: false),
                     InternalAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -169,6 +171,38 @@ namespace PluginDemocracy.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Homes_Communities_ParentCommunityId",
                         column: x => x.ParentCommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Petitions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CommunityId = table.Column<int>(type: "int", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActionRequested = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SupportingArguments = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeadlineForResponse = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LinksToSupportingDocumentsSerialized = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommunityId1 = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Petitions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Petitions_Communities_CommunityId",
+                        column: x => x.CommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Petitions_Communities_CommunityId1",
+                        column: x => x.CommunityId1,
                         principalTable: "Communities",
                         principalColumn: "Id");
                 });
@@ -233,8 +267,8 @@ namespace PluginDemocracy.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TitleKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DescriptionKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CommunityId = table.Column<int>(type: "int", nullable: true),
                     IssueDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ProposalId = table.Column<int>(type: "int", nullable: false),
@@ -320,6 +354,7 @@ namespace PluginDemocracy.Data.Migrations
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CultureCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Admin = table.Column<bool>(type: "bit", nullable: false),
                     RedFlagId = table.Column<int>(type: "int", nullable: true),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -335,6 +370,38 @@ namespace PluginDemocracy.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ESignatures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SignerId = table.Column<int>(type: "int", nullable: false),
+                    IPAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PetitionId = table.Column<int>(type: "int", nullable: false),
+                    SignatureImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DocumentHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HashOfSignedDocument = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SignedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Intent = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ESignatures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ESignatures_Petitions_PetitionId",
+                        column: x => x.PetitionId,
+                        principalTable: "Petitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ESignatures_Users_SignerId",
+                        column: x => x.SignerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HomeOwnership",
                 columns: table => new
                 {
@@ -343,9 +410,11 @@ namespace PluginDemocracy.Data.Migrations
                     OwnershipPercentage = table.Column<double>(type: "float", nullable: false),
                     HomeId = table.Column<int>(type: "int", nullable: false),
                     CommunityId = table.Column<int>(type: "int", nullable: true),
+                    CommunityId1 = table.Column<int>(type: "int", nullable: true),
                     HomeId1 = table.Column<int>(type: "int", nullable: true),
                     HomeId2 = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -353,6 +422,11 @@ namespace PluginDemocracy.Data.Migrations
                     table.ForeignKey(
                         name: "FK_HomeOwnership_Communities_CommunityId",
                         column: x => x.CommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HomeOwnership_Communities_CommunityId1",
+                        column: x => x.CommunityId1,
                         principalTable: "Communities",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -374,6 +448,11 @@ namespace PluginDemocracy.Data.Migrations
                     table.ForeignKey(
                         name: "FK_HomeOwnership_Users_UserId",
                         column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HomeOwnership_Users_UserId1",
+                        column: x => x.UserId1,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -403,6 +482,112 @@ namespace PluginDemocracy.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JoinCommunityRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CommunityId = table.Column<int>(type: "int", nullable: false),
+                    HomeId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    JoiningAsOwner = table.Column<bool>(type: "bit", nullable: false),
+                    JoiningAsResident = table.Column<bool>(type: "bit", nullable: false),
+                    OwnershipPercentage = table.Column<double>(type: "float", nullable: false),
+                    Approved = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JoinCommunityRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JoinCommunityRequests_Communities_CommunityId",
+                        column: x => x.CommunityId,
+                        principalTable: "Communities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JoinCommunityRequests_Homes_HomeId",
+                        column: x => x.HomeId,
+                        principalTable: "Homes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JoinCommunityRequests_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Read = table.Column<bool>(type: "bit", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notification_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PetitionAuthors",
+                columns: table => new
+                {
+                    PetitionId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PetitionAuthors", x => new { x.PetitionId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_PetitionAuthors_Petitions_PetitionId",
+                        column: x => x.PetitionId,
+                        principalTable: "Petitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PetitionAuthors_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PetitionAuthorsReadyToPublish",
+                columns: table => new
+                {
+                    PetitionId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PetitionAuthorsReadyToPublish", x => new { x.PetitionId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_PetitionAuthorsReadyToPublish_Petitions_PetitionId",
+                        column: x => x.PetitionId,
+                        principalTable: "Petitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PetitionAuthorsReadyToPublish_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -410,8 +595,9 @@ namespace PluginDemocracy.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AuthorId = table.Column<int>(type: "int", nullable: true),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CommunityId = table.Column<int>(type: "int", nullable: true)
+                    LatestActivity = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Images = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommunityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -420,7 +606,8 @@ namespace PluginDemocracy.Data.Migrations
                         name: "FK_Posts_Communities_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communities",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Posts_Users_AuthorId",
                         column: x => x.AuthorId,
@@ -435,16 +622,12 @@ namespace PluginDemocracy.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AssigneeId = table.Column<int>(type: "int", nullable: true),
+                    HolderId = table.Column<int>(type: "int", nullable: true),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanJoinCitizen = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanRemoveCitizen = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanJoinResident = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanRemoveResident = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanCreateRole = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanVerifyHomeOwnership = table.Column<bool>(type: "bit", nullable: false),
-                    Powers_CanAccounting = table.Column<bool>(type: "bit", nullable: false),
+                    Powers_CanEditHomeOwnership = table.Column<bool>(type: "bit", nullable: false),
+                    Powers_CanEditResidency = table.Column<bool>(type: "bit", nullable: false),
+                    Powers_CanModifyAccounting = table.Column<bool>(type: "bit", nullable: false),
                     CommunityId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -462,8 +645,8 @@ namespace PluginDemocracy.Data.Migrations
                         principalTable: "Communities",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Roles_Users_AssigneeId",
-                        column: x => x.AssigneeId,
+                        name: "FK_Roles_Users_HolderId",
+                        column: x => x.HolderId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -498,6 +681,62 @@ namespace PluginDemocracy.Data.Migrations
                         column: x => x.AccountantId,
                         principalTable: "Users",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostComments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostReactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ReactionType = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostReactions_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostReactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -557,9 +796,24 @@ namespace PluginDemocracy.Data.Migrations
                 column: "ProposalToCreateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ESignatures_PetitionId",
+                table: "ESignatures",
+                column: "PetitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ESignatures_SignerId",
+                table: "ESignatures",
+                column: "SignerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HomeOwnership_CommunityId",
                 table: "HomeOwnership",
                 column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HomeOwnership_CommunityId1",
+                table: "HomeOwnership",
+                column: "CommunityId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HomeOwnership_HomeId",
@@ -582,6 +836,11 @@ namespace PluginDemocracy.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HomeOwnership_UserId1",
+                table: "HomeOwnership",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Homes_ParentCommunityId",
                 table: "Homes",
                 column: "ParentCommunityId");
@@ -590,6 +849,66 @@ namespace PluginDemocracy.Data.Migrations
                 name: "IX_HomeUser_ResidentsId",
                 table: "HomeUser",
                 column: "ResidentsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinCommunityRequests_CommunityId",
+                table: "JoinCommunityRequests",
+                column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinCommunityRequests_HomeId",
+                table: "JoinCommunityRequests",
+                column: "HomeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinCommunityRequests_UserId",
+                table: "JoinCommunityRequests",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notification_UserId",
+                table: "Notification",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PetitionAuthors_UserId",
+                table: "PetitionAuthors",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PetitionAuthorsReadyToPublish_UserId",
+                table: "PetitionAuthorsReadyToPublish",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Petitions_CommunityId",
+                table: "Petitions",
+                column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Petitions_CommunityId1",
+                table: "Petitions",
+                column: "CommunityId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostComments_AuthorId",
+                table: "PostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostComments_PostId",
+                table: "PostComments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostReactions_PostId",
+                table: "PostReactions",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostReactions_UserId",
+                table: "PostReactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AuthorId",
@@ -632,14 +951,14 @@ namespace PluginDemocracy.Data.Migrations
                 column: "ProposalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Roles_AssigneeId",
-                table: "Roles",
-                column: "AssigneeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Roles_CommunityId",
                 table: "Roles",
                 column: "CommunityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_HolderId",
+                table: "Roles",
+                column: "HolderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionHistory_AccountantId",
@@ -713,13 +1032,31 @@ namespace PluginDemocracy.Data.Migrations
                 name: "Articles");
 
             migrationBuilder.DropTable(
+                name: "ESignatures");
+
+            migrationBuilder.DropTable(
                 name: "HomeOwnership");
 
             migrationBuilder.DropTable(
                 name: "HomeUser");
 
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "JoinCommunityRequests");
+
+            migrationBuilder.DropTable(
+                name: "Notification");
+
+            migrationBuilder.DropTable(
+                name: "PetitionAuthors");
+
+            migrationBuilder.DropTable(
+                name: "PetitionAuthorsReadyToPublish");
+
+            migrationBuilder.DropTable(
+                name: "PostComments");
+
+            migrationBuilder.DropTable(
+                name: "PostReactions");
 
             migrationBuilder.DropTable(
                 name: "Projects");
@@ -729,6 +1066,12 @@ namespace PluginDemocracy.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TransactionHistory");
+
+            migrationBuilder.DropTable(
+                name: "Petitions");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Dictamens");
