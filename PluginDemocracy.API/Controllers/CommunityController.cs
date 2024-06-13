@@ -20,10 +20,12 @@ namespace PluginDemocracy.API.Controllers
         private readonly APIUtilityClass _utilityClass = utilityClass;
         private readonly IConfiguration _configuration = configuration;
 
+        [Authorize]
         [HttpPost("registercommunity")]
         public async Task<ActionResult<PDAPIResponse>> Register(CommunityDTO communityDto)
         {
             PDAPIResponse response = new();
+
             if (string.IsNullOrEmpty(communityDto.Name))
             {
                 response.AddAlert("error", "Community name is required");
