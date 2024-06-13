@@ -436,7 +436,25 @@ namespace PluginDemocracy.API.Controllers
             if (string.IsNullOrEmpty(blobSasURL)) throw new Exception("BlobSASURL environment variable is null or empty");
             BlobContainerClient blobContainerClient = new(new Uri(blobSasURL));
 
-            string blobName = $"user/profilepicture/{existingUser.Id}{fileExtension}";
+            //if the user has a profile picture, delete it
+            if (!String.IsNullOrEmpty(existingUser.ProfilePicture))
+            {
+                Uri profilePicUri = new(existingUser.ProfilePicture);
+                string blobContainerUrl = $"{profilePicUri.Scheme}://{profilePicUri.Host}/{profilePicUri.Segments[1]}";
+                string oldBlobName = profilePicUri.AbsolutePath.Replace($"/{profilePicUri.Segments[1]}", "").TrimStart('/');
+                BlobClient oldBlobClient = blobContainerClient.GetBlobClient(oldBlobName);
+                try
+                {
+                    await oldBlobClient.DeleteAsync();
+                }
+                catch (Exception ex)
+                {
+                    response.AddAlert("error", $"Unable to delete old profile picture\nError:\n{ex.Message}");
+                    return BadRequest(response);
+                }
+            }
+
+            string newBlobName = $"user/{existingUser.Id}/profileimage/{Guid.NewGuid()}{fileExtension}";
             #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
             string contentType = fileExtension switch
             {
@@ -445,10 +463,9 @@ namespace PluginDemocracy.API.Controllers
                 ".png" => "image/png",
             };
             #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
-
             try
             {
-                BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
+                BlobClient blobClient = blobContainerClient.GetBlobClient(newBlobName);
                 await using var fileStream = file.OpenReadStream();
                 await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType }); 
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
@@ -494,7 +511,6 @@ namespace PluginDemocracy.API.Controllers
             {
                 return StatusCode(500);
             }
-
         }
         [Authorize]
         [HttpGet(ApiEndPoints.GetUserDTOFromEmail)]
