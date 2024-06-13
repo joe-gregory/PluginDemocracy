@@ -28,17 +28,29 @@ namespace PluginDemocracy.Models
         /// Once published, it cannot be unpublished, edited, or deleted.
         /// </summary>
         public DateTime? PublishedDate { get; protected set; } = null;
+        protected DateTime? _lastUpdated;
         /// <summary>
-        /// Returns the date of when the petition was published or the most recent e-signature was added.
-        /// Whatever is the most recent date.
+        /// If the petition has not been published, the LastUpdated date can be changed as changes are made to the draft. 
+        /// However, once it is published, LastUpdated can only be set internally. It is set to the date it was published and afterwards
+        /// after every new e-signature is added. 
         /// </summary>
-        public DateTime? LastUpdated
+        public DateTime? LastUpdated 
         {
             get
             {
-                ESignature? mostRecentSignature = _signatures.OrderByDescending(s => s.SignedDate).FirstOrDefault();
-                return mostRecentSignature != null && mostRecentSignature.SignedDate > PublishedDate ? mostRecentSignature.SignedDate : PublishedDate;
+                return _lastUpdated;
             }
+            set 
+            { 
+                if (!_published)
+                {
+                    _lastUpdated = value;
+                }
+                else
+                {
+                    throw new Exception("Cannot change LastUpdated date of a published petition.");
+                }
+            } 
         }
         protected Community? _community;
         /// <summary>
@@ -145,7 +157,6 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
-        [NotMapped]
         public IEnumerable<string> LinksToSupportingDocuments
         {
             get
@@ -204,11 +215,18 @@ namespace PluginDemocracy.Models
             IsGoodToPublish();
             _published = true;
             PublishedDate = DateTime.UtcNow;
+            LastUpdated = DateTime.UtcNow;
         }
-        public void Publish(User author)
+        /// <summary>
+        /// When there are multiple authors, each author needs to mark the petition as ready to publish.
+        /// When all the authors have marked it as published, then the petition publishes. 
+        /// If there is only one author, then the petition will publish.
+        /// </summary>
+        /// <param name="author">The author saying he is ok with the current draft and is ready to publish</param>
+        public void AuthorMarksAsReadyToPublish(User author)
         {
             IsGoodToPublish();
-            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can be published.");
+            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as ready to be published.");
             _authorsReadyToPublish.Add(author);
             if (_authorsReadyToPublish.Count == _authors.Count) Publish();
         }
@@ -230,6 +248,7 @@ namespace PluginDemocracy.Models
             if (!_published) throw new System.InvalidOperationException("Cannot sign an un-published petition.");
             if (_signatures.Any(s => s.Signer == signature.Signer)) throw new System.InvalidOperationException("Cannot sign a petition more than once.");
             _signatures.Add(signature);
+            LastUpdated = DateTime.UtcNow;
         }
         public string ReturnHash()
         {
