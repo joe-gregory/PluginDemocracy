@@ -21,6 +21,7 @@
         public const string RefreshUserData = UsersController + "refreshuserdata";
         public const string AboutUser = UsersController + "aboutuser";
         public const string GetUserDTOFromEmail = UsersController + "getuserdtofromemail";
+        public const string GetUserPetitionDrafts = UsersController + "getuserpetitiondrafts";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";

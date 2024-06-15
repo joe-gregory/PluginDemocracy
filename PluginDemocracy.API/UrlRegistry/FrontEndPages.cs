@@ -15,6 +15,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string ForgotPassword = "/forgotpassword";
         public const string ResetPassword = "/resetpassword";
         public const string Notifications = "/notifications";
+        public const string PetitionDrafts = "/petitiondrafts";
 
         //Community pages
         public const string Feed = "/feed";
