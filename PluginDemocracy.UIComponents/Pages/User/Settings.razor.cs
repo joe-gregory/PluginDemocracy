@@ -29,9 +29,9 @@ namespace PluginDemocracy.UIComponents.Pages.User
             else if (AppState.Culture.Name == "en-US") _checked = false;
             else disabled = true;
             SetLook();
-            await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
             if (AppState.IsLoggedIn)
             {
+                await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
                 #pragma warning disable CS8602 // Dereference of a possibly null reference. AppState.IsLoggedIn checks if AppState.User is null
                 userDto.Id = AppState.User.Id;
                 userDto.FirstName = AppState.User.FirstName;
