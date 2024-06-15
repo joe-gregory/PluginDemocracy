@@ -293,7 +293,7 @@ namespace PluginDemocracy.API.Controllers
                     }
 
                     Guid guid = Guid.NewGuid();
-                    string blobName = $"{newPost.Id}-{guid}";
+                    string blobName = $"posts/{newPost.Id}/images/{guid}";
 
                     //Create a blob client for the image
                     BlobClient blobClient = containerClient.GetBlobClient(blobName);
@@ -377,24 +377,26 @@ namespace PluginDemocracy.API.Controllers
             }
             try
             {
+
                 //If post has images in the blob storage, delete them
                 if (post.Images.Count != 0)
                 {
                     string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
+                    if (string.IsNullOrEmpty(blobSasUrl))
+                    {
+                        response.AddAlert("error", "Blob SAS URL is null or empty");
+                        return BadRequest(response);
+                    }
                     BlobContainerClient containerClient = new(new Uri(blobSasUrl));
 
-                    //iterate through the images and delete them
-                    foreach (string imageUrl in post.Images)
+                    // Define the directory containing the post images
+                    string postImagesDirectory = $"posts/{post.Id}/images/";
+                    // List all blobs in the directory
+                    await foreach (BlobItem blobItem in containerClient.GetBlobsAsync(prefix: postImagesDirectory))
                     {
-                        Uri imageUri = new(imageUrl);
-                        string blobName = imageUri.Segments.Last(); //Extract the blob name from the URL
-
-                        //strip off any SAS token if present from image name: 
-                        int queryStartIndex = blobName.IndexOf('?');
-                        if (queryStartIndex != -1) blobName = blobName[..queryStartIndex];
-
-                        BlobClient blobClient = containerClient.GetBlobClient(blobName);
-                        Azure.Response successfulDelete = await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                        // Get a reference to the blob and delete it
+                        BlobClient blobClient = containerClient.GetBlobClient(blobItem.Name);
+                        await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
                 }
                 _context.Posts.Remove(post);
