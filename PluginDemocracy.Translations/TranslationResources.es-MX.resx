@@ -303,6 +303,9 @@
   <data name="LastName" xml:space="preserve">
     <value>Apellido</value>
   </data>
+  <data name="LatestEdit" xml:space="preserve">
+    <value>Última Edición</value>
+  </data>
   <data name="LogIn" xml:space="preserve">
     <value>Inicia sesión</value>
   </data>
@@ -338,6 +341,9 @@
   </data>
   <data name="PetitionDescription" xml:space="preserve">
     <value>Una descripción detallada del problema, incluyendo por qué es importante y qué cambios o acciones se están solicitando.</value>
+  </data>
+  <data name="PetitionDrafts" xml:space="preserve">
+    <value>Borradores de Peticiones</value>
   </data>
   <data name="PetitionSavedSuccessfully" xml:space="preserve">
     <value>La petición fue guardada exitosamente</value>

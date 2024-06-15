@@ -619,6 +619,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Latest Edit.
+        /// </summary>
+        internal static string LatestEdit {
+            get {
+                return ResourceManager.GetString("LatestEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log in.
         /// </summary>
         internal static string LogIn {
@@ -723,6 +732,15 @@ namespace PluginDemocracy.Translations {
         internal static string PetitionDescription {
             get {
                 return ResourceManager.GetString("PetitionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Petition Drafts.
+        /// </summary>
+        internal static string PetitionDrafts {
+            get {
+                return ResourceManager.GetString("PetitionDrafts", resourceCulture);
             }
         }
         

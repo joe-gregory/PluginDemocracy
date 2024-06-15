@@ -115,6 +115,8 @@ namespace PluginDemocracy.Translations
         public const string DeletePetitionDraft = "DeletePetitionDraft";
         public const string Publish = "Publish";
         public const string AuthorsReadyToPublish = "AuthorsReadyToPublish";
+        public const string PetitionDrafts = "PetitionDrafts";
+        public const string LatestEdit = "LatestEdit";
         #endregion
     }
 }
