@@ -105,6 +105,10 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                 // Add the petition data as a JSON part
                 string json = JsonSerializer.Serialize(Petition);
                 StringContent stringContent = new(json, Encoding.UTF8, "application/json");
+                stringContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "petition"
+                };
                 content.Add(stringContent, "petition");
 
                 //Add each file
@@ -113,7 +117,12 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                 {
                     StreamContent streamContent = new(file.OpenReadStream(maxAllowedSize: maxAllowedSize));
                     streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                    content.Add(streamContent, "files", file.Name);
+                    streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "files",
+                        FileName = file.Name
+                    };
+                    content.Add(streamContent, "files", file.Name); 
                 }
                 //send the request
                 string endpoint = AppState.BaseUrl + ApiEndPoints.SavePetitionDraft;

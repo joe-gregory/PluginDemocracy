@@ -1,19 +1,13 @@
-﻿@inject BaseAppState AppState
-@{
-    Dictionary<string, object> avatarAttributes = new();
-    if (Size != null) avatarAttributes.Add("Size", Size);
-    if(Style!= null) avatarAttributes.Add("Style", Style);
-}
-<MudAvatar @attributes="avatarAttributes">
-    @if (AppState.User != null)
+﻿<MudAvatar @onclick="() => NavigateToProfile(User.Id)">
+    @if (User != null)
     {
-        if (!string.IsNullOrEmpty(AppState.User.ProfilePicture))
+        if (!string.IsNullOrEmpty(User.ProfilePicture))
         {
-            <MudImage Src=@AppState.User.ProfilePicture />
+            <MudImage Src=@User.ProfilePicture />
         }
         else
         {
-            <MudText Color="Color.Primary">@AppState.User.Initials</MudText>
+            <MudText Color="Color.Primary">@User.Initials</MudText>
         }
     }
     else
@@ -21,10 +15,3 @@
         <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" />
     }
 </MudAvatar>
-
-@code {
-    [Parameter]
-    public MudBlazor.Size? Size { get; set; } = null;
-    [Parameter]
-    public string? Style { get; set; } = null;
-}

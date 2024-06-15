@@ -1,1 +1,38 @@
-﻿
+﻿<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudText>
+
+<MudPaper Elevation = "25" Variant="Variant.Outlined" Class="mt-5 mb-5">
+    @if (PetitionDraftsList != null && PetitionDraftsList.Count != 0)
+    {
+        <MudTable Items="@PetitionDraftsList" Class="table-striped">
+            <HeaderContent>
+                <MudTh>@AppState.Translate(ResourceKeys.Title)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.LatestEdit)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.Authors)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Title</MudTd>
+                <MudTd>@context.LastUpdated</MudTd>
+                <MudTh>
+                    <MudAvatarGroup>
+                        @foreach(UserDTO user in context.Authors)
+                        {
+                            <UserAvatar User="@user"/>
+                        }
+                    </MudAvatarGroup>
+                </MudTh>
+                <MudTh>
+                    <MudAvatarGroup>
+                        @foreach(UserDTO user in context.AuthorsReadyToPublish)
+                        {
+                            <UserAvatar User="@user"/>
+                        }
+                    </MudAvatarGroup>
+                </MudTh>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+    }
+</MudPaper>
