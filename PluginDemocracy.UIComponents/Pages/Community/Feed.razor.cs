@@ -11,7 +11,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         {
             await base.OnInitializedAsync();
             //if AppState.PDAPIResponse.LastRefreshed is older than 30 seconds, refresh user data
-            if (AppState.PDAPIResponse.LastRefreshed < DateTime.UtcNow.AddSeconds(-30)) await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
+            if (AppState.PDAPIResponse.LastRefreshed < DateTime.UtcNow.AddSeconds(-10)) await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
             //If user doesn't have any communities, redirect to JoinOrRegisterCommunity page
             if (AppState.User?.Citizenships.Count == 0) Services.NavigateTo(FrontEndPages.JoinOrRegisterCommunity);
 
