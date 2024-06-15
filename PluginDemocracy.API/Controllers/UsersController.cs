@@ -7,7 +7,6 @@ using PluginDemocracy.Data;
 using PluginDemocracy.Models;
 using PluginDemocracy.DTOs;
 using Azure.Storage.Blobs;
-using Azure;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
