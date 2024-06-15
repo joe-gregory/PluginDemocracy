@@ -486,7 +486,7 @@ namespace PluginDemocracy.API.Controllers
         #region PETITIONS
         [Authorize]
         [HttpPost(ApiEndPoints.SavePetitionDraft)]
-        public async Task<ActionResult<PDAPIResponse>> SavePetitionDraft(PetitionDTO petitionDTO)
+        public async Task<ActionResult<PDAPIResponse>> SavePetitionDraft([FromForm] PetitionDTO petitionDTO)
         {
             PDAPIResponse response = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
@@ -510,6 +510,7 @@ namespace PluginDemocracy.API.Controllers
                         ActionRequested = petitionDTO.ActionRequested,
                         SupportingArguments = petitionDTO.SupportingArguments,
                         DeadlineForResponse = petitionDTO.DeadlineForResponse,
+                        LastUpdated = DateTime.UtcNow
                     };
                     Community? petitionsCommunity = null;
                     if (petitionDTO.CommunityDTO != null) petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTO.Id);
@@ -553,27 +554,30 @@ namespace PluginDemocracy.API.Controllers
                         response.AddAlert("error", "Unable to modify authors list. The petition may be published.");
                         return BadRequest(response);
                     }
-
                     //Remove authors from petition that were removed from petitionDTO
                     // Collect the authors to be removed in a separate list
                     List<User> authorsToRemove = petition.Authors.Where(author => !petitionDTO.Authors.Any(a => a.Id == author.Id)).ToList();
-
-                    // Remove the collected authors from the original list
-                    foreach (User author in authorsToRemove)
+                    if (authorsToRemove != null && authorsToRemove.Count > 0)
                     {
-                        authorsList.Remove(author);
-                        author.PetitionDrafts.Remove(petition);
-                        author.AddNotification("Petition draft removed", $"You have been removed as an author from the petition draft: {petition.Title}");
+                        // Remove the collected authors from the original list
+                        foreach (User author in authorsToRemove)
+                        {
+                            authorsList.Remove(author);
+                            author.PetitionDrafts.Remove(petition);
+                            author.AddNotification("Petition draft removed", $"You have been removed as an author from the petition draft: {petition.Title}");
+                        }
                     }
-                    
                     //Add new authors from the DTO
                     // Add any new authors that are in petitionDTO.Authors but not in petition.Authors
                     List<UserDTO> authorsToAddDTO = petitionDTO.Authors.Where(authorDTO => !petition.Authors.Any(a => a.Id == authorDTO.Id)).ToList();
-                    List<User> authorsToAdd = await _context.Users.Where(u => authorsToAddDTO.Any(a => a.Id == u.Id)).ToListAsync();
-                    foreach (User author in authorsToAdd)
+                    if (authorsToAddDTO != null && authorsToAddDTO.Count > 0)
                     {
-                        authorsList.Add(author);
-                        author.AddNotification("New petition draft", $"You have been added as an author to the petition draft: {petition.Title}");
+                        List<User> authorsToAdd = await _context.Users.Where(u => authorsToAddDTO.Any(a => a.Id == u.Id)).ToListAsync();
+                        foreach (User author in authorsToAdd)
+                        {
+                            authorsList.Add(author);
+                            author.AddNotification("New petition draft", $"You have been added as an author to the petition draft: {petition.Title}");
+                        }
                     }
                     //if the petition doesn't have any authors now, delete it
                     if (authorsList.Count == 0)
@@ -639,6 +643,7 @@ namespace PluginDemocracy.API.Controllers
 }
                             linksList.Add(blobClient.Uri.ToString());
                     }
+                    petition.LastUpdated = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
                     response.AddAlert("success", "Petition draft updated successfully");
                     response.Petition = new PetitionDTO(petition);

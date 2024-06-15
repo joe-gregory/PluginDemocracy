@@ -527,6 +527,17 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(new UserDTO(userToReturn));
         }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetUserPetitionDrafts)]
+        public async Task<ActionResult<List<PetitionDTO>>> GetUserPetitionDrafts()
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("You are not logged in");
+            List<Petition> petitions = await _context.Petitions.Include(p => p.Authors).Where(p => p.Authors.Contains(existingUser)).ToListAsync();
+            List<PetitionDTO> petitionDTOs = [];            
+            foreach (Petition petition in petitions) petitionDTOs.Add(new PetitionDTO(petition));
+            return Ok(petitionDTOs);
+        }
         #endregion
     }
 }
