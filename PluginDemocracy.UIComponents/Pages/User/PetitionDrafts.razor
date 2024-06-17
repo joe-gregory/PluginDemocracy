@@ -1,4 +1,6 @@
-﻿<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudText>
+﻿@inject MudBlazor.IDialogService DialogService
+
+<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudText>
 
 <MudPaper Elevation = "25" Variant="Variant.Outlined" Class="mt-5 mb-5">
     @if (PetitionDraftsList != null && PetitionDraftsList.Count != 0)
@@ -9,6 +11,7 @@
                 <MudTh>@AppState.Translate(ResourceKeys.LatestEdit)</MudTh>
                 <MudTh>@AppState.Translate(ResourceKeys.Authors)</MudTh>
                 <MudTh>@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudTh>
+                <MudTh>@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.Title</MudTd>
@@ -29,10 +32,21 @@
                         }
                     </MudAvatarGroup>
                 </MudTh>
+                <MudTh>
+                    <MudButton Icon="MudIcons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => CheckDeletePetitionDraft(context.Id))" />
+                </MudTh>
             </RowTemplate>
         </MudTable>
     }
-    else
-    {
-    }
 </MudPaper>
+<MudDialog @bind-IsVisible="dialogVisibleMultipleAuthors">
+    <DialogContent>
+        <MudText>
+            @AppState.Translate(ResourceKeys.DialogDeletePetitionDraftMultipleAuthors)
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton StartIcon="@Icons.Material.Filled.Remove" Color="Color.Error" Disabled="AppState.IsLoading" OnClick="DeletePetitionDraft">@AppState.Translate(ResourceKeys.Remove)</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Cancel" Disabled="AppState.IsLoading" OnClick="CanceledDeleteMultipleAuthors">@AppState.Translate(ResourceKeys.Cancel)</MudButton>
+    </DialogActions>
+</MudDialog>

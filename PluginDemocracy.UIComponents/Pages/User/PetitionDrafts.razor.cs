@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
+using PluginDemocracy.Models;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {
@@ -11,6 +13,8 @@ namespace PluginDemocracy.UIComponents.Pages.User
         [Inject]
         Services Services { get; set; } = default!;
         private List<PetitionDTO>? PetitionDraftsList { get; set; } = null;
+        private bool dialogVisibleMultipleAuthors = false;
+        private int petitionDraftIdToDelete = 0;
         protected async override Task OnInitializedAsync()
         {
             //Get a list of current user's petition drafts
@@ -20,6 +24,31 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 PetitionDraftsList = petitionDrafts;
             }
              
+        }
+        private void CheckDeletePetitionDraft(int petitionId)
+        {
+            petitionDraftIdToDelete = petitionId;
+            //If there are multiple authors, let the person know that the petition draft will not be deleted
+            //and instead he/she will be removed as an author
+            if (PetitionDraftsList?.FirstOrDefault(p => p.Id == petitionId)?.Authors.Count > 1)
+            {
+                dialogVisibleMultipleAuthors = true;
+                return;
+            }
+            else
+            {
+                DeletePetitionDraft();
+            }
+        }
+        private async void DeletePetitionDraft()
+        {
+            await Services.DeleteDataAsync(ApiEndPoints.DeletePetitionDraft + $"?petitionId={petitionDraftIdToDelete}");
+            dialogVisibleMultipleAuthors = false;
+        }
+        private void CanceledDeleteMultipleAuthors()
+        {
+            dialogVisibleMultipleAuthors = false;
+            petitionDraftIdToDelete = 0;
         }
     }
 }
