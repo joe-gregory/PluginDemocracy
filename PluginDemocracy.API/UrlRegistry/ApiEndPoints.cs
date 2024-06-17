@@ -22,6 +22,8 @@
         public const string AboutUser = UsersController + "aboutuser";
         public const string GetUserDTOFromEmail = UsersController + "getuserdtofromemail";
         public const string GetUserPetitionDrafts = UsersController + "getuserpetitiondrafts";
+        public const string SavePetitionDraft = UsersController + "savepetitiondraft";
+        public const string DeletePetitionDraft = UsersController + "deletepetitiondraft";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
@@ -30,7 +32,7 @@
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
         public const string ProposalCreate = CommunityController + "/proposal/create";
-        public const string SavePetitionDraft = CommunityController + "savepetitiondraft";
+        
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
