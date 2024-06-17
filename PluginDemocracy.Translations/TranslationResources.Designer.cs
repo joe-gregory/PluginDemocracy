@@ -70,6 +70,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accept.
+        /// </summary>
+        internal static string Accept {
+            get {
+                return ResourceManager.GetString("Accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account.
         /// </summary>
         internal static string Account {
@@ -268,6 +277,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Password.
         /// </summary>
         internal static string ChangePassword {
@@ -426,6 +444,15 @@ namespace PluginDemocracy.Translations {
         internal static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This petition draft has multiple authors. You are not able to delete it but you can remove yourself as one of the authors. Do you want to remove yourself as an author?.
+        /// </summary>
+        internal static string DialogDeletePetitionDraftMultipleAuthors {
+            get {
+                return ResourceManager.GetString("DialogDeletePetitionDraftMultipleAuthors", resourceCulture);
             }
         }
         

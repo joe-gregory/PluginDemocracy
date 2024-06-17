@@ -120,6 +120,9 @@
   <data name="AboutCommunity" xml:space="preserve">
     <value>Informacion de Comunidad</value>
   </data>
+  <data name="Accept" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Cuenta</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="AvailableOwnership" xml:space="preserve">
     <value>Propiedad disponible</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -239,6 +245,9 @@
   </data>
   <data name="Description" xml:space="preserve">
     <value>Descripción</value>
+  </data>
+  <data name="DialogDeletePetitionDraftMultipleAuthors" xml:space="preserve">
+    <value>Este borrador de petición tiene múltiples autores. No puedes eliminarlo, pero puedes eliminarte a ti mismo como uno de los autores. ¿Quieres eliminarte como autor?</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>Ingles</value>

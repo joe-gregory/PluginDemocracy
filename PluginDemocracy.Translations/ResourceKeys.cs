@@ -9,6 +9,9 @@ namespace PluginDemocracy.Translations
 {
     public static class ResourceKeys
     {
+        public const string Cancel = "Cancel";
+        public const string Accept = "Accept";
+        
         public const string NewPasswordTitle = "NewPasswordTitle";
         public const string PasswordsDoNotMatch = "PasswordsDoNotMatch";
         public const string Password = "Password";
@@ -117,6 +120,7 @@ namespace PluginDemocracy.Translations
         public const string AuthorsReadyToPublish = "AuthorsReadyToPublish";
         public const string PetitionDrafts = "PetitionDrafts";
         public const string LatestEdit = "LatestEdit";
+        public const string DialogDeletePetitionDraftMultipleAuthors = "DialogDeletePetitionDraftMultipleAuthors";
         #endregion
     }
 }
