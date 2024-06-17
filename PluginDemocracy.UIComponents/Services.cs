@@ -133,7 +133,7 @@ namespace PluginDemocracy.UIComponents
                 return new();
             }
         }
-        public async Task<TResult?> PostDataGenericAsync<TInput, TResult>(string endpoint, TInput? data = null) 
+        public async Task<TResult?> PostDataGenericAsync<TInput, TResult>(string endpoint, TInput? data = null)
             where TResult : class
             where TInput : class
         {
@@ -167,18 +167,17 @@ namespace PluginDemocracy.UIComponents
                 return default;
             }
         }
-        public async Task<PDAPIResponse> DeleteDataAsync<TInput>(string endpoint, TInput data)
+        public async Task<PDAPIResponse> DeleteDataAsync(string endpoint)
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Delete, url);
-            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
-            //Add request content if the data is not null
+            if (!string.IsNullOrEmpty(_appState.SessionJWT))
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+
             try
             {
-                if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-                else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
@@ -186,9 +185,10 @@ namespace PluginDemocracy.UIComponents
             {
                 AddSnackBarMessage("error", ex.Message);
                 _appState.IsLoading = false;
-                return new();
+                return new PDAPIResponse();
             }
         }
+
         public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
         {
             _appState.IsLoading = true;
@@ -322,9 +322,9 @@ namespace PluginDemocracy.UIComponents
             }
             catch (Exception ex)
             {
-                #if DEBUG
+#if DEBUG
                 AddSnackBarMessage("error", ex.Message);
-                #endif
+#endif
                 AddSnackBarMessage("error", $"Network or server error");
                 _appState.IsLoading = false;
                 return false;
@@ -364,9 +364,9 @@ namespace PluginDemocracy.UIComponents
         /// <returns>PDAPIResponse extracted from response</returns>
         public async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
-            #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
+#if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
             if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
-            #endif
+#endif
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
 
             if (apiResponse == null)
