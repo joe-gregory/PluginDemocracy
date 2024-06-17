@@ -255,6 +255,7 @@ namespace PluginDemocracy.API
             {
                 User? user = await _context.Users
                     .Include(u => u.Notifications)
+                    .Include(u => u.PetitionDrafts)
                     .Include(u => u.ResidentOfHomes)
                         .ThenInclude(h => h.ParentCommunity)
                     .Include(u => u.NonResidentialCitizenIn)
