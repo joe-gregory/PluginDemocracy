@@ -4,6 +4,9 @@ using System.Text;
 
 namespace PluginDemocracy.Models
 {
+    /// <summary>
+    /// Any edit before it is published will clear the list Authors Ready to Publish. 
+    /// </summary>
     public class Petition
     {
         #region DATA
@@ -66,6 +69,7 @@ namespace PluginDemocracy.Models
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change community of a published petition.");
                 _community = value;
+                _authorsReadyToPublish.Clear();
             }
         }
         protected string? _title;
@@ -81,6 +85,7 @@ namespace PluginDemocracy.Models
             set
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change title of a published petition.");
+                _authorsReadyToPublish.Clear();
                 _title = value;
             }
         }
@@ -97,6 +102,7 @@ namespace PluginDemocracy.Models
             set
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change description of a published petition.");
+                _authorsReadyToPublish.Clear();
                 _description = value;
             }
         }
@@ -113,6 +119,7 @@ namespace PluginDemocracy.Models
             set
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change action requested of a published petition.");
+                _authorsReadyToPublish.Clear();
                 _actionRequested = value;
             }
         }
@@ -126,6 +133,7 @@ namespace PluginDemocracy.Models
             set
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change supporting arguments of a published petition.");
+                _authorsReadyToPublish.Clear();
                 _supportingArguments = value;
             }
         }
@@ -142,6 +150,7 @@ namespace PluginDemocracy.Models
             set
             {
                 if (_published) throw new System.InvalidOperationException("Cannot change deadline for response of a published petition.");
+                _authorsReadyToPublish.Clear();
                 _deadlineForResponse = value;
             }
         }
@@ -157,32 +166,14 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
-        public IEnumerable<string> LinksToSupportingDocuments
-        {
-            get
-            {
-                return _published ? _linksToSupportingDocuments.AsReadOnly() : _linksToSupportingDocuments;
-            }
-        }
+        public IReadOnlyList<string> LinksToSupportingDocuments => _linksToSupportingDocuments.AsReadOnly();
         protected List<User> _authors;
         /// <summary>
-        /// The name and contact information of the person or group who created the petition.
+        /// The User(s) who created the petition and can modify it when not published.
         /// </summary>
-        public IEnumerable<User> Authors
-        {
-            get
-            {
-                return _published ? _authors.AsReadOnly() : _authors;
-            }
-        }
+        public IReadOnlyList<User> Authors => _authors.AsReadOnly();
         protected List<User> _authorsReadyToPublish;
-        public IEnumerable<User> AuthorsReadyToPublish
-        {
-            get
-            {
-                return _published ? _authorsReadyToPublish.AsReadOnly() : _authorsReadyToPublish;
-            }
-        }
+        public IReadOnlyList<User> AuthorsReadyToPublish => _authorsReadyToPublish.AsReadOnly();
         protected List<ESignature> _signatures = [];
         public IReadOnlyList<ESignature> Signatures
         {
@@ -214,7 +205,50 @@ namespace PluginDemocracy.Models
         {
             IsGoodToPublish();
             _published = true;
+            foreach (User author in _authors) author.PetitionDrafts.Remove(this);
             PublishedDate = DateTime.UtcNow;
+            LastUpdated = DateTime.UtcNow;
+        }
+        /// <summary>
+        /// If the petition is published, this method will throw an error.
+        /// Otherwise, it adds the User to the list of author and adds the petition to the User's list of petition drafts.
+        /// </summary>
+        /// <param name="author">User to be added as author</param>
+        /// <exception cref="System.InvalidOperationException">Exception thrown if petition is already published</exception>
+        public void AddAuthor(User author)
+        {
+            if (_published) throw new System.InvalidOperationException("Cannot add an author to a published petition.");
+            if (_authors.Contains(author)) throw new System.InvalidOperationException("Author is already added to the petition.");
+            _authors.Add(author);
+            author.PetitionDrafts.Add(this);
+            LastUpdated = DateTime.UtcNow;
+        }
+        /// <summary>
+        /// If published it throws an error. 
+        /// Otherwise, it removes the User from the authors list and it removes
+        /// the petition from <see cref="User.PetitionDrafts"/>
+        /// </summary>
+        /// <param name="author">The user to be removed as an author</param>
+        /// <exception cref="System.InvalidOperationException"></exception>
+        public void RemoveAuthor(User author)
+        {
+            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author is not added to the petition.");
+            _authors.Remove(author);
+            author.PetitionDrafts.Remove(this);
+            LastUpdated = DateTime.UtcNow;
+        }
+        public void AddLinkToSupportingDocument(string link)
+        {
+            if (_published) throw new System.InvalidOperationException("Cannot add a link to a supporting document to a published petition.");
+            _linksToSupportingDocuments.Add(link);
+            _authorsReadyToPublish.Clear();
+            LastUpdated = DateTime.UtcNow;
+        }
+        public void RemoveLinkToSupportingDocument(string link)
+        {
+            if (_published) throw new System.InvalidOperationException("Cannot remove a link to a supporting document from a published petition.");
+            _linksToSupportingDocuments.Remove(link);
+            _authorsReadyToPublish.Clear();
             LastUpdated = DateTime.UtcNow;
         }
         /// <summary>
@@ -223,12 +257,18 @@ namespace PluginDemocracy.Models
         /// If there is only one author, then the petition will publish.
         /// </summary>
         /// <param name="author">The author saying he is ok with the current draft and is ready to publish</param>
-        public void AuthorMarksAsReadyToPublish(User author)
+        public void ReadyToPublish(User author)
         {
             IsGoodToPublish();
             if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as ready to be published.");
             _authorsReadyToPublish.Add(author);
             if (_authorsReadyToPublish.Count == _authors.Count) Publish();
+        }
+        public void NotReadyToPublish(User author)
+        {
+            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as not ready to be published.");
+            _authorsReadyToPublish.Remove(author);
+            LastUpdated = DateTime.UtcNow;
         }
         /// <summary>
         /// Throws exceptions if the petition is not ready to be published.
