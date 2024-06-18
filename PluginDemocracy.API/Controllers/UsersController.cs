@@ -685,7 +685,7 @@ namespace PluginDemocracy.API.Controllers
                     //Files to add to blob
                     foreach (IFormFile file in petitionDTO.SupportingDocumentsToAdd)
                     {
-                        string blobName = $"/petitiondocuments/{petition.Id}/{file.Name}";
+                        string blobName = $"petition/{petition.Id}/documents/{file.Name}";
                         BlobClient blobClient = containerClient.GetBlobClient(blobName);
                         await using Stream filestream = file.OpenReadStream();
                         //Upload the document
@@ -748,6 +748,18 @@ namespace PluginDemocracy.API.Controllers
                 petition.RemoveAuthor(existingUser);
                 if (petition.Authors.Count == 0)
                 {
+                    //Delete associated documents form blob storage
+                    string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
+                    if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
+                    BlobContainerClient containerClient = new(new Uri(blobSasUrl));
+                    foreach (string link in petition.LinksToSupportingDocuments)
+                    {
+                        Uri uri = new(link);
+                        string blobName = string.Join("/", uri.Segments.Skip(1)); // Remove the initial '/' segment
+                        BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                        await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                    }
+
                     _context.Petitions.Remove(petition);
                     await _context.SaveChangesAsync();
                     response.AddAlert("success", "Petition draft deleted successfully");
