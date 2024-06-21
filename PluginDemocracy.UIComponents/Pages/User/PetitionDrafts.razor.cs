@@ -18,6 +18,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         protected async override Task OnInitializedAsync()
         {
             //Get a list of current user's petition drafts
+            Console.WriteLine("OnInitializedAsync called");
             if (AppState.IsLoggedIn)
             {
                 List<PetitionDTO>? petitionDrafts = await Services.GetDataGenericAsync<List<PetitionDTO>>(ApiEndPoints.GetUserPetitionDrafts);

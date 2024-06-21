@@ -6,6 +6,7 @@ using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using static PluginDemocracy.UIComponents.Components.BottomBar;
 
 namespace PluginDemocracy.UIComponents
@@ -68,8 +69,21 @@ namespace PluginDemocracy.UIComponents
             try
             {
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
-                _appState.IsLoading = false;
-                return await response.Content.ReadFromJsonAsync<T>();
+                
+                //return await response.Content.ReadFromJsonAsync<T>();
+                if (!response.IsSuccessStatusCode)
+                {
+                    AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
+                    return default;
+                }
+                string responseBody = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                });
+                
             }
             catch (Exception ex)
             {
@@ -77,6 +91,10 @@ namespace PluginDemocracy.UIComponents
                 _appState.IsLoading = false;
                 _appState.IsLoading = false;
                 return default;
+            }
+            finally
+            {
+                _appState.IsLoading = false;
             }
         }
         public async Task<bool> PutDataAsync<T>(string endpoint, T data)
