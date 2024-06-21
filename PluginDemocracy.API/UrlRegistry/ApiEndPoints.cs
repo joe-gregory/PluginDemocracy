@@ -24,6 +24,7 @@
         public const string GetUserPetitionDrafts = UsersController + "getuserpetitiondrafts";
         public const string SavePetitionDraft = UsersController + "savepetitiondraft";
         public const string DeletePetitionDraft = UsersController + "deletepetitiondraft";
+        public const string GetPetitionDraft = UsersController + "getpetitiondraft";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
