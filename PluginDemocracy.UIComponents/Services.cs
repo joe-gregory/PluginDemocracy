@@ -77,13 +77,13 @@ namespace PluginDemocracy.UIComponents
                     return default;
                 }
                 string responseBody = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                    WriteIndented = true
-                });
-                
+                //return JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions
+                //{
+                //    PropertyNameCaseInsensitive = true,
+                //    ReferenceHandler = ReferenceHandler.Preserve,
+                //    WriteIndented = true
+                //});
+                return await response.Content.ReadFromJsonAsync<T>();
             }
             catch (Exception ex)
             {
