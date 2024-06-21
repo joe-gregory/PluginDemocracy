@@ -31,7 +31,7 @@ namespace PluginDemocracy.DTOs
             {
                 Id = homeOwnership.Id,
                 OwnershipPercentage = homeOwnership.OwnershipPercentage,
-                _userOwner = homeOwnership._userOwner != null ? UserDTO.ReturnSimpleUserDtoFromUser(homeOwnership._userOwner) : null,
+                _userOwner = homeOwnership._userOwner != null ? UserDTO.ReturnSimpleUserDTOFromUser(homeOwnership._userOwner) : null,
                 _communityOwner = homeOwnership._communityOwner != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership._communityOwner) : null,
             };
             HomeDto homeDto = new()
