@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 
@@ -15,6 +16,8 @@ namespace PluginDemocracy.UIComponents.Components
         Services Services { get; set; } = default!;
         [Parameter]
         public UserDTO? User { get; set; }
+        [Parameter]
+        public MudBlazor.Size Size { get; set; }
         private void NavigateToProfile(int? id)
         {
             if (id.HasValue) Services.NavigateTo($"{FrontEndPages.AboutUser}?userId={id}");

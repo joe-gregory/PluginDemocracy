@@ -1,4 +1,4 @@
-﻿<MudAvatar @onclick="() => NavigateToProfile(User.Id)">
+﻿<MudAvatar Size="Size" @onclick="() => NavigateToProfile(User?.Id)">
     @if (User != null)
     {
         if (!string.IsNullOrEmpty(User.ProfilePicture))
