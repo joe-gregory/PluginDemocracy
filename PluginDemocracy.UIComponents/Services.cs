@@ -105,6 +105,8 @@ namespace PluginDemocracy.UIComponents
             }
         }
         /// <summary>
+        /// This makes POST requests with a content-type header of application/json, so it only works with <paramref name="data"/> 
+        /// that can be formatted as JSON.
         /// In order to include the session JWT in the headers, the request must be constructed manually using HttpRequestMessage.
         /// </summary>
         /// <typeparam name="T">Type for optional data load</typeparam>
@@ -119,7 +121,11 @@ namespace PluginDemocracy.UIComponents
             using HttpRequestMessage request = new(HttpMethod.Post, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             //Add request content if the data is not null
-            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+            };
+            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data, options), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
@@ -188,7 +194,28 @@ namespace PluginDemocracy.UIComponents
                 return new PDAPIResponse();
             }
         }
-
+        public async Task<PDAPIResponse> DeleteDataAsyncGeneric<TInput>(string endpoint, TInput data)
+        {
+            _appState.IsLoading = true;
+            string url = _appState.BaseUrl + endpoint;
+            //Add JWT to request if available
+            using HttpRequestMessage request = new(HttpMethod.Delete, url);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            //Add request content if the data is not null
+            try
+            {
+                if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+                else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                return await CommunicationCommon(response);
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                _appState.IsLoading = false;
+                return new();
+            }
+        }
         public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
         {
             _appState.IsLoading = true;
@@ -365,7 +392,10 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
 #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
-            if (!response.IsSuccessStatusCode) AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
+            if (!response.IsSuccessStatusCode)
+            {
+                AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
+            }
 #endif
             PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
 
@@ -433,6 +463,26 @@ namespace PluginDemocracy.UIComponents
             //     yield return "Password must contain at least one lowercase letter";
             // if (!Regex.IsMatch(pw, @"[0-9]"))
             //     yield return "Password must contain at least one digit";
+        }
+        public async Task<PDAPIResponse> SendRequestAsync(HttpRequestMessage request)
+        {
+            try
+            {
+                // Ensure the request contains the SessionJWT if available
+                if (!string.IsNullOrEmpty(_appState.SessionJWT))
+                {
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+                }
+
+                // Send the request
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                return await CommunicationCommon(response);
+            }
+            catch (Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                return new PDAPIResponse { SuccessfulOperation = false };
+            }
         }
         internal HttpClient CreateHttpClient()
         {
