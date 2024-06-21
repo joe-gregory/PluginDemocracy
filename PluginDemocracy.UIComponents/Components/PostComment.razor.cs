@@ -17,7 +17,7 @@ namespace PluginDemocracy.UIComponents.Components
         private async void DeleteComment()
         {
             PDAPIResponse response = new();
-            if (PostCommentDto != null) response = await Services.DeleteDataAsync<PostCommentDto>(ApiEndPoints.DeleteComment, PostCommentDto);
+            if (PostCommentDto != null) response = await Services.DeleteDataAsyncGeneric<PostCommentDto>(ApiEndPoints.DeleteComment, PostCommentDto);
             if (response.SuccessfulOperation && OnDeleteComment.HasDelegate)
             {
                 await OnDeleteComment.InvokeAsync(PostCommentDto);
