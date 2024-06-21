@@ -11,6 +11,7 @@ using System.Text;
 using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {
@@ -20,25 +21,44 @@ namespace PluginDemocracy.UIComponents.Pages.User
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private IDialogService DialogService { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        [SupplyParameterFromQuery]
+        public int? petitionId { get; set; }
         private PetitionDTO PetitionDTO = new();
         private readonly IList<IBrowserFile> files = [];
         private string? temporaryAddAuthor;
         private bool disableAll = false;
-        protected override void OnInitialized()
+        protected override async void OnInitialized()
         {
-            if (AppState?.User != null) PetitionDTO.Authors.Add(new UserDTO()
+            //This is if it is a new petition
+            if (petitionId == null)
             {
-                Id = AppState.User.Id,
-                FirstName = AppState.User.FirstName,
-                MiddleName = AppState.User.MiddleName,
-                LastName = AppState.User.LastName,
-                SecondLastName = AppState.User.SecondLastName,
-            });
-            if (AppState?.User?.Citizenships.Count == 1) PetitionDTO.CommunityDTO = new CommunityDTO()
+                if (AppState?.User != null) PetitionDTO.Authors.Add(new UserDTO()
+                {
+                    Id = AppState.User.Id,
+                    FirstName = AppState.User.FirstName,
+                    MiddleName = AppState.User.MiddleName,
+                    LastName = AppState.User.LastName,
+                    SecondLastName = AppState.User.SecondLastName,
+                });
+                if (AppState?.User?.Citizenships.Count == 1) PetitionDTO.CommunityDTO = new CommunityDTO()
+                {
+                    Id = AppState.User.Citizenships[0].Id,
+                    Name = AppState.User.Citizenships[0].Name,
+                };
+            }
+            else
             {
-                Id = AppState.User.Citizenships[0].Id,
-                Name = AppState.User.Citizenships[0].Name,
-            };
+                await RefreshPetition();
+            }
+        }
+        private async Task RefreshPetition()
+        {
+            if (petitionId == null) return;
+            string endpoint = ApiEndPoints.GetPetitionDraft + $"?petitionId={petitionId}";
+            PetitionDTO? petition = await Services.GetDataGenericAsync<PetitionDTO>(endpoint);
+            if (petition != null) PetitionDTO = petition;
+            else Services.AddSnackBarMessage("error", "Could not load the petition");
+            StateHasChanged();
         }
         private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
@@ -113,36 +133,29 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 disableAll = true;
                 AppState.IsLoading = true;
 
-                MultipartFormDataContent formData = [];
+                MultipartFormDataContent multiPartFormDataContent = [];
                 // Add each property of PetitionDTO individually
-                formData.Add(new StringContent(PetitionDTO.Id.ToString()), nameof(PetitionDTO.Id));
-                formData.Add(new StringContent(PetitionDTO.Published.ToString()), nameof(PetitionDTO.Published));
-                if (PetitionDTO.PublishedDate.HasValue)
-                    formData.Add(new StringContent(PetitionDTO.PublishedDate.Value.ToString("o")), nameof(PetitionDTO.PublishedDate));
-                if (PetitionDTO.LastUpdated.HasValue)
-                    formData.Add(new StringContent(PetitionDTO.LastUpdated.Value.ToString("o")), nameof(PetitionDTO.LastUpdated));
-                if (!string.IsNullOrEmpty(PetitionDTO.Title))
-                    formData.Add(new StringContent(PetitionDTO.Title), nameof(PetitionDTO.Title));
-                if (!string.IsNullOrEmpty(PetitionDTO.Description))
-                    formData.Add(new StringContent(PetitionDTO.Description), nameof(PetitionDTO.Description));
-                if (!string.IsNullOrEmpty(PetitionDTO.ActionRequested))
-                    formData.Add(new StringContent(PetitionDTO.ActionRequested), nameof(PetitionDTO.ActionRequested));
-                if (!string.IsNullOrEmpty(PetitionDTO.SupportingArguments))
-                    formData.Add(new StringContent(PetitionDTO.SupportingArguments), nameof(PetitionDTO.SupportingArguments));
-                if (PetitionDTO.DeadlineForResponse.HasValue)
-                    formData.Add(new StringContent(PetitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(PetitionDTO.DeadlineForResponse));
+                multiPartFormDataContent.Add(new StringContent(PetitionDTO.Id.ToString()), nameof(PetitionDTO.Id));
+                multiPartFormDataContent.Add(new StringContent(PetitionDTO.Published.ToString()), nameof(PetitionDTO.Published));
+                if (PetitionDTO.PublishedDate.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.PublishedDate.Value.ToString("o")), nameof(PetitionDTO.PublishedDate));
+                if (PetitionDTO.LastUpdated.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.LastUpdated.Value.ToString("o")), nameof(PetitionDTO.LastUpdated));
+                if (!string.IsNullOrEmpty(PetitionDTO.Title)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.Title), nameof(PetitionDTO.Title));
+                if (!string.IsNullOrEmpty(PetitionDTO.Description)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.Description), nameof(PetitionDTO.Description));
+                if (!string.IsNullOrEmpty(PetitionDTO.ActionRequested)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.ActionRequested), nameof(PetitionDTO.ActionRequested));
+                if (!string.IsNullOrEmpty(PetitionDTO.SupportingArguments)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.SupportingArguments), nameof(PetitionDTO.SupportingArguments));
+                if (PetitionDTO.DeadlineForResponse.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(PetitionDTO.DeadlineForResponse));
 
                 // Serialize complex properties like CommunityDTO and Authors
                 if (PetitionDTO.CommunityDTO != null)
                 {
                     var communityJson = JsonSerializer.Serialize(PetitionDTO.CommunityDTO, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
-                    formData.Add(new StringContent(communityJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.CommunityDTO));
+                    multiPartFormDataContent.Add(new StringContent(communityJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.CommunityDTO));
                 }
 
                 if (PetitionDTO.Authors != null && PetitionDTO.Authors.Count > 0)
                 {
                     var authorsJson = JsonSerializer.Serialize(PetitionDTO.Authors, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
-                    formData.Add(new StringContent(authorsJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.Authors));
+                    multiPartFormDataContent.Add(new StringContent(authorsJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.Authors));
                 }
                 //Add each file
                 int maxAllowedSize = 100 * 1024 * 1024; //100MB
@@ -155,14 +168,14 @@ namespace PluginDemocracy.UIComponents.Pages.User
                         Name = "SupportingDocumentsToAdd",
                         FileName = file.Name
                     };
-                    formData.Add(streamContent);
+                    multiPartFormDataContent.Add(streamContent);
                 }
                 //send the request
                 string endpoint = AppState.BaseUrl + ApiEndPoints.SavePetitionDraft;
                 HttpRequestMessage request = new(HttpMethod.Post, endpoint);
                 if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
 
-                request.Content = formData;
+                request.Content = multiPartFormDataContent;
                 //HttpResponseMessage response = await Services._httpClient.SendAsync(request);
 
                 //PDAPIResponse apiResponse = await Services.CommunicationCommon(response);
@@ -182,6 +195,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             {
                 AppState.IsLoading = false;
                 disableAll = false;
+
             }
         }
         private void DeleteDraft()
