@@ -28,6 +28,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
             }
             StateHasChanged();
         }
+        private void NavigateToClickedPetition(DataGridRowClickEventArgs<PetitionDTO> e)
+        {
+            Services.NavigateTo($"{FrontEndPages.CreatePetition}/?petitionId={e.Item.Id}");
+        }
         private void CheckDeletePetitionDraft(int petitionId)
         {
             petitionDraftIdToDelete = petitionId;

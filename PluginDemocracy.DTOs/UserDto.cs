@@ -138,7 +138,7 @@ namespace PluginDemocracy.DTOs
             foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDto.ReturnHomeDtoFromHome(home));
             return userDto;
         }
-        public static UserDTO ReturnSimpleUserDtoFromUser(User user)
+        public static UserDTO ReturnSimpleUserDTOFromUser(User user)
         {
             UserDTO userDto = new()
             {
@@ -157,6 +157,7 @@ namespace PluginDemocracy.DTOs
                 Culture = user.Culture,
                 Admin = user.Admin,
             };
+            foreach (Community community in user.Citizenships) userDto.Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             return userDto;
         }
         public static User ReturnUserFromUserDto(UserDTO userDto)

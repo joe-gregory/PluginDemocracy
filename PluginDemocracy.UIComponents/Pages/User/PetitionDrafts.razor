@@ -3,9 +3,9 @@
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudText>
 
 <MudPaper Elevation = "25" Variant="Variant.Outlined" Class="mt-5 mb-5">
-    <MudDataGrid T="PetitionDTO" Items="@PetitionDraftsList" Groupable="false">
+    <MudDataGrid T="PetitionDTO" Items="@PetitionDraftsList" Groupable="false" RowClick="NavigateToClickedPetition">
         <Columns>
-            <PropertyColumn Property="p => p.Title" Title="@AppState.Translate(ResourceKeys.Title)" />
+            <PropertyColumn Property="p => p.Title" Title="@AppState.Translate(ResourceKeys.Title)"/>
             <PropertyColumn Property="p => p.LastUpdated.HasValue ? p.LastUpdated.Value.ToString() : string.Empty" Title="@AppState.Translate(ResourceKeys.LatestEdit)" />
             <TemplateColumn Title="@AppState.Translate(ResourceKeys.Authors)">
                 <CellTemplate>
@@ -35,35 +35,6 @@
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            @* <TemplateColumn Title="Authors" CellClass="d-flex justify-end">
-                <CellTemplate Context="context">
-                    <MudStack Row>
-                        <MudAvatarGroup>
-                            @foreach (UserDTO author in context.Authors)
-                            {
-                                @if (context.AuthorsReadyToPublish.Contains(author))
-                                {
-                                    <MudBadge Icon="@Icons.Material.Filled.Check" Color="Color.Primary">
-                                        <UserAvatar User="@author" />
-                                    </MudBadge>
-                                }
-                                else
-                                {
-                                    <UserAvatar User="@author" />
-                                }
-                            }
-                        </MudAvatarGroup>
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn>
-
-            <TemplateColumn Title="Actions" CellClass="d-flex justify-end">
-                <CellTemplate Context="context">
-                    <MudStack Row>
-                        <MudButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => CheckDeletePetitionDraft(context.Id))" />
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn> *@
         </Columns>
     </MudDataGrid>
 
