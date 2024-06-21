@@ -17,14 +17,16 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private int petitionDraftIdToDelete = 0;
         protected async override Task OnInitializedAsync()
         {
-            //Get a list of current user's petition drafts
-            Console.WriteLine("OnInitializedAsync called");
+            await UpdatePetitionDraftsListAsync();          
+        }
+        private async Task UpdatePetitionDraftsListAsync()
+        {
             if (AppState.IsLoggedIn)
             {
                 List<PetitionDTO>? petitionDrafts = await Services.GetDataGenericAsync<List<PetitionDTO>>(ApiEndPoints.GetUserPetitionDrafts);
                 if (petitionDrafts != null) PetitionDraftsList = [.. petitionDrafts.OrderByDescending(p => p.LastUpdated)];
             }
-
+            StateHasChanged();
         }
         private void CheckDeletePetitionDraft(int petitionId)
         {
@@ -45,6 +47,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         {
             await Services.DeleteDataAsync(ApiEndPoints.DeletePetitionDraft + $"?petitionId={petitionDraftIdToDelete}");
             dialogVisibleMultipleAuthors = false;
+            await UpdatePetitionDraftsListAsync();
         }
         private void CanceledDeleteMultipleAuthors()
         {

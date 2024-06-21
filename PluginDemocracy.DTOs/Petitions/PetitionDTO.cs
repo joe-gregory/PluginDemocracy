@@ -39,8 +39,8 @@ namespace PluginDemocracy.DTOs
             SupportingArguments = petition.SupportingArguments;
             DeadlineForResponse = petition.DeadlineForResponse;
             LinksToSupportingDocuments = petition.LinksToSupportingDocuments.ToList();
-            //Authors = petition.Authors.Select(author => new UserDTO(author)).ToList();
-            //AuthorsReadyToPublish = petition.AuthorsReadyToPublish.Select(author => new UserDTO(author)).ToList();
+            foreach (User author in petition.Authors) Authors.Add(UserDTO.ReturnSimpleUserDtoFromUser(author));
+            foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDtoFromUser(authorReadyToPublish)); 
         }
         #endregion
 

@@ -3,41 +3,6 @@
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudText>
 
 <MudPaper Elevation = "25" Variant="Variant.Outlined" Class="mt-5 mb-5">
-    
-        @* <MudTable Items="@PetitionDraftsList" Class="table-striped" >
-            <HeaderContent>
-                <MudTh>@AppState.Translate(ResourceKeys.Title)</MudTh>
-                <MudTh>@AppState.Translate(ResourceKeys.LatestEdit)</MudTh>
-                <MudTh>@AppState.Translate(ResourceKeys.Authors)</MudTh>
-                <MudTh>@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudTh>
-                <MudTh>@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>@context.Title</MudTd>
-                <MudTd>@context.LastUpdated</MudTd>
-                <MudTd>
-                    <MudAvatarGroup>
-                        @foreach(UserDTO user in context.Authors)
-                        {
-                            <UserAvatar User="@user"/>
-                        }
-                    </MudAvatarGroup>
-                </MudTd>
-                <MudTd>
-                    <MudAvatarGroup>
-                        @foreach(UserDTO user in context.AuthorsReadyToPublish)
-                        {
-                            <UserAvatar User="@user"/>
-                        }
-                    </MudAvatarGroup>
-                </MudTd>
-                <MudTd>
-                    <MudButton Icon="MudIcons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => CheckDeletePetitionDraft(context.Id))" />
-                </MudTd>
-            </RowTemplate>
-        </MudTable> *@
-
-
     <MudDataGrid T="PetitionDTO" Items="@PetitionDraftsList" Groupable="false">
         <Columns>
             <PropertyColumn Property="p => p.Title" Title="@AppState.Translate(ResourceKeys.Title)" />
