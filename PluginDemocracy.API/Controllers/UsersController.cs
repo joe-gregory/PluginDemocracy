@@ -10,6 +10,9 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -58,7 +61,7 @@ namespace PluginDemocracy.API.Controllers
 
             return Ok(apiResponse);
         }
-        [HttpPost("login")]
+        [HttpPost(ApiEndPoints.PostLogin)]
         public async Task<ActionResult<PDAPIResponse>> LogIn(LoginInfoDto loginInfo)
         {
             //Create response object
@@ -551,12 +554,19 @@ namespace PluginDemocracy.API.Controllers
                 .Include(p => p.AuthorsReadyToPublish)
                 .Include(p => p.Signatures)
                 .FirstOrDefaultAsync(p => p.Id == petitionDTO.Id);
-
+            
             //NEW PETITION: if the petition does not exist, or petitionDTO.Id = 0, it is a new petition. 
             if (petition == null)
             {
                 try
                 {
+                    //Del this If, only for debugging as you could save one with very little info or if all null dont save actually
+                    //If Id == 0, it is mean it is new so this will always return bad request for now
+                    if (petitionDTO.Id == 0 || petitionDTO.Title == null) 
+                    {
+                        response.AddAlert("error", "PetitionDTO.Id is 0 or Title is null");
+                        return BadRequest(response); 
+                    }
                     petition = new(existingUser)
                     {
                         Title = petitionDTO.Title,
