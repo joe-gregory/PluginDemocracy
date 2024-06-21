@@ -560,13 +560,6 @@ namespace PluginDemocracy.API.Controllers
             {
                 try
                 {
-                    //Del this If, only for debugging as you could save one with very little info or if all null dont save actually
-                    //If Id == 0, it is mean it is new so this will always return bad request for now
-                    if (petitionDTO.Id == 0 || petitionDTO.Title == null) 
-                    {
-                        response.AddAlert("error", "PetitionDTO.Id is 0 or Title is null");
-                        return BadRequest(response); 
-                    }
                     petition = new(existingUser)
                     {
                         Title = petitionDTO.Title,

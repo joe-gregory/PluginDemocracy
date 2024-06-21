@@ -32,7 +32,7 @@ namespace PluginDemocracy.DTOs
             Published = petition.Published;
             PublishedDate = petition.PublishedDate;
             LastUpdated = petition.LastUpdated;
-            if (petition.Community != null) CommunityDTO = new CommunityDTO(petition.Community);
+            if (petition.Community != null) CommunityDTO = CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(petition.Community); 
             Title = petition.Title;
             Description = petition.Description;
             ActionRequested = petition.ActionRequested;
