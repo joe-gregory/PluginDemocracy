@@ -17,6 +17,14 @@ namespace PluginDemocracy.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //Logging 
+            // Add services to the container.
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ModelStateFeatureFilter>();
+            });
+            builder.Services.AddLogging();
+
             // Add services to the container.
             //Authentication
             string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
@@ -79,7 +87,16 @@ namespace PluginDemocracy.API
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(
+                c =>
+                {
+                    c.ResolveConflictingActions(apiDescriptions =>
+                    {
+                        // Custom logic to resolve conflicts
+                        return apiDescriptions.First();
+                    });
+                }
+                );
 
             builder.Services.AddCors(options =>
             {
@@ -92,6 +109,7 @@ namespace PluginDemocracy.API
             });
 
             var app = builder.Build();
+            app.UseMiddleware<ApiLoggingMiddleware>(); //I added this for logging 
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
