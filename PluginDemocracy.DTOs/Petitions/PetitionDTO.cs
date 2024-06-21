@@ -20,6 +20,20 @@ namespace PluginDemocracy.DTOs
         public List<IFormFile> SupportingDocumentsToAdd { get; set; } = [];
         public List<UserDTO> Authors { get; set; } = [];
         public List<UserDTO> AuthorsReadyToPublish { get; set; } = [];
+        public List<CommunityDTO> CommonCommunitiesBetweenAuthors
+        {
+            get
+            {
+                if (Authors.Count == 0) return [];
+                if (Authors.Count == 1) return Authors[0].Citizenships;
+                IEnumerable<CommunityDTO> commonCommunities = Authors[0].Citizenships;
+                foreach (UserDTO author in Authors.Skip(1))
+                {
+                    commonCommunities = commonCommunities.Intersect(author.Citizenships);
+                }
+                return commonCommunities.ToList();
+            }
+        }
         #endregion
         #region METHODS
         public PetitionDTO()
@@ -39,8 +53,8 @@ namespace PluginDemocracy.DTOs
             SupportingArguments = petition.SupportingArguments;
             DeadlineForResponse = petition.DeadlineForResponse;
             LinksToSupportingDocuments = petition.LinksToSupportingDocuments.ToList();
-            foreach (User author in petition.Authors) Authors.Add(UserDTO.ReturnSimpleUserDtoFromUser(author));
-            foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDtoFromUser(authorReadyToPublish)); 
+            foreach (User author in petition.Authors) Authors.Add(UserDTO.ReturnSimpleUserDTOFromUser(author));
+            foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDTOFromUser(authorReadyToPublish)); 
         }
         #endregion
 
