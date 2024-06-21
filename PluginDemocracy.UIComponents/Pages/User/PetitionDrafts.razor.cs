@@ -12,7 +12,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         BaseAppState AppState { get; set; } = default!;
         [Inject]
         Services Services { get; set; } = default!;
-        private List<PetitionDTO>? PetitionDraftsList { get; set; } = null;
+        private IEnumerable<PetitionDTO> PetitionDraftsList { get; set; } = [];
         private bool dialogVisibleMultipleAuthors = false;
         private int petitionDraftIdToDelete = 0;
         protected async override Task OnInitializedAsync()
@@ -21,9 +21,9 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (AppState.IsLoggedIn)
             {
                 List<PetitionDTO>? petitionDrafts = await Services.GetDataGenericAsync<List<PetitionDTO>>(ApiEndPoints.GetUserPetitionDrafts);
-                PetitionDraftsList = petitionDrafts;
+                if (petitionDrafts != null) PetitionDraftsList = [.. petitionDrafts.OrderByDescending(p => p.LastUpdated)];
             }
-             
+
         }
         private void CheckDeletePetitionDraft(int petitionId)
         {
