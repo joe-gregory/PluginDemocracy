@@ -92,7 +92,7 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", $"Unable to look up user by email\nError:\n{ex.Message}");
                 return StatusCode(500, apiResponse);
             }
-            
+
             loginInfo.Password ??= string.Empty;
 
             //Compare passwords
@@ -109,7 +109,7 @@ namespace PluginDemocracy.API.Controllers
                 //Convert User to UserDto
                 apiResponse.User = new(existingUser);
                 //apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
-                
+
                 //Send a SessionJWT to the client so that they can maintain a session
                 apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
                 //Redirect to home feed after login in or join community page if no community
@@ -287,7 +287,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //Now use this extracted userIdClaim to find the user in the database
-            if(!int.TryParse(userIdClaim.Value, out int userId))
+            if (!int.TryParse(userIdClaim.Value, out int userId))
             {
                 response.AddAlert("error", "Unable to parse userId from claims");
                 return BadRequest(response);
@@ -304,10 +304,10 @@ namespace PluginDemocracy.API.Controllers
                             .ThenInclude(h => h.ParentCommunity)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
-                if (fullDataUser == null) 
+                if (fullDataUser == null)
                 {
                     response.AddAlert("error", "Unable to find user in database");
-                    return BadRequest(response); 
+                    return BadRequest(response);
                 }
                 response.User = new(fullDataUser);
                 //Send a SessionJWT to the client so that they can maintain a session
@@ -457,19 +457,19 @@ namespace PluginDemocracy.API.Controllers
             }
 
             string newBlobName = $"user/{existingUser.Id}/profileimage/{Guid.NewGuid()}{fileExtension}";
-            #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive) because I am checking previous to this.
             string contentType = fileExtension switch
             {
                 ".jpg" => "image/jpeg",
                 ".jpeg" => "image/jpeg",
                 ".png" => "image/png",
             };
-            #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             try
             {
                 BlobClient blobClient = blobContainerClient.GetBlobClient(newBlobName);
                 await using var fileStream = file.OpenReadStream();
-                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType }); 
+                await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType });
                 existingUser.ProfilePicture = blobClient.Uri.ToString();
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
@@ -491,7 +491,7 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<bool>> MarkNotificationAsRead([FromBody] int notificationId)
         {
             bool wasSuccessful = false;
-            
+
             System.Security.Claims.Claim? userIdClaim = User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
             if (userIdClaim == null) return BadRequest();
             //Now use this extracted userIdClaim to find the user in the database
@@ -509,7 +509,7 @@ namespace PluginDemocracy.API.Controllers
                 wasSuccessful = true;
                 return Ok(wasSuccessful);
             }
-            catch 
+            catch
             {
                 return StatusCode(500);
             }
@@ -537,7 +537,7 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest("You are not logged in");
             List<Petition> petitions = await _context.Petitions.Include(p => p.Authors).Where(p => p.Authors.Contains(existingUser)).ToListAsync();
-            List<PetitionDTO> petitionDTOs = [];            
+            List<PetitionDTO> petitionDTOs = [];
             foreach (Petition petition in petitions) petitionDTOs.Add(new PetitionDTO(petition));
             return Ok(petitionDTOs);
         }
@@ -554,7 +554,7 @@ namespace PluginDemocracy.API.Controllers
                 .Include(p => p.AuthorsReadyToPublish)
                 .Include(p => p.Signatures)
                 .FirstOrDefaultAsync(p => p.Id == petitionDTO.Id);
-            
+
             //NEW PETITION: if the petition does not exist, or petitionDTO.Id = 0, it is a new petition. 
             if (petition == null)
             {
@@ -780,6 +780,35 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", ex.Message);
                 return BadRequest(response);
             }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetPetitionDraft)]
+        public async Task<ActionResult<PetitionDTO>> GetPetitionDraft([FromQuery] int petitionId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+
+            Petition? petition = await _context.Petitions
+                .Include(p => p.Authors)
+                    .ThenInclude(a => a.HomeOwnerships)
+                .Include(p => p.Authors)
+                    .ThenInclude(a => a.NonResidentialCitizenIn)
+                .Include(p => p.Authors)
+                    .ThenInclude(a => a.ResidentOfHomes)
+                .Include(p => p.AuthorsReadyToPublish)
+                .Include(p => p.Signatures)
+                .FirstOrDefaultAsync(p => p.Id == petitionId);
+
+            if (petition == null)
+            {
+                return NotFound();
+            }
+            //Make sure user is an author of the petition
+            if (!petition.Authors.Contains(existingUser))
+            {
+                return BadRequest("You are not an author of this petition");
+            }
+            return Ok(new PetitionDTO(petition));
         }
         #endregion
     }
