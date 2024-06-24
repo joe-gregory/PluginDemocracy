@@ -12,6 +12,7 @@ using Azure.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {
@@ -155,7 +156,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (PetitionDTO.Authors != null && PetitionDTO.Authors.Count > 0)
                 {
                     var authorsJson = JsonSerializer.Serialize(PetitionDTO.Authors, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
-                    multiPartFormDataContent.Add(new StringContent(authorsJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.Authors));
+                    multiPartFormDataContent.Add(new StringContent(authorsJson, Encoding.UTF8, "application/json"), "Authors");
                 }
                 //Add each file
                 int maxAllowedSize = 100 * 1024 * 1024; //100MB
@@ -183,9 +184,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 //Update the new petition
                 if (apiResponse.SuccessfulOperation)
                 {
-                    if (apiResponse.Petition != null) PetitionDTO = apiResponse.Petition;
                     files.Clear();
+                    if(apiResponse.Petition != null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
                 }
+                Services.AddSnackBarMessages(apiResponse.Alerts);
             }
             catch (Exception ex)
             {
@@ -195,7 +197,6 @@ namespace PluginDemocracy.UIComponents.Pages.User
             {
                 AppState.IsLoading = false;
                 disableAll = false;
-
             }
         }
         private void DeleteDraft()

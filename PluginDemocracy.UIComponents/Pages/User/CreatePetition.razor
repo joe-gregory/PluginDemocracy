@@ -8,7 +8,7 @@
 </MudCard>
 @*Community*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
-    @if (petitionId == null)
+    @if (petitionId == null || petitionId == 0)
     {
         @if (AppState?.User?.Citizenships.Count > 1)
         {

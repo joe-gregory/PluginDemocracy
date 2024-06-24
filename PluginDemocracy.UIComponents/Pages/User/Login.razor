@@ -16,14 +16,15 @@
         <MudTextField T="string" Label="Email" Required="true" RequiredError="@AppState.Translate("Required")" Validation="@(new EmailAddressAttribute() {ErrorMessage = AppState.Translate("Invalid")})" @bind-Value="loginInfo.Email" Variant="Variant.Outlined" Immediate="true"/>
         <MudTextField T="string" Label="@AppState.Translate("Password")" @ref="pwField1" InputType="InputType.Password" Required="true" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="Password is required!" @bind-Value="loginInfo.Password" Variant="Variant.Outlined" Immediate="true"/>
 
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="mt-5" OnClick="PostForm">Login</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || disabled)" Class="mt-5" OnClick="PostForm">Login</MudButton>
     </MudPaper>
 </MudForm>
 <MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
-    @code {
+@code {
     LoginInfoDto loginInfo = new();
 
     private bool success;
+    private bool disabled; 
 
     string[] errors = { };
     MudTextField<string>? pwField1;
@@ -41,9 +42,10 @@
 
     private async void PostForm()
     {
-        success = false;
-        StateHasChanged();
+        disabled = true;
         loginInfo.Culture = AppState.Culture;
         await Services.PostDataAsync<LoginInfoDto>(ApiEndPoints.PostLogin, loginInfo);
+        disabled = false;
+        StateHasChanged();
     }
 }
