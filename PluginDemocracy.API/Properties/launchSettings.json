@@ -10,7 +10,10 @@
         "JsonWebTokenSecretKey": "PluginDemocracy112PluginDemocracy112PluginDemocracy112",
         "BlobSASToken": "sp=racwdli&st=2024-02-01T02:02:54Z&se=2024-12-31T10:02:54Z&spr=https&sv=2022-11-02&sr=c&sig=x5nvDT%2B%2BTjE9v5PryepVxF1rt9hHGV0h3tAfOF0u6aQ%3D",
         "BlobSASURL": "https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer?sp=racwdli&st=2024-02-01T02:02:54Z&se=2024-12-31T10:02:54Z&spr=https&sv=2022-11-02&sr=c&sig=x5nvDT%2B%2BTjE9v5PryepVxF1rt9hHGV0h3tAfOF0u6aQ%3D",
-        "BlobURL": "https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer"
+        "BlobURL": "https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer",
+        "ReadOnlyBlobSASToken": "sp=r&st=2024-06-25T21:11:25Z&se=2026-08-25T07:00:00Z&spr=https&sv=2022-11-02&sr=c&sig=GL59UBvx2kerJwqVb2QyK%2BBRpmnDM%2B7AXY7FnRO89pk%3D",
+        "ReadOnlyBlobSASURL": "https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer?sp=r&st=2024-06-25T21:11:25Z&se=2026-08-25T07:00:00Z&spr=https&sv=2022-11-02&sr=c&sig=GL59UBvx2kerJwqVb2QyK%2BBRpmnDM%2B7AXY7FnRO89pk%3D",
+        "BlobContainerURL": "https://pdstorageaccountname.blob.core.windows.net/pdblobcontainer"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7042;http://localhost:5039"
