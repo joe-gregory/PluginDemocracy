@@ -11,6 +11,7 @@ namespace PluginDemocracy.DTOs
         public DateTime? PublishedDate { get; set; }
         public DateTime? LastUpdated { get; set; }
         public CommunityDTO? CommunityDTO { get; set; }
+        public int CommunityDTOId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? ActionRequested { get; set; }
@@ -19,6 +20,7 @@ namespace PluginDemocracy.DTOs
         public List<string> LinksToSupportingDocuments { get; set; } = [];
         public List<IFormFile> SupportingDocumentsToAdd { get; set; } = [];
         public List<UserDTO> Authors { get; set; } = [];
+        public List<int> AuthorsIds { get; set; } = [];
         public List<UserDTO> AuthorsReadyToPublish { get; set; } = [];
         public List<CommunityDTO> CommonCommunitiesBetweenAuthors
         {
