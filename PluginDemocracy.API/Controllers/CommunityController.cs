@@ -61,7 +61,7 @@ namespace PluginDemocracy.API.Controllers
                 CanHaveHomes = true,
             };
             foreach (CultureInfo language in communityDto.OfficialLanguages) newCommunity.AddOfficialLanguage(language);
-            foreach (HomeDto homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
+            foreach (HomeDTO homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
             {
                 ParentCommunity = newCommunity,
                 Number = homeDTO.Number,
@@ -122,7 +122,7 @@ namespace PluginDemocracy.API.Controllers
                     return BadRequest(response);
                 }
                 response.Community = CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community);
-                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDto.ReturnHomeDtoFromHome(home));
+                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
                 return Ok(response);
             }
             catch (Exception ex)
@@ -143,7 +143,7 @@ namespace PluginDemocracy.API.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost(ApiEndPoints.JoinCommunityRequest)]
-        public async Task<ActionResult<PDAPIResponse>> JoinCommunityRequest(JoinCommunityRequestDto requestDto)
+        public async Task<ActionResult<PDAPIResponse>> JoinCommunityRequest(JoinCommunityRequestDTO requestDto)
         {
             PDAPIResponse response = new();
             //Ensure User from claims is valid, that it matches the UserId in the request and that the Community exists.
