@@ -53,7 +53,7 @@ namespace PluginDemocracy.API.Controllers
         /// <param name="communityId"></param>
         /// <returns></returns>
         [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequests)]
-        public async Task<ActionResult<List<JoinCommunityRequestDto>>> GetJoinCommunityRequests([FromQuery] int? communityId)
+        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> GetJoinCommunityRequests([FromQuery] int? communityId)
         {
             User? user = await _utilityClass.ReturnUserFromClaims(User);
             if (user == null) return BadRequest();
@@ -62,8 +62,8 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.User).Include(j => j.Home).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
-                List<JoinCommunityRequestDto> joinCommunityRequestDtos = [];
-                foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDto(joinCommunityRequest));
+                List<JoinCommunityRequestDTO> joinCommunityRequestDtos = [];
+                foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDTO(joinCommunityRequest));
                 return Ok(joinCommunityRequestDtos);
             }
             catch (Exception e)
@@ -72,7 +72,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         [HttpPost(ApiEndPoints.AdminAcceptJoinRequest)]
-        public async Task<ActionResult<PDAPIResponse>> AcceptJoinCommunityRequest(JoinCommunityRequestDto request)
+        public async Task<ActionResult<PDAPIResponse>> AcceptJoinCommunityRequest(JoinCommunityRequestDTO request)
         {
             PDAPIResponse response = new();
 
@@ -113,7 +113,7 @@ namespace PluginDemocracy.API.Controllers
             
         }
         [HttpPost(ApiEndPoints.AdminRejectJoinRequest)]
-        public async Task<ActionResult<PDAPIResponse>> RejectJoinCommunityRequest(JoinCommunityRequestDto request)
+        public async Task<ActionResult<PDAPIResponse>> RejectJoinCommunityRequest(JoinCommunityRequestDTO request)
         {
             PDAPIResponse response = new();
 
