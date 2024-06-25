@@ -11,7 +11,7 @@ namespace PluginDemocracy.DTOs
         #region PROPERTIES
         public string? Name { get; set; }
         [JsonIgnore]
-        public override string? FullName => string.Join(" ", Name, Address);
+        public override string FullName => string.Join(" ", Name, Address);
         public string OfficialCurrency { get; set; } = "USD";
         public List<string> _officialLanguagesCodes { get; set; } = [];
         [JsonIgnore]
@@ -25,17 +25,8 @@ namespace PluginDemocracy.DTOs
             }
         }
         public string? Description { get; set; } = string.Empty;
-        [JsonIgnore]
-        public override List<CommunityDTO> Citizenships
-        {
-            get
-            {
-                List<CommunityDTO> citizenships = [.. NonResidentialCitizenIn];
-                return citizenships.Distinct().ToList();
-            }
-        }
         public bool CanHaveHomes { get; set; }
-        public List<HomeDto> Homes { get; set; } = [];
+        public List<HomeDTO> Homes { get; set; } = [];
         /// <summary>
         /// Can Citizens be added if they don't belong to a home
         /// </summary>
@@ -105,14 +96,14 @@ namespace PluginDemocracy.DTOs
             Address = community.Address;
             ProfilePicture = community.ProfilePicture;
             NonResidentialCitizenIn = community.NonResidentialCitizenIn.Select(c => ReturnSimpleCommunityDtoFromCommunity(c)).ToList();
-            foreach (HomeOwnership homeOwnership in community.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
+            foreach (HomeOwnership homeOwnership in community.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
             //CommunityDto Properties
             Name = community.Name;
             OfficialCurrency = community.OfficialCurrency;
             foreach (string language in community._officialLanguagesCodes) _officialLanguagesCodes.Add(language);
             Description = community.Description;
             CanHaveHomes = community.CanHaveHomes;
-            foreach(Home home in community.Homes) Homes?.Add(HomeDto.ReturnHomeDtoFromHome(home));
+            foreach(Home home in community.Homes) Homes?.Add(HomeDTO.ReturnHomeDtoFromHome(home));
             CanHaveNonResidentialCitizens = community.CanHaveNonResidentialCitizens;
             foreach (Community communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
             foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDTO.ReturnSimpleUserDTOFromUser(userNonResidentialCitizen));
@@ -132,7 +123,7 @@ namespace PluginDemocracy.DTOs
         {
             _officialLanguagesCodes.Add(culture.Name);
         }
-        public void AddHome(HomeDto home)
+        public void AddHome(HomeDTO home)
         {
             if (!Homes.Contains(home)) 
             {
@@ -140,7 +131,7 @@ namespace PluginDemocracy.DTOs
                 Homes.Add(home);
             }
         }
-        public void RemoveHome(HomeDto home)
+        public void RemoveHome(HomeDTO home)
         {
             Homes.Remove(home);
         }   
@@ -161,7 +152,11 @@ namespace PluginDemocracy.DTOs
                 _officialLanguagesCodes = community.OfficialLanguages.Select(culture => culture.Name).ToList(),
                 Description = community.Description,
             };
-        }   
+        }
+        public override string ToString()
+        {
+            return FullName;
+        }
         #endregion
     }
 }

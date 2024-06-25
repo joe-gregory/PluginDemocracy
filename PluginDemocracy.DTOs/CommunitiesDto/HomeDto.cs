@@ -4,28 +4,19 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HomeDto : BaseCitizenDto
+    public class HomeDTO : BaseCitizenDto
     {
         #region PROPERTIES
         public CommunityDTO? ParentCommunity { get; set; }
-        public HashSet<HomeOwnershipDto> Ownerships { get; set; } = [];
+        public HashSet<HomeOwnershipDTO> Ownerships { get; set; } = [];
         [JsonIgnore]
         public override string? FullName
         {
             get
             {
                 string fullName = string.Empty;
-                foreach(HomeOwnershipDto ho in Ownerships) fullName += ho.Owner?.FullName + ", ";
+                foreach(HomeOwnershipDTO ho in Ownerships) fullName += ho.Owner?.FullName + ", ";
                 return fullName;
-            }
-        }
-        [JsonIgnore]
-        public override List<CommunityDTO> Citizenships
-        {
-            get
-            {
-                if (ParentCommunity != null) return [ParentCommunity];
-                else return [];
             }
         }
         public int Number { get; set; }
@@ -71,7 +62,7 @@ namespace PluginDemocracy.DTOs
 
             if (GetType() == obj?.GetType()) 
             { 
-                return Id == ((HomeDto)obj).Id && Number == ((HomeDto)obj).Number && InternalAddress == ((HomeDto)obj).InternalAddress;
+                return Id == ((HomeDTO)obj).Id && Number == ((HomeDTO)obj).Number && InternalAddress == ((HomeDTO)obj).InternalAddress;
             }
             else return false;
         }
@@ -83,13 +74,13 @@ namespace PluginDemocracy.DTOs
         {
             return Id.GetHashCode();
         }
-        public JoinCommunityRequestDto JoinHome(UserDTO user, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public JoinCommunityRequestDTO JoinHome(UserDTO user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             if (joiningAsOwner)
             {
                 if (ownershipPercentage > AvailableOwnershipPercentage || ownershipPercentage <= 0 || ownershipPercentage > 100) throw new Exception("ErrorMessageJoinHomeWrongPercentage");
             }
-            JoinCommunityRequestDto request = new()
+            JoinCommunityRequestDTO request = new()
             {
                 CommunityDto = ParentCommunity,
                 HomeDto = this,
@@ -108,19 +99,19 @@ namespace PluginDemocracy.DTOs
             }
             return request;
         }
-        public static HomeDto ReturnHomeDtoFromHome(Home home)
+        public static HomeDTO ReturnHomeDtoFromHome(Home home)
         {
-            HomeDto newHomeDto = new()
+            HomeDTO newHomeDto = new()
             {
                 //BaseCitizenDto Properties
                 Id = home.Id,
                 Address = home.Address,
                 ProfilePicture = home.ProfilePicture,
                 NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
-                HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
+                HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
                 //HomeDto Properties
                 ParentCommunity = home.ParentCommunity != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
-                Ownerships = home.Ownerships.Select(ho => HomeOwnershipDto.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
+                Ownerships = home.Ownerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
                 Number = home.Number,
                 InternalAddress = home.InternalAddress,
                 Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDTOFromUser(r)).ToList(),

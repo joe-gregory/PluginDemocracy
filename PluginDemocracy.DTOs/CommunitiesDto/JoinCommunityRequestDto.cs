@@ -2,22 +2,22 @@
 
 namespace PluginDemocracy.DTOs
 {
-    public class JoinCommunityRequestDto
+    public class JoinCommunityRequestDTO
     {
         public int Id { get; set; } = 0;
         public CommunityDTO? CommunityDto { get; set; }
-        public HomeDto? HomeDto { get; set; } 
+        public HomeDTO? HomeDto { get; set; } 
         public UserDTO? UserDto { get; set; }
         public bool JoiningAsOwner { get; set; } = false;
         public bool JoiningAsResident { get; set; } = false;
         public double OwnershipPercentage { get; set; } = 0;
         public bool? Approved { get; internal set; } = null;
-        public JoinCommunityRequestDto() { }
-        public JoinCommunityRequestDto(JoinCommunityRequest jcr)
+        public JoinCommunityRequestDTO() { }
+        public JoinCommunityRequestDTO(JoinCommunityRequest jcr)
         {
             Id = jcr.Id;
             CommunityDto = CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(jcr.Community);
-            HomeDto = HomeDto.ReturnHomeDtoFromHome(jcr.Home);
+            HomeDto = HomeDTO.ReturnHomeDtoFromHome(jcr.Home);
             UserDto = jcr.User != null ? new(jcr.User) : null;
             JoiningAsOwner = jcr.JoiningAsOwner;
             JoiningAsResident = jcr.JoiningAsResident;

@@ -1,6 +1,7 @@
 ﻿using PluginDemocracy.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HomeOwnershipDto
+    public class HomeOwnershipDTO
     {
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
-        public virtual HomeDto? Home { get; set; }
+        public virtual HomeDTO? Home { get; set; }
         public UserDTO? _userOwner;
         public CommunityDTO? _communityOwner;
         [JsonIgnore]
@@ -25,16 +26,25 @@ namespace PluginDemocracy.DTOs
                 return null;
             }
         }
-        public static HomeOwnershipDto ReturnHomeOwnershipDtoFromHomeOwnership(HomeOwnership homeOwnership)
+        public static HomeOwnershipDTO ReturnHomeOwnershipDtoFromHomeOwnership(HomeOwnership homeOwnership)
         {
-            HomeOwnershipDto newHomeOwnershipDto = new()
+            HomeOwnershipDTO newHomeOwnershipDto = new()
             {
                 Id = homeOwnership.Id,
                 OwnershipPercentage = homeOwnership.OwnershipPercentage,
-                _userOwner = homeOwnership._userOwner != null ? UserDTO.ReturnSimpleUserDTOFromUser(homeOwnership._userOwner) : null,
+                _userOwner = homeOwnership._userOwner != null ? new UserDTO() 
+                { 
+                    Id = homeOwnership._userOwner.Id, 
+                    FirstName = homeOwnership._userOwner.FirstName,
+                    MiddleName = homeOwnership._userOwner.MiddleName,
+                    LastName = homeOwnership._userOwner.LastName,
+                    SecondLastName = homeOwnership._userOwner.SecondLastName,
+                    ProfilePicture = homeOwnership._userOwner.ProfilePicture,
+                } 
+                : null,
                 _communityOwner = homeOwnership._communityOwner != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership._communityOwner) : null,
             };
-            HomeDto homeDto = new()
+            HomeDTO homeDto = new()
             {
                 Id = homeOwnership.Home.Id,
                 Address = homeOwnership.Home.Address,
