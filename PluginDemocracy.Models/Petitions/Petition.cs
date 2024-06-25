@@ -166,13 +166,14 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
+        [NotMapped]
         public IReadOnlyList<string> LinksToSupportingDocuments => _linksToSupportingDocuments.AsReadOnly();
-        protected List<User> _authors;
+        protected List<User> _authors = [];
         /// <summary>
         /// The User(s) who created the petition and can modify it when not published.
         /// </summary>
         public IReadOnlyList<User> Authors => _authors.AsReadOnly();
-        protected List<User> _authorsReadyToPublish;
+        protected List<User> _authorsReadyToPublish = [];
         public IReadOnlyList<User> AuthorsReadyToPublish => _authorsReadyToPublish.AsReadOnly();
         protected List<ESignature> _signatures = [];
         public IReadOnlyList<ESignature> Signatures
@@ -189,13 +190,10 @@ namespace PluginDemocracy.Models
         /// </summary>
         protected Petition()
         {
-            _authors = [];
-            _authorsReadyToPublish = [];
         }
         public Petition(User originalAuthor)
         {
-            _authors = [originalAuthor];
-            _authorsReadyToPublish = [];
+            AddAuthor(originalAuthor);
         }
         /// <summary>
         /// When it is published, the petition is made available to the public for signatures.
