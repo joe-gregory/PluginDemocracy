@@ -8,11 +8,11 @@
 </MudCard>
 @*Community*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
-    @if (petitionId == null || petitionId == 0)
+    @if (petitionId == null)
     {
         @if (AppState?.User?.Citizenships.Count > 1)
         {
-            <MudSelect @bind-Value="PetitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
+            <MudSelect @bind-Value="petitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
                 @foreach (CommunityDTO community in AppState.User.Citizenships)
                 {
                     <MudSelectItem Value="@community">@community.Name</MudSelectItem>
@@ -21,16 +21,16 @@
         }
         else
         {
-            <MudField Label="@AppState?.Translate(ResourceKeys.Community)" Variant="Variant.Outlined">@PetitionDTO.CommunityDTO?.Name</MudField>
+            <MudField Label="@AppState?.Translate(ResourceKeys.Community)" Variant="Variant.Outlined">@petitionDTO.CommunityDTO?.Name</MudField>
         }
     }
     else
     {
         @* Display the communities that all the authors share in common *@
-        <MudSelect @bind-Value="PetitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
-            @foreach (CommunityDTO community in PetitionDTO.CommonCommunitiesBetweenAuthors)
+        <MudSelect @bind-Value="petitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
+            @foreach (CommunityDTO community in petitionDTO.CommonCommunitiesBetweenAuthors)
             {
-                <MudSelectItem Value="@community">@community.Name</MudSelectItem>
+                <MudSelectItem Value="@community">@community.FullName</MudSelectItem>
             }
         </MudSelect>
     }
@@ -38,11 +38,11 @@
 </MudCard>
 @*Title, Description, Action Requested, Supporting Arguments, Deadline for Response*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
-    <MudTextField @bind-Value="PetitionDTO.Title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" Class="mt-5" HelperText="@AppState.Translate(ResourceKeys.PetitionTitle)" Required="true" Disabled="disableAll" />
-    <MudTextField @bind-Value="PetitionDTO.Description" Label="@AppState.Translate(ResourceKeys.Description)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.PetitionDescription)" Required="true" Disabled="disableAll" />
-    <MudTextField @bind-Value="PetitionDTO.ActionRequested" Label="@AppState.Translate(ResourceKeys.ActionRequested)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.ActionRequestedDescription)" Required="true" Disabled="disableAll" />
-    <MudTextField @bind-Value="PetitionDTO.SupportingArguments" Label="@AppState.Translate(ResourceKeys.SupportingArguments)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.SupportingArgumentsDescription)" Required="true" Disabled="disableAll" />
-    <MudTextField @bind-Value="PetitionDTO.DeadlineForResponse" Format="yyyy-MM-dd" Label="@AppState.Translate(ResourceKeys.DeadlineForResponse)" InputType="InputType.Date" HelperText="@AppState.Translate(ResourceKeys.DeadlineForResponseDescription)" Disabled="disableAll" />
+    <MudTextField @bind-Value="petitionDTO.Title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" Class="mt-5" HelperText="@AppState.Translate(ResourceKeys.PetitionTitle)" Required="true" Disabled="disableAll" />
+    <MudTextField @bind-Value="petitionDTO.Description" Label="@AppState.Translate(ResourceKeys.Description)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.PetitionDescription)" Required="true" Disabled="disableAll" />
+    <MudTextField @bind-Value="petitionDTO.ActionRequested" Label="@AppState.Translate(ResourceKeys.ActionRequested)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.ActionRequestedDescription)" Required="true" Disabled="disableAll" />
+    <MudTextField @bind-Value="petitionDTO.SupportingArguments" Label="@AppState.Translate(ResourceKeys.SupportingArguments)" Variant="Variant.Outlined" Class="mt-5" Lines="10" AutoGrow HelperText="@AppState.Translate(ResourceKeys.SupportingArgumentsDescription)" Required="true" Disabled="disableAll" />
+    <MudTextField @bind-Value="petitionDTO.DeadlineForResponse" Format="yyyy-MM-dd" Label="@AppState.Translate(ResourceKeys.DeadlineForResponse)" InputType="InputType.Date" HelperText="@AppState.Translate(ResourceKeys.DeadlineForResponseDescription)" Disabled="disableAll" />
 </MudCard>
 @*Supporting Documents*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
@@ -76,14 +76,19 @@
         </MudCard>
     }
     @*Already uploaded documents*@
-    @if (PetitionDTO.LinksToSupportingDocuments != null && PetitionDTO.LinksToSupportingDocuments.Count > 0)
+    @if (petitionDTO.LinksToSupportingDocuments != null && petitionDTO.LinksToSupportingDocuments.Count > 0)
     {
         <MudCard Elevation="25">
             <MudText>@AppState.Translate(ResourceKeys.UploadedFiles)</MudText>
             <MudList>
-                @foreach (string fileLink in PetitionDTO.LinksToSupportingDocuments)
+                @foreach (string fileLink in petitionDTO.LinksToSupportingDocuments)
                 {
                     string fileName = Path.GetFileName(fileLink);
+                    int index = fileName.IndexOf("?");
+                    if (index >=0)
+                    {
+                        fileName = fileName.Substring(0, index);
+                    }
                     <MudListItem Icon="@Icons.Material.Filled.CheckCircle"><MudLink Href="@fileLink">@fileName</MudLink></MudListItem>
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveSupportingDocument(fileLink)" />
                 }
@@ -102,7 +107,7 @@
     <MudCard Elevation="25" Class="mt-1 pa-2">
         <MudText Typo="Typo.h6">@AppState.Translate(ResourceKeys.Authors)</MudText>
         <MudList>
-            @foreach (UserDTO author in PetitionDTO.Authors)
+            @foreach (UserDTO author in petitionDTO.Authors)
             {
                 <MudListItem Icon="@Icons.Material.Filled.Person">
                     @author.FullName
@@ -118,11 +123,11 @@
     <MudCard Class="mt-1 pa-2">
         <MudText Typo="Typo.h5" Class="mb-5">@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudText>
         <MudList>
-            @foreach (UserDTO authorReadyToPublish in PetitionDTO.AuthorsReadyToPublish)
+            @foreach (UserDTO authorReadyToPublish in petitionDTO.AuthorsReadyToPublish)
             {
                 <MudListItem>@authorReadyToPublish.FullName <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /></MudListItem>
             }
-            @foreach (UserDTO authorNotReadyToPublish in PetitionDTO.Authors.Except(PetitionDTO.AuthorsReadyToPublish))
+            @foreach (UserDTO authorNotReadyToPublish in petitionDTO.Authors.Except(petitionDTO.AuthorsReadyToPublish))
             {
                 <MudListItem>@authorNotReadyToPublish.FullName <MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" /></MudListItem>
             }
@@ -131,9 +136,9 @@
 </MudCard>
 <MudCard Class="mt-5 mb-5">
     @*Saving Petition Draft*@
-    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info" OnClick="SavePetitionDraft">@AppState.Translate(ResourceKeys.Save)</MudButton>
-    @*Delete Petition Draft*@
-    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteDraft">@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudButton>
-    @*Publishing Petition *@
-    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Publish" Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishPetition">@AppState.Translate(ResourceKeys.Publish)</MudButton>
+    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info" OnClick="SavePetitionDraft" Disabled="disableAll">@AppState.Translate(ResourceKeys.Save)</MudButton>
+    @*Delete Petition Draft - Currently deleting on the list page*@
+@*     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteDraft">@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudButton>
+ *@    @*Publishing Petition *@
+    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Publish" Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishPetition" Disabled="disableAll">@AppState.Translate(ResourceKeys.Publish)</MudButton>
 </MudCard>

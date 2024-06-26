@@ -1,6 +1,6 @@
 ﻿@inject BaseAppState AppState
 
-<MudDataGrid T="HomeDto" Items="this.Community?.Homes" Bordered="true" Dense="true" ReadOnly="false" EditMode="DataGridEditMode.Cell">
+<MudDataGrid T="HomeDTO" Items="this.Community?.Homes" Bordered="true" Dense="true" ReadOnly="false" EditMode="DataGridEditMode.Cell">
     <Columns>
         <PropertyColumn Property = "home => home.Number" Title="@AppState.Translate(ResourceKeys.Number)" Required="true"/>
         <PropertyColumn Property = "home => home.InternalAddress" Title="@AppState.Translate(ResourceKeys.InternalAddress)" Required="false"/>

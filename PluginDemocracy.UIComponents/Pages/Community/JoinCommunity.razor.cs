@@ -8,7 +8,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
     {
         private List<CommunityDTO> communitiesDtos = [];
         private CommunityDTO? selectedCommunityDto;
-        private List<HomeDto> homesDtosFromSelectedCommunity = [];
+        private List<HomeDTO> homesDtosFromSelectedCommunity = [];
         private bool isJoinHomeDialogVisible = false;
         private readonly DialogOptions dialogOptions = new()
         {
@@ -16,7 +16,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             DisableBackdropClick = true,
             CloseOnEscapeKey = true,
         };
-        private HomeDto? selectedHomeDto;
+        private HomeDTO? selectedHomeDto;
         //false is resident, true is owner
         private bool residentOrOwner = false;
         private bool displayDialogErrorMessage = false;
@@ -62,7 +62,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         {
             displayDialogErrorMessage = false;
             dialogErrorMessage = string.Empty;
-            JoinCommunityRequestDto joinRequest;
+            JoinCommunityRequestDTO joinRequest;
             if (AppState.User != null && selectedHomeDto != null)
             {
                 try

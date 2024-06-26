@@ -39,7 +39,7 @@ namespace PluginDemocracy.UIComponents.Components
     {
         [Parameter]
         public CommunityDTO? Community { get; set; }
-        public void DeleteHome(HomeDto home)
+        public void DeleteHome(HomeDTO home)
         {
             Community?.Homes.Remove(home);
             StateHasChanged();

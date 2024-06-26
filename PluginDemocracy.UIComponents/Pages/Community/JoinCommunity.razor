@@ -21,7 +21,7 @@
     <MudPaper Elevation="25" Class="mt-10 mb-10">
         <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">@AppState.Translate(ResourceKeys.JoinAHome)</MudText>
         <MudText Class="ma-3">@AppState.Translate(ResourceKeys.SelectHomeDescriptionInJoinCommunity)</MudText>
-        <MudTable T="HomeDto" Items="@homesDtosFromSelectedCommunity" Hover="true">
+        <MudTable T="HomeDTO" Items="@homesDtosFromSelectedCommunity" Hover="true">
             <HeaderContent>
                 <MudTh>@AppState.Translate(ResourceKeys.Homes)</MudTh>
                 <MudTh>@AppState.Translate(ResourceKeys.Residents)</MudTh>

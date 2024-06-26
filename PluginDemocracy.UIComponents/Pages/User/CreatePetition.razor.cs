@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Newtonsoft.Json;
+using static MudBlazor.CategoryTypes;
+using System.Net.Http.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {
@@ -24,7 +28,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         [SupplyParameterFromQuery]
         public int? petitionId { get; set; }
-        private PetitionDTO PetitionDTO = new();
+        private PetitionDTO petitionDTO = new();
         private readonly IList<IBrowserFile> files = [];
         private string? temporaryAddAuthor;
         private bool disableAll = false;
@@ -33,7 +37,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             //This is if it is a new petition
             if (petitionId == null)
             {
-                if (AppState?.User != null) PetitionDTO.Authors.Add(new UserDTO()
+                if (AppState?.User != null) petitionDTO.Authors.Add(new UserDTO()
                 {
                     Id = AppState.User.Id,
                     FirstName = AppState.User.FirstName,
@@ -41,7 +45,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
                 });
-                if (AppState?.User?.Citizenships.Count == 1) PetitionDTO.CommunityDTO = new CommunityDTO()
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new CommunityDTO()
                 {
                     Id = AppState.User.Citizenships[0].Id,
                     Name = AppState.User.Citizenships[0].Name,
@@ -57,10 +61,35 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (petitionId == null) return;
             string endpoint = ApiEndPoints.GetPetitionDraft + $"?petitionId={petitionId}";
             PetitionDTO? petition = await Services.GetDataGenericAsync<PetitionDTO>(endpoint);
-            if (petition != null) PetitionDTO = petition;
+            if (petition != null) petitionDTO = petition;
             else Services.AddSnackBarMessage("error", "Could not load the petition");
             StateHasChanged();
         }
+        protected override async Task OnParametersSetAsync()
+        {
+            if (petitionId == null)
+            {
+                petitionDTO = new();
+                if (AppState?.User != null) petitionDTO.Authors.Add(new UserDTO()
+                {
+                    Id = AppState.User.Id,
+                    FirstName = AppState.User.FirstName,
+                    MiddleName = AppState.User.MiddleName,
+                    LastName = AppState.User.LastName,
+                    SecondLastName = AppState.User.SecondLastName,
+                });
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new CommunityDTO()
+                {
+                    Id = AppState.User.Citizenships[0].Id,
+                    Name = AppState.User.Citizenships[0].Name,
+                };
+            }
+            else
+            {
+                await RefreshPetition();
+            }
+        }
+
         private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
             foreach (IBrowserFile file in files)
@@ -73,9 +102,20 @@ namespace PluginDemocracy.UIComponents.Pages.User
             files.Remove(file);
             Services.AddSnackBarMessage("success", "Removed " + file.Name);
         }
-        private void RemoveSupportingDocument(string fileLink)
+        private async void RemoveSupportingDocument(string fileLink)
         {
-            throw new NotImplementedException();
+            MultipartFormDataContent content = new()
+            {
+                { new StringContent(fileLink), "fileLink" },
+                { new StringContent(petitionDTO.Id.ToString()), "petitionId" }
+            };
+            string endpoint = AppState.BaseUrl + ApiEndPoints.DeleteDocumentFromPetition;
+            HttpRequestMessage request = new(HttpMethod.Delete, endpoint);
+            if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
+            request.Content = content;
+            PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
+            
+            if (apiResponse.SuccessfulOperation) await RefreshPetition();
         }
         /// <summary>
         /// This hits API endpoing <see cref="ApiEndPoints.GetUserDtoFromEmail"/> to get the UserDTO
@@ -105,7 +145,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (newAuthor == null) Services.AddSnackBarMessage("error", "Did not find a user with that email address");
             else
             {
-                PetitionDTO.Authors.Add(newAuthor);
+                petitionDTO.Authors.Add(newAuthor);
                 Services.AddSnackBarMessage("success", "Added " + newAuthor.FullName + " to the petition. Don't forget to save!");
                 //If successful Clear the temporary placeholder for the author to add 
                 temporaryAddAuthor = null;
@@ -122,7 +162,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 );
             if (result == true)
             {
-                PetitionDTO.Authors.Remove(authorToRemove);
+                petitionDTO.Authors.Remove(authorToRemove);
                 Services.AddSnackBarMessage("success", AppState.Translate(ResourceKeys.SuccessAuthorRemoved));
             }
         }
@@ -136,28 +176,31 @@ namespace PluginDemocracy.UIComponents.Pages.User
 
                 MultipartFormDataContent multiPartFormDataContent = [];
                 // Add each property of PetitionDTO individually
-                multiPartFormDataContent.Add(new StringContent(PetitionDTO.Id.ToString()), nameof(PetitionDTO.Id));
-                multiPartFormDataContent.Add(new StringContent(PetitionDTO.Published.ToString()), nameof(PetitionDTO.Published));
-                if (PetitionDTO.PublishedDate.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.PublishedDate.Value.ToString("o")), nameof(PetitionDTO.PublishedDate));
-                if (PetitionDTO.LastUpdated.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.LastUpdated.Value.ToString("o")), nameof(PetitionDTO.LastUpdated));
-                if (!string.IsNullOrEmpty(PetitionDTO.Title)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.Title), nameof(PetitionDTO.Title));
-                if (!string.IsNullOrEmpty(PetitionDTO.Description)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.Description), nameof(PetitionDTO.Description));
-                if (!string.IsNullOrEmpty(PetitionDTO.ActionRequested)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.ActionRequested), nameof(PetitionDTO.ActionRequested));
-                if (!string.IsNullOrEmpty(PetitionDTO.SupportingArguments)) multiPartFormDataContent.Add(new StringContent(PetitionDTO.SupportingArguments), nameof(PetitionDTO.SupportingArguments));
-                if (PetitionDTO.DeadlineForResponse.HasValue) multiPartFormDataContent.Add(new StringContent(PetitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(PetitionDTO.DeadlineForResponse));
-
+                multiPartFormDataContent.Add(new StringContent(petitionDTO.Id.ToString()), nameof(petitionDTO.Id));
+                multiPartFormDataContent.Add(new StringContent(petitionDTO.Published.ToString()), nameof(petitionDTO.Published));
+                if (petitionDTO.PublishedDate.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.PublishedDate.Value.ToString("o")), nameof(petitionDTO.PublishedDate));
+                if (petitionDTO.LastUpdated.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.LastUpdated.Value.ToString("o")), nameof(petitionDTO.LastUpdated));
+                if (!string.IsNullOrEmpty(petitionDTO.Title)) multiPartFormDataContent.Add(new StringContent(petitionDTO.Title), nameof(petitionDTO.Title));
+                if (!string.IsNullOrEmpty(petitionDTO.Description)) multiPartFormDataContent.Add(new StringContent(petitionDTO.Description), nameof(petitionDTO.Description));
+                if (!string.IsNullOrEmpty(petitionDTO.ActionRequested)) multiPartFormDataContent.Add(new StringContent(petitionDTO.ActionRequested), nameof(petitionDTO.ActionRequested));
+                if (!string.IsNullOrEmpty(petitionDTO.SupportingArguments)) multiPartFormDataContent.Add(new StringContent(petitionDTO.SupportingArguments), nameof(petitionDTO.SupportingArguments));
+                if (petitionDTO.DeadlineForResponse.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(petitionDTO.DeadlineForResponse));
+                if (petitionDTO.CommunityDTO != null && petitionDTO.CommunityDTO.Id.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.CommunityDTO.Id.ToString()), nameof(petitionDTO.CommunityDTOId));
+                foreach(UserDTO authorDTO in petitionDTO.Authors)
+                {
+                    if (authorDTO?.Id != null) multiPartFormDataContent.Add(new StringContent(authorDTO.Id.ToString()), nameof(petitionDTO.AuthorsIds));
+                }
                 // Serialize complex properties like CommunityDTO and Authors
-                if (PetitionDTO.CommunityDTO != null)
+                if (petitionDTO.CommunityDTO != null)
                 {
-                    var communityJson = JsonSerializer.Serialize(PetitionDTO.CommunityDTO, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
-                    multiPartFormDataContent.Add(new StringContent(communityJson, Encoding.UTF8, "application/json"), nameof(PetitionDTO.CommunityDTO));
+                    multiPartFormDataContent.Add(new StringContent(JsonConvert.SerializeObject(petitionDTO.CommunityDTO)), nameof(petitionDTO.CommunityDTO));
                 }
 
-                if (PetitionDTO.Authors != null && PetitionDTO.Authors.Count > 0)
+                if (petitionDTO.Authors != null && petitionDTO.Authors.Count > 0)
                 {
-                    var authorsJson = JsonSerializer.Serialize(PetitionDTO.Authors, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
-                    multiPartFormDataContent.Add(new StringContent(authorsJson, Encoding.UTF8, "application/json"), "Authors");
+                    multiPartFormDataContent.Add(new StringContent(JsonConvert.SerializeObject(petitionDTO.Authors), Encoding.UTF8, "application/json"), nameof(petitionDTO.Authors));
                 }
+
                 //Add each file
                 int maxAllowedSize = 100 * 1024 * 1024; //100MB
                 foreach (IBrowserFile file in files)
@@ -177,15 +220,13 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
 
                 request.Content = multiPartFormDataContent;
-                //HttpResponseMessage response = await Services._httpClient.SendAsync(request);
-
-                //PDAPIResponse apiResponse = await Services.CommunicationCommon(response);
                 PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
                 //Update the new petition
                 if (apiResponse.SuccessfulOperation)
                 {
                     files.Clear();
-                    if(apiResponse.Petition != null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
+                    if (apiResponse.Petition != null && petitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
+                    else await RefreshPetition();
                 }
                 Services.AddSnackBarMessages(apiResponse.Alerts);
             }
@@ -198,10 +239,6 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 AppState.IsLoading = false;
                 disableAll = false;
             }
-        }
-        private void DeleteDraft()
-        {
-            throw new NotImplementedException();
         }
         private void PublishPetition()
         {

@@ -93,7 +93,7 @@
         }
         for(int i = startingNumberAHA; i <= endingNumberAHA; i++)
         {
-            HomeDto newHome = new();
+            HomeDTO newHome = new();
             newHome.Id = i;
             newHome.Number = i;
             newHome.InternalAddress = internalAddressAHA;
@@ -114,7 +114,7 @@
     {
         int highestNumber = 0;
         if(communityDto.Homes!=null && communityDto.Homes.Count > 0) highestNumber = communityDto.Homes.Max(home => home.Number);
-        HomeDto newHome = new();
+        HomeDTO newHome = new();
         newHome.Id = highestNumber + 1;
         newHome.Number = highestNumber + 1;
         communityDto.AddHome(newHome);

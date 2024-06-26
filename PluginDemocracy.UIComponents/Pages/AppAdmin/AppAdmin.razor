@@ -16,7 +16,7 @@
 {
     <MudText Typo="Typo.h5" Class="mt-10">Pending Join Community Requests</MudText>
     <MudText>Selected Community: @SelectedCommunity.FullName</MudText>
-    <MudDataGrid Items="PendingJoinCommunityRequests" Bordered="true" T="JoinCommunityRequestDto" ReadOnly="true" Elevation="25" RowClick="(e) => OnRowClicked(e.Item)">
+    <MudDataGrid Items="PendingJoinCommunityRequests" Bordered="true" T="JoinCommunityRequestDTO" ReadOnly="true" Elevation="25" RowClick="(e) => OnRowClicked(e.Item)">
         <Columns>
             @* //Request Info  *@
             <PropertyColumn Property="request => request.Id" Title="Request Id" />
@@ -66,9 +66,9 @@
 {
     private List<CommunityDTO>? CommunitiesDto = [];
     private CommunityDTO? SelectedCommunity = null;
-    private List<JoinCommunityRequestDto>? PendingJoinCommunityRequests = null;
+    private List<JoinCommunityRequestDTO>? PendingJoinCommunityRequests = null;
     private bool IsDialogOpen = false;
-    private JoinCommunityRequestDto? SelectedJoinRequest = null;
+    private JoinCommunityRequestDTO? SelectedJoinRequest = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,13 +86,13 @@
         if (SelectedCommunity != null)
         {
             //Make a Get request for the JoinCommunityRequests for that community.
-            PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
+            PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity.Id);
         }
     }
     private async Task ApproveJoinRequest()
     {
         //Make a post request to approve the request
-        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminAcceptJoinRequest, SelectedJoinRequest);
+        await Services.PostDataAsync<JoinCommunityRequestDTO>(ApiEndPoints.AdminAcceptJoinRequest, SelectedJoinRequest);
         //Reload the requests
         
         await CommonDecision();
@@ -100,16 +100,16 @@
     private async Task RejectJoinRequest()
     {
         //Make a post request to reject the request
-        await Services.PostDataAsync<JoinCommunityRequestDto>(ApiEndPoints.AdminRejectJoinRequest, SelectedJoinRequest);
+        await Services.PostDataAsync<JoinCommunityRequestDTO>(ApiEndPoints.AdminRejectJoinRequest, SelectedJoinRequest);
         //Reload the requests
         await CommonDecision();
     }
     private async Task CommonDecision()
     {
-        PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDto>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
+        PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequests + "?communityId=" + SelectedCommunity?.Id);
         IsDialogOpen = false; 
     }
-    private void OnRowClicked(JoinCommunityRequestDto request)
+    private void OnRowClicked(JoinCommunityRequestDTO request)
     {
         SelectedJoinRequest = request;
         IsDialogOpen = true;
