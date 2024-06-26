@@ -7,9 +7,9 @@
         abstract public string? FullName { get; }
         virtual public string? Address { get; set; }
         public string? ProfilePicture { get; set; }
-        public abstract List<CommunityDTO> Citizenships { get; }
+        public List<CommunityDTO> Citizenships { get; set; } = [];
         public List<CommunityDTO> NonResidentialCitizenIn { get; set; }
-        public List<HomeOwnershipDto> HomeOwnershipsDto { get; set; } = [];
+        public List<HomeOwnershipDTO> HomeOwnershipsDto { get; set; } = [];
         #endregion
         #region METHODS
         /// <summary>
