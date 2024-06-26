@@ -569,7 +569,10 @@ namespace PluginDemocracy.API.Controllers
                     Community? petitionsCommunity = null;
                     petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
-                    
+                    //Before adding the files, save the petition so an Id is assigned by SQL and it can be used as part of the document's urls
+                    _context.Petitions.Add(petition);
+                    await _context.SaveChangesAsync();
+
                     //BLOB STORAGE SUPPORTING DOCUMENTS
                     string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
                     string blobSASToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
@@ -582,7 +585,7 @@ namespace PluginDemocracy.API.Controllers
                     //Files to add to blob
                     foreach (IFormFile file in petitionDTO.SupportingDocumentsToAdd)
                     {
-                        string blobName = $"petition/{petition.Id}/documents/{file.Name}";
+                        string blobName = $"petition/{petition.Id}/documents/{file.FileName}";
                         BlobClient blobClient = containerClient.GetBlobClient(blobName);
                         await using Stream filestream = file.OpenReadStream();
                         //Upload the document
@@ -597,7 +600,6 @@ namespace PluginDemocracy.API.Controllers
                     }
                     petition.LastUpdated = DateTime.UtcNow;
                     //All done, save the petition
-                    _context.Petitions.Add(petition);
                     await _context.SaveChangesAsync();
                     response.Petition = new PetitionDTO(petition);
                     response.AddAlert("success", "New petition draft saved successfully");
@@ -704,6 +706,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         /// <summary>
+        /// Removes author. If there are no authors left, the petition is deleted.
         /// This uses <see cref="Petition.RemoveAuthor(Models.User)"/>. If after the removal there 
         /// are no authors left, the petition is deleted. 
         /// </summary>
@@ -728,6 +731,11 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "Petition not found");
                 return BadRequest(response);
             }
+            if (petition.Published)
+            {
+                response.AddAlert("error", "Cannot delete a published petition.");
+                return BadRequest(response);
+            }
             //Make sure user is an author of the petition
             if (!petition.Authors.Contains(existingUser))
             {
@@ -740,19 +748,24 @@ namespace PluginDemocracy.API.Controllers
                 if (petition.Authors.Count == 0)
                 {
                     //Delete associated documents form blob storage
-                    string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
-                    if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
-                    BlobContainerClient containerClient = new(new Uri(blobSasUrl));
-                    foreach (string link in petition.LinksToSupportingDocuments)
+                    string readWriteSasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                    if (string.IsNullOrEmpty(readWriteSasToken)) throw new Exception("BlobSASToken environment variable is null or empty");
+                    foreach(string fileLink in petition.LinksToSupportingDocuments)
                     {
-                        Uri uri = new(link);
-                        string blobName = string.Join("/", uri.Segments.Skip(1)); // Remove the initial '/' segment
-                        BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                        string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
+                        // Remove existing SAS token from URL if present
+                        UriBuilder uriBuilder = new UriBuilder(decodedFileLink)
+                        {
+                            Query = null // This removes the existing query (SAS token)
+                        };
+                        // Append the new SAS token
+                        uriBuilder.Query = readWriteSasToken;
+                        BlobClient blobClient = new BlobClient(uriBuilder.Uri);
                         await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
-
                     _context.Petitions.Remove(petition);
                     await _context.SaveChangesAsync();
+                    response.SuccessfulOperation = true;
                     response.AddAlert("success", "Petition draft deleted successfully");
                     return Ok(response);
                 }
@@ -796,6 +809,71 @@ namespace PluginDemocracy.API.Controllers
             if (!petition.Authors.Contains(existingUser)) return BadRequest("You are not an author of this petition");
             PetitionDTO petitionDTO = new(petition);
             return Ok(petitionDTO);
+        }
+        [Authorize]
+        [HttpDelete(ApiEndPoints.DeleteDocumentFromPetition)]
+        public async Task<ActionResult<PDAPIResponse>> DeleteDocumentFromPetition([FromForm] int petitionId, [FromForm] string fileLink)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+
+            Petition? petition = await _context.Petitions
+                .Include(p => p.Authors)
+                .Include(p => p.AuthorsReadyToPublish)
+                .Include(p => p.Signatures)
+                .FirstOrDefaultAsync(p => p.Id == petitionId);
+
+            if (petition == null)
+            {
+                response.AddAlert("error", "Petition not found");
+                return BadRequest(response);
+            }
+            if (petition.Published)
+            {
+                response.AddAlert("error", "Cannot modify a published petition.");
+                return BadRequest(response);
+            }
+            //Make sure user is an author of the petition
+            if (!petition.Authors.Contains(existingUser))
+            {
+                response.AddAlert("error", "You are not an author of this petition");
+                return BadRequest(response);
+            }
+            //Make sure the document exists
+            if (!petition.LinksToSupportingDocuments.Contains(fileLink))
+            {
+                response.AddAlert("error", "Document not found in petition");
+                return BadRequest(response);
+            }
+            //Delete the document from blob storage
+            try
+            {
+                string readWriteSasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                if (string.IsNullOrEmpty(readWriteSasToken)) throw new Exception("BlobSASToken environment variable is null or empty");
+
+                string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
+
+                // Remove existing SAS token from URL if present
+                UriBuilder uriBuilder = new UriBuilder(decodedFileLink)
+                {
+                    Query = null // This removes the existing query (SAS token)
+                };
+                // Append the new SAS token
+                uriBuilder.Query = readWriteSasToken;
+                BlobClient blobClient = new BlobClient(uriBuilder.Uri);
+                await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                petition.RemoveLinkToSupportingDocument(fileLink);
+                await _context.SaveChangesAsync();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success", "Document deleted successfully");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
         }
         #endregion
     }
