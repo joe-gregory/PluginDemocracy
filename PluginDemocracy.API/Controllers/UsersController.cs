@@ -875,6 +875,54 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
+        [Authorize]
+        [HttpPost(ApiEndPoints.AuthorReadyToPublishPetition)]
+        public async Task<ActionResult<PDAPIResponse>> PublishPetition([FromQuery] int petitionId)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).FirstOrDefaultAsync(p => p.Id == petitionId);
+
+            //if petition is null, bad request
+            if (petition == null)
+            {
+                response.AddAlert("error", "Petition not found");
+                return BadRequest(response);
+            }
+            //If the current user is not an author, cannot publish
+            if (!petition.Authors.Contains(existingUser))
+            {
+                response.AddAlert("error", "User is not an author of this petition");
+                return BadRequest(response);
+            }
+            //If the petition is already published, return bad request
+            if (petition.Published)
+            {
+                response.AddAlert("error", "Petition is already published");
+                return BadRequest(response);
+            }
+            try
+            {
+                petition.ReadyToPublish(existingUser);
+                _context.SaveChanges();
+                if (petition.Published)
+                {
+                    response.AddAlert("success", "Petition was published");
+                }
+                else response.AddAlert("success", "You have marked the petition as ready to publish");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
+        }
         #endregion
     }
 }
