@@ -1,10 +1,11 @@
 ﻿using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HomeDTO : BaseCitizenDto
+    public class HomeDTO : BaseCitizenDTO
     {
         #region PROPERTIES
         public CommunityDTO? ParentCommunity { get; set; }
@@ -19,12 +20,20 @@ namespace PluginDemocracy.DTOs
                 return fullName;
             }
         }
+        [JsonIgnore]
+        public override string? Initials
+        {
+            get
+            {
+                return $"{Number}{ParentCommunity?.Initials}";
+            }
+        }
         public int Number { get; set; }
         public string InternalAddress { get; set; } = string.Empty;
         [JsonIgnore]
         public override string Address => Number + " " + InternalAddress + " " + ParentCommunity?.Address;
         [JsonIgnore]
-        public Dictionary<BaseCitizenDto, double> Owners
+        public Dictionary<BaseCitizenDTO, double> Owners
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
@@ -46,7 +55,7 @@ namespace PluginDemocracy.DTOs
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
         [JsonIgnore]
-        public List<BaseCitizenDto> Citizens
+        public List<BaseCitizenDTO> Citizens
         {
             get => Owners.Keys.Union(Residents).ToList();
         }

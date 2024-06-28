@@ -1,10 +1,11 @@
 ﻿namespace PluginDemocracy.DTOs
 {
-    public abstract class BaseCitizenDto
+    public abstract class BaseCitizenDTO
     {
         #region PROPERTIES
         public int? Id { get; set; }
         abstract public string? FullName { get; }
+        abstract public string? Initials { get; }
         virtual public string? Address { get; set; }
         public string? ProfilePicture { get; set; }
         public List<CommunityDTO> Citizenships { get; set; } = [];
@@ -32,7 +33,7 @@
                 return communitiesFromAbove.Distinct().ToList();
             }
         }
-        public BaseCitizenDto()
+        public BaseCitizenDTO()
         {
             HomeOwnershipsDto = [];
             NonResidentialCitizenIn = [];

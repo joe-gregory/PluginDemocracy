@@ -5,7 +5,7 @@ using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
-    public class UserDTO : BaseCitizenDto
+    public class UserDTO : BaseCitizenDTO
     {
         [Required]
         public string FirstName { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ namespace PluginDemocracy.DTOs
                                    .Where(s => !string.IsNullOrEmpty(s)));
         }
         [JsonIgnore]
-        public string? Initials
+        public override string? Initials
         {
             get
             {

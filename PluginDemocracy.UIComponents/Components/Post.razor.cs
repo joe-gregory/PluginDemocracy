@@ -20,7 +20,7 @@ namespace PluginDemocracy.UIComponents.Components
         /// This is the Post to display
         /// </summary>
         [Parameter]
-        public PostDto? PostDto { get; set; }
+        public PostDTO? PostDto { get; set; }
         /// <summary>
         /// This is the bind value for writing a comment on the text box. 
         /// </summary>
@@ -104,7 +104,7 @@ namespace PluginDemocracy.UIComponents.Components
             {
                 PostCommentDto postComment = new(PostDto.Id, AppState.User, newCommentText);
                 //Update this Post with this request:
-                PostDto? refreshedPost = await Services.PostDataGenericAsync<PostCommentDto, PostDto>(ApiEndPoints.AddCommentToPost, postComment);
+                PostDTO? refreshedPost = await Services.PostDataGenericAsync<PostCommentDto, PostDTO>(ApiEndPoints.AddCommentToPost, postComment);
                 if (refreshedPost != null)
                 {
                     //If successful, add comment to PostDto. which refreshing the post should do:

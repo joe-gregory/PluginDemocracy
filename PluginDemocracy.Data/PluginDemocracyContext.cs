@@ -28,182 +28,220 @@ namespace PluginDemocracy.Data
         public DbSet<BaseVotingStrategy> VotingStrategies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .ToTable("Users");
 
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
+    //        // Shadow properties for JoinCommunityRequest
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .Property<int>("CommunityId");
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .Property<int>("HomeId");
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .Property<int?>("UserId");
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.PetitionDrafts)
-                .WithMany(p => p.Authors)
-                .UsingEntity<Dictionary<string, object>>(
-                    "PetitionAuthors",
-                    j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId"),
-                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId")
-    );
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .HasOne(j => j.Community)
+    //            .WithMany()
+    //            .HasForeignKey("CommunityId")
+    //            .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Community>()
-                .ToTable("Communities");
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .HasOne(j => j.Home)
+    //            .WithMany()
+    //            .HasForeignKey("HomeId")
+    //            .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Community>()
-                .HasMany(typeof(Post), "Posts")
-                .WithOne()
-                .HasForeignKey("CommunityId")
-                .IsRequired();
+    //        modelBuilder.Entity<JoinCommunityRequest>()
+    //            .HasOne(j => j.User)
+    //            .WithMany()
+    //            .HasForeignKey("UserId")
+    //            .OnDelete(DeleteBehavior.Restrict);
 
-            // Petition Start
-            modelBuilder.Entity<Petition>()
-                .HasMany(p => p.Authors)
-                .WithMany(u => u.PetitionDrafts)
-                .UsingEntity<Dictionary<string, object>>(
-                    "PetitionAuthors",
-                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
-                    j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId")
-                );
+    //        modelBuilder.Entity<User>()
+    //            .ToTable("Users");
 
-            modelBuilder.Entity<Petition>()
-                .HasMany(p => p.AuthorsReadyToPublish)
-                .WithMany()
-                .UsingEntity<Dictionary<string, object>>(
-                    "PetitionAuthorsReadyToPublish",
-                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
-                    j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId")
-                );
+    //        modelBuilder.Entity<User>()
+    //            .HasIndex(u => u.Email)
+    //            .IsUnique();
 
-            modelBuilder.Entity<Petition>()
-                .HasMany(p => p.Signatures)
-                .WithOne(s => s.Petition)
-                .HasForeignKey("PetitionId"); // Using shadow property
+    //        modelBuilder.Entity<User>()
+    //            .HasMany(u => u.PetitionDrafts)
+    //            .WithMany(p => p.Authors)
+    //            .UsingEntity<Dictionary<string, object>>(
+    //                "PetitionAuthors",
+    //                j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId"),
+    //                j => j.HasOne<User>().WithMany().HasForeignKey("UserId")
+    //);
 
-            // Configure the SupportingDocuments as a serialized string
-            modelBuilder.Entity<Petition>()
-                .Property<string>("LinksToSupportingDocumentsSerialized")
-                .HasColumnName("LinksToSupportingDocumentsSerialized");
+    //        modelBuilder.Entity<Community>()
+    //            .ToTable("Communities");
 
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.LastUpdated)
-                .HasField("_lastUpdated");
+    //        modelBuilder.Entity<Community>()
+    //            .HasMany(typeof(Post), "Posts")
+    //            .WithOne()
+    //            .HasForeignKey("CommunityId")
+    //            .IsRequired();
 
-            // Configure the Community relationship
-            modelBuilder.Entity<Petition>()
-                .HasOne(p => p.Community)
-                .WithMany() // Adjust based on your relationship (e.g., .WithMany(c => c.Petitions))
-                .HasForeignKey("CommunityId") // Assuming a foreign key named "CommunityId"
-                .IsRequired(false); // Make it optional if _community is nullable
 
-            // Use HasField to specify backing fields for other properties
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.Title)
-                .HasField("_title");
+    //        // Add configuration to prevent cascade delete for PostComments
+    //        modelBuilder.Entity<PostComment>()
+    //            .Property<int>("AuthorId");
 
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.Description)
-                .HasField("_description");
+    //        modelBuilder.Entity<PostComment>()
+    //            .HasOne(pc => pc.Author)
+    //            .WithMany()
+    //            .HasForeignKey("AuthorId")
+    //            .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.ActionRequested)
-                .HasField("_actionRequested");
+    //        // Petition Start
+    //        modelBuilder.Entity<Petition>()
+    //            .HasMany(p => p.Authors)
+    //            .WithMany(u => u.PetitionDrafts)
+    //            .UsingEntity<Dictionary<string, object>>(
+    //                "PetitionAuthors",
+    //                j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
+    //                j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId")
+    //            );
 
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.SupportingArguments)
-                .HasField("_supportingArguments");
+    //        modelBuilder.Entity<Petition>()
+    //            .HasMany(p => p.AuthorsReadyToPublish)
+    //            .WithMany()
+    //            .UsingEntity<Dictionary<string, object>>(
+    //                "PetitionAuthorsReadyToPublish",
+    //                j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
+    //                j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId")
+    //            );
 
-            modelBuilder.Entity<Petition>()
-                .Property(p => p.DeadlineForResponse)
-                .HasField("_deadlineForResponse");
+    //        modelBuilder.Entity<Petition>()
+    //            .HasMany(p => p.Signatures)
+    //            .WithOne(s => s.Petition)
+    //            .HasForeignKey("PetitionId"); // Using shadow property
 
-            modelBuilder.Entity<Petition>()
-                .Navigation(p => p.Signatures)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
+    //        // Configure the SupportingDocuments as a serialized string
+    //        modelBuilder.Entity<Petition>()
+    //            .Property<string>("LinksToSupportingDocumentsSerialized")
+    //            .HasColumnName("LinksToSupportingDocumentsSerialized");
 
-            // Petition End
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.LastUpdated)
+    //            .HasField("_lastUpdated");
 
-            modelBuilder.Entity<HomeOwnership>()
-                .HasOne(ho => ho.Home)
-                .WithMany(h => h.Ownerships)
-                .HasForeignKey(ho => ho.HomeId);
+    //        // Configure the Community relationship
+    //        modelBuilder.Entity<Petition>()
+    //            .HasOne(p => p.Community)
+    //            .WithMany() // Adjust based on your relationship (e.g., .WithMany(c => c.Petitions))
+    //            .HasForeignKey("CommunityId") // Assuming a foreign key named "CommunityId"
+    //            .IsRequired(false); // Make it optional if _community is nullable
 
-            modelBuilder.Entity<HomeOwnership>()
-                .HasOne(ho => ho._userOwner)
-                .WithMany()
-                .HasForeignKey("UserId");
+    //        // Use HasField to specify backing fields for other properties
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.Title)
+    //            .HasField("_title");
 
-            modelBuilder.Entity<HomeOwnership>()
-                .HasOne(ho => ho._communityOwner)
-                .WithMany()
-                .HasForeignKey("CommunityId");
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.Description)
+    //            .HasField("_description");
 
-            modelBuilder.Entity<Home>()
-                .ToTable("Homes");
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.ActionRequested)
+    //            .HasField("_actionRequested");
 
-            modelBuilder.Entity<Community>()
-                .HasMany(c => c.Homes)
-                .WithOne(h => h.ParentCommunity);
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.SupportingArguments)
+    //            .HasField("_supportingArguments");
 
-            modelBuilder.Entity<HomeOwnership>()
-                .HasOne(ho => ho.Home)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade);
+    //        modelBuilder.Entity<Petition>()
+    //            .Property(p => p.DeadlineForResponse)
+    //            .HasField("_deadlineForResponse");
 
-            modelBuilder.Entity<Role>()
-                .ToTable("Roles");
+    //        modelBuilder.Entity<Petition>()
+    //            .Navigation(p => p.Signatures)
+    //            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            modelBuilder.Entity<Role>().OwnsOne(r => r.Powers);
+    //        // Petition End
 
-            modelBuilder.Entity<Transaction>()
-                .ToTable("Transactions");
+    //        modelBuilder.Entity<HomeOwnership>()
+    //            .HasOne(ho => ho.Home)
+    //            .WithMany(h => h.Ownerships)
+    //            .HasForeignKey(ho => ho.HomeId);
 
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.Community)
-                .WithMany(c => c.Projects);
+    //        modelBuilder.Entity<HomeOwnership>()
+    //            .HasOne(ho => ho._userOwner)
+    //            .WithMany()
+    //            .HasForeignKey("UserId");
 
-            modelBuilder.Entity<BaseDictamen>()
-                .HasDiscriminator<string>("DictamenType")
-                .HasValue<PropagatedVoteDictamen>("PropagatedVoteDictamen")
-                .HasValue<ProposalWithDifferentVotingStrategyDictamen>("ProposalWithDifferentVotingStrategyDictamen");
+    //        modelBuilder.Entity<HomeOwnership>()
+    //            .HasOne(ho => ho._communityOwner)
+    //            .WithMany()
+    //            .HasForeignKey("CommunityId");
 
-            modelBuilder.Entity<BaseVotingStrategy>()
-                .HasDiscriminator<string>("VotingStrategyType")
-                .HasValue<CitizensVotingStrategy>("CitizensVotingStrategy")
-                .HasValue<HomeOwnersFractionalVotingStrategy>("HomeOwnersFractionalVotingStrategy")
-                .HasValue<HomeOwnersNonFractionalVotingStrategy>("HomeOwnersNonFractionalVotingStrategy")
-                .HasValue<UsersVotingStrategy>("UsersVotingStrategy");
+    //        modelBuilder.Entity<Home>()
+    //            .ToTable("Homes");
 
-            modelBuilder.Entity<Post>()
-                .HasMany(p => p.Comments)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+    //        modelBuilder.Entity<Community>()
+    //            .HasMany(c => c.Homes)
+    //            .WithOne(h => h.ParentCommunity);
 
-            modelBuilder.Entity<Post>()
-                .HasMany(p => p.Reactions)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+    //        modelBuilder.Entity<HomeOwnership>()
+    //            .HasOne(ho => ho.Home)
+    //            .WithMany()
+    //            .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Project>()
-                .Property(p => p.FundingGoal)
-                .HasPrecision(18, 6);
+    //        modelBuilder.Entity<Role>()
+    //            .ToTable("Roles");
 
-            modelBuilder.Entity<Transaction>()
-                .Property(t => t.Amount)
-                .HasPrecision(18, 6);
+    //        modelBuilder.Entity<Role>().OwnsOne(r => r.Powers);
 
-            // Configure the Id column for ESignatures to have identity
-            modelBuilder.Entity<ESignature>()
-                .Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasAnnotation("SqlServer:Identity", "1, 1");
+    //        modelBuilder.Entity<Transaction>()
+    //            .ToTable("Transactions");
 
-            // Ensure the PetitionId shadow property is configured correctly
-            modelBuilder.Entity<ESignature>()
-                .Property<int>("PetitionId");
+    //        modelBuilder.Entity<Project>()
+    //            .HasOne(p => p.Community)
+    //            .WithMany(c => c.Projects);
 
-            modelBuilder.Entity<ESignature>()
-                .HasOne(e => e.Petition)
-                .WithMany(p => p.Signatures)
-                .HasForeignKey("PetitionId")
-                .OnDelete(DeleteBehavior.Cascade);
+    //        modelBuilder.Entity<BaseDictamen>()
+    //            .HasDiscriminator<string>("DictamenType")
+    //            .HasValue<PropagatedVoteDictamen>("PropagatedVoteDictamen")
+    //            .HasValue<ProposalWithDifferentVotingStrategyDictamen>("ProposalWithDifferentVotingStrategyDictamen");
+
+    //        modelBuilder.Entity<BaseVotingStrategy>()
+    //            .HasDiscriminator<string>("VotingStrategyType")
+    //            .HasValue<CitizensVotingStrategy>("CitizensVotingStrategy")
+    //            .HasValue<HomeOwnersFractionalVotingStrategy>("HomeOwnersFractionalVotingStrategy")
+    //            .HasValue<HomeOwnersNonFractionalVotingStrategy>("HomeOwnersNonFractionalVotingStrategy")
+    //            .HasValue<UsersVotingStrategy>("UsersVotingStrategy");
+
+    //        modelBuilder.Entity<Post>()
+    //            .HasMany(p => p.Comments)
+    //            .WithOne()
+    //            .OnDelete(DeleteBehavior.Cascade);
+
+    //        modelBuilder.Entity<Post>()
+    //            .HasMany(p => p.Reactions)
+    //            .WithOne()
+    //            .OnDelete(DeleteBehavior.Cascade);
+
+    //        modelBuilder.Entity<Project>()
+    //            .Property(p => p.FundingGoal)
+    //            .HasPrecision(18, 6);
+
+    //        modelBuilder.Entity<Transaction>()
+    //            .Property(t => t.Amount)
+    //            .HasPrecision(18, 6);
+
+    //        // Configure the Id column for ESignatures to have identity
+    //        modelBuilder.Entity<ESignature>()
+    //            .Property(e => e.Id)
+    //            .ValueGeneratedOnAdd()
+    //            .HasAnnotation("SqlServer:Identity", "1, 1");
+
+    //        // Ensure the PetitionId shadow property is configured correctly
+    //        modelBuilder.Entity<ESignature>()
+    //            .Property<int>("PetitionId");
+
+    //        modelBuilder.Entity<ESignature>()
+    //            .HasOne(e => e.Petition)
+    //            .WithMany(p => p.Signatures)
+    //            .HasForeignKey("PetitionId")
+    //            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

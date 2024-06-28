@@ -3,10 +3,10 @@ using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
-    public class PostDto
+    public class PostDTO
     {
         public int Id { get; set; }
-        public UserDTO? Author { get; set; }
+        public BaseCitizenDTO? Author { get; set; }
         public string? Body { get; set; }
         public DateTime PublishedDate { get; set; }
         public List<PostCommentDto> Comments { get; set; } = [];
@@ -15,14 +15,15 @@ namespace PluginDemocracy.DTOs
         public List<PostReactionDto> Reactions { get; set; } = [];
         public int NumberOfLikeReactions { get => Reactions.Where(r => r.ReactionType == ReactionType.Like).Count(); }
         public int NumberOfDislikeReactions { get => Reactions.Where(r => r.ReactionType == ReactionType.Dislike).Count(); }
-        public PostDto()
+        public PostDTO()
         {
             Id = 0;
         }
-        public PostDto(Post post)
+        public PostDTO(Post post)
         {
             Id = post.Id;
-            if (post.Author != null) Author = new(post.Author);
+            if (post.Author is User author) Author = new UserDTO(author);
+            else if(post.Author is Community community) Author = new CommunityDTO(community);
             Body = post.Body;
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;

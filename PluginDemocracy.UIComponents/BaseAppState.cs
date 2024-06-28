@@ -54,7 +54,7 @@ namespace PluginDemocracy.UIComponents
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         public string? SessionJWT { get; set; }
-        public List<PostDto> Posts { get; set; } = [];
+        public List<PostDTO> Posts { get; set; } = [];
         //METHODS:
         #region METHODS
         public BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
@@ -86,7 +86,7 @@ namespace PluginDemocracy.UIComponents
             NotifyStateChanged();
             Posts.Clear();
         }
-        public void DeletePost(PostDto post)
+        public void DeletePost(PostDTO post)
         {
             if (Posts.Contains(post)) Posts.Remove(post);
             NotifyStateChanged();

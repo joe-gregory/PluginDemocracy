@@ -6,12 +6,30 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class CommunityDTO : BaseCitizenDto
+    public class CommunityDTO : BaseCitizenDTO
     {
         #region PROPERTIES
         public string? Name { get; set; }
         [JsonIgnore]
         public override string FullName => string.Join(" ", Name, Address);
+        [JsonIgnore]
+        [NotMapped]
+        public override string? Initials
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Name))
+                    return null;
+
+                // Split the name by spaces and take the first letter of each word
+                var initials = Name
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => word[0])
+                    .ToArray();
+
+                return new string(initials);
+            }
+        }
         public string OfficialCurrency { get; set; } = "USD";
         public List<string> _officialLanguagesCodes { get; set; } = [];
         [JsonIgnore]
@@ -37,14 +55,14 @@ namespace PluginDemocracy.DTOs
         /// Citizens that don't live in a home
         /// </summary>
         [JsonIgnore]
-        public virtual List<BaseCitizenDto> NonResidentialCitizens => _communityNonResidentialCitizens.Cast<BaseCitizenDto>().Concat(_userNonResidentialCitizens).ToList();
+        public virtual List<BaseCitizenDTO> NonResidentialCitizens => _communityNonResidentialCitizens.Cast<BaseCitizenDTO>().Concat(_userNonResidentialCitizens).ToList();
 
         [JsonIgnore]
-        virtual public List<BaseCitizenDto> Citizens
+        virtual public List<BaseCitizenDTO> Citizens
         {
             get
             {
-                List<BaseCitizenDto> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? [];
+                List<BaseCitizenDTO> homeOwners = Homes?.SelectMany(home => home.Owners.Keys).ToList() ?? [];
                 List<UserDTO> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
                 return NonResidentialCitizens.Union(homeOwners).Union(homeResidents).Distinct().ToList();
             }
@@ -60,7 +78,7 @@ namespace PluginDemocracy.DTOs
         /// In BaseCommunity, each Citizens gets one vote. 
         /// </summary>
         [JsonIgnore]
-        public Dictionary<BaseCitizenDto, double> CitizensVotingValue = [];
+        public Dictionary<BaseCitizenDTO, double> CitizensVotingValue = [];
         public double TotalVotes;
         public Constitution? Constitution { get; set; }
         public List<Proposal>? Proposals { get; set; }

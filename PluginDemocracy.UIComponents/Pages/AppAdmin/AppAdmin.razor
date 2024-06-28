@@ -51,7 +51,7 @@
             <MudLink Href=@($"/user/{pair.Key.Id}")>Owner: @pair.Key.FullName Ownership: @($"{pair.Value}%")</MudLink>
         }
         <MudText>Current Residents:</MudText>
-        @foreach(BaseCitizenDto resident in SelectedJoinRequest?.HomeDto?.Residents ?? [])
+        @foreach(BaseCitizenDTO resident in SelectedJoinRequest?.HomeDto?.Residents ?? [])
         {
             <MudLink Href=@($"/user/{resident.Id}")>Resident: @resident.FullName</MudLink>
         }

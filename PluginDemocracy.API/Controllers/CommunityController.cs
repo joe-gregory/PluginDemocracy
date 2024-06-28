@@ -342,7 +342,7 @@ namespace PluginDemocracy.API.Controllers
                     return BadRequest(response);
                 }
 
-                foreach (Post post in community.PostsByLatestActivity) response.Posts.Add(new PostDto(post));
+                foreach (Post post in community.PostsByLatestActivity) response.Posts.Add(new PostDTO(post));
                 return Ok(response);
             }
             catch (Exception ex)
@@ -426,7 +426,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 post.React(existingUser, reactionDto.ReactionType);
                 await _context.SaveChangesAsync();
-                PostDto postDto = new(post);
+                PostDTO postDto = new(post);
                 return Ok(postDto.Reactions);
             }
             catch
@@ -436,7 +436,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.AddCommentToPost)]
-        public async Task<ActionResult<PostDto>> AddCommentToPost(PostCommentDto postCommentDto)
+        public async Task<ActionResult<PostDTO>> AddCommentToPost(PostCommentDto postCommentDto)
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
@@ -448,7 +448,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 post.AddComment(newPostComment);
                 await _context.SaveChangesAsync();
-                PostDto postDto = new(post);
+                PostDTO postDto = new(post);
                 return Ok(postDto);
             }
             catch

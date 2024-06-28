@@ -3,7 +3,7 @@
     public class Post
     {
         public int Id { get; set; }
-        public User? Author { get; private set; }
+        public BaseCitizen? Author { get; private set; }
         public string? Body { get; private set; }
         public DateTime PublishedDate { get; } = DateTime.UtcNow;
         public List<PostComment> Comments { get; private set; }
@@ -16,9 +16,9 @@
             Images = [];
             Reactions = [];
         }
-        public Post(User user, string body, List<string>? imagesLinks = null)
+        public Post(BaseCitizen author, string body, List<string>? imagesLinks = null)
         {
-            Author = user;
+            Author = author;
             Body = body;
             Comments = [];
             if(imagesLinks != null) Images = imagesLinks;

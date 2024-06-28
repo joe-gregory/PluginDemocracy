@@ -17,6 +17,14 @@ namespace PluginDemocracy.Models
             }
         }
         [NotMapped]
+        public override string Initials
+        {
+            get
+            {
+                return $"{Number}{ParentCommunity?.Initials}";
+            }
+        }
+        [NotMapped]
         public override List<Community> Citizenships
         {
             get

@@ -9,6 +9,7 @@ namespace PluginDemocracy.Models
     {
         public int Id { get; set; }
         abstract public string? FullName { get; }
+        abstract public string? Initials { get; }
         virtual public string? Address { get; set; }
         public string? ProfilePicture { get; set; }
         /// <summary>

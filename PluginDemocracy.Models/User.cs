@@ -13,13 +13,13 @@ namespace PluginDemocracy.Models
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
         [NotMapped]
-        override public string? FullName
+        public override string? FullName
         {
             get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
                                    .Where(s => !string.IsNullOrEmpty(s)));
         }
         [NotMapped]
-        public string? Initials
+         public override string? Initials
         {
             get
             {

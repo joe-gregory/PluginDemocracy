@@ -17,7 +17,7 @@ namespace PluginDemocracy.DTOs
         public UserDTO? _userOwner;
         public CommunityDTO? _communityOwner;
         [JsonIgnore]
-        public virtual BaseCitizenDto? Owner
+        public virtual BaseCitizenDTO? Owner
         {
             get
             {

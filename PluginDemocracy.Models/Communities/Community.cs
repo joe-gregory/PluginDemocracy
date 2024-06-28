@@ -13,6 +13,23 @@ namespace PluginDemocracy.Models
         public string? Name { get; set; }
         [NotMapped]
         public override string? FullName => string.Join(" ", Name, Address);
+        [NotMapped]
+        public override string? Initials 
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Name))
+                    return null;
+
+                // Split the name by spaces and take the first letter of each word
+                var initials = Name
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => word[0])
+                    .ToArray();
+
+                return new string(initials);
+            }
+        }
         public string OfficialCurrency { get; set; } = "USD";
         /// <summary>
         /// Ideally this property should be private. However, EFCore requires it to be public... for now. 

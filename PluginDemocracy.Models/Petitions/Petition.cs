@@ -156,17 +156,8 @@ namespace PluginDemocracy.Models
         }
         protected List<string> _linksToSupportingDocuments = [];
         /// <summary>
-        /// EF Core needs a property it can map to. It wont map protected fields. The property can be private/protected.
-        /// </summary>
-        protected string LinksToSupportingDocumentsSerialized
-        {
-            get => string.Join(';', _linksToSupportingDocuments);
-            set => _linksToSupportingDocuments = [.. value.Split(';', StringSplitOptions.RemoveEmptyEntries)];
-        }
-        /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
-        [NotMapped]
         public IReadOnlyList<string> LinksToSupportingDocuments => _linksToSupportingDocuments.AsReadOnly();
         protected List<User> _authors = [];
         /// <summary>
