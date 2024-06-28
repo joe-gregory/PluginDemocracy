@@ -26,6 +26,7 @@
         public const string DeletePetitionDraft = UsersController + "deletepetitiondraft";
         public const string GetPetitionDraft = UsersController + "getpetitiondraft";
         public const string DeleteDocumentFromPetition = UsersController + "deletedocumentfrompetition";
+        public const string AuthorReadyToPublishPetition = UsersController + "authorreadytopublishpetition";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
