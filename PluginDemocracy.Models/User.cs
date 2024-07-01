@@ -4,112 +4,90 @@ using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
-    public class User : BaseCitizen
+    public class User
     {
-        [Required]
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
-        [Required]
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
-        [NotMapped]
-        public override string? FullName
+        /// <summary>
+        /// Get only property. Returns the full name of the user.
+        /// </summary>
+        public string FullName
         {
-            get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
-                                   .Where(s => !string.IsNullOrEmpty(s)));
+            get 
+            {
+                return string.Join(" ", new string?[] {FirstName, MiddleName, LastName, SecondLastName}.Where(s => !string.IsNullOrEmpty(s)));
+            }
         }
-        [NotMapped]
-         public override string? Initials
+        /// <summary>
+        /// Get only property. Returns the initials of the user.
+        /// </summary>
+        public string Initials
         {
             get
             {
                 string initials = "";
                 if (!string.IsNullOrEmpty(FirstName)) initials += FirstName[0];
+                if (!string.IsNullOrEmpty(MiddleName)) initials += MiddleName[0];
                 if (!string.IsNullOrEmpty(LastName)) initials += LastName[0];
-                if(!string.IsNullOrEmpty(SecondLastName))initials += SecondLastName[0];
+                if (!string.IsNullOrEmpty(SecondLastName)) initials += SecondLastName[0];
                 return initials;
             }
         }
-        [Required]
         public string Email { get; set; }
         public string? EmailConfirmationToken { get; set; }
-        public bool EmailConfirmed { get; set; } = false;
-        public List<Notification> Notifications { get; set; } = [];
-        [NotMapped]
-        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
-        [NotMapped]
-        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
-        [Required]
+        public bool EmailConfirmed { get; set; }
         public string HashedPassword { get; set; }
-        public string? PhoneNumber { get; set; } = null;
-        public bool PhoneNumberConfirmed { get; set; } = false;
-        override public string? Address { get; set; }
+        public string? PhoneNumber { get; set; } 
+        public bool PhoneNumberConfirmed { get; set; } 
+       public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
-        [NotMapped]
-        public int Age { 
+        /// <summary>
+        /// Get only property. Returns the age of the user using the DateOfBirth property.
+        /// </summary>
+        public int Age
+        {
             get
             {
                 DateTime today = DateTime.Today;
                 int age = today.Year - DateOfBirth.Year;
                 if (DateOfBirth.Date > today.AddYears(-age)) age--;
                 return age;
+            }
+        }
+        public CultureInfo Culture { get; set; }
+        public bool Admin { get; set; }
+        private readonly List<Petition> _petitionDrafts;
+        public IReadOnlyList<Petition> PetitionDrafts 
+        { 
+            get 
+            { 
+                return _petitionDrafts.AsReadOnly();
             } 
         }
-        public string CultureCode { get; private set; } = "en-US";
-        [NotMapped]
-        public CultureInfo Culture { get => new(CultureCode); set => CultureCode = value.Name; }
-        public bool Admin { get; set; }
-        public List<Role> Roles { get; set; }
-        /// <summary>
-        /// All the proposals of communities where this citizen has citizenship and also of parent communities where Proposal.VotingWeights keys contians this User.
-        /// </summary>
-        [NotMapped]
-        public List<Proposal> Proposals
+        private readonly List<Community> _citizenships;
+        public IReadOnlyList<Community> Citizenships
         {
             get
             {
-                List<Proposal> allAssociatedProposals = [];
-                foreach (Community community in Citizenships) allAssociatedProposals.AddRange(community.Proposals);
-                foreach (Community associatedCommunity in AssociatedCommunities)
-                {
-                    foreach (Proposal proposal in associatedCommunity.Proposals) if (proposal.VotingWeights.ContainsKey(this)) allAssociatedProposals.Add(proposal);
-                }
-                return allAssociatedProposals.Distinct().ToList();
+                return _citizenships.AsReadOnly();
             }
         }
-        public List<Petition> PetitionDrafts { get; set; }
-        /// <summary>
-        /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
-        /// </summary>
-        [NotMapped]
-        public override List<Community> Citizenships 
-        { 
-            get 
-            {
-                List<Community> citizenships = [];
-                foreach(HomeOwnership ho in HomeOwnerships) citizenships.AddRange(ho.Home.Citizenships);
-                citizenships.AddRange(NonResidentialCitizenIn);
-                citizenships.AddRange(ResidentOfHomes.SelectMany(h => h.Citizenships));
-                return citizenships.Distinct().ToList();
-            } 
-        }
-        
-        /// <summary>
-        /// A list where User shows up on Home.Residents
-        /// </summary>
-        public List<Home> ResidentOfHomes { get; set; }
-        internal User(bool admin = false)
+        private readonly List<Notification> _notifications;
+        public IReadOnlyList<Notification> Notifications
         {
-            FirstName = string.Empty;
-            LastName = string.Empty;
-            Email = string.Empty;
-            HashedPassword = string.Empty;
-            Culture = new CultureInfo("en-US");
-            Admin = admin;
-            Roles = [];
-            PetitionDrafts = [];
-            ResidentOfHomes = [];
+            get
+            {
+                return _notifications.AsReadOnly();
+            }
         }
+        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
+        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
+        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
+        #pragma warning disable CS8618
+        private User(){}
+        #pragma warning restore CS8618
         public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
             FirstName = firstName;
@@ -122,22 +100,33 @@ namespace PluginDemocracy.Models
             Address = address;
             DateOfBirth = dateOfBirth;
             Culture = culture;
-
-            Roles = [];
-            PetitionDrafts = [];
-            ResidentOfHomes = [];
+            _petitionDrafts = [];
+            _citizenships = [];
+            _notifications = [];
         }
-        public void AddRole(Role role)
+        public void AddPetitionDraft(Petition petition)
         {
-            if (role != null && !Roles.Contains(role)) Roles.Add(role);
+            _petitionDrafts.Add(petition);
         }
-        public void RemoveRole(Role role)
+        public void RemovePetitionDraft(Petition petition)
         {
-            Roles.Remove(role);
+            _petitionDrafts.Remove(petition);
+        }
+        public void AddCitizenship(Community community)
+        {
+            _citizenships.Add(community);
+        }
+        public void RemoveCitizenship(Community community)
+        {
+            _citizenships.Remove(community);
         }
         public void AddNotification(string title, string message)
         {
-            Notifications.Add(new Notification(title, message));
+            _notifications.Add(new Notification(title, message));
+        }
+        public void DeleteNotification(Notification notification)
+        {
+            _notifications.Remove(notification);
         }
     }
 }
