@@ -4,12 +4,17 @@ using System.Globalization;
 
 namespace PluginDemocracy.Models
 {
-    public class User
+    /// <summary>
+    /// Represents a human user of the system. Email needs to be verified. 
+    /// </summary>
+    public class User : IAvatar
     {
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
+        public string? ProfilePicture { get; set; }
         /// <summary>
         /// Get only property. Returns the full name of the user.
         /// </summary>
