@@ -38,7 +38,7 @@
     </MudPaper>
 </MudForm>
     @code {
-    private CommunityDTO communityDto = new CommunityDTO()
+    private HOACommunityDTO communityDto = new HOACommunityDTO()
         {
             CanHaveHomes = true,
             ProposalsExpirationDays = 30,
@@ -103,7 +103,7 @@
                 return;
             }
             communityDto.AddHome(newHome);
-            newHome.ParentCommunity = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
+            newHome.Community = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
         }
     }
     /// <summary>
@@ -118,7 +118,7 @@
         newHome.Id = highestNumber + 1;
         newHome.Number = highestNumber + 1;
         communityDto.AddHome(newHome);
-        newHome.ParentCommunity = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
+        newHome.Community = null; //Don't assign HomeDto.ParentCommunity in CommunityDto.Homes in order to avoid circular references when serializing to JSON in the post method
     }
     private bool finalCheckBeforePosting()
     {
@@ -158,7 +158,7 @@
         {
             if (officialLanguageEnglish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("en-US"));
             if (officialLanguageSpanish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("es-MX"));
-            await Services.PostDataAsync<CommunityDTO>(ApiEndPoints.RegisterCommunity, communityDto);
+            await Services.PostDataAsync<HOACommunityDTO>(ApiEndPoints.RegisterCommunity, communityDto);
         }
         else return;
     }

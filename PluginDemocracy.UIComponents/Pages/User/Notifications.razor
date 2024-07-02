@@ -4,11 +4,11 @@
 <MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.Notifications)</MudText>
 <MudText>Number of Notifications: @AppState.User?.HowManyUnreadNotifications</MudText>
 
-<MudTable T="NotificationDto" Items="@AppState.User?.Notifications" OnRowClick="RowClickEvent" Hover="true">
+<MudTable T="NotificationDTO" Items="@AppState.User?.Notifications" OnRowClick="RowClickEvent" Hover="true">
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDto, object>(x => x.Date)">@AppState.Translate(ResourceKeys.Date)</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDTO, object>(x => x.Date)">@AppState.Translate(ResourceKeys.Date)</MudTableSortLabel></MudTh>
         <MudTh>@AppState.Translate(ResourceKeys.Title)</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDto, object>(x => x.Read)">@AppState.Translate(ResourceKeys.Read)</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<NotificationDTO, object>(x => x.Read)">@AppState.Translate(ResourceKeys.Read)</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="@AppState.Translate(ResourceKeys.Date)">@context.Date</MudTd>
@@ -35,7 +35,7 @@
 
 @code{
     bool dialogIsOpen = false;
-    NotificationDto? selectedNotification = null;
+    NotificationDTO? selectedNotification = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,7 +43,7 @@
         await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
         dialogIsOpen = false;
     }
-    private async Task RowClickEvent(TableRowClickEventArgs<NotificationDto> tableRowClickEventArgs)
+    private async Task RowClickEvent(TableRowClickEventArgs<NotificationDTO> tableRowClickEventArgs)
     {
         //This gives me access to the item NotificationDto (tableRowClickEventArgs.Item).
         int notificationId = tableRowClickEventArgs.Item.Id;

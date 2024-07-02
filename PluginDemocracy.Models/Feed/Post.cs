@@ -2,46 +2,75 @@
 {
     public class Post
     {
-        public int Id { get; set; }
-        public BaseCitizen? Author { get; private set; }
+        public int Id { get; init; }
+        public IAvatar? Author { get; private set; }
         public string? Body { get; private set; }
-        public DateTime PublishedDate { get; } = DateTime.UtcNow;
-        public List<PostComment> Comments { get; private set; }
+        public DateTime PublishedDate { get; init; }
         public DateTime? LatestActivity { get; private set; } = null;
-        public List<string> Images { get; set; }
-        public List<PostReaction> Reactions { get; set; }
-        protected Post() 
+        private readonly List<PostComment> _comments;
+        public IReadOnlyList<PostComment> Comments
         {
-            Comments = [];
-            Images = [];
-            Reactions = [];
+            get
+            {
+                return _comments.AsReadOnly();
+            }
         }
-        public Post(BaseCitizen author, string body, List<string>? imagesLinks = null)
+        private readonly List<string> _images;
+        public IReadOnlyList<string> Images
+        {
+            get
+            {
+                return _images.AsReadOnly();
+            }
+        }
+        private readonly List<PostReaction> _reactions;
+        public IReadOnlyList<PostReaction> Reactions
+        {
+            get
+            {
+                return _reactions.AsReadOnly();
+            }
+        }
+        #pragma warning disable CS8618
+        protected Post() { }
+        #pragma warning restore CS8618
+        public Post(IAvatar author, string body, List<string>? imagesLinks = null)
         {
             Author = author;
             Body = body;
-            Comments = [];
-            if(imagesLinks != null) Images = imagesLinks;
-            else Images = [];
-            Reactions = [];
+            PublishedDate = DateTime.UtcNow;
+            _comments = [];
+            if(imagesLinks != null) _images = imagesLinks;
+            else _images = [];
+            _reactions = [];
         }
-        public void AddComment(PostComment comment)
+        public void AddComment(User commenter, string comment)
         {
-            Comments.Add(comment);
-            comment.PostId = Id;
+            PostComment newComment = new(commenter, this, comment);
+            _comments.Add(newComment);
             LatestActivity = DateTime.UtcNow;
         }
+        public void RemoveComment(PostComment comment)
+        {
+            _comments.Remove(comment);
+        }
+        /// <summary>
+        /// If the reaction being passed is the same as the user's current reaction, remove the reaction. 
+        /// If the user has already reacted to the post but the new reaction is a new type, remove the previous reaction and add the new reaction.
+        /// </summary>
+        /// <param name="user">The user reacting</param>
+        /// <param name="reaction">Reaction of type <see cref="ReactionType"/></param>
         public void React(User user, ReactionType reaction)
         {
             //if the user already has a reaction of the same type, remove the reaction and return
             if(Reactions.Any(r => r.User == user && r.ReactionType == reaction))
             {
-                Reactions.RemoveAll(r => r.User == user && r.ReactionType == reaction);
+                _reactions.RemoveAll(r => r.User == user && r.ReactionType == reaction);
                 return;
             }
             //If the user has already reacted to the post, remove the previous reaction
-            Reactions.RemoveAll(r => r.User == user);
-            Reactions.Add(new PostReaction(user, reaction));
+            _reactions.RemoveAll(r => r.User == user);
+            _reactions.Add(new PostReaction(user, reaction));
         }
     }
 }

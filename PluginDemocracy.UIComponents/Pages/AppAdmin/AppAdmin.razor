@@ -6,8 +6,8 @@
 
 <MudText Typo="Typo.h5">Select Community</MudText>
 
-<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
-    @foreach (CommunityDTO communityDtoOption in CommunitiesDto ?? new())
+<MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<HOACommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
+    @foreach (HOACommunityDTO communityDtoOption in CommunitiesDto ?? new())
     {
         <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
     }
@@ -46,7 +46,7 @@
         }
         <MudText>Details about home: </MudText>
         <MudText>Current owners: </MudText>
-        @foreach(var pair in SelectedJoinRequest?.HomeDto?.Owners ?? [])
+        @foreach(var pair in SelectedJoinRequest?.HomeDto?.OwnersOwnerships ?? [])
         {
             <MudLink Href=@($"/user/{pair.Key.Id}")>Owner: @pair.Key.FullName Ownership: @($"{pair.Value}%")</MudLink>
         }
@@ -64,8 +64,8 @@
 
 @code
 {
-    private List<CommunityDTO>? CommunitiesDto = [];
-    private CommunityDTO? SelectedCommunity = null;
+    private List<HOACommunityDTO>? CommunitiesDto = [];
+    private HOACommunityDTO? SelectedCommunity = null;
     private List<JoinCommunityRequestDTO>? PendingJoinCommunityRequests = null;
     private bool IsDialogOpen = false;
     private JoinCommunityRequestDTO? SelectedJoinRequest = null;
@@ -77,9 +77,9 @@
         bool isUserAdmin = await Services.GetDataGenericAsync<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
         if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
         //Get a list of all the communities
-        CommunitiesDto = await Services.GetDataGenericAsync<List<CommunityDTO>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
+        CommunitiesDto = await Services.GetDataGenericAsync<List<HOACommunityDTO>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDtos);
     }
-    private async Task OnSelectCommunityDtoChanged(CommunityDTO newValue)
+    private async Task OnSelectCommunityDtoChanged(HOACommunityDTO newValue)
     {
         SelectedCommunity = newValue;
         //Now load the requests for the selected community

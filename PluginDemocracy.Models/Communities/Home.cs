@@ -7,7 +7,7 @@ namespace PluginDemocracy.Models
         public int Id { get; init; }
         public int Number { get; set; }
         public string InternalAddress { get; set; }
-        public HOACommunity? Community { get; set; }
+        public HOACommunity Community { get; set; }
         /// <summary>
         /// Get only property. Returns Number + InternalAddress + Community.Address.
         /// </summary>

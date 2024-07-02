@@ -102,9 +102,9 @@ namespace PluginDemocracy.UIComponents.Components
             //Make post request to submit comment
             if (AppState.User != null && PostDto != null && !string.IsNullOrEmpty(newCommentText))
             {
-                PostCommentDto postComment = new(PostDto.Id, AppState.User, newCommentText);
+                PostCommentDTO postComment = new(PostDto.Id, AppState.User, newCommentText);
                 //Update this Post with this request:
-                PostDTO? refreshedPost = await Services.PostDataGenericAsync<PostCommentDto, PostDTO>(ApiEndPoints.AddCommentToPost, postComment);
+                PostDTO? refreshedPost = await Services.PostDataGenericAsync<PostCommentDTO, PostDTO>(ApiEndPoints.AddCommentToPost, postComment);
                 if (refreshedPost != null)
                 {
                     //If successful, add comment to PostDto. which refreshing the post should do:
@@ -139,7 +139,7 @@ namespace PluginDemocracy.UIComponents.Components
                 }
             }
         }
-        public void RemoveComment(PostCommentDto comment)
+        public void RemoveComment(PostCommentDTO comment)
         {
             if (PostDto != null)
             {

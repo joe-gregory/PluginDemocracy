@@ -40,6 +40,10 @@ namespace PluginDemocracy.Models
             }
         }
         public string? Description { get; set; }
+        /// <summary>
+        /// TODO: This property is missing encapsulation. 
+        /// </summary>
+        public string OfficialCurrency { get; set; }
         private readonly List<CultureInfo> _officialLanguages;
         /// <summary>
         /// Get only property. Represents the official languages of the community.
@@ -65,6 +69,13 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Get only property. Represents all the individuals living in the community regardless of voting ability
         /// </summary>
+        public IReadOnlyList<HomeOwnership> HomeOwnerships
+        {
+            get
+            {
+                return Homes.SelectMany(home => home.Ownerships).ToList().AsReadOnly();
+            }
+        }
         public List<User> Citizens
         {
             get
@@ -94,6 +105,14 @@ namespace PluginDemocracy.Models
             get
             {
                 return _joinCommunityRequests.AsReadOnly();
+            }
+        }
+        private readonly List<Role> _roles;
+        public IReadOnlyList<Role> Roles
+        {
+            get
+            {
+                return _roles.AsReadOnly();
             }
         }
         
@@ -133,16 +152,18 @@ namespace PluginDemocracy.Models
         #endregion
         #region METHODS
         //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-#       pragma warning disable CS8618
+        #pragma warning disable CS8618
         private HOACommunity() { }
-#       pragma warning restore CS8618
+        #pragma warning restore CS8618
         public HOACommunity(string name, string address)
         {
             Name = name;
             Address = address;
+            OfficialCurrency = "USD";
             _officialLanguages = [];
             _homes = [];
             _joinCommunityRequests = [];
+            _roles = [];
             _petitions = [];
             _posts = [];
         }
@@ -185,6 +206,14 @@ namespace PluginDemocracy.Models
         public void RemoveJoinCommunityRequest(JoinCommunityRequest request)
         {
            _joinCommunityRequests.Remove(request);
+        }
+        public void AddRole(Role role)
+        {
+            if (!_roles.Contains(role)) _roles.Add(role);
+        }
+        public void RemoveRole(Role role)
+        {
+            _roles.Remove(role);
         }
         /// <summary>
         /// Call to approve a JoinCommunityRequest. Approving sets the user as a homeowner or resident of the home which makes him 

@@ -13,48 +13,49 @@ namespace PluginDemocracy.DTOs
     {
         public int Id { get; set; }
         public double OwnershipPercentage { get; set; }
-        public virtual HomeDTO? Home { get; set; }
-        public UserDTO? _userOwner;
-        public CommunityDTO? _communityOwner;
-        [JsonIgnore]
-        public virtual BaseCitizenDTO? Owner
+        public HomeDTO? Home { get; set; }
+        public UserDTO? Owner { get; set; }
+        public static HomeOwnershipDTO ReturnSimpleHomeOwnershipDTOFromHomeOwnership(HomeOwnership homeOwnership)
         {
-            get
-            {
-                if(_userOwner != null) return _userOwner;
-                if(_communityOwner != null) return _communityOwner;
-                return null;
-            }
-        }
-        public static HomeOwnershipDTO ReturnHomeOwnershipDtoFromHomeOwnership(HomeOwnership homeOwnership)
-        {
-            HomeOwnershipDTO newHomeOwnershipDto = new()
+            HomeOwnershipDTO newHomeOwnershipDTO = new()
             {
                 Id = homeOwnership.Id,
                 OwnershipPercentage = homeOwnership.OwnershipPercentage,
-                _userOwner = homeOwnership._userOwner != null ? new UserDTO() 
-                { 
-                    Id = homeOwnership._userOwner.Id, 
-                    FirstName = homeOwnership._userOwner.FirstName,
-                    MiddleName = homeOwnership._userOwner.MiddleName,
-                    LastName = homeOwnership._userOwner.LastName,
-                    SecondLastName = homeOwnership._userOwner.SecondLastName,
-                    ProfilePicture = homeOwnership._userOwner.ProfilePicture,
-                } 
-                : null,
-                _communityOwner = homeOwnership._communityOwner != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership._communityOwner) : null,
+                Owner = homeOwnership.Owner != null ? new UserDTO()
+                {
+                    Id = homeOwnership.Owner.Id,
+                    FirstName = homeOwnership.Owner.FirstName,
+                    MiddleName = homeOwnership.Owner.MiddleName,
+                    LastName = homeOwnership.Owner.LastName,
+                    SecondLastName = homeOwnership.Owner.SecondLastName,
+                    ProfilePicture = homeOwnership.Owner.ProfilePicture,
+                } : null,
             };
             HomeDTO homeDto = new()
             {
                 Id = homeOwnership.Home.Id,
-                Address = homeOwnership.Home.FullAddress,
-                ProfilePicture = homeOwnership.Home.ProfilePicture,
-                ParentCommunity = homeOwnership.Home.Community != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership.Home.Community) : null,
-                Number = homeOwnership.Home.Number,
                 InternalAddress = homeOwnership.Home.InternalAddress,
+                FullAddress = homeOwnership.Home.FullAddress,
+                Number = homeOwnership.Home.Number,
             };
-            newHomeOwnershipDto.Home = homeDto;
-            return newHomeOwnershipDto;
+            HOACommunityDTO homeDTOCommunity = new();
+            homeDTOCommunity.Id = homeOwnership.Home.Community.Id;
+            homeDTOCommunity.Name = homeOwnership.Home.Community.Name;
+            homeDTOCommunity.Address = homeOwnership.Home.Community.Address;
+
+            homeDto.Community = homeDTOCommunity;
+
+            newHomeOwnershipDTO.Home = homeDto;
+            return newHomeOwnershipDTO;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is HomeOwnershipDTO hoDTO) return Id == hoDTO.Id;
+            else return false;
+        }
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
         }
     }
 }

@@ -26,7 +26,12 @@ namespace PluginDemocracy.Models
         /// These are messages that will be displayed in case the admin needs more info or more files in order to verify the request to join the community.
         /// </summary>
         public List<string> Messages { get; init; }
-        public bool Approved { get; set; }
+        /// <summary>
+        /// Null indicates that a decision has not been made. 
+        /// True indicates that the request has been approved. 
+        /// False indicates that the request has been denied.
+        /// </summary>
+        public bool? Approved { get; set; }
         //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
         #pragma warning disable CS8618
         private JoinCommunityRequest() {}

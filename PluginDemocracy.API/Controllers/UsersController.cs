@@ -28,14 +28,10 @@ namespace PluginDemocracy.API.Controllers
 
             //Check validity of input
             if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
-
-            //Create new User object
-            User newUser = UserDTO.ReturnUserFromUserDto(registeringUser);
-
+            User newUser = new(firstName: registeringUser.FirstName, lastName: registeringUser.LastName, email: registeringUser.Email, phoneNumber: registeringUser.PhoneNumber, address:registeringUser.Address, dateOfBirth:registeringUser.DateOfBirth, culture:registeringUser.Culture, middleName:registeringUser.MiddleName, secondLastName:registeringUser.SecondLastName);
             //hash password && assign
             PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
-
             // Save the new user to the context
             _context.Users.Add(newUser);
             try
@@ -633,7 +629,7 @@ namespace PluginDemocracy.API.Controllers
                     foreach(int id in extraAuthors)
                     {
                         User? extraAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (extraAuthor != null) extraAuthor.PetitionDrafts.Remove(petition);
+                        if (extraAuthor != null) extraAuthor.RemovePetitionDraft(petition); 
                         else response.AddAlert("error", $"Extra author with id {id} not found");
                         return BadRequest(response);
                     }

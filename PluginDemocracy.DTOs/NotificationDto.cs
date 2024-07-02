@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs
 {
-    public class NotificationDto
+    public class NotificationDTO
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public bool Read { get; set; } = false;
         public DateTime Date { get; set; }
-        public NotificationDto() { }
-        public NotificationDto(Notification notification)
+        public NotificationDTO() { }
+        public NotificationDTO(Notification notification)
         {
             Id = notification.Id;
             Title = notification.Title;

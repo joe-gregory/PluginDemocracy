@@ -169,9 +169,9 @@ namespace PluginDemocracy.Models
         #endregion
         #region METHODS
         /// <summary>
-        /// This constructor is for use by EFC
+        /// This constructor is for the benefit of EFC
         /// </summary>
-        protected Petition() {}
+        private Petition() {}
         public Petition(User originalAuthor)
         {
             AddAuthor(originalAuthor);

@@ -14,15 +14,14 @@ namespace PluginDemocracy.Models
         public string? MiddleName { get; set; }
         public string LastName { get; set; }
         public string? SecondLastName { get; set; }
-        public string? ProfilePicture { get; set; }
         /// <summary>
         /// Get only property. Returns the full name of the user.
         /// </summary>
         public string FullName
         {
-            get 
+            get
             {
-                return string.Join(" ", new string?[] {FirstName, MiddleName, LastName, SecondLastName}.Where(s => !string.IsNullOrEmpty(s)));
+                return string.Join(" ", new string?[] { FirstName, MiddleName, LastName, SecondLastName }.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
         /// <summary>
@@ -40,13 +39,6 @@ namespace PluginDemocracy.Models
                 return initials;
             }
         }
-        public string Email { get; set; }
-        public string? EmailConfirmationToken { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public string HashedPassword { get; set; }
-        public string? PhoneNumber { get; set; } 
-        public bool PhoneNumberConfirmed { get; set; } 
-       public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
         /// <summary>
         /// Get only property. Returns the age of the user using the DateOfBirth property.
@@ -61,6 +53,14 @@ namespace PluginDemocracy.Models
                 return age;
             }
         }
+        public string? Address { get; set; }
+        public string Email { get; set; }
+        public string? EmailConfirmationToken { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string HashedPassword { get; set; }
+        public string? ProfilePicture { get; set; }
+        public string? PhoneNumber { get; set; } 
+        public bool PhoneNumberConfirmed { get; set; } 
         public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
         private readonly List<HOACommunity> _citizenships;
@@ -87,6 +87,14 @@ namespace PluginDemocracy.Models
                 return _residentOfHomes.AsReadOnly();
             }
         }
+        private readonly List<Role> _roles;
+        public IReadOnlyList<Role> Roles
+        {
+            get
+            {
+                return _roles.AsReadOnly();
+            }
+        }
         private readonly List<Notification> _notifications;
         public IReadOnlyList<Notification> Notifications
         {
@@ -109,20 +117,21 @@ namespace PluginDemocracy.Models
         #pragma warning disable CS8618
         private User(){}
         #pragma warning restore CS8618
-        public User(string firstName, string lastName, string email, string hashedPassword, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
+        public User(string firstName, string lastName, string email, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
             FirstName = firstName;
             MiddleName = middleName;
             LastName = lastName;
             SecondLastName = secondLastName;
             Email = email;
-            HashedPassword = hashedPassword;
+            HashedPassword = string.Empty;
             PhoneNumber = phoneNumber;
             Address = address;
             DateOfBirth = dateOfBirth;
             Culture = culture;
             _homeOwnerships = [];
             _residentOfHomes = [];
+            _roles = [];
             _petitionDrafts = [];
             _citizenships = [];
             _notifications = [];
@@ -151,6 +160,14 @@ namespace PluginDemocracy.Models
         public void RemoveAsResidentOfHome(Home home)
         {
             _residentOfHomes.Remove(home);
+        }
+        public void AddRole(Role role)
+        {
+            if (!Roles.Contains(role)) _roles.Add(role);
+        }
+        public void RemoveRole(Role role)
+        {
+            _roles.Remove(role);
         }
         public void AddNotification(string title, string message)
         {

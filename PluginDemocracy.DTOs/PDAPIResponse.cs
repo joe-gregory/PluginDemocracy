@@ -11,8 +11,8 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
-        public List<CommunityDTO> AllCommunities { get; set; } = [];
-        public CommunityDTO? Community { get; set; }
+        public List<HOACommunityDTO> AllCommunities { get; set; } = [];
+        public HOACommunityDTO? Community { get; set; }
         public List<PostDTO> Posts { get; set; } = [];
         public PetitionDTO? Petition { get; set; }
         #endregion

@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
+    <Compile Remove="VotingStrategiesDto\**" />
+    <EmbeddedResource Remove="VotingStrategiesDto\**" />
+    <None Remove="VotingStrategiesDto\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="VotingStrategiesDto\" />
+    <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

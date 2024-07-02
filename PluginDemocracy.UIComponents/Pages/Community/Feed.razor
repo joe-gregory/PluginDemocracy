@@ -5,7 +5,7 @@
 @if (AppState?.User?.Citizenships.Count > 1)
 {
     <MudSelect T="int?" Label="@(AppState.Translate(ResourceKeys.Community))" ValueChanged="OnCommunityChanged">
-        @foreach (CommunityDTO community in AppState.User.Citizenships)
+        @foreach (HOACommunityDTO community in AppState.User.Citizenships)
         {
             <MudSelectItem Value="@community.Id">@community.Name</MudSelectItem>
         }

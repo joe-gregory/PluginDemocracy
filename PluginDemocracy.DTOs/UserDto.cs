@@ -5,8 +5,9 @@ using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
-    public class UserDTO : BaseCitizenDTO
+    public class UserDTO : IAvatar
     {
+        public int Id { get; set; }
         [Required]
         public string FirstName { get; set; } = string.Empty;
         public string? MiddleName { get; set; }
@@ -14,13 +15,12 @@ namespace PluginDemocracy.DTOs
         public string LastName { get; set; } = string.Empty;
         public string? SecondLastName { get; set; }
         [JsonIgnore]
-        override public string? FullName
+        public string FullName
         {
-            get => string.Join(" ", new string?[] { FirstName, LastName, SecondLastName }
-                                   .Where(s => !string.IsNullOrEmpty(s)));
+            get => string.Join(" ", new string?[] {FirstName, LastName, SecondLastName}.Where(s => !string.IsNullOrEmpty(s)));
         }
         [JsonIgnore]
-        public override string? Initials
+        public string Initials
         {
             get
             {
@@ -31,21 +31,6 @@ namespace PluginDemocracy.DTOs
                 return initials;
             }
         }
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-        public bool? EmailConfirmed { get; set; }
-        public List<NotificationDto> Notifications { get; set; } = [];
-        [JsonIgnore]
-        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
-        [JsonIgnore]
-        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
-        //Password field is used by create account in frontend
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
-        public string? PhoneNumber { get; set; }
-        public bool? PhoneNumberConfirmed { get; set; }
-        override public string? Address { get; set; }
         public DateTime DateOfBirth { get; set; }
         [JsonIgnore]
         public int Age
@@ -58,34 +43,26 @@ namespace PluginDemocracy.DTOs
                 return age;
             }
         }
-        public string _cultureCode { get; set; } = "en-US";
-        [JsonIgnore]
-        public CultureInfo Culture { get => new(_cultureCode); set => _cultureCode = value.Name; }
-        public bool? Admin { get; set; }
-        //TODO: List of RolesDto, List of ProposalsDto, Citizenships (List<CommunityDto>), AssociatedCommunities (List<CommunityDto>), ResidentOfHomes (List<HomeDto>)
-        #region TODO
-        //public List<Role> Roles { get; set; } = [];
-        //public List<Proposal> Proposals { get; set; } = [];
-
-        /// <summary>
-        /// This should be the union of Homes + Ownerships + NonResidentialCitizenships all distinct and dynamically generated
-        /// </summary>
-        //public override List<CommunityDTO> Citizenships
-        //{
-        //    get
-        //    {
-        //        List<CommunityDTO> citizenships = [];
-        //        foreach (HomeOwnershipDto homeOwnershipDto in HomeOwnershipsDto) citizenships.AddRange(homeOwnershipDto.Home?.Citizenships ?? []);
-        //        citizenships.AddRange(NonResidentialCitizenIn);
-        //        citizenships.AddRange(ResidentOfHomes.SelectMany(home => home.Citizenships));
-        //        return citizenships.Distinct().ToList();
-        //    }
-        //}
-        /// <summary>
-        /// A list where UserDto shows up on HomeDto.Residents
-        /// </summary>
+        public string? Address { get; set; }
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+        public bool? EmailConfirmed { get; set; }
+        public string? ProfilePicture { get; set; }
+        public string? PhoneNumber { get; set; }
+        public bool? PhoneNumberConfirmed { get; set; }
+        public CultureInfo? Culture { get; set; }
+        public bool Admin { get; set; }
+        public List<HOACommunityDTO> Citizenships { get; set; } = [];
+        public List<HomeOwnershipDTO> HomeOwnerships { get; set; } = [];
         public List<HomeDTO> ResidentOfHomes { get; set; } = [];
-        #endregion
+        public List<NotificationDTO> Notifications { get; set; } = [];
+        [JsonIgnore]
+        public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
+        [JsonIgnore]
+        public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
+        public List<PetitionDTO> PetitionDrafts = [];
         public UserDTO() { }
         public UserDTO(User user)
         {
@@ -103,14 +80,13 @@ namespace PluginDemocracy.DTOs
             DateOfBirth = user.DateOfBirth;
             Culture = user.Culture;
             Admin = user.Admin;
-            foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDto(notification));
-            foreach(HOACommunity community in user.Citizenships) Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
-            foreach (HOACommunity community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
-            foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
-            foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
+            foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDTO(notification));
+            foreach(HOACommunity community in user.Citizenships) Citizenships.Add(HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
+            foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnerships.Add(HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(homeOwnership));
+            foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDTO.ReturnHomeDTOFromHome(home));
         }
         [Obsolete("This method can lead to infinite recursions like when loggin in")]
-        public static UserDTO ReturnUserDtoFromUser(User user)
+        public static UserDTO ReturnUserDTOFromUser(User user)
         {
             UserDTO userDto = new()
             {
@@ -132,10 +108,9 @@ namespace PluginDemocracy.DTOs
                 //Roles = user.Roles,
                 //Proposals = user.Proposals,
             };
-            foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDto(notification));
-            foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
-            foreach(HOACommunity community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
-            foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
+            foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDTO(notification));
+            foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnerships.Add(HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(homeOwnership));
+            foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDTO.ReturnHomeDTOFromHome(home));
             return userDto;
         }
         public static UserDTO ReturnSimpleUserDTOFromUser(User user)
@@ -157,26 +132,7 @@ namespace PluginDemocracy.DTOs
                 Culture = user.Culture,
                 Admin = user.Admin,
             };
-            foreach (HomeOwnership ho in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho));
-
-            foreach (HOACommunity community in user.Citizenships) userDto.Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             return userDto;
-        }
-        public static User ReturnUserFromUserDto(UserDTO userDto)
-        {
-            User user = new(
-                firstName: userDto.FirstName,
-                lastName: userDto.LastName,
-                email: userDto.Email,
-                hashedPassword: string.Empty,
-                phoneNumber: userDto.PhoneNumber,
-                address: userDto.Address,
-                dateOfBirth: userDto.DateOfBirth,
-                culture: userDto.Culture,
-                middleName: userDto.MiddleName,
-                secondLastName: userDto.SecondLastName);
-
-            return user;
         }
         /// <summary>
         /// Two userDtos are equal if their Ids are equal
@@ -190,7 +146,7 @@ namespace PluginDemocracy.DTOs
         }
         public override int GetHashCode()
         {
-            return Id?.GetHashCode() ?? 0;
+            return Id.GetHashCode();
         }
     }
 }

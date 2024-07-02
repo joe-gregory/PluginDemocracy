@@ -6,10 +6,10 @@ namespace PluginDemocracy.DTOs
     public class PostDTO
     {
         public int Id { get; set; }
-        public BaseCitizenDTO? Author { get; set; }
+        public IAvatar? Author { get; set; }
         public string? Body { get; set; }
         public DateTime PublishedDate { get; set; }
-        public List<PostCommentDto> Comments { get; set; } = [];
+        public List<PostCommentDTO> Comments { get; set; } = [];
         public DateTime? LatestActivity { get; set; }
         public List<string> Images { get; set; } = [];
         public List<PostReactionDto> Reactions { get; set; } = [];
@@ -22,12 +22,12 @@ namespace PluginDemocracy.DTOs
         public PostDTO(Post post)
         {
             Id = post.Id;
-            if (post.Author is User author) Author = new UserDTO(author);
-            else if(post.Author is HOACommunity community) Author = new CommunityDTO(community);
+            if (post.Author is User author) Author = UserDTO.ReturnSimpleUserDTOFromUser(author);
+            else if(post.Author is HOACommunity community) Author = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
             Body = post.Body;
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;
-            Images = post.Images;
+            Images = [..post.Images];
             foreach(PostReaction reaction in post.Reactions)
             {
                 Reactions.Add(new(post.Id, new(reaction.User), reaction.ReactionType));

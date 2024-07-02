@@ -45,7 +45,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
                 });
-                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new CommunityDTO()
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new HOACommunityDTO()
                 {
                     Id = AppState.User.Citizenships[0].Id,
                     Name = AppState.User.Citizenships[0].Name,
@@ -78,7 +78,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
                 });
-                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new CommunityDTO()
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new HOACommunityDTO()
                 {
                     Id = AppState.User.Citizenships[0].Id,
                     Name = AppState.User.Citizenships[0].Name,
@@ -185,7 +185,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (!string.IsNullOrEmpty(petitionDTO.ActionRequested)) multiPartFormDataContent.Add(new StringContent(petitionDTO.ActionRequested), nameof(petitionDTO.ActionRequested));
                 if (!string.IsNullOrEmpty(petitionDTO.SupportingArguments)) multiPartFormDataContent.Add(new StringContent(petitionDTO.SupportingArguments), nameof(petitionDTO.SupportingArguments));
                 if (petitionDTO.DeadlineForResponse.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(petitionDTO.DeadlineForResponse));
-                if (petitionDTO.CommunityDTO != null && petitionDTO.CommunityDTO.Id.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.CommunityDTO.Id.ToString()), nameof(petitionDTO.CommunityDTOId));
+                if (petitionDTO.CommunityDTO != null) multiPartFormDataContent.Add(new StringContent(petitionDTO.CommunityDTO.Id.ToString()), nameof(petitionDTO.CommunityDTOId));
                 foreach(UserDTO authorDTO in petitionDTO.Authors)
                 {
                     if (authorDTO?.Id != null) multiPartFormDataContent.Add(new StringContent(authorDTO.Id.ToString()), nameof(petitionDTO.AuthorsIds));

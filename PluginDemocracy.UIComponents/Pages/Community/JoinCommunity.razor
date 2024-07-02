@@ -7,8 +7,8 @@
 
 <MudGrid Class="mt-5 mb-10">
     <MudItem>
-        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<CommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
-            @foreach (CommunityDTO communityDtoOption in communitiesDtos)
+        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<HOACommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
+            @foreach (HOACommunityDTO communityDtoOption in communitiesDtos)
             {
                 <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
             }
@@ -46,7 +46,7 @@
                     </MudAvatarGroup>
                 </MudTd>
                 <MudTd DataLabel="@AppState.Translate(ResourceKeys.HomeOwners)">
-                    @foreach (UserDTO owner in context.Owners.Keys)
+                    @foreach (UserDTO owner in context.OwnersOwnerships.Keys)
                     {
                         if (!string.IsNullOrEmpty(owner.ProfilePicture))
                         {

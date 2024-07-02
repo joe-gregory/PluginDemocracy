@@ -1,34 +1,28 @@
 ﻿namespace PluginDemocracy.Models
 {
-    public class Role : BaseRedFlaggable
+    public class Role
     {
-        public override int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
+        public int Id { get; init; }
+        public string Title { get; internal set; }
         /// <summary>
         /// Description of responsabilities
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; internal set; }
         /// <summary>
-        /// Person who has this role assigned to them
+        /// The community that the role is part of
         /// </summary>
-        public HOACommunity Community { get; }
+        public HOACommunity Community { get; init; }
         /// <summary>
         /// The person that holds the Role
         /// </summary>
         public User? Holder { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public bool Active { get; set; }
-        public RolePowers Powers { get; }
-        //IREDFLAGGABLE
-        public override List<RedFlag> RedFlags { get; }
-        public override Type Type => typeof(Role);
-        //END IREDFLAGGABLE
-        protected Role()
-        {
-            Community = new();
-            Powers = new();
-            RedFlags = [];
-        }
+        public RolePowers Powers { get; init; }
+        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
+        #pragma warning disable CS8618
+        private Role() { }
+        #pragma warning restore CS8618
         public Role(string title, string description, HOACommunity community)
         {
             Title = title;
@@ -36,7 +30,6 @@
             Community = community;
             Active = true;
             Powers = new();
-            RedFlags = [];
         }
         public void Update()
         {

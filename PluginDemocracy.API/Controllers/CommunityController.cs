@@ -22,7 +22,7 @@ namespace PluginDemocracy.API.Controllers
 
         [Authorize]
         [HttpPost("registercommunity")]
-        public async Task<ActionResult<PDAPIResponse>> Register(CommunityDTO communityDto)
+        public async Task<ActionResult<PDAPIResponse>> Register(HOACommunityDTO communityDto)
         {
             PDAPIResponse response = new();
 
@@ -52,22 +52,15 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //Create Community instance
-            HOACommunity newCommunity = new()
+            HOACommunity newCommunity = new(communityDto.Name, communityDto.Address)
             {
                 Name = communityDto.Name,
                 Address = communityDto.Address,
                 OfficialCurrency = communityDto.OfficialCurrency,
                 Description = communityDto.Description,
-                CanHaveHomes = true,
             };
             foreach (CultureInfo language in communityDto.OfficialLanguages) newCommunity.AddOfficialLanguage(language);
-            foreach (HomeDTO homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
-            {
-                Community = newCommunity,
-                Number = homeDTO.Number,
-                InternalAddress = homeDTO.InternalAddress,
-            });
-            newCommunity.VotingStrategy = new HomeOwnersFractionalVotingStrategy();
+            foreach (HomeDTO homeDTO in communityDto.Homes) newCommunity.AddHome(new Home(newCommunity, homeDTO.Number, homeDTO.InternalAddress));
             try
             {
                 _context.Communities.Add(newCommunity);
@@ -89,7 +82,7 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 List<HOACommunity> communities = await _context.Communities.ToListAsync();
-                foreach (HOACommunity community in communities) response.AllCommunities.Add(new CommunityDTO()
+                foreach (HOACommunity community in communities) response.AllCommunities.Add(new HOACommunityDTO()
                 {
                     Id = community.Id,
                     Name = community.Name,
@@ -121,8 +114,8 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "Community not found");
                     return BadRequest(response);
                 }
-                response.Community = CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community);
-                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
+                response.Community = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
+                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDTO.ReturnHomeDTOFromHome(home));
                 return Ok(response);
             }
             catch (Exception ex)
@@ -132,7 +125,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         /// <summary>
-        /// Controller method by which a request to join a community is sent. 
+        /// Controller method by which a request to join a community is posted. 
         /// Community.AddJoinCommunityRequest makes validations. The controller needs to check that the user from claims 
         /// matches the user in the request and that the community matches but the rest of the validation is done in community
         /// If something doesn't work, the community will throw an exception and the controller will catch it and return a BadRequest. 
@@ -190,14 +183,13 @@ namespace PluginDemocracy.API.Controllers
                 //at this point requestDto.JoiningAsOwner should not be null, so I am going to go ahead and add this bool variable
                 JoinCommunityRequest request = new(community, home, existingUser, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
                 community.AddJoinCommunityRequest(request);
-                Home homeToJoin = community.Homes.First(h => h.Id == requestDto.HomeDto?.Id);
 
                 //Send notifications to the corresponding parties
                 //Send notification to role that has the capability to accept new home owners. Lookup all the Roles that have CanEditHomeOwnership and CanEditResidency
                 //Search for all the roles that have CanEditHomeOwnership and CanEditResidency in the Community
                 //If user is joining as home owner, send notification to Roles with corresponding powers. If role is not there, default send notification to app admin.
                 List<User?> roleHoldersWithJoinPower = community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
-                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {homeToJoin.FullName} in community {community.FullName}";
+                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {home.Name} in community {community.FullName}";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
                 if (request.JoiningAsOwner)
                 {
@@ -216,7 +208,7 @@ namespace PluginDemocracy.API.Controllers
                 else
                 {
                     List<User> usersToEmail = [];
-                    foreach (BaseCitizen baseCitizen in homeToJoin.Owners) if (baseCitizen is User user) usersToEmail.Add(user);
+                    foreach (User user in home.Owners) usersToEmail.Add(user);
                     foreach (User? user in roleHoldersWithJoinPower) if (user != null) usersToEmail.Add(user);
                     //send the emails and add the notifications
                     foreach (User user in usersToEmail)
@@ -224,7 +216,7 @@ namespace PluginDemocracy.API.Controllers
                         user.AddNotification(_utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
                         await _utilityClass.SendEmailAsync(user.Email, _utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
                     }
-                    if (homeToJoin.Owners.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
+                    if (home.Owners.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
                 }
                 //The emails and notifications have been sent.
 
@@ -436,17 +428,16 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.AddCommentToPost)]
-        public async Task<ActionResult<PostDTO>> AddCommentToPost(PostCommentDto postCommentDto)
+        public async Task<ActionResult<PostDTO>> AddCommentToPost(PostCommentDTO postCommentDto)
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
             Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
             if (post == null) return BadRequest();
 
-            PostComment newPostComment = new(existingUser, postCommentDto.Comment);
             try
             {
-                post.AddComment(newPostComment);
+                post.AddComment(existingUser, postCommentDto.Comment);
                 await _context.SaveChangesAsync();
                 PostDTO postDto = new(post);
                 return Ok(postDto);
@@ -458,7 +449,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpDelete(ApiEndPoints.DeleteComment)]
-        public async Task<ActionResult<PDAPIResponse>> DeleteComment(PostCommentDto postCommentDto)
+        public async Task<ActionResult<PDAPIResponse>> DeleteComment(PostCommentDTO postCommentDto)
         {
             PDAPIResponse response = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
@@ -473,7 +464,7 @@ namespace PluginDemocracy.API.Controllers
 
             try
             {
-                post.Comments.Remove(comment);
+                post.RemoveComment(comment);
                 await _context.SaveChangesAsync();
                 response.SuccessfulOperation = true;
                 return Ok(response);

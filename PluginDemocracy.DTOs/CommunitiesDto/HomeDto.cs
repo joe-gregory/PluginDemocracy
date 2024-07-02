@@ -5,37 +5,35 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HomeDTO : BaseCitizenDTO
+    public class HomeDTO
     {
         #region PROPERTIES
-        public CommunityDTO? ParentCommunity { get; set; }
-        public HashSet<HomeOwnershipDTO> Ownerships { get; set; } = [];
-        [JsonIgnore]
-        public override string? FullName
-        {
-            get
-            {
-                string fullName = string.Empty;
-                foreach(HomeOwnershipDTO ho in Ownerships) fullName += ho.Owner?.FullName + ", ";
-                return fullName;
-            }
-        }
-        [JsonIgnore]
-        public override string? Initials
-        {
-            get
-            {
-                return $"{Number}{ParentCommunity?.Initials}";
-            }
-        }
+        public int Id { get; set; }
         public int Number { get; set; }
-        public string InternalAddress { get; set; } = string.Empty;
+        public string? InternalAddress { get; set; }
+        public HOACommunityDTO? Community { get; set; }
+        public string? FullAddress { get; set; }
+        public List<HomeOwnershipDTO> Ownerships { get; set; } = [];
         [JsonIgnore]
-        public override string Address => Number + " " + InternalAddress + " " + ParentCommunity?.Address;
-        [JsonIgnore]
-        public Dictionary<BaseCitizenDTO, double> Owners
+        public Dictionary<UserDTO, double> OwnersOwnerships
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
+        }
+        [JsonIgnore]
+        public List<UserDTO> Owners
+        {
+            get
+            {
+                return [.. OwnersOwnerships.Keys];
+            }
+        }
+        [JsonIgnore]
+        public double CurrentlyOwnedPercentage
+        {
+            get
+            {
+                return OwnersOwnerships.Values.Sum();
+            }
         }
         /// <summary>
         /// The percentage of ownership that is available to be owned by new owners. This is calculated by subtracting the sum of the ownership percentages of the current owners from 100.
@@ -45,7 +43,7 @@ namespace PluginDemocracy.DTOs
         { 
             get
             {
-                return 100 - Owners.Values.Sum();
+                return 100 - OwnersOwnerships.Values.Sum();
             } 
         }
         public List<UserDTO> Residents { get; set; } = [];
@@ -55,12 +53,45 @@ namespace PluginDemocracy.DTOs
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
         [JsonIgnore]
-        public List<BaseCitizenDTO> Citizens
+        public List<UserDTO> Citizens
         {
-            get => Owners.Keys.Union(Residents).ToList();
+            get 
+            { 
+                return Owners.Union(Residents).ToList(); 
+            }
         }
         #endregion
         #region METHODS
+        public HomeDTO() { }
+        public HomeDTO(Home home)
+        {
+            Id = home.Id;
+            Number = home.Number;
+            InternalAddress = home.InternalAddress;
+            FullAddress = home.FullAddress;
+            foreach (HomeOwnership homeOwnership in home.Ownerships)
+            {
+                HomeOwnershipDTO homeOwnershipDTO = new()
+                {
+                    Id = homeOwnership.Id,
+                    OwnershipPercentage = homeOwnership.OwnershipPercentage,
+                    Home = this,
+                    Owner = homeOwnership.Owner != null ? new UserDTO()
+                    {
+                        Id = homeOwnership.Owner.Id,
+                        FirstName = homeOwnership.Owner.FirstName,
+                        MiddleName = homeOwnership.Owner.MiddleName,
+                        LastName = homeOwnership.Owner.LastName,
+                        SecondLastName = homeOwnership.Owner.SecondLastName,
+                        ProfilePicture = homeOwnership.Owner.ProfilePicture,
+                    } : null,
+                };
+                Ownerships.Add(homeOwnershipDTO);
+            }
+            //HomeDto Properties
+            Community = home.Community != null ? HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.Community) : null;
+            Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDTOFromUser(r)).ToList();
+        }
         /// <summary>
         /// Overriding DTO Equals method to compare Ids because more than one DTO object may be created for the same entity.
         /// </summary>
@@ -91,7 +122,7 @@ namespace PluginDemocracy.DTOs
             }
             JoinCommunityRequestDTO request = new()
             {
-                CommunityDto = ParentCommunity,
+                CommunityDto = Community,
                 HomeDto = this,
                 UserDto = user,
             };
@@ -108,21 +139,18 @@ namespace PluginDemocracy.DTOs
             }
             return request;
         }
-        public static HomeDTO ReturnHomeDtoFromHome(Home home)
+        [Obsolete("There is a new constructor that takes Home type as argument. No need for this static method anymore.")]
+        public static HomeDTO ReturnHomeDTOFromHome(Home home)
         {
             HomeDTO newHomeDto = new()
             {
-                //BaseCitizenDto Properties
                 Id = home.Id,
-                Address = home.FullAddress,
-                ProfilePicture = home.ProfilePicture,
-                NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
-                HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
-                //HomeDto Properties
-                ParentCommunity = home.Community != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(home.Community) : null,
-                Ownerships = home.Ownerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
                 Number = home.Number,
                 InternalAddress = home.InternalAddress,
+                FullAddress = home.FullAddress,
+                Ownerships = home.Ownerships.Select(ho => HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(ho)).ToList(),
+                //HomeDto Properties
+                Community = home.Community != null ? HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.Community) : null,
                 Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDTOFromUser(r)).ToList(),
             };
             return newHomeDto;

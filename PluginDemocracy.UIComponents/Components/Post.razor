@@ -60,7 +60,7 @@
                 </div>
             </TitleContent>
             <ChildContent>
-                @foreach (PostCommentDto comment in PostDto.Comments)
+                @foreach (PostCommentDTO comment in PostDto.Comments)
                 {
                     <PostComment PostCommentDto="@comment" OnDeleteComment="RemoveComment" />
                 }
