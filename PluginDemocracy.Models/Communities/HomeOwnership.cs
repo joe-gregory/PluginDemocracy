@@ -7,57 +7,24 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
+    /// <summary>
+    /// Represents a claim of ownership of some % of a home. 
+    /// </summary>
     public class HomeOwnership
     {
-        #region PROPERTIES
-        public int Id { get; set; }
-        public double OwnershipPercentage { get; set; }
-        [ForeignKey("HomeId")]
-#pragma warning disable IDE0051 // Remove unused private members warning because this field is used but by EFC
-        public int HomeId { get; set; }
-#pragma warning restore IDE0051 // Remove unused private members
-        public virtual Home Home { get; set; }
-        //Todo, these should also be private User and Community owners.
-        public User? _userOwner;
-        public Community? _communityOwner;
-        [NotMapped]
-        public virtual BaseCitizen Owner 
-        { 
-            get 
-            { 
-                if (_userOwner != null) return _userOwner;
-                if (_communityOwner != null) return _communityOwner;
-                throw new InvalidOperationException("Owner is neither User nor Community");
-            } 
-        }
-        #endregion
-        #region METHODS
-        /// <summary>
-        /// Required by EFC
-        /// </summary>
-        private HomeOwnership() 
-        {
-            Home = new();
-            _communityOwner = new Community();
-        }
-        public HomeOwnership(Home home, BaseCitizen owner, double percentage)
+        public int Id { get; init; }
+        public Home Home { get; init; }
+        public User Owner { get; init; }
+        public double OwnershipPercentage { get; init; }
+        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
+        #pragma warning disable CS8618
+        private HomeOwnership() { }
+        #pragma warning restore CS8618
+        public HomeOwnership(Home home, User owner, double percentage)
         {
             Home = home;
-            if(owner is User userOwner)
-            {
-                _userOwner = userOwner;
-            }
-            else if (owner is Community communityOwner)
-            {
-                _communityOwner = communityOwner;
-            }
-            else
-            {
-                throw new ArgumentException("Owner must be either User or Community");
-            }
-
+            Owner = owner;
             OwnershipPercentage = percentage;
         }
-        #endregion
     }
 }
