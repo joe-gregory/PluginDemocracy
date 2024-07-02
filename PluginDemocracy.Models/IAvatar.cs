@@ -11,8 +11,8 @@ namespace PluginDemocracy.Models
     /// </summary>
     public interface IAvatar
     {
-        public string? ProfilePicture { get; }
         public string FullName { get; }
         public string Initials { get; }
+        public string? ProfilePicture { get; }
     }
 }
