@@ -6,22 +6,32 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
+    /// <summary>
+    /// This represents a request to join a community by stating if you are an owner (of some %) or a resident of a home listed in the community's <see cref="HOACommunity.Homes"/>.
+    /// </summary>
     public class JoinCommunityRequest
     {
-        public int Id { get; set; }
-        public Community Community { get; set; }
-        public Home Home { get; set; }
-        public User? User { get; set; }
-        public bool JoiningAsOwner { get; set; }
-        public bool JoiningAsResident { get; set; }
-        public double OwnershipPercentage { get; set; }
-        public bool? Approved { get; set; } = null;
-        protected JoinCommunityRequest()
-        {
-            Home = new();
-            Community = new();
-        }
-        public JoinCommunityRequest(Community community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public int Id { get; init; }
+        public HOACommunity Community { get; init; }
+        public Home Home { get; init; }
+        public User User { get; init; }
+        public bool JoiningAsOwner { get; init; }
+        public bool JoiningAsResident { get; init; }
+        public double OwnershipPercentage { get; init; }
+        /// <summary>
+        /// Link to files that the user will need to upload in order to 
+        /// </summary>
+        public List<string> Files { get; init; }
+        /// <summary>
+        /// These are messages that will be displayed in case the admin needs more info or more files in order to verify the request to join the community.
+        /// </summary>
+        public List<string> Messages { get; init; }
+        public bool Approved { get; set; }
+        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
+        #pragma warning disable CS8618
+        private JoinCommunityRequest() {}
+        #pragma warning restore CS8618
+        public JoinCommunityRequest(HOACommunity community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             Community = community; 
             Home = home;
@@ -30,6 +40,8 @@ namespace PluginDemocracy.Models
             if (!joiningAsOwner) JoiningAsResident = true;
             else JoiningAsResident = false;
             OwnershipPercentage = ownershipPercentage;
+            Files = [];
+            Messages = [];
         }
     }
 }
