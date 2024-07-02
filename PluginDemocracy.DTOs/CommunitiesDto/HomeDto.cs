@@ -114,12 +114,12 @@ namespace PluginDemocracy.DTOs
             {
                 //BaseCitizenDto Properties
                 Id = home.Id,
-                Address = home.Address,
+                Address = home.FullAddress,
                 ProfilePicture = home.ProfilePicture,
                 NonResidentialCitizenIn = home.NonResidentialCitizenIn.Select(c => CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(c)).ToList(),
                 HomeOwnershipsDto = home.HomeOwnerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToList(),
                 //HomeDto Properties
-                ParentCommunity = home.ParentCommunity != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(home.ParentCommunity) : null,
+                ParentCommunity = home.Community != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(home.Community) : null,
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho)).ToHashSet(),
                 Number = home.Number,
                 InternalAddress = home.InternalAddress,

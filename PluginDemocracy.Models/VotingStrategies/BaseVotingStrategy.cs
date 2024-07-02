@@ -10,7 +10,7 @@ namespace PluginDemocracy.Models
         [NotMapped]
         public abstract string Description { get; }
         //METHODS:
-        public abstract Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community);
+        public abstract Dictionary<BaseCitizen, double> ReturnVotingWeights(HOACommunity community);
         public abstract List<Vote> ReturnHomeVotes(Proposal proposal);
         public abstract bool ShouldProposalPropagate(Proposal proposal);
     }

@@ -47,9 +47,9 @@ namespace PluginDemocracy.DTOs
             HomeDTO homeDto = new()
             {
                 Id = homeOwnership.Home.Id,
-                Address = homeOwnership.Home.Address,
+                Address = homeOwnership.Home.FullAddress,
                 ProfilePicture = homeOwnership.Home.ProfilePicture,
-                ParentCommunity = homeOwnership.Home.ParentCommunity != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership.Home.ParentCommunity) : null,
+                ParentCommunity = homeOwnership.Home.Community != null ? CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(homeOwnership.Home.Community) : null,
                 Number = homeOwnership.Home.Number,
                 InternalAddress = homeOwnership.Home.InternalAddress,
             };

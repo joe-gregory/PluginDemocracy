@@ -52,7 +52,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //Create Community instance
-            Community newCommunity = new()
+            HOACommunity newCommunity = new()
             {
                 Name = communityDto.Name,
                 Address = communityDto.Address,
@@ -63,7 +63,7 @@ namespace PluginDemocracy.API.Controllers
             foreach (CultureInfo language in communityDto.OfficialLanguages) newCommunity.AddOfficialLanguage(language);
             foreach (HomeDTO homeDTO in communityDto.Homes) newCommunity.AddHome(new Home()
             {
-                ParentCommunity = newCommunity,
+                Community = newCommunity,
                 Number = homeDTO.Number,
                 InternalAddress = homeDTO.InternalAddress,
             });
@@ -88,8 +88,8 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                List<Community> communities = await _context.Communities.ToListAsync();
-                foreach (Community community in communities) response.AllCommunities.Add(new CommunityDTO()
+                List<HOACommunity> communities = await _context.Communities.ToListAsync();
+                foreach (HOACommunity community in communities) response.AllCommunities.Add(new CommunityDTO()
                 {
                     Id = community.Id,
                     Name = community.Name,
@@ -115,7 +115,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                Community? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+                HOACommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
                 if (community == null)
                 {
                     response.AddAlert("error", "Community not found");
@@ -172,7 +172,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "CommunityDto is null");
                 return BadRequest(response);
             }
-            Community? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
+            HOACommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -258,7 +258,7 @@ namespace PluginDemocracy.API.Controllers
                 return response;
             }
             Post newPost = new(existingUser, request.Body);
-            Community? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
+            HOACommunity? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -327,7 +327,7 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
-                Community? community = await _context.Communities
+                HOACommunity? community = await _context.Communities
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Author)
                     .Include(c => c.Posts)

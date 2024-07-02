@@ -37,9 +37,9 @@ namespace PluginDemocracy.API.Controllers
                 User? user = await _context.Users.FirstOrDefaultAsync(u => u.Id == existingUser.Id);
                 if(user == null) return BadRequest();
                 if (user.Admin == false) return Unauthorized();
-                List<Community> communities = await _context.Communities.ToListAsync();
+                List<HOACommunity> communities = await _context.Communities.ToListAsync();
                 List<CommunityDTO> communityDtos = [];
-                foreach (Community community in communities) communityDtos.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
+                foreach (HOACommunity community in communities) communityDtos.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
                 return Ok(communityDtos);
             }
             catch (Exception e)

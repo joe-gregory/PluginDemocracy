@@ -21,21 +21,21 @@ namespace PluginDemocracy.Models
         [NotMapped]
         override public string Description => HomeOwnersFractionalVotingStrategyResources.Description;
         //METHODS: 
-        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(Community community)
+        override public Dictionary<BaseCitizen, double> ReturnVotingWeights(HOACommunity community)
         {
             var ownersVotingValue = new Dictionary<BaseCitizen, double>();
             foreach (Home home in community.Homes)
             {
-                foreach (BaseCitizen owner in home.OwnersWithOwnership.Keys)
+                foreach (BaseCitizen owner in home.OwnersOwnerships.Keys)
                 {
                     //an owner may own more than 1 home in the same gated community
                     if (ownersVotingValue.ContainsKey(owner))
                     {
-                        ownersVotingValue[owner] += home.OwnersWithOwnership[owner];
+                        ownersVotingValue[owner] += home.OwnersOwnerships[owner];
                     }
                     else
                     {
-                        ownersVotingValue[owner] = home.OwnersWithOwnership[owner];
+                        ownersVotingValue[owner] = home.OwnersOwnerships[owner];
                     }
                 }
             }

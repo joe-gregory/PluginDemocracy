@@ -9,7 +9,7 @@ namespace PluginDemocracy.Models
     /// </summary>
     public class User : IAvatar
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
         public string LastName { get; set; }
@@ -63,20 +63,28 @@ namespace PluginDemocracy.Models
         }
         public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
-        private readonly List<Petition> _petitionDrafts;
-        public IReadOnlyList<Petition> PetitionDrafts 
-        { 
-            get 
-            { 
-                return _petitionDrafts.AsReadOnly();
-            } 
-        }
-        private readonly List<Community> _citizenships;
-        public IReadOnlyList<Community> Citizenships
+        private readonly List<HOACommunity> _citizenships;
+        public IReadOnlyList<HOACommunity> Citizenships
         {
             get
             {
                 return _citizenships.AsReadOnly();
+            }
+        }
+        private readonly List<HomeOwnership> _homeOwnerships;
+        public IReadOnlyList<HomeOwnership> HomeOwnerships
+        {
+            get
+            {
+                return _homeOwnerships.AsReadOnly();
+            }
+        }
+        private readonly List<Home> _residentOfHomes;
+        public IReadOnlyList<Home> ResidentOfHomes
+        {
+            get
+            {
+                return _residentOfHomes.AsReadOnly();
             }
         }
         private readonly List<Notification> _notifications;
@@ -89,6 +97,14 @@ namespace PluginDemocracy.Models
         }
         public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
         public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
+        private readonly List<Petition> _petitionDrafts;
+        public IReadOnlyList<Petition> PetitionDrafts 
+        { 
+            get 
+            { 
+                return _petitionDrafts.AsReadOnly();
+            } 
+        }
         //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
         #pragma warning disable CS8618
         private User(){}
@@ -105,25 +121,36 @@ namespace PluginDemocracy.Models
             Address = address;
             DateOfBirth = dateOfBirth;
             Culture = culture;
+            _homeOwnerships = [];
+            _residentOfHomes = [];
             _petitionDrafts = [];
             _citizenships = [];
             _notifications = [];
         }
-        public void AddPetitionDraft(Petition petition)
-        {
-            _petitionDrafts.Add(petition);
-        }
-        public void RemovePetitionDraft(Petition petition)
-        {
-            _petitionDrafts.Remove(petition);
-        }
-        public void AddCitizenship(Community community)
+
+        public void AddCitizenship(HOACommunity community)
         {
             _citizenships.Add(community);
         }
-        public void RemoveCitizenship(Community community)
+        public void RemoveCitizenship(HOACommunity community)
         {
             _citizenships.Remove(community);
+        }
+        public void AddHomeOwnership(HomeOwnership homeOwnership)
+        {
+            _homeOwnerships.Add(homeOwnership);
+        }
+        public void RemoveHomeOwnership(HomeOwnership homeOwnership)
+        {
+            _homeOwnerships.Remove(homeOwnership);
+        }
+        public void AddAsResidentOfHome(Home home)
+        {
+            if (!_residentOfHomes.Contains(home)) _residentOfHomes.Add(home);
+        }
+        public void RemoveAsResidentOfHome(Home home)
+        {
+            _residentOfHomes.Remove(home);
         }
         public void AddNotification(string title, string message)
         {
@@ -132,6 +159,14 @@ namespace PluginDemocracy.Models
         public void DeleteNotification(Notification notification)
         {
             _notifications.Remove(notification);
+        }
+        public void AddPetitionDraft(Petition petition)
+        {
+            _petitionDrafts.Add(petition);
+        }
+        public void RemovePetitionDraft(Petition petition)
+        {
+            _petitionDrafts.Remove(petition);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace PluginDemocracy.Models
         /// This is the key used in PluginDemocracy.Translations on the frontend and not the actual Description of the Dictamen.
         /// </summary>
         abstract public string? DescriptionKey { get; set; }
-        public Community? Community { get; set; }
+        public HOACommunity? Community { get; set; }
         //Change this because the Origin of a Dictamen is either a Role or a Proposal
         public DateTime? IssueDate { get; private set; }
         /// <summary>

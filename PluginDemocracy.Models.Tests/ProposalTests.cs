@@ -6,10 +6,10 @@
     /// </summary>
     public class ProposalTests
     {
-        public Community parentCommunity;
+        public HOACommunity parentCommunity;
         public User citizen1;
         public User citizen2;
-        public Community childGatedCommunity;
+        public HOACommunity childGatedCommunity;
         public Home home1;
         public Home home2;
         public Home home3;

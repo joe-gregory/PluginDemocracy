@@ -257,11 +257,11 @@ namespace PluginDemocracy.API
                     .Include(u => u.Notifications)
                     .Include(u => u.PetitionDrafts)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.ParentCommunity)
+                        .ThenInclude(h => h.Community)
                     .Include(u => u.NonResidentialCitizenIn)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.ParentCommunity)
+                            .ThenInclude(h => h.Community)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)

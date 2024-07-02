@@ -107,7 +107,7 @@ namespace PluginDemocracy.DTOs
             RedFlags = [];
             Posts = [];
         }
-        public CommunityDTO(Community community)
+        public CommunityDTO(HOACommunity community)
         {
             //BaseCitizenDto Properties
             Id = community.Id;
@@ -123,7 +123,7 @@ namespace PluginDemocracy.DTOs
             CanHaveHomes = community.CanHaveHomes;
             foreach(Home home in community.Homes) Homes?.Add(HomeDTO.ReturnHomeDtoFromHome(home));
             CanHaveNonResidentialCitizens = community.CanHaveNonResidentialCitizens;
-            foreach (Community communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
+            foreach (HOACommunity communityNonResidentialCitizen in community._communityNonResidentialCitizens) _communityNonResidentialCitizens.Add(ReturnSimpleCommunityDtoFromCommunity(communityNonResidentialCitizen));
             foreach (User userNonResidentialCitizen in community._userNonResidentialCitizens) _userNonResidentialCitizens.Add(UserDTO.ReturnSimpleUserDTOFromUser(userNonResidentialCitizen));
             ProposalsExpirationDays = community.ProposalsExpirationDays;
             VotingStrategy = community.VotingStrategy;
@@ -159,7 +159,7 @@ namespace PluginDemocracy.DTOs
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        public static CommunityDTO ReturnSimpleCommunityDtoFromCommunity(Community community)
+        public static CommunityDTO ReturnSimpleCommunityDtoFromCommunity(HOACommunity community)
         {
             return new CommunityDTO()
             {

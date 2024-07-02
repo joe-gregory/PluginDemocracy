@@ -20,7 +20,7 @@ namespace PluginDemocracy.Models
             } 
         }
         public User? _userCitizen { get; }
-        public Community? _communityCitizen { get; }
+        public HOACommunity? _communityCitizen { get; }
         public Home? _homeCitizen { get; }
         public bool InFavor { get; private set; }
         public double VoteWeight { get; private set; }
@@ -44,7 +44,7 @@ namespace PluginDemocracy.Models
             {
                 _userCitizen = userCitizen;
             }
-            else if(citizen is Community communityCitizen)
+            else if(citizen is HOACommunity communityCitizen)
             {
                 _communityCitizen = communityCitizen;
             }
@@ -81,7 +81,7 @@ namespace PluginDemocracy.Models
             {
                 _userCitizen = userCitizen;
             }
-            else if (citizen is Community communityCitizen)
+            else if (citizen is HOACommunity communityCitizen)
             {
                 _communityCitizen = communityCitizen;
             }

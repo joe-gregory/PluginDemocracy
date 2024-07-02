@@ -12,7 +12,7 @@ namespace PluginDemocracy.Models
         public string? Title { get; set; }
         public string? Description { get; set; }
         public User Author { get; }
-        public Community Community { get; set; }
+        public HOACommunity Community { get; set; }
         public List<RedFlag> AddressesRedFlags { get; }
         /// <summary>
         /// PublishedDate is set by the Community when Community.PublishProposal() is invoked.
@@ -66,7 +66,7 @@ namespace PluginDemocracy.Models
             AddressesRedFlags = new();
             Community = new();
         }
-        public Proposal(Community community, User user)
+        public Proposal(HOACommunity community, User user)
         {
             Author = user;
             Community = community;

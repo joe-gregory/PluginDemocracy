@@ -5,8 +5,9 @@
     /// </summary>
     public class Constitution
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
         public string Preamble { get; set; }
+        public readonly List<Article> _articles;
         public IReadOnlyList<Article> Articles
         {
             get
@@ -15,7 +16,6 @@
                 return _articles.AsReadOnly();
             }
         }
-        public readonly List<Article> _articles;
         public Constitution()
         {
             _articles = [];

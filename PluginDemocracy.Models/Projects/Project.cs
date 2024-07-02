@@ -10,7 +10,7 @@ namespace PluginDemocracy.Models
         public string? Description { get; set; }
         public DateTime? CreatedOn { get; }
         public bool Active => DateTime.UtcNow < Deadline;
-        public Community? Community { get; }
+        public HOACommunity? Community { get; }
         public decimal? FundingGoal { get; set; }
         public decimal? CurrentFunding => Accounting?.Balance ?? 0m;
         public decimal? RemainingFunding => FundingGoal - CurrentFunding;
@@ -19,7 +19,7 @@ namespace PluginDemocracy.Models
         public User? Author { get; }
         public Accounting? Accounting { get; }
         protected Project() {}
-        public Project(string title, string description, Community community, decimal fundingGoal, DateTime deadline, BaseDictamen dictamen)
+        public Project(string title, string description, HOACommunity community, decimal fundingGoal, DateTime deadline, BaseDictamen dictamen)
         {
             Guid = new();
             Title = title;

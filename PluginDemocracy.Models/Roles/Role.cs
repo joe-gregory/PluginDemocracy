@@ -11,7 +11,7 @@
         /// <summary>
         /// Person who has this role assigned to them
         /// </summary>
-        public Community Community { get; }
+        public HOACommunity Community { get; }
         /// <summary>
         /// The person that holds the Role
         /// </summary>
@@ -29,7 +29,7 @@
             Powers = new();
             RedFlags = [];
         }
-        public Role(string title, string description, Community community)
+        public Role(string title, string description, HOACommunity community)
         {
             Title = title;
             Description = description;

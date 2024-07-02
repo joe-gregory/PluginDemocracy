@@ -104,8 +104,8 @@ namespace PluginDemocracy.DTOs
             Culture = user.Culture;
             Admin = user.Admin;
             foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDto(notification));
-            foreach(Community community in user.Citizenships) Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
-            foreach (Community community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach(HOACommunity community in user.Citizenships) Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach (HOACommunity community in user.NonResidentialCitizenIn) NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
             foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
         }
@@ -134,7 +134,7 @@ namespace PluginDemocracy.DTOs
             };
             foreach(Notification notification in user.Notifications) userDto.Notifications.Add(new NotificationDto(notification));
             foreach(HomeOwnership homeOwnership in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(homeOwnership));
-            foreach(Community community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach(HOACommunity community in user.NonResidentialCitizenIn) userDto.NonResidentialCitizenIn.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             foreach(Home home in user.ResidentOfHomes) userDto.ResidentOfHomes.Add(HomeDTO.ReturnHomeDtoFromHome(home));
             return userDto;
         }
@@ -159,7 +159,7 @@ namespace PluginDemocracy.DTOs
             };
             foreach (HomeOwnership ho in user.HomeOwnerships) userDto.HomeOwnershipsDto.Add(HomeOwnershipDTO.ReturnHomeOwnershipDtoFromHomeOwnership(ho));
 
-            foreach (Community community in user.Citizenships) userDto.Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
+            foreach (HOACommunity community in user.Citizenships) userDto.Citizenships.Add(CommunityDTO.ReturnSimpleCommunityDtoFromCommunity(community));
             return userDto;
         }
         public static User ReturnUserFromUserDto(UserDTO userDto)

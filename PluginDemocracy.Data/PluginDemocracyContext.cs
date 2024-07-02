@@ -6,7 +6,7 @@ namespace PluginDemocracy.Data
     public class PluginDemocracyContext : DbContext
     {
         public PluginDemocracyContext(DbContextOptions<PluginDemocracyContext> options) : base(options) { }
-        public DbSet<Community> Communities { get; set; }
+        public DbSet<HOACommunity> Communities { get; set; }
         public DbSet<Petition> Petitions { get; set; }
         public DbSet<ESignature> ESignatures { get; set; }
         public DbSet<JoinCommunityRequest> JoinCommunityRequests { get; set; }

@@ -9,7 +9,7 @@
         public void HomeMaxOwnershipTest()
         {
             //Arrange
-            Community gatedCommunity = new()
+            HOACommunity gatedCommunity = new()
             {
                 CanHaveHomes = true,
                 CanHaveNonResidentialCitizens = false,

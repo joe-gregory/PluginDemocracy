@@ -71,11 +71,11 @@ namespace PluginDemocracy.API.Controllers
                 existingUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.ParentCommunity)
+                        .ThenInclude(h => h.Community)
                     .Include(u => u.NonResidentialCitizenIn)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.ParentCommunity)
+                            .ThenInclude(h => h.Community)
                     .FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
                 if (existingUser == null)
                 {
@@ -119,11 +119,11 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _context.Users
                 .Include(u => u.ResidentOfHomes)
-                    .ThenInclude(h => h.ParentCommunity)
+                    .ThenInclude(h => h.Community)
                 .Include(u => u.NonResidentialCitizenIn)
                 .Include(u => u.HomeOwnerships)
                     .ThenInclude(ho => ho.Home)
-                        .ThenInclude(h => h.ParentCommunity)
+                        .ThenInclude(h => h.Community)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (existingUser == null) return NotFound();
             return Ok(new UserDTO(existingUser));
@@ -294,11 +294,11 @@ namespace PluginDemocracy.API.Controllers
                 User? fullDataUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.ParentCommunity)
+                        .ThenInclude(h => h.Community)
                     .Include(u => u.NonResidentialCitizenIn)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.ParentCommunity)
+                            .ThenInclude(h => h.Community)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (fullDataUser == null)
@@ -566,7 +566,7 @@ namespace PluginDemocracy.API.Controllers
                         DeadlineForResponse = petitionDTO.DeadlineForResponse,
                         LastUpdated = DateTime.UtcNow
                     };
-                    Community? petitionsCommunity = null;
+                    HOACommunity? petitionsCommunity = null;
                     petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
                     //Before adding the files, save the petition so an Id is assigned by SQL and it can be used as part of the document's urls
@@ -660,7 +660,7 @@ namespace PluginDemocracy.API.Controllers
                     petition.ActionRequested = petitionDTO.ActionRequested;
                     petition.SupportingArguments = petitionDTO.SupportingArguments;
                     petition.DeadlineForResponse = petitionDTO.DeadlineForResponse;
-                    Community? petitionsCommunity = null;
+                    HOACommunity? petitionsCommunity = null;
                     petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
 

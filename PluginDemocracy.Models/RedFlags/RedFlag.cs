@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public bool Resolved { get; set; }
-        public Community Community { get; private set;}
+        public HOACommunity Community { get; private set;}
         /// <summary>
         /// The users that are raising this flag. 
         /// </summary>
@@ -17,7 +17,7 @@
             Community = new();
             
         }
-        public RedFlag(Community community, User user, string description, BaseRedFlaggable itemFlagged)
+        public RedFlag(HOACommunity community, User user, string description, BaseRedFlaggable itemFlagged)
         {
             Users = new();
             Community = community;
