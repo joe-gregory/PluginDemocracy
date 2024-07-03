@@ -6,7 +6,7 @@
         public static string ConfirmEmailLink => "ConfirmEmailLink";
         public static string ConfirmEmailP1 => "ConfirmEmailP1";
         public static string ConfirmEmailP2 => "ConfirmEmailP2";
-        public static string ConfirmEmailTitle = "ConfirmEmailTitle";
+        public static string ConfirmEmailTitle => "ConfirmEmailTitle";
         public static string EmailOutEmailConfirmedBody => "EmailOutEmailConfirmedBody";
         public static string EmailOutEmailConfirmedTitle => "EmailOutEmailConfirmedTitle";
         public static string EmailTokenNoMatchBody => "EmailTokenNoMatchBody";
