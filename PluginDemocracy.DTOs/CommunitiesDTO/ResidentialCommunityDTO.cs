@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
 {
-    public class HOACommunityDTO : IAvatar
+    public class ResidentialCommunityDTO : IAvatar
     {
         #region PROPERTIES
         public int Id { get; set; }
@@ -40,14 +40,14 @@ namespace PluginDemocracy.DTOs
         public List<PostDTO>? Posts { get; set; } = [];
         #endregion
         #region METHODS
-        public HOACommunityDTO()
+        public ResidentialCommunityDTO()
         {
             FullName = string.Empty;
             Initials = string.Empty;
             Homes = [];
             Posts = [];
         }
-        public HOACommunityDTO(HOACommunity community)
+        public ResidentialCommunityDTO(ResidentialCommunity community)
         {
             //BaseCitizenDto Properties
             Id = community.Id;
@@ -70,6 +70,7 @@ namespace PluginDemocracy.DTOs
                     InternalAddress = home.InternalAddress,
                     Community = this,
                 };
+                Homes.Add(homeDTO);
             }
             foreach (Post post in community.Posts) Posts.Add(new PostDTO(post));
         }
@@ -91,9 +92,9 @@ namespace PluginDemocracy.DTOs
         /// </summary>
         /// <param name="community"></param>
         /// <returns></returns>
-        public static HOACommunityDTO ReturnSimpleCommunityDTOFromCommunity(HOACommunity community)
+        public static ResidentialCommunityDTO ReturnSimpleCommunityDTOFromCommunity(ResidentialCommunity community)
         {
-            HOACommunityDTO communityDTO = new()
+            ResidentialCommunityDTO communityDTO = new()
             {
                 Id = community.Id,
                 Name = community.Name,

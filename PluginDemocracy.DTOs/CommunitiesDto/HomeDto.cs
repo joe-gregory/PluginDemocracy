@@ -10,8 +10,8 @@ namespace PluginDemocracy.DTOs
         #region PROPERTIES
         public int Id { get; set; }
         public int Number { get; set; }
-        public string? InternalAddress { get; set; }
-        public HOACommunityDTO? Community { get; set; }
+        public string InternalAddress { get; set; }
+        public ResidentialCommunityDTO? Community { get; set; }
         public string? FullAddress { get; set; }
         public List<HomeOwnershipDTO> Ownerships { get; set; } = [];
         [JsonIgnore]
@@ -62,7 +62,10 @@ namespace PluginDemocracy.DTOs
         }
         #endregion
         #region METHODS
-        public HomeDTO() { }
+        public HomeDTO() 
+        {
+            InternalAddress = string.Empty;
+        }
         public HomeDTO(Home home)
         {
             Id = home.Id;
@@ -89,7 +92,7 @@ namespace PluginDemocracy.DTOs
                 Ownerships.Add(homeOwnershipDTO);
             }
             //HomeDto Properties
-            Community = home.Community != null ? HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.Community) : null;
+            Community = home.ResidentialCommunity != null ? ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.ResidentialCommunity) : null;
             Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDTOFromUser(r)).ToList();
         }
         /// <summary>
@@ -150,7 +153,7 @@ namespace PluginDemocracy.DTOs
                 FullAddress = home.FullAddress,
                 Ownerships = home.Ownerships.Select(ho => HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(ho)).ToList(),
                 //HomeDto Properties
-                Community = home.Community != null ? HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.Community) : null,
+                Community = home.ResidentialCommunity != null ? ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(home.ResidentialCommunity) : null,
                 Residents = home.Residents.Select(r => UserDTO.ReturnSimpleUserDTOFromUser(r)).ToList(),
             };
             return newHomeDto;

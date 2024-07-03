@@ -38,10 +38,12 @@ namespace PluginDemocracy.DTOs
                 FullAddress = homeOwnership.Home.FullAddress,
                 Number = homeOwnership.Home.Number,
             };
-            HOACommunityDTO homeDTOCommunity = new();
-            homeDTOCommunity.Id = homeOwnership.Home.Community.Id;
-            homeDTOCommunity.Name = homeOwnership.Home.Community.Name;
-            homeDTOCommunity.Address = homeOwnership.Home.Community.Address;
+            ResidentialCommunityDTO homeDTOCommunity = new()
+            {
+                Id = homeOwnership.Home?.ResidentialCommunity?.Id ?? 0,
+                Name = homeOwnership.Home?.ResidentialCommunity?.Name ?? string.Empty,
+                Address = homeOwnership.Home?.ResidentialCommunity?.Address ?? string.Empty
+            };
 
             homeDto.Community = homeDTOCommunity;
 

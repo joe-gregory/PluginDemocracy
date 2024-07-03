@@ -5,7 +5,7 @@ namespace PluginDemocracy.DTOs
     public class JoinCommunityRequestDTO
     {
         public int Id { get; set; } = 0;
-        public HOACommunityDTO? CommunityDto { get; set; }
+        public ResidentialCommunityDTO? CommunityDto { get; set; }
         public HomeDTO? HomeDto { get; set; } 
         public UserDTO? UserDto { get; set; }
         public bool JoiningAsOwner { get; set; } = false;
@@ -16,8 +16,8 @@ namespace PluginDemocracy.DTOs
         public JoinCommunityRequestDTO(JoinCommunityRequest jcr)
         {
             Id = jcr.Id;
-            CommunityDto = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(jcr.Community);
-            HomeDto = HomeDTO.ReturnHomeDTOFromHome(jcr.Home);
+            CommunityDto = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(jcr.Community);
+            HomeDto = new(jcr.Home);
             UserDto = jcr.User != null ? new(jcr.User) : null;
             JoiningAsOwner = jcr.JoiningAsOwner;
             JoiningAsResident = jcr.JoiningAsResident;
