@@ -7,8 +7,8 @@
 
 <MudGrid Class="mt-5 mb-10">
     <MudItem>
-        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<HOACommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
-            @foreach (HOACommunityDTO communityDtoOption in communitiesDtos)
+        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
+            @foreach (ResidentialCommunityDTO communityDtoOption in communitiesDtos)
             {
                 <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
             }

@@ -7,7 +7,7 @@ namespace PluginDemocracy.Models
         public int Id { get; init; }
         public int Number { get; set; }
         public string InternalAddress { get; set; }
-        public HOACommunity Community { get; set; }
+        public ResidentialCommunity? ResidentialCommunity { get; set; }
         /// <summary>
         /// Get only property. Returns Number + InternalAddress + Community.Address.
         /// </summary>
@@ -15,7 +15,7 @@ namespace PluginDemocracy.Models
         { 
             get 
             { 
-                return $"{Number} {InternalAddress}.\n{Community?.Address}"; 
+                return $"{Number} {InternalAddress}.\n{ResidentialCommunity?.Address}"; 
             } 
         }
         private readonly List<HomeOwnership> _ownerships;
@@ -88,9 +88,9 @@ namespace PluginDemocracy.Models
         #pragma warning disable CS8618
         private Home(){}
         #pragma warning restore CS8618
-        public Home(HOACommunity community, int number, string internalAddress)
+        public Home(ResidentialCommunity community, int number, string internalAddress)
         {
-            Community = community;
+            ResidentialCommunity = community;
             Number = number;
             InternalAddress = internalAddress;
             _ownerships = [];

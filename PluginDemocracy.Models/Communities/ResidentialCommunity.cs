@@ -4,9 +4,11 @@ using System.Globalization;
 namespace PluginDemocracy.Models
 {
     /// <summary>
-    /// Represents a Home Owners Association community that has homes and someone is a resident of this community if they live in one of the homes.
+    /// Represents a community where citizenship depends on either being a homeowner or a resident of a home in the community.
+    /// The homes are listed in <see cref="Homes"/>. The <see cref="Citizens"/> property is generated depending on the <see cref="Homes"/> property. 
+    /// This type of Community can represent a HOA, gated community , or any other type of residential commmunity. 
     /// </summary>
-    public class HOACommunity : IAvatar
+    public class ResidentialCommunity : IAvatar
     {
         #region PROPERTIES
         public int Id { get; init; }
@@ -153,9 +155,9 @@ namespace PluginDemocracy.Models
         #region METHODS
         //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
         #pragma warning disable CS8618
-        private HOACommunity() { }
+        private ResidentialCommunity() { }
         #pragma warning restore CS8618
-        public HOACommunity(string name, string address)
+        public ResidentialCommunity(string name, string address)
         {
             Name = name;
             Address = address;
@@ -180,13 +182,13 @@ namespace PluginDemocracy.Models
             if (!_homes.Contains(home))
             {
                 _homes.Add(home);
-                home.Community = this;
+                home.ResidentialCommunity = this;
             }
         }
         public void RemoveHome(Home home)
         {
             _homes.Remove(home);
-            home.Community = null;
+            home.ResidentialCommunity = null;
         }
         public void AddJoinCommunityRequest(JoinCommunityRequest request)
         {
@@ -217,12 +219,12 @@ namespace PluginDemocracy.Models
         }
         /// <summary>
         /// Call to approve a JoinCommunityRequest. Approving sets the user as a homeowner or resident of the home which makes him 
-        /// show up as a citizen in <see cref="HOACommunity.Citizens"/>. 
-        /// The request should be located in <see cref="HOACommunity.JoinCommunityRequests"/> in order to be able to approve it. 
+        /// show up as a citizen in <see cref="ResidentialCommunity.Citizens"/>. 
+        /// The request should be located in <see cref="ResidentialCommunity.JoinCommunityRequests"/> in order to be able to approve it. 
         /// </summary>
         /// <param name="request">The request you want to approve.</param>
-        /// <exception cref="ArgumentException">Thrown if request is not found in <see cref="HOACommunity.JoinCommunityRequests"/> or
-        /// if <see cref="JoinCommunityRequest.Home"/> does not match a <see cref="Home"/> in <see cref="HOACommunity.Homes"/> or if
+        /// <exception cref="ArgumentException">Thrown if request is not found in <see cref="ResidentialCommunity.JoinCommunityRequests"/> or
+        /// if <see cref="JoinCommunityRequest.Home"/> does not match a <see cref="Home"/> in <see cref="ResidentialCommunity.Homes"/> or if
         /// <see cref="JoinCommunityRequest.User"/> is null.</exception>
         public void ApproveJoinCommunityRequest(JoinCommunityRequest request)
         {

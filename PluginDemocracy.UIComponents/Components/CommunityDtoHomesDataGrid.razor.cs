@@ -38,7 +38,7 @@ namespace PluginDemocracy.UIComponents.Components
     public partial class CommunityDtoHomesDataGrid
     {
         [Parameter]
-        public HOACommunityDTO? Community { get; set; }
+        public ResidentialCommunityDTO? Community { get; set; }
         public void DeleteHome(HomeDTO home)
         {
             Community?.Homes.Remove(home);

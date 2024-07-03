@@ -9,7 +9,7 @@ namespace PluginDemocracy.Translations
         public CultureInfo Culture { get => TranslationResources.Culture; }
         private TranslationResourceManager()
         {
-            if(TranslationResources.Culture == null) TranslationResources.Culture = CultureInfo.GetCultureInfo("en-US");
+            TranslationResources.Culture ??= CultureInfo.GetCultureInfo("en-US");
             TranslationResources.Culture = CultureInfo.CurrentCulture;
         }
         public static TranslationResourceManager Instance { get; } = new();

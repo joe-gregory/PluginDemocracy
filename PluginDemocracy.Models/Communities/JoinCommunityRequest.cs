@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace PluginDemocracy.Models
 {
     /// <summary>
-    /// This represents a request to join a community by stating if you are an owner (of some %) or a resident of a home listed in the community's <see cref="HOACommunity.Homes"/>.
+    /// This represents a request to join a community by stating if you are an owner (of some %) or a resident of a home listed in the community's <see cref="ResidentialCommunity.Homes"/>.
     /// </summary>
     public class JoinCommunityRequest
     {
         public int Id { get; init; }
-        public HOACommunity Community { get; init; }
+        public ResidentialCommunity Community { get; init; }
         public Home Home { get; init; }
         public User User { get; init; }
         public bool JoiningAsOwner { get; init; }
@@ -36,7 +36,7 @@ namespace PluginDemocracy.Models
         #pragma warning disable CS8618
         private JoinCommunityRequest() {}
         #pragma warning restore CS8618
-        public JoinCommunityRequest(HOACommunity community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
+        public JoinCommunityRequest(ResidentialCommunity community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             Community = community; 
             Home = home;

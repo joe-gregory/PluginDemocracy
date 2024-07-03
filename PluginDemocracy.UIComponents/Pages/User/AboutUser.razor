@@ -16,7 +16,7 @@
     </div>
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-5 mb-5">@User?.FullName</MudText>
     <MudText Typo="Typo.h4" Class="mt-5 mb-5" Color="Color.Primary">@AppState.Translate(ResourceKeys.Communities):</MudText>
-    @foreach (HOACommunityDTO community in User?.Citizenships ?? [])
+    @foreach (ResidentialCommunityDTO community in User?.Citizenships ?? [])
     {
         <MudText Class="mt-5 mb-5">@community.FullName</MudText>
     }

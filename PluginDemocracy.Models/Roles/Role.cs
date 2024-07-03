@@ -11,7 +11,7 @@
         /// <summary>
         /// The community that the role is part of
         /// </summary>
-        public HOACommunity Community { get; init; }
+        public ResidentialCommunity Community { get; init; }
         /// <summary>
         /// The person that holds the Role
         /// </summary>
@@ -23,7 +23,7 @@
         #pragma warning disable CS8618
         private Role() { }
         #pragma warning restore CS8618
-        public Role(string title, string description, HOACommunity community)
+        public Role(string title, string description, ResidentialCommunity community)
         {
             Title = title;
             Description = description;

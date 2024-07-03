@@ -63,8 +63,8 @@ namespace PluginDemocracy.Models
         public bool PhoneNumberConfirmed { get; set; } 
         public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
-        private readonly List<HOACommunity> _citizenships;
-        public IReadOnlyList<HOACommunity> Citizenships
+        private readonly List<ResidentialCommunity> _citizenships;
+        public IReadOnlyList<ResidentialCommunity> Citizenships
         {
             get
             {
@@ -137,11 +137,11 @@ namespace PluginDemocracy.Models
             _notifications = [];
         }
 
-        public void AddCitizenship(HOACommunity community)
+        public void AddCitizenship(ResidentialCommunity community)
         {
             _citizenships.Add(community);
         }
-        public void RemoveCitizenship(HOACommunity community)
+        public void RemoveCitizenship(ResidentialCommunity community)
         {
             _citizenships.Remove(community);
         }

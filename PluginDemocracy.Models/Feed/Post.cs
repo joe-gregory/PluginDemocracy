@@ -7,6 +7,7 @@
         public string? Body { get; private set; }
         public DateTime PublishedDate { get; init; }
         public DateTime? LatestActivity { get; private set; } = null;
+
         private readonly List<PostComment> _comments;
         public IReadOnlyList<PostComment> Comments
         {
@@ -43,6 +44,20 @@
             if(imagesLinks != null) _images = imagesLinks;
             else _images = [];
             _reactions = [];
+        }
+        public void AddImage(string imageLink)
+        {
+            _images.Add(imageLink);
+            LatestActivity = DateTime.UtcNow;
+        }
+        public void AddImages(List<string> imageLinks)
+        {
+            _images.AddRange(imageLinks);
+            LatestActivity = DateTime.UtcNow;
+        }
+        public void RemoveImage(string imageLink)
+        {
+            _images.Remove(imageLink);
         }
         public void AddComment(User commenter, string comment)
         {

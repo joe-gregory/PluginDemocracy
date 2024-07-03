@@ -263,7 +263,7 @@ namespace PluginDemocracy.UIComponents
                 content.Add(fileContent, "file");
 
                 //Create HttpRequestMessage to include JWT in Authorization header
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url)
+                HttpRequestMessage request = new(HttpMethod.Post, url)
                 {
                     Content = content
                 };

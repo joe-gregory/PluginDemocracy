@@ -47,11 +47,11 @@ namespace PluginDemocracy.Models
                 }
             } 
         }
-        protected HOACommunity? _community;
+        protected ResidentialCommunity? _community;
         /// <summary>
         /// The community for which this petition is being created.
         /// </summary>
-        public HOACommunity? Community
+        public ResidentialCommunity? Community
         {
             get
             {

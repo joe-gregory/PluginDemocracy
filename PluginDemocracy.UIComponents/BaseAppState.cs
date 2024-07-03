@@ -9,11 +9,11 @@ namespace PluginDemocracy.UIComponents
     /// TODO: a loading method wherever I am storing data on web or maui that obtains this class. The SessionJWT is particuarly important for keeping session. 
     /// TODO: When a user opens up the app, the app needs to make sure that its token is still valid and if not, it should logout the user to ask for credentials again. Maybe the app needs to make a get request when just booting up to make sure the JWT is still valid. 
     /// </summary>
-    public abstract class BaseAppState
+    public abstract class BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
     {
-        protected readonly IServiceProvider _serviceProvider;
-        protected readonly IConfiguration _configuration;
-        protected readonly IHttpClientFactory _httpClientFactory;
+        protected readonly IServiceProvider _serviceProvider = serviceProvider;
+        protected readonly IConfiguration _configuration = configuration;
+        protected readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private bool _isLoading = false;
         public bool IsLoading 
         { 
@@ -23,8 +23,8 @@ namespace PluginDemocracy.UIComponents
                 _isLoading = value;
                 NotifyStateChanged();
             } 
-        } 
-        public PDAPIResponse PDAPIResponse { get; set; }
+        }
+        public PDAPIResponse PDAPIResponse { get; set; } = new();
         public abstract string BaseUrl { get; protected set; }
         //PROPERTIES:
         /// <summary>
@@ -55,15 +55,8 @@ namespace PluginDemocracy.UIComponents
         public CultureInfo Culture { get => TranslationResourceManager.Culture; }
         public string? SessionJWT { get; set; }
         public List<PostDTO> Posts { get; set; } = [];
-        //METHODS:
+
         #region METHODS
-        public BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
-        {
-            _serviceProvider = serviceProvider;
-            _configuration = configuration;
-            _httpClientFactory = httpClientFactory;
-            PDAPIResponse = new();
-        }
         #region PROTECTED METHODS
         /// <summary>
         /// Notify that changes have been made to the App State
@@ -88,7 +81,7 @@ namespace PluginDemocracy.UIComponents
         }
         public void DeletePost(PostDTO post)
         {
-            if (Posts.Contains(post)) Posts.Remove(post);
+            Posts.Remove(post);
             NotifyStateChanged();
         }
         //TODO: Change to protected later on cuando este implementando como checar el internet en diferentes devices

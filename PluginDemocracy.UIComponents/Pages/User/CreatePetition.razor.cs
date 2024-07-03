@@ -27,7 +27,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private IDialogService DialogService { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         [SupplyParameterFromQuery]
-        public int? petitionId { get; set; }
+        public int? PetitionId { get; set; }
         private PetitionDTO petitionDTO = new();
         private readonly IList<IBrowserFile> files = [];
         private string? temporaryAddAuthor;
@@ -35,7 +35,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         protected override async void OnInitialized()
         {
             //This is if it is a new petition
-            if (petitionId == null)
+            if (PetitionId == null)
             {
                 if (AppState?.User != null) petitionDTO.Authors.Add(new UserDTO()
                 {
@@ -45,7 +45,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
                 });
-                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new HOACommunityDTO()
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new ResidentialCommunityDTO()
                 {
                     Id = AppState.User.Citizenships[0].Id,
                     Name = AppState.User.Citizenships[0].Name,
@@ -58,8 +58,8 @@ namespace PluginDemocracy.UIComponents.Pages.User
         }
         private async Task RefreshPetition()
         {
-            if (petitionId == null) return;
-            string endpoint = ApiEndPoints.GetPetitionDraft + $"?petitionId={petitionId}";
+            if (PetitionId == null) return;
+            string endpoint = ApiEndPoints.GetPetitionDraft + $"?petitionId={PetitionId}";
             PetitionDTO? petition = await Services.GetDataGenericAsync<PetitionDTO>(endpoint);
             if (petition != null) petitionDTO = petition;
             else Services.AddSnackBarMessage("error", "Could not load the petition");
@@ -67,7 +67,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         }
         protected override async Task OnParametersSetAsync()
         {
-            if (petitionId == null)
+            if (PetitionId == null)
             {
                 petitionDTO = new();
                 if (AppState?.User != null) petitionDTO.Authors.Add(new UserDTO()
@@ -78,7 +78,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
                 });
-                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new HOACommunityDTO()
+                if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new ResidentialCommunityDTO()
                 {
                     Id = AppState.User.Citizenships[0].Id,
                     Name = AppState.User.Citizenships[0].Name,
@@ -225,7 +225,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (apiResponse.SuccessfulOperation)
                 {
                     files.Clear();
-                    if (apiResponse.Petition != null && petitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
+                    if (apiResponse.Petition != null && PetitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
                     else await RefreshPetition();
                 }
                 Services.AddSnackBarMessages(apiResponse.Alerts);

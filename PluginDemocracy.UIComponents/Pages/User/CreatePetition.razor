@@ -8,12 +8,12 @@
 </MudCard>
 @*Community*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
-    @if (petitionId == null)
+    @if (PetitionId == null)
     {
         @if (AppState?.User?.Citizenships.Count > 1)
         {
             <MudSelect @bind-Value="petitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
-                @foreach (HOACommunityDTO community in AppState.User.Citizenships)
+                @foreach (ResidentialCommunityDTO community in AppState.User.Citizenships)
                 {
                     <MudSelectItem Value="@community">@community.Name</MudSelectItem>
                 }
@@ -28,7 +28,7 @@
     {
         @* Display the communities that all the authors share in common *@
         <MudSelect @bind-Value="petitionDTO.CommunityDTO" Label="@(AppState.Translate(ResourceKeys.Community))" Required="true" Disabled="disableAll">
-            @foreach (HOACommunityDTO community in petitionDTO.CommonCommunitiesBetweenAuthors)
+            @foreach (ResidentialCommunityDTO community in petitionDTO.CommonCommunitiesBetweenAuthors)
             {
                 <MudSelectItem Value="@community">@community.FullName</MudSelectItem>
             }
