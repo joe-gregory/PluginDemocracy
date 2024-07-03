@@ -3,26 +3,20 @@ using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs.CommunitiesDto
 {
-   
-    public class PostReactionDto
+
+    [method: JsonConstructor]
+    public class PostReactionDto(int postId, UserDTO user, ReactionType reactionType)
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
         [JsonPropertyName("postId")]
 
-        public int PostId { get; set; } 
+        public int PostId { get; set; } = postId;
         [JsonPropertyName("user")]
 
-        public UserDTO User { get; private set; } 
+        public UserDTO User { get; private set; } = user;
         [JsonPropertyName("reactionType")]
 
-        public ReactionType ReactionType { get; set; } 
-        [JsonConstructor]
-        public PostReactionDto(int postId, UserDTO user, ReactionType reactionType)
-        {
-            PostId = postId;
-            User = user;
-            ReactionType = reactionType;
-        }
+        public ReactionType ReactionType { get; set; } = reactionType;
     }
 }

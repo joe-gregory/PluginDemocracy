@@ -23,7 +23,7 @@ namespace PluginDemocracy.DTOs
         {
             Id = post.Id;
             if (post.Author is User author) Author = UserDTO.ReturnSimpleUserDTOFromUser(author);
-            else if(post.Author is HOACommunity community) Author = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
+            else if(post.Author is ResidentialCommunity community) Author = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
             Body = post.Body;
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;
