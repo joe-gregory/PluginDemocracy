@@ -52,9 +52,9 @@ namespace PluginDemocracy.DTOs
         public string? ProfilePicture { get; set; }
         public string? PhoneNumber { get; set; }
         public bool? PhoneNumberConfirmed { get; set; }
-        public CultureInfo? Culture { get; set; }
+        public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
-        public List<HOACommunityDTO> Citizenships { get; set; } = [];
+        public List<ResidentialCommunityDTO> Citizenships { get; set; } = [];
         public List<HomeOwnershipDTO> HomeOwnerships { get; set; } = [];
         public List<HomeDTO> ResidentOfHomes { get; set; } = [];
         public List<NotificationDTO> Notifications { get; set; } = [];
@@ -63,7 +63,10 @@ namespace PluginDemocracy.DTOs
         [JsonIgnore]
         public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         public List<PetitionDTO> PetitionDrafts = [];
-        public UserDTO() { }
+        public UserDTO() 
+        { 
+            Culture = CultureInfo.CurrentCulture;
+        }
         public UserDTO(User user)
         {
             Id = user.Id;
@@ -81,9 +84,9 @@ namespace PluginDemocracy.DTOs
             Culture = user.Culture;
             Admin = user.Admin;
             foreach (Notification notification in user.Notifications) Notifications.Add(new NotificationDTO(notification));
-            foreach(HOACommunity community in user.Citizenships) Citizenships.Add(HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
+            foreach(ResidentialCommunity community in user.Citizenships) Citizenships.Add(ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
             foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnerships.Add(HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(homeOwnership));
-            foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(HomeDTO.ReturnHomeDTOFromHome(home));
+            foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(new(home));
         }
         [Obsolete("This method can lead to infinite recursions like when loggin in")]
         public static UserDTO ReturnUserDTOFromUser(User user)

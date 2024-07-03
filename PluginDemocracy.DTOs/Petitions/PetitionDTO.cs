@@ -10,7 +10,7 @@ namespace PluginDemocracy.DTOs
         public bool Published { get; set; }
         public DateTime? PublishedDate { get; set; }
         public DateTime? LastUpdated { get; set; }
-        public HOACommunityDTO? CommunityDTO { get; set; }
+        public ResidentialCommunityDTO? CommunityDTO { get; set; }
         public int CommunityDTOId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
@@ -22,13 +22,13 @@ namespace PluginDemocracy.DTOs
         public List<UserDTO> Authors { get; set; } = [];
         public List<int> AuthorsIds { get; set; } = [];
         public List<UserDTO> AuthorsReadyToPublish { get; set; } = [];
-        public List<HOACommunityDTO> CommonCommunitiesBetweenAuthors
+        public List<ResidentialCommunityDTO> CommonCommunitiesBetweenAuthors
         {
             get
             {
                 if (Authors.Count == 0) return [];
                 if (Authors.Count == 1) return Authors[0].Citizenships;
-                IEnumerable<HOACommunityDTO> commonCommunities = Authors[0].Citizenships;
+                IEnumerable<ResidentialCommunityDTO> commonCommunities = Authors[0].Citizenships;
                 foreach (UserDTO author in Authors.Skip(1))
                 {
                     commonCommunities = commonCommunities.Intersect(author.Citizenships);
@@ -48,13 +48,13 @@ namespace PluginDemocracy.DTOs
             Published = petition.Published;
             PublishedDate = petition.PublishedDate;
             LastUpdated = petition.LastUpdated;
-            if (petition.Community != null) CommunityDTO = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(petition.Community); 
+            if (petition.Community != null) CommunityDTO = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(petition.Community); 
             Title = petition.Title;
             Description = petition.Description;
             ActionRequested = petition.ActionRequested;
             SupportingArguments = petition.SupportingArguments;
             DeadlineForResponse = petition.DeadlineForResponse;
-            LinksToSupportingDocuments = petition.LinksToSupportingDocuments.ToList();
+            LinksToSupportingDocuments = [..petition.LinksToSupportingDocuments];
             foreach (User author in petition.Authors) Authors.Add(UserDTO.ReturnSimpleUserDTOFromUser(author));
             foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDTOFromUser(authorReadyToPublish)); 
         }

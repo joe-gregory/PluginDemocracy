@@ -11,8 +11,8 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
-        public List<HOACommunityDTO> AllCommunities { get; set; } = [];
-        public HOACommunityDTO? Community { get; set; }
+        public List<ResidentialCommunityDTO> AllCommunities { get; set; } = [];
+        public ResidentialCommunityDTO? Community { get; set; }
         public List<PostDTO> Posts { get; set; } = [];
         public PetitionDTO? Petition { get; set; }
         #endregion
@@ -30,9 +30,11 @@
         {
             if (Enum.TryParse(severity, true, out Severity severityLevel))
             {
-                Alert messageToAdd = new();
-                messageToAdd.Severity = severityLevel;
-                messageToAdd.Message = message;
+                Alert messageToAdd = new()
+                {
+                    Severity = severityLevel,
+                    Message = message
+                };
                 Alerts.Add(messageToAdd);
             }
             else throw new Exception("Unable to add message to PDAPIResponse.Messages using AddMessage method. Likely Severity provided with typos.");
