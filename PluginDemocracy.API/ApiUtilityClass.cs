@@ -51,7 +51,7 @@ namespace PluginDemocracy.API
             smtpClient.Credentials = new NetworkCredential(mailJetApiKey, mailJetSecretKey);
             smtpClient.EnableSsl = true;
 
-            MailMessage mailMessage = new MailMessage()
+            MailMessage mailMessage = new()
             {
                 From = new MailAddress("info@plugindemocracy.com"),
                 Subject = subject,
@@ -141,10 +141,10 @@ namespace PluginDemocracy.API
 
             SecurityTokenDescriptor tokenDescriptor = new()
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
+                Subject = new ClaimsIdentity(
+                [
                     new(ClaimTypes.Name, userId.ToString())
-                }),
+                ]),
                 Expires = DateTime.UtcNow.AddDays(expirationDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -257,11 +257,10 @@ namespace PluginDemocracy.API
                     .Include(u => u.Notifications)
                     .Include(u => u.PetitionDrafts)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.Community)
-                    .Include(u => u.NonResidentialCitizenIn)
+                        .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.Community)
+                            .ThenInclude(h => h.ResidentialCommunity)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (user == null)
