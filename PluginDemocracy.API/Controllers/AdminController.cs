@@ -28,7 +28,7 @@ namespace PluginDemocracy.API.Controllers
             return Ok(user.Admin);
         }
         [HttpGet("getlistofallsimplecommunitiesdtos")]
-        public async Task<ActionResult<List<HOACommunityDTO>>> GetListOfAllSimpleCommunitiesDtos()
+        public async Task<ActionResult<List<ResidentialCommunityDTO>>> GetListOfAllSimpleCommunitiesDtos()
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return Unauthorized();
@@ -37,9 +37,9 @@ namespace PluginDemocracy.API.Controllers
                 User? user = await _context.Users.FirstOrDefaultAsync(u => u.Id == existingUser.Id);
                 if(user == null) return BadRequest();
                 if (user.Admin == false) return Unauthorized();
-                List<HOACommunity> communities = await _context.Communities.ToListAsync();
-                List<HOACommunityDTO> communityDtos = [];
-                foreach (HOACommunity community in communities) communityDtos.Add(HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
+                List<ResidentialCommunity> communities = await _context.Communities.ToListAsync();
+                List<ResidentialCommunityDTO> communityDtos = [];
+                foreach (ResidentialCommunity community in communities) communityDtos.Add(ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
                 return Ok(communityDtos);
             }
             catch (Exception e)

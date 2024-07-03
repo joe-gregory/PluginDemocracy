@@ -22,7 +22,7 @@ namespace PluginDemocracy.API.Controllers
 
         [Authorize]
         [HttpPost("registercommunity")]
-        public async Task<ActionResult<PDAPIResponse>> Register(HOACommunityDTO communityDto)
+        public async Task<ActionResult<PDAPIResponse>> Register(ResidentialCommunityDTO communityDto)
         {
             PDAPIResponse response = new();
 
@@ -52,7 +52,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //Create Community instance
-            HOACommunity newCommunity = new(communityDto.Name, communityDto.Address)
+            ResidentialCommunity newCommunity = new(communityDto.Name, communityDto.Address)
             {
                 Name = communityDto.Name,
                 Address = communityDto.Address,
@@ -81,8 +81,8 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                List<HOACommunity> communities = await _context.Communities.ToListAsync();
-                foreach (HOACommunity community in communities) response.AllCommunities.Add(new HOACommunityDTO()
+                List<ResidentialCommunity> communities = await _context.Communities.ToListAsync();
+                foreach (ResidentialCommunity community in communities) response.AllCommunities.Add(new ResidentialCommunityDTO()
                 {
                     Id = community.Id,
                     Name = community.Name,
@@ -108,14 +108,14 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                HOACommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+                ResidentialCommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
                 if (community == null)
                 {
                     response.AddAlert("error", "Community not found");
                     return BadRequest(response);
                 }
-                response.Community = HOACommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
-                foreach (Home home in community.Homes) response.Community.Homes.Add(HomeDTO.ReturnHomeDTOFromHome(home));
+                response.Community = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
+                foreach (Home home in community.Homes) response.Community.Homes.Add(new(home));
                 return Ok(response);
             }
             catch (Exception ex)
@@ -165,7 +165,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "CommunityDto is null");
                 return BadRequest(response);
             }
-            HOACommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
+            ResidentialCommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -189,7 +189,7 @@ namespace PluginDemocracy.API.Controllers
                 //Search for all the roles that have CanEditHomeOwnership and CanEditResidency in the Community
                 //If user is joining as home owner, send notification to Roles with corresponding powers. If role is not there, default send notification to app admin.
                 List<User?> roleHoldersWithJoinPower = community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
-                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {home.Name} in community {community.FullName}";
+                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
                 if (request.JoiningAsOwner)
                 {
@@ -250,7 +250,7 @@ namespace PluginDemocracy.API.Controllers
                 return response;
             }
             Post newPost = new(existingUser, request.Body);
-            HOACommunity? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
+            ResidentialCommunity? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -292,7 +292,8 @@ namespace PluginDemocracy.API.Controllers
                     await using Stream filestream = file.OpenReadStream();
                     //Upload the image
                     await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
-                    newPost.Images.Add(blobClient.Uri.ToString());
+
+                    newPost.AddImage(blobClient.Uri.ToString());
                 }
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.PostCreatedSuccessfully, existingUser.Culture));
@@ -319,7 +320,7 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
-                HOACommunity? community = await _context.Communities
+                ResidentialCommunity? community = await _context.Communities
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Author)
                     .Include(c => c.Posts)
@@ -357,20 +358,21 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             Post? post = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == postId);
-            if (post == null)
-            {
-                response.AddAlert("error", "Post not found");
-                return BadRequest(response);
-            }
-            if (post?.Author?.Id != existingUser.Id)
-            {
-                response.AddAlert("error", "User does not have permission to delete this post");
-                return BadRequest(response);
-            }
+
             try
             {
-
+                if (post == null)
+                {
+                    response.AddAlert("error", "Post not found");
+                    return BadRequest(response);
+                }
+                if (post?.Author is User user && user.Id != existingUser.Id)
+                {
+                    response.AddAlert("error", "User does not have permission to delete this post");
+                    return BadRequest(response);
+                }
                 //If post has images in the blob storage, delete them
+                #pragma warning disable CS8602 // Suppressing warning dereference of a possibly null reference because checking for nullability inside try statement.
                 if (post.Images.Count != 0)
                 {
                     string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
@@ -391,6 +393,7 @@ namespace PluginDemocracy.API.Controllers
                         await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
                 }
+                #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 _context.Posts.Remove(post);
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", "Post deleted successfully");

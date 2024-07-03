@@ -30,7 +30,7 @@ namespace PluginDemocracy.API.Controllers
             if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
             User newUser = new(firstName: registeringUser.FirstName, lastName: registeringUser.LastName, email: registeringUser.Email, phoneNumber: registeringUser.PhoneNumber, address:registeringUser.Address, dateOfBirth:registeringUser.DateOfBirth, culture:registeringUser.Culture, middleName:registeringUser.MiddleName, secondLastName:registeringUser.SecondLastName);
             //hash password && assign
-            PasswordHasher<User> _passwordHasher = new PasswordHasher<User>();
+            PasswordHasher<User> _passwordHasher = new();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
             // Save the new user to the context
             _context.Users.Add(newUser);
@@ -67,11 +67,10 @@ namespace PluginDemocracy.API.Controllers
                 existingUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.Community)
-                    .Include(u => u.NonResidentialCitizenIn)
+                        .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.Community)
+                            .ThenInclude(h => h.ResidentialCommunity)
                     .FirstOrDefaultAsync(u => u.Email == loginInfo.Email);
                 if (existingUser == null)
                 {
@@ -115,11 +114,10 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _context.Users
                 .Include(u => u.ResidentOfHomes)
-                    .ThenInclude(h => h.Community)
-                .Include(u => u.NonResidentialCitizenIn)
+                    .ThenInclude(h => h.ResidentialCommunity)
                 .Include(u => u.HomeOwnerships)
                     .ThenInclude(ho => ho.Home)
-                        .ThenInclude(h => h.Community)
+                        .ThenInclude(h => h.ResidentialCommunity)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (existingUser == null) return NotFound();
             return Ok(new UserDTO(existingUser));
@@ -290,11 +288,10 @@ namespace PluginDemocracy.API.Controllers
                 User? fullDataUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.ResidentOfHomes)
-                        .ThenInclude(h => h.Community)
-                    .Include(u => u.NonResidentialCitizenIn)
+                        .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
                         .ThenInclude(ho => ho.Home)
-                            .ThenInclude(h => h.Community)
+                            .ThenInclude(h => h.ResidentialCommunity)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if (fullDataUser == null)
@@ -419,7 +416,7 @@ namespace PluginDemocracy.API.Controllers
 
             //Make sure it is the correct type of file
             string fileExtension = Path.GetExtension(file.FileName).ToLower();
-            if (!fileExtension.StartsWith(".")) fileExtension = "." + fileExtension;
+            if (!fileExtension.StartsWith('.')) fileExtension = "." + fileExtension;
             if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
             {
                 response.AddAlert("error", "File extension is not jpg, jpeg, or png");
@@ -435,7 +432,6 @@ namespace PluginDemocracy.API.Controllers
             if (!String.IsNullOrEmpty(existingUser.ProfilePicture))
             {
                 Uri profilePicUri = new(existingUser.ProfilePicture);
-                string blobContainerUrl = $"{profilePicUri.Scheme}://{profilePicUri.Host}/{profilePicUri.Segments[1]}";
                 string oldBlobName = profilePicUri.AbsolutePath.Replace($"/{profilePicUri.Segments[1]}", "").TrimStart('/');
                 BlobClient oldBlobClient = blobContainerClient.GetBlobClient(oldBlobName);
                 try
@@ -562,7 +558,7 @@ namespace PluginDemocracy.API.Controllers
                         DeadlineForResponse = petitionDTO.DeadlineForResponse,
                         LastUpdated = DateTime.UtcNow
                     };
-                    HOACommunity? petitionsCommunity = null;
+                    ResidentialCommunity? petitionsCommunity = null;
                     petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
                     //Before adding the files, save the petition so an Id is assigned by SQL and it can be used as part of the document's urls
@@ -587,7 +583,7 @@ namespace PluginDemocracy.API.Controllers
                         //Upload the document
                         await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
                         //Remove Sas Token: 
-                        UriBuilder uriBuilder = new UriBuilder(blobClient.Uri);
+                        UriBuilder uriBuilder = new(blobClient.Uri);
                         System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
                         query.Clear();
                         uriBuilder.Query = query.ToString();
@@ -656,7 +652,7 @@ namespace PluginDemocracy.API.Controllers
                     petition.ActionRequested = petitionDTO.ActionRequested;
                     petition.SupportingArguments = petitionDTO.SupportingArguments;
                     petition.DeadlineForResponse = petitionDTO.DeadlineForResponse;
-                    HOACommunity? petitionsCommunity = null;
+                    ResidentialCommunity? petitionsCommunity = null;
                     petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
 
@@ -678,7 +674,7 @@ namespace PluginDemocracy.API.Controllers
                         //Upload the document
                         await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
                         //Remove Sas Token: 
-                        UriBuilder uriBuilder = new UriBuilder(blobClient.Uri);
+                        UriBuilder uriBuilder = new(blobClient.Uri);
                         System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
                         query.Clear();
                         uriBuilder.Query = query.ToString();
@@ -750,13 +746,13 @@ namespace PluginDemocracy.API.Controllers
                     {
                         string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
                         // Remove existing SAS token from URL if present
-                        UriBuilder uriBuilder = new UriBuilder(decodedFileLink)
+                        UriBuilder uriBuilder = new(decodedFileLink)
                         {
                             Query = null // This removes the existing query (SAS token)
                         };
                         // Append the new SAS token
                         uriBuilder.Query = readWriteSasToken;
-                        BlobClient blobClient = new BlobClient(uriBuilder.Uri);
+                        BlobClient blobClient = new(uriBuilder.Uri);
                         await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
                     _context.Petitions.Remove(petition);
@@ -789,7 +785,6 @@ namespace PluginDemocracy.API.Controllers
                 .Include(p => p.Authors)
                     .ThenInclude(a => a.HomeOwnerships)
                 .Include(p => p.Authors)
-                    .ThenInclude(a => a.NonResidentialCitizenIn)
                 .Include(p => p.Authors)
                     .ThenInclude(a => a.ResidentOfHomes)
                 .Include(p => p.AuthorsReadyToPublish)
@@ -851,13 +846,13 @@ namespace PluginDemocracy.API.Controllers
                 string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
 
                 // Remove existing SAS token from URL if present
-                UriBuilder uriBuilder = new UriBuilder(decodedFileLink)
+                UriBuilder uriBuilder = new(decodedFileLink)
                 {
                     Query = null // This removes the existing query (SAS token)
                 };
                 // Append the new SAS token
                 uriBuilder.Query = readWriteSasToken;
-                BlobClient blobClient = new BlobClient(uriBuilder.Uri);
+                BlobClient blobClient = new(uriBuilder.Uri);
                 await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                 petition.RemoveLinkToSupportingDocument(fileLink);
                 await _context.SaveChangesAsync();
