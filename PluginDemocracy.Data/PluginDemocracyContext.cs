@@ -12,6 +12,11 @@ namespace PluginDemocracy.Data
         public DbSet<Post> Posts { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            /// Since EFC has difficulty storing CultureInfo objects, I convert to string when saving and 
+            /// convert back to CultureInfo when reading.
+            modelBuilder.Entity<User>().Property(u => u.Culture).HasConversion(c => c.Name, s => new(s));
+
+            modelBuilder.Entity<ResidentialCommunity>().Property("_officialLanguagesCodes");
         }
     }
 }

@@ -38,6 +38,17 @@ namespace PluginDemocracy.UIComponents.Components
             base.OnInitialized();
             RefreshLookOfThumbs();
         }
+        private void NavigateToAboutPage()
+        {
+            if (PostDto?.Author is UserDTO)
+            {
+                Services.NavigateTo($"{FrontEndPages.AboutUser}?userId ={PostDto?.Author?.Id}");
+            }
+            else if(PostDto?.Author is ResidentialCommunityDTO)
+            {
+                Services.NavigateTo($"{FrontEndPages.AboutCommunity}?communityId ={PostDto?.Author?.Id}");
+            }
+        }
         private async void ReactToPost(ReactionType reactionType)
         {
             if (AppState.User != null && PostDto != null)

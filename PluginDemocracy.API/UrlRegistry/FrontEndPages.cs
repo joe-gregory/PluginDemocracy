@@ -30,5 +30,6 @@ namespace PluginDemocracy.API.UrlRegistry
 
         //About pages
         public const string AboutUser = "/aboutuser";
+        public const string AboutCommunity = "/aboutcommunity"; 
     }
 }

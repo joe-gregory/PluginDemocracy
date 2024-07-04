@@ -24,7 +24,7 @@
             <PropertyColumn Property="request => request.JoiningAsOwner" Title="Joining As Owner" />
             <PropertyColumn Property="request => request.OwnershipPercentage" Title="Ownership Claimed" />
             @* //Home Info: *@
-            <PropertyColumn Property="request => request.HomeDto != null ? request.HomeDto.Address : null" Title="Home Address" />
+            <PropertyColumn Property="request => request.HomeDto != null ? request.HomeDto.InternalAddress : null" Title="Home Address" />
             @* //User info: *@
            <PropertyColumn Property="request => request.UserDto != null ? request.UserDto.FullName : null" Title="Name"/>
         </Columns>
@@ -51,7 +51,7 @@
             <MudLink Href=@($"/user/{pair.Key.Id}")>Owner: @pair.Key.FullName Ownership: @($"{pair.Value}%")</MudLink>
         }
         <MudText>Current Residents:</MudText>
-        @foreach(BaseCitizenDTO resident in SelectedJoinRequest?.HomeDto?.Residents ?? [])
+        @foreach(UserDTO resident in SelectedJoinRequest?.HomeDto?.Residents ?? [])
         {
             <MudLink Href=@($"/user/{resident.Id}")>Resident: @resident.FullName</MudLink>
         }

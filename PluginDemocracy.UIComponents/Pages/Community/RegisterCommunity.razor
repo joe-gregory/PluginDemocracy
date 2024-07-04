@@ -38,11 +38,7 @@
     </MudPaper>
 </MudForm>
     @code {
-    private ResidentialCommunityDTO communityDto = new ResidentialCommunityDTO()
-        {
-            CanHaveHomes = true,
-            ProposalsExpirationDays = 30,
-        };
+    private ResidentialCommunityDTO communityDto = new();
     private bool success;
     string[] errors = [];
 
@@ -156,8 +152,8 @@
         //Assign language if all looks good
         if (finalCheckBeforePosting())
         {
-            if (officialLanguageEnglish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("en-US"));
-            if (officialLanguageSpanish) communityDto.AddOfficialLanguage(new System.Globalization.CultureInfo("es-MX"));
+            if (officialLanguageEnglish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("en-US"));
+            if (officialLanguageSpanish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("es-MX"));
             await Services.PostDataAsync<ResidentialCommunityDTO>(ApiEndPoints.RegisterCommunity, communityDto);
         }
         else return;

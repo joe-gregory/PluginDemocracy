@@ -46,7 +46,7 @@ namespace PluginDemocracy.Models
         /// TODO: This property is missing encapsulation. 
         /// </summary>
         public string OfficialCurrency { get; set; }
-        private readonly List<CultureInfo> _officialLanguages;
+        private readonly List<string> _officialLanguagesCodes;
         /// <summary>
         /// Get only property. Represents the official languages of the community.
         /// </summary>
@@ -54,7 +54,12 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                return _officialLanguages.AsReadOnly();
+                List<CultureInfo> officialLanguages = [];
+                foreach (string language in _officialLanguagesCodes)
+                {
+                    officialLanguages.Add(new CultureInfo(language));
+                }
+                return officialLanguages.AsReadOnly();
             }
         }
         private readonly List<Home> _homes;
@@ -162,7 +167,7 @@ namespace PluginDemocracy.Models
             Name = name;
             Address = address;
             OfficialCurrency = "USD";
-            _officialLanguages = [];
+            _officialLanguagesCodes = [];
             _homes = [];
             _joinCommunityRequests = [];
             _roles = [];
@@ -171,11 +176,11 @@ namespace PluginDemocracy.Models
         }
         public void AddOfficialLanguage(CultureInfo culture)
         {
-            if (!_officialLanguages.Contains(culture)) _officialLanguages.Add(culture);
+            if (!_officialLanguagesCodes.Contains(culture.Name)) _officialLanguagesCodes.Add(culture.Name);
         }
         public void RemoveOfficialLanguage(CultureInfo culture)
         {
-            _officialLanguages.Remove(culture);
+            _officialLanguagesCodes.Remove(culture.Name);
         }
         public void AddHome(Home home)
         {

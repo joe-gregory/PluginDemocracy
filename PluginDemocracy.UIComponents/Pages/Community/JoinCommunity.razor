@@ -29,7 +29,7 @@
                 <MudTh>@AppState.Translate(ResourceKeys.Join)</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Homes)">@context.Address</MudTd>
+                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Homes)">@context.InternalAddress</MudTd>
                 <MudTd DataLabel="@AppState.Translate(ResourceKeys.Residents)">
                     <MudAvatarGroup>
                         @foreach (UserDTO user in context.Residents)

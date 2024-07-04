@@ -60,7 +60,7 @@ namespace PluginDemocracy.Models
         public string HashedPassword { get; set; }
         public string? ProfilePicture { get; set; }
         public string? PhoneNumber { get; set; } 
-        public bool PhoneNumberConfirmed { get; set; } 
+        public bool PhoneNumberConfirmed { get; set; }
         public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
         private readonly List<ResidentialCommunity> _citizenships;
