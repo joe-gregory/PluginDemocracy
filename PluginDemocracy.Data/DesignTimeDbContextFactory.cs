@@ -13,10 +13,12 @@ namespace PluginDemocracy.Data
     {
         public PluginDemocracyContext CreateDbContext(string[] args)
         {
+            string basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "PluginDemocracy.API"));
+
             IConfigurationRoot configuration = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.json")
-             .Build();
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json")
+                .Build();
 
             var connectionString = configuration.GetConnectionString("PluginDemocracyDatabase");
 

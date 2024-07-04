@@ -63,7 +63,7 @@ namespace PluginDemocracy.API.Controllers
             foreach (HomeDTO homeDTO in communityDto.Homes) newCommunity.AddHome(new Home(newCommunity, homeDTO.Number, homeDTO.InternalAddress));
             try
             {
-                _context.Communities.Add(newCommunity);
+                _context.ResidentialCommunities.Add(newCommunity);
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", "Community created successfully");
                 response.RedirectTo = FrontEndPages.JoinCommunity;
@@ -81,7 +81,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                List<ResidentialCommunity> communities = await _context.Communities.ToListAsync();
+                List<ResidentialCommunity> communities = await _context.ResidentialCommunities.ToListAsync();
                 foreach (ResidentialCommunity community in communities) response.AllCommunities.Add(new ResidentialCommunityDTO()
                 {
                     Id = community.Id,
@@ -108,7 +108,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                ResidentialCommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+                ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
                 if (community == null)
                 {
                     response.AddAlert("error", "Community not found");
@@ -165,7 +165,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "CommunityDto is null");
                 return BadRequest(response);
             }
-            ResidentialCommunity? community = await _context.Communities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -250,7 +250,7 @@ namespace PluginDemocracy.API.Controllers
                 return response;
             }
             Post newPost = new(existingUser, request.Body);
-            ResidentialCommunity? community = await _context.Communities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == request.CommunityId);
             if (community == null)
             {
                 response.AddAlert("error", "Community not found");
@@ -320,7 +320,7 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
-                ResidentialCommunity? community = await _context.Communities
+                ResidentialCommunity? community = await _context.ResidentialCommunities
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Author)
                     .Include(c => c.Posts)
@@ -373,7 +373,7 @@ namespace PluginDemocracy.API.Controllers
                 }
                 //If post has images in the blob storage, delete them
                 #pragma warning disable CS8602 // Suppressing warning dereference of a possibly null reference because checking for nullability inside try statement.
-                if (post.Images.Count != 0)
+                if (post.ImagesLinks.Count != 0)
                 {
                     string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
                     if (string.IsNullOrEmpty(blobSasUrl))

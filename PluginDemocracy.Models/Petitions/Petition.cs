@@ -23,7 +23,7 @@ namespace PluginDemocracy.Models
         /// Once published, it cannot be unpublished, edited, or deleted.
         /// </summary>
         public DateTime? PublishedDate { get; protected set; } = null;
-        protected DateTime? _lastUpdated;
+        private DateTime? _lastUpdated;
         /// <summary>
         /// If the petition has not been published, the LastUpdated date can be changed as changes are made to the draft. 
         /// However, once it is published, LastUpdated can only be set internally. It is set to the date it was published and afterwards
@@ -47,7 +47,7 @@ namespace PluginDemocracy.Models
                 }
             } 
         }
-        protected ResidentialCommunity? _community;
+        private ResidentialCommunity? _community;
         /// <summary>
         /// The community for which this petition is being created.
         /// </summary>
@@ -64,7 +64,7 @@ namespace PluginDemocracy.Models
                 _authorsReadyToPublish.Clear();
             }
         }
-        protected string? _title;
+        private string? _title;
         /// <summary>
         /// A clear and concise title that summarizes the purpose of the petition.
         /// </summary>
@@ -81,7 +81,7 @@ namespace PluginDemocracy.Models
                 _title = value;
             }
         }
-        protected string? _description;
+        private string? _description;
         /// <summary>
         /// A detailed description of the issue, including why it is important and what changes or actions are being requested.
         /// </summary>
@@ -101,7 +101,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// A clear statement of what the petitioners want to happen as a result of the petition.
         /// </summary>
-        protected string? _actionRequested;
+        private string? _actionRequested;
         public string? ActionRequested
         {
             get
@@ -115,7 +115,7 @@ namespace PluginDemocracy.Models
                 _actionRequested = value;
             }
         }
-        protected string? _supportingArguments;
+        private string? _supportingArguments;
         public string? SupportingArguments
         {
             get
@@ -129,7 +129,7 @@ namespace PluginDemocracy.Models
                 _supportingArguments = value;
             }
         }
-        protected DateTime? _deadlineForResponse;
+        private DateTime? _deadlineForResponse;
         /// <summary>
         /// A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board.
         /// </summary>
@@ -146,19 +146,19 @@ namespace PluginDemocracy.Models
                 _deadlineForResponse = value;
             }
         }
-        protected List<string> _linksToSupportingDocuments = [];
+        private readonly List<string> _linksToSupportingDocuments = [];
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
         public IReadOnlyList<string> LinksToSupportingDocuments => _linksToSupportingDocuments.AsReadOnly();
-        protected List<User> _authors = [];
+        private readonly List<User> _authors = [];
         /// <summary>
         /// The User(s) who created the petition and can modify it when not published.
         /// </summary>
         public IReadOnlyList<User> Authors => _authors.AsReadOnly();
-        protected List<User> _authorsReadyToPublish = [];
+        private readonly List<User> _authorsReadyToPublish = [];
         public IReadOnlyList<User> AuthorsReadyToPublish => _authorsReadyToPublish.AsReadOnly();
-        protected List<ESignature> _signatures = [];
+        private readonly List<ESignature> _signatures = [];
         public IReadOnlyList<ESignature> Signatures
         {
             get

@@ -31,12 +31,12 @@
                 return _comments.AsReadOnly();
             }
         }
-        private readonly List<string> _images;
-        public IReadOnlyList<string> Images
+        private readonly List<string> _imagesLinks;
+        public IReadOnlyList<string> ImagesLinks
         {
             get
             {
-                return _images.AsReadOnly();
+                return _imagesLinks.AsReadOnly();
             }
         }
         private readonly List<PostReaction> _reactions;
@@ -56,23 +56,23 @@
             Body = body;
             PublishedDate = DateTime.UtcNow;
             _comments = [];
-            if(imagesLinks != null) _images = imagesLinks;
-            else _images = [];
+            if(imagesLinks != null) _imagesLinks = imagesLinks;
+            else _imagesLinks = [];
             _reactions = [];
         }
         public void AddImage(string imageLink)
         {
-            _images.Add(imageLink);
+            _imagesLinks.Add(imageLink);
             LatestActivity = DateTime.UtcNow;
         }
         public void AddImages(List<string> imageLinks)
         {
-            _images.AddRange(imageLinks);
+            _imagesLinks.AddRange(imageLinks);
             LatestActivity = DateTime.UtcNow;
         }
         public void RemoveImage(string imageLink)
         {
-            _images.Remove(imageLink);
+            _imagesLinks.Remove(imageLink);
         }
         public void AddComment(User commenter, string comment)
         {

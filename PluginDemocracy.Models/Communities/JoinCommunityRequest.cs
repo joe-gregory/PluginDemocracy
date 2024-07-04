@@ -21,7 +21,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Link to files that the user will need to upload in order to 
         /// </summary>
-        public List<string> Files { get; init; }
+        public List<string> LinksToFiles { get; init; }
         /// <summary>
         /// These are messages that will be displayed in case the admin needs more info or more files in order to verify the request to join the community.
         /// </summary>
@@ -45,7 +45,7 @@ namespace PluginDemocracy.Models
             if (!joiningAsOwner) JoiningAsResident = true;
             else JoiningAsResident = false;
             OwnershipPercentage = ownershipPercentage;
-            Files = [];
+            LinksToFiles = [];
             Messages = [];
         }
     }

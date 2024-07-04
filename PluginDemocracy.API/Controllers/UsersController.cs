@@ -559,7 +559,7 @@ namespace PluginDemocracy.API.Controllers
                         LastUpdated = DateTime.UtcNow
                     };
                     ResidentialCommunity? petitionsCommunity = null;
-                    petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
+                    petitionsCommunity = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
                     //Before adding the files, save the petition so an Id is assigned by SQL and it can be used as part of the document's urls
                     _context.Petitions.Add(petition);
@@ -653,7 +653,7 @@ namespace PluginDemocracy.API.Controllers
                     petition.SupportingArguments = petitionDTO.SupportingArguments;
                     petition.DeadlineForResponse = petitionDTO.DeadlineForResponse;
                     ResidentialCommunity? petitionsCommunity = null;
-                    petitionsCommunity = await _context.Communities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
+                    petitionsCommunity = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == petitionDTO.CommunityDTOId);
                     if (petitionsCommunity != null) petition.Community = petitionsCommunity;
 
                     //BLOB STORAGE SUPPORTING DOCUMENTS

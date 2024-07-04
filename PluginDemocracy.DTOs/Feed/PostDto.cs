@@ -27,7 +27,7 @@ namespace PluginDemocracy.DTOs
             Body = post.Body;
             PublishedDate = post.PublishedDate;
             LatestActivity = post.LatestActivity;
-            Images = [..post.Images];
+            Images = [..post.ImagesLinks];
             foreach(PostReaction reaction in post.Reactions)
             {
                 Reactions.Add(new(post.Id, new(reaction.User), reaction.ReactionType));
