@@ -3,7 +3,22 @@
     public class Post
     {
         public int Id { get; init; }
-        public IAvatar? Author { get; private set; }
+        private User? UserAuthor;
+        private ResidentialCommunity? CommunityAuthor;
+        public IAvatar? Author
+        {
+            get
+            {
+                if(UserAuthor != null) return UserAuthor;
+                return CommunityAuthor;
+            }
+            set
+            {
+                if (value is User user) UserAuthor = user;
+                else if (value is ResidentialCommunity community) CommunityAuthor = community;
+                else throw new ArgumentException("Author must be either a User or a ResidentialCommunity");
+            }
+        }
         public string? Body { get; private set; }
         public DateTime PublishedDate { get; init; }
         public DateTime? LatestActivity { get; private set; } = null;

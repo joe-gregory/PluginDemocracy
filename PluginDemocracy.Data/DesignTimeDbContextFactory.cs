@@ -21,7 +21,8 @@ namespace PluginDemocracy.Data
             var connectionString = configuration.GetConnectionString("PluginDemocracyDatabase");
 
             var optionsBuilder = new DbContextOptionsBuilder<PluginDemocracyContext>();
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString).EnableDetailedErrors();
+            optionsBuilder.EnableDetailedErrors();
 
             return new PluginDemocracyContext(optionsBuilder.Options);
         }

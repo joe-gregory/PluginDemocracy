@@ -2,6 +2,7 @@
 {
     public class RolePowers
     {
+        public int Id { get; init; }
         /// <summary>
         /// This allows it to accept Join Community Requests where the user is joining as an owner. 
         /// </summary>
