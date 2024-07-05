@@ -135,26 +135,17 @@ namespace PluginDemocracy.UIComponents
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
-            //Add JWT to request if available
-            using HttpRequestMessage request = new(HttpMethod.Post, url);
-            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
-            //Add request content if the data is not null
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
-            };
-            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data, options), Encoding.UTF8, "application/json");
-            else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
+                _appState.PDAPIResponse = new();
                 _appState.IsLoading = false;
-                return new();
+                return _appState.PDAPIResponse;
             }
         }
         public async Task<TResult?> PostDataGenericAsync<TInput, TResult>(string endpoint, TInput? data = null)
