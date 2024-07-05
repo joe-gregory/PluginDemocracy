@@ -137,7 +137,9 @@ namespace PluginDemocracy.UIComponents
             string url = _appState.BaseUrl + endpoint;
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsJsonAsync<T>(url, data);
+                HttpResponseMessage response;
+                if (data != null) response = await _httpClient.PostAsJsonAsync<T>(url, data);
+                else response = await _httpClient.PostAsJsonAsync(url, new { });
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
