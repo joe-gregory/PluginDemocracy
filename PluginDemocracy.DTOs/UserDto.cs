@@ -52,7 +52,20 @@ namespace PluginDemocracy.DTOs
         public string? ProfilePicture { get; set; }
         public string? PhoneNumber { get; set; }
         public bool? PhoneNumberConfirmed { get; set; }
-        public CultureInfo Culture { get; set; }
+        public string CultureCode { get; set; } = "en-US";
+        [JsonIgnore]
+        public CultureInfo Culture 
+        {
+            get 
+            {
+                return new(CultureCode);
+            }
+            set
+            {
+                CultureCode = value.Name;
+            
+            }
+        }
         public bool Admin { get; set; }
         public List<ResidentialCommunityDTO> Citizenships { get; set; } = [];
         public List<HomeOwnershipDTO> HomeOwnerships { get; set; } = [];

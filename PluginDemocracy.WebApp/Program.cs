@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.WebApp.Components;
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
 using MudBlazor;
-using Microsoft.AspNetCore.Components;
 
 namespace PluginDemocracy.WebApp
 {

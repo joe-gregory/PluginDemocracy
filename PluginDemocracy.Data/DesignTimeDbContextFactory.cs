@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +14,9 @@ namespace PluginDemocracy.Data
     {
         public PluginDemocracyContext CreateDbContext(string[] args)
         {
-            string basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "PluginDemocracy.API"));
+            // Use the location of the executing assembly to find the base path
+            var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var basePath = Path.GetFullPath(Path.Combine(exePath ?? string.Empty, "..", "..", "..", "..", "PluginDemocracy.API"));
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)

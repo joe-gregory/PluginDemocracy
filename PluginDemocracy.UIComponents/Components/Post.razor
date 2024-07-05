@@ -1,7 +1,7 @@
 ﻿<MudCard Elevation="25" Class="mt-5 mb-5">
     <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
-            <MudAvatar onclick="@{() => Services.NavigateTo($"{FrontEndPages.AboutUser}?userId={PostDto?.Author?.Id}")}">
+            <MudAvatar onclick="NavigateToAboutPage">
                 @if (!string.IsNullOrEmpty(PostDto?.Author?.ProfilePicture))
                 {
                     <MudImage Src="@PostDto.Author.ProfilePicture" />

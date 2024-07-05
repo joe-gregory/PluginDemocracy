@@ -20,7 +20,7 @@ namespace PluginDemocracy.API.Controllers
         private readonly PluginDemocracyContext _context = context;
         private readonly APIUtilityClass _utilityClass = utilityClass;
         #region PUBLIC ENDPOINTS
-        [HttpPost("signup")]
+        [HttpPost(ApiEndPoints.PostSignUp)]
         public async Task<ActionResult<PDAPIResponse>> SignUp(UserDTO registeringUser)
         {
             //Create response object
