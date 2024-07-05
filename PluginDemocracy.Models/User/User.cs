@@ -113,10 +113,23 @@ namespace PluginDemocracy.Models
                 return _petitionDrafts.AsReadOnly();
             } 
         }
-        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-        #pragma warning disable CS8618
-        private User(){}
-        #pragma warning restore CS8618
+        /// <summary>
+        /// Parameterless constructor for the benefit of EF Core
+        /// </summary>
+        private User()
+        {
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            Email = string.Empty;
+            HashedPassword = string.Empty;
+            Culture = new("en-US");
+            _homeOwnerships = [];
+            _residentOfHomes = [];
+            _roles = [];
+            _petitionDrafts = [];
+            _citizenships = [];
+            _notifications = [];
+        }
         public User(string firstName, string lastName, string email, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
             FirstName = firstName;

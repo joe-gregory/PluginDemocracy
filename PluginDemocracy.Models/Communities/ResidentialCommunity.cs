@@ -158,10 +158,21 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Post> PostsByPublishedDate => Posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
         #endregion
         #region METHODS
-        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-        #pragma warning disable CS8618
-        private ResidentialCommunity() { }
-        #pragma warning restore CS8618
+        /// <summary>
+        /// Parameterless constructor for the benefit of EFC
+        /// </summary>
+        private ResidentialCommunity() 
+        {
+            Name = string.Empty;
+            Address = string.Empty;
+            OfficialCurrency = "USD";
+            _officialLanguagesCodes = [];
+            _homes = [];
+            _joinCommunityRequests = [];
+            _roles = [];
+            _petitions = [];
+            _posts = [];
+        }
         public ResidentialCommunity(string name, string address)
         {
             Name = name;

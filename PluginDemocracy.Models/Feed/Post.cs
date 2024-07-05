@@ -47,9 +47,15 @@
                 return _reactions.AsReadOnly();
             }
         }
-        #pragma warning disable CS8618
-        protected Post() { }
-        #pragma warning restore CS8618
+        /// <summary>
+        /// Parameterless constructor for the benefit of EFC
+        /// </summary>
+        private Post() 
+        { 
+            _comments = [];
+            _imagesLinks = [];
+            _reactions = [];
+        }
         public Post(IAvatar author, string body, List<string>? imagesLinks = null)
         {
             Author = author;

@@ -32,10 +32,17 @@ namespace PluginDemocracy.Models
         /// False indicates that the request has been denied.
         /// </summary>
         public bool? Approved { get; set; }
-        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-        #pragma warning disable CS8618
-        private JoinCommunityRequest() {}
-        #pragma warning restore CS8618
+        /// <summary>
+        /// Parameterless constructor for the benefit of EFC
+        /// </summary>
+        private JoinCommunityRequest() 
+        {
+            Community = new(string.Empty, string.Empty);
+            Home = new(Community, 0, string.Empty);
+            User = new(firstName: string.Empty, lastName: string.Empty, email: string.Empty,phoneNumber: string.Empty,address: string.Empty, dateOfBirth: DateTime.UtcNow, culture: new("en-US"));
+            LinksToFiles = [];
+            Messages = [];
+        }
         public JoinCommunityRequest(ResidentialCommunity community, Home home, User user, bool joiningAsOwner = false, double ownershipPercentage = 0)
         {
             Community = community; 
