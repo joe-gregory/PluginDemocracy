@@ -6,7 +6,6 @@ using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using static PluginDemocracy.UIComponents.Components.BottomBar;
 
 namespace PluginDemocracy.UIComponents
@@ -131,23 +130,33 @@ namespace PluginDemocracy.UIComponents
         /// <param name="endpoint">The API endpoint to hit</param>
         /// <param name="data">Data load in post request</param>
         /// <returns>PDAPIResponse from server or if none an empty PDAPIResponse</returns>
-        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = null) where T : class
+        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = null, bool referenceHandlerPreserve = true) where T : class
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;
+            //Add JWT to request if available
+            using HttpRequestMessage request = new(HttpMethod.Post, url);
+            if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
+            //Add request content if the data is not null
+            JsonSerializerOptions options = new();
+            if (referenceHandlerPreserve) options.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            if (data != null)
+            {
+                string jsonData = JsonSerializer.Serialize(data, options);
+                Console.WriteLine(jsonData);
+                request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            }
+            else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
-                HttpResponseMessage response;
-                if (data != null) response = await _httpClient.PostAsJsonAsync<T>(url, data);
-                else response = await _httpClient.PostAsJsonAsync(url, new { });
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
             {
                 AddSnackBarMessage("error", ex.Message);
-                _appState.PDAPIResponse = new();
                 _appState.IsLoading = false;
-                return _appState.PDAPIResponse;
+                return new();
             }
         }
         public async Task<TResult?> PostDataGenericAsync<TInput, TResult>(string endpoint, TInput? data = null)
@@ -360,9 +369,9 @@ namespace PluginDemocracy.UIComponents
             }
             catch (Exception ex)
             {
-#if DEBUG
+                #if DEBUG
                 AddSnackBarMessage("error", ex.Message);
-#endif
+                #endif
                 AddSnackBarMessage("error", $"Network or server error");
                 _appState.IsLoading = false;
                 return false;

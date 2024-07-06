@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
@@ -22,7 +23,11 @@ namespace PluginDemocracy.API
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add<ModelStateFeatureFilter>();
-            });
+            })
+              .ConfigureApiBehaviorOptions(options =>
+              {
+                  options.SuppressModelStateInvalidFilter = true; // Optional: If you want to suppress the automatic 400 response
+              });
             builder.Services.AddLogging();
 
             // Add services to the container.
@@ -53,7 +58,7 @@ namespace PluginDemocracy.API
                                 //Manually constructing the PDAPIResponse equivalent JSON
                                 var response = new
                                 {
-                                    Alerts = new List<object> { new { Severity = "info", Message = "Session has expired. Please log in again." }},
+                                    Alerts = new List<object> { new { Severity = "info", Message = "Session has expired. Please log in again." } },
                                     RedirectTo = (string?)null,
                                     RedirectParameters = new Dictionary<string, string>(),
                                     SessionJWT = (string?)null,

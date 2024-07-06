@@ -49,32 +49,41 @@ namespace PluginDemocracy.API
                 await context.Response.WriteAsync("An unexpected error occurred.");
             }
         }
-        private void LogModelStateErrors(HttpContext context)
+        private async Task LogModelStateErrors(HttpContext context)
         {
+            context.Request.EnableBuffering();
+            var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            context.Request.Body.Position = 0;
+
+            _logger.LogError($"Request Body: {body}");
+
             if (context.RequestServices.GetService(typeof(ModelStateDictionary)) is ModelStateDictionary modelState)
             {
-                foreach (var state in modelState)
+                if (!modelState.IsValid)
                 {
-                    foreach (var error in state.Value.Errors)
+                    foreach (var state in modelState)
                     {
-                        _logger.LogError("Model state error in {Key}: {ErrorMessage}", state.Key, error.ErrorMessage);
+                        foreach (var error in state.Value.Errors)
+                        {
+                            _logger.LogError("Model state error in {Key}: {ErrorMessage}", state.Key, error.ErrorMessage);
+                        }
                     }
                 }
             }
         }
     }
-    public class ModelStateFeatureFilter : IActionFilter
+}
+public class ModelStateFeatureFilter : IActionFilter
+{
+    public void OnActionExecuting(ActionExecutingContext context)
     {
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-            var httpContext = context.HttpContext;
-            var modelState = context.ModelState;
-            httpContext.Features.Set(modelState);
-        }
+        var httpContext = context.HttpContext;
+        var modelState = context.ModelState;
+        httpContext.Features.Set(modelState);
+    }
 
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            // No implementation needed
-        }
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        // No implementation needed
     }
 }

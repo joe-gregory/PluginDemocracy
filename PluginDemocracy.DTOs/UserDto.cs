@@ -63,7 +63,6 @@ namespace PluginDemocracy.DTOs
             set
             {
                 CultureCode = value.Name;
-            
             }
         }
         public bool Admin { get; set; }
@@ -76,10 +75,7 @@ namespace PluginDemocracy.DTOs
         [JsonIgnore]
         public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         public List<PetitionDTO> PetitionDrafts = [];
-        public UserDTO() 
-        { 
-            Culture = CultureInfo.CurrentCulture;
-        }
+        public UserDTO() { }
         public UserDTO(User user)
         {
             Id = user.Id;

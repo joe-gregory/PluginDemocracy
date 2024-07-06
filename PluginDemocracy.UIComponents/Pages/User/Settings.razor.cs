@@ -47,6 +47,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 userDto.Culture = AppState.User.Culture;
                 userDto.Admin = AppState.User.Admin;
                 if(AppState.User.EmailConfirmed != true) Services.AddSnackBarMessage("info", AppState.Translate(Translations.ResourceKeys.PleaseConfirmEmailForFullFunctionality));
+                StateHasChanged();
             };
         }
         private void SetLook()
@@ -70,7 +71,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 try
                 {
                     await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostToggleUserCulture);
-                    _checked = !_checked;
+                    if (AppState.PDAPIResponse.SuccessfulOperation) _checked = !_checked;
                 }
                 catch (Exception ex)
                 {
@@ -88,7 +89,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private async void PostForm()
         {
             disable = true;
-            await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostUpdateAccount, userDto);
+            await Services.PostDataAsync<UserDTO>(ApiEndPoints.PostUpdateAccount, userDto, false);
             disable = false;
         }
         private async void UpdateProfilePicture()

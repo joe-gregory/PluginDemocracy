@@ -345,11 +345,11 @@ namespace PluginDemocracy.API.Controllers
             return Ok(response);
         }
         [Authorize]
-        [HttpPost("updateaccount")]
-        public async Task<ActionResult<PDAPIResponse>> UpdateAccount(UserDTO userDto)
+        [HttpPost(ApiEndPoints.PostUpdateAccount)]
+        public async Task<ActionResult<PDAPIResponse>> UpdateAccount([FromBody] UserDTO userDto)
         {
-            //Create response object
-            PDAPIResponse response = new();
+                //Create response object
+                PDAPIResponse response = new();
             //Extract User from claims
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
             if (existingUser == null) return BadRequest(response);
