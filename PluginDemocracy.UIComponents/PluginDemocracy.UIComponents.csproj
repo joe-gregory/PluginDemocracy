@@ -1,76 +1,81 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>9999</WarningLevel>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningLevel>9999</WarningLevel>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningLevel>9999</WarningLevel>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<WarningLevel>9999</WarningLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Icons\CommunityIcon.svg" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Icons\CommunityIcon.svg" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Icons\CommunityIcon.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Icons\CommunityIcon.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.15.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MudBlazor" Version="6.15.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
-    <ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
-    <ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
-    <ProjectReference Include="..\PluginDemocracy.Translations\PluginDemocracy.Translations.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PluginDemocracy.API\PluginDemocracy.API.csproj" />
+		<ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
+		<ProjectReference Include="..\PluginDemocracy.Models\PluginDemocracy.Models.csproj" />
+		<ProjectReference Include="..\PluginDemocracy.Translations\PluginDemocracy.Translations.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\GenericMessage.razor" />
-  </ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Pages\GenericMessage.razor" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\ConfirmEmail.razor" />
-    <_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
-    <_ContentIncludedByDefault Remove="Pages\RegisterCommunity.razor" />
-  </ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Pages\ConfirmEmail.razor" />
+		<_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
+		<_ContentIncludedByDefault Remove="Pages\RegisterCommunity.razor" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\ConfirmEmail.razor" />
-  </ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Pages\ConfirmEmail.razor" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\RegisterCommunity.razor" />
-  </ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Pages\RegisterCommunity.razor" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<AssemblyNeutralLanguage>en-US</AssemblyNeutralLanguage>
+	</PropertyGroup>
+
 
 </Project>

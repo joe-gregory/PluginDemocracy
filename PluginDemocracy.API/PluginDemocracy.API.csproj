@@ -62,4 +62,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+	<PropertyGroup>
+		<AssemblyNeutralLanguage>en-US</AssemblyNeutralLanguage>
+	</PropertyGroup>
+
 </Project>

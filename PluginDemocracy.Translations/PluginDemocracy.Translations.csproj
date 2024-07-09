@@ -20,5 +20,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
+	
+<PropertyGroup>
+  <AssemblyNeutralLanguage>en-US</AssemblyNeutralLanguage>
+</PropertyGroup>
 
 </Project>
