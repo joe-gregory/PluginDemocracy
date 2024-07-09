@@ -6,7 +6,7 @@ namespace PluginDemocracy.Translations
 {
     public class TranslationResourceManager : INotifyPropertyChanged
     {
-        public CultureInfo Culture { get => TranslationResources.Culture; }
+        public static CultureInfo Culture { get => TranslationResources.Culture; }
         private TranslationResourceManager()
         {
             TranslationResources.Culture ??= CultureInfo.GetCultureInfo("en-US");

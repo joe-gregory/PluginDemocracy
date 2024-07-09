@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace PluginDemocracy.API
 {
@@ -22,25 +17,23 @@ namespace PluginDemocracy.API
 
                 // Copy the original response stream
                 var originalBodyStream = context.Response.Body;
-                using (var responseBody = new MemoryStream())
+                using var responseBody = new MemoryStream();
+                context.Response.Body = responseBody;
+
+                await _next(context);
+
+                // Log the response
+                _logger.LogInformation("Outgoing response: {StatusCode}", context.Response.StatusCode);
+
+                // Check if the response is a 400 Bad Request and log model state errors
+                if (context.Response.StatusCode == StatusCodes.Status400BadRequest)
                 {
-                    context.Response.Body = responseBody;
-
-                    await _next(context);
-
-                    // Log the response
-                    _logger.LogInformation("Outgoing response: {StatusCode}", context.Response.StatusCode);
-
-                    // Check if the response is a 400 Bad Request and log model state errors
-                    if (context.Response.StatusCode == StatusCodes.Status400BadRequest)
-                    {
-                        LogModelStateErrors(context);
-                    }
-
-                    // Copy the contents of the new memory stream (which contains the response) to the original stream
-                    responseBody.Seek(0, SeekOrigin.Begin);
-                    await responseBody.CopyToAsync(originalBodyStream);
+                    await LogModelStateErrors(context);
                 }
+
+                // Copy the contents of the new memory stream (which contains the response) to the original stream
+                responseBody.Seek(0, SeekOrigin.Begin);
+                await responseBody.CopyToAsync(originalBodyStream);
             }
             catch (Exception ex)
             {
@@ -72,18 +65,19 @@ namespace PluginDemocracy.API
             }
         }
     }
-}
-public class ModelStateFeatureFilter : IActionFilter
-{
-    public void OnActionExecuting(ActionExecutingContext context)
-    {
-        var httpContext = context.HttpContext;
-        var modelState = context.ModelState;
-        httpContext.Features.Set(modelState);
-    }
 
-    public void OnActionExecuted(ActionExecutedContext context)
+    public class ModelStateFeatureFilter : IActionFilter
     {
-        // No implementation needed
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            var httpContext = context.HttpContext;
+            var modelState = context.ModelState;
+            httpContext.Features.Set(modelState);
+        }
+
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+            // No implementation needed
+        }
     }
 }

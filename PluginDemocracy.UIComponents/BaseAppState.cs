@@ -52,7 +52,7 @@ namespace PluginDemocracy.UIComponents
         }
         public bool IsLoggedIn { get => User != null; }
         protected TranslationResourceManager TranslationResourceManager { get; } = TranslationResourceManager.Instance;
-        public CultureInfo Culture { get => TranslationResourceManager.Culture; }
+        public static CultureInfo Culture { get => TranslationResourceManager.Culture; }
         public string? SessionJWT { get; set; }
         public List<PostDTO> Posts { get; set; } = [];
 
