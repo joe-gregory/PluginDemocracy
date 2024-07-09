@@ -67,11 +67,18 @@
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
         </MudNavMenu>
     }
-    else
+    else if (AppState.IsLoggedIn)
     {
         <MudNavMenu>
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
+        </MudNavMenu>
+    }
+    else
+    {
+        <MudNavMenu>
+            <MudNavLink Href="@FrontEndPages.Login">You must log in for community options.</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.Login">Necesita acceder a su cuenta para las opciones de comunidad.</MudNavLink>
         </MudNavMenu>
     }
 </MudDrawer>

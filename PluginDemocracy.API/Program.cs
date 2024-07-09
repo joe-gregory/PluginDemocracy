@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.Data;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.API
 {
@@ -20,14 +21,20 @@ namespace PluginDemocracy.API
 
             //Logging 
             // Add services to the container.
-            builder.Services.AddControllers(options =>
-            {
-                options.Filters.Add<ModelStateFeatureFilter>();
-            })
-              .ConfigureApiBehaviorOptions(options =>
-              {
+            builder.Services
+                .AddControllers(options =>
+                {
+                    options.Filters.Add<ModelStateFeatureFilter>();
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
                   options.SuppressModelStateInvalidFilter = true; // Optional: If you want to suppress the automatic 400 response
-              });
+                })
+                .AddJsonOptions(o =>
+                {
+                    o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                })
+              ;
             builder.Services.AddLogging();
 
             // Add services to the container.

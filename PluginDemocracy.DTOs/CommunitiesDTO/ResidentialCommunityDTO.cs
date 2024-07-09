@@ -16,8 +16,18 @@ namespace PluginDemocracy.DTOs
         public string FullName { get; set; }
         public string Initials { get; set; }
         public string? Description { get; set; } = string.Empty;
-        public string? OfficialCurrency { get; set; }
-        public List<CultureInfo> OfficialLanguages { get; set; } = [];
+        public string? OfficialCurrency { get; set; } = "USD";
+        public List<string> OfficialLanguagesCodes { get; set; } = [];
+        [JsonIgnore]
+        public List<CultureInfo> OfficialLanguages
+        {
+            get
+            {
+                List<CultureInfo> languages = [];
+                foreach (string language in OfficialLanguagesCodes) languages.Add(new CultureInfo(language));
+                return languages;
+            }
+        }
         public List<HomeDTO> Homes { get; set; }
         [JsonIgnore]
         public IReadOnlyList<HomeOwnershipDTO> HomeOwnerships
@@ -58,7 +68,7 @@ namespace PluginDemocracy.DTOs
             //CommunityDto Properties
             Name = community.Name;
             OfficialCurrency = community.OfficialCurrency;
-            foreach (CultureInfo language in community.OfficialLanguages) OfficialLanguages?.Add(language);
+            foreach (CultureInfo language in community.OfficialLanguages) AddLanguage(language);
             Description = community.Description;
             Homes = [];
             foreach (Home home in community.Homes)
@@ -86,6 +96,14 @@ namespace PluginDemocracy.DTOs
         {
             Homes.Remove(home);
         }   
+        public void AddLanguage(CultureInfo culture)
+        {
+            OfficialLanguagesCodes.Add(culture.Name);
+        }
+        public void RemoveLanguage(CultureInfo culture)
+        {
+            OfficialLanguagesCodes.Remove(culture.Name);
+        }
         /// <summary>
         /// This will return a CommunityDto basic properties. It is most likely used with Home.Ownerships reference outside communities for 
         /// which not a lot of extensive informaiton is needed. 
@@ -102,7 +120,7 @@ namespace PluginDemocracy.DTOs
                 OfficialCurrency = community.OfficialCurrency,
                 Address = community.Address,
             };
-            foreach (CultureInfo language in community.OfficialLanguages) communityDTO.OfficialLanguages.Add(language);
+            foreach (CultureInfo language in community.OfficialLanguages) communityDTO.AddLanguage(language);
 
             return communityDTO;
         }

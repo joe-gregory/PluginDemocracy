@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using Newtonsoft.Json;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using static PluginDemocracy.UIComponents.Components.BottomBar;
 
 namespace PluginDemocracy.UIComponents
@@ -105,7 +107,7 @@ namespace PluginDemocracy.UIComponents
             // Add the JWT as a Bearer token in the Authorization header if it's available
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             // Add the data to the request
-            if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            if (data != null) request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
@@ -137,18 +139,17 @@ namespace PluginDemocracy.UIComponents
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Post, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
-            //Add request content if the data is not null
-            JsonSerializerOptions options = new();
-            if (referenceHandlerPreserve) options.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            if (data != null)
-            {
-                string jsonData = JsonSerializer.Serialize(data, options);
-                Console.WriteLine(jsonData);
-                request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-            }
-            else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             try
             {
+                //Add request content if the data is not null
+                JsonSerializerOptions options = new();
+                if (referenceHandlerPreserve) options.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                if (data != null)
+                {
+                    string jsonData = System.Text.Json.JsonSerializer.Serialize(data, options);
+                    request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                }
+                else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
@@ -171,7 +172,7 @@ namespace PluginDemocracy.UIComponents
             //Add request content if the data is not null
             try
             {
-                if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+                if (data != null) request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
                 else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             }
             catch (Exception ex)
@@ -224,7 +225,7 @@ namespace PluginDemocracy.UIComponents
             //Add request content if the data is not null
             try
             {
-                if (data != null) request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+                if (data != null) request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
                 else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 return await CommunicationCommon(response);
@@ -411,13 +412,30 @@ namespace PluginDemocracy.UIComponents
         /// <returns>PDAPIResponse extracted from response</returns>
         public async Task<PDAPIResponse> CommunicationCommon(HttpResponseMessage response)
         {
-#if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
+            #if DEBUG //Only show HTTP error in debug mode. In development, only show messages the API wants to send.
             if (!response.IsSuccessStatusCode)
             {
                 AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
             }
-#endif
-            PDAPIResponse? apiResponse = await response.Content.ReadFromJsonAsync<PDAPIResponse>();
+            #endif
+            string jsonString = await response.Content.ReadAsStringAsync();
+            PDAPIResponse? apiResponse = null;
+            try
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    TypeNameHandling = TypeNameHandling.Auto
+                };
+                apiResponse = JsonConvert.DeserializeObject<PDAPIResponse>(jsonString, settings);
+            }
+            catch(Exception ex)
+            {
+                AddSnackBarMessage("error", ex.Message);
+                #if DEBUG
+                Console.WriteLine(ex.Message);
+                #endif
+            }
 
             if (apiResponse == null)
             {
@@ -425,7 +443,6 @@ namespace PluginDemocracy.UIComponents
                 _appState.IsLoading = false;
                 return new PDAPIResponse();
             }
-
             //Add snackbar messages sent from API
             AddSnackBarMessages(apiResponse.Alerts);
             //Add latest API response to AppState

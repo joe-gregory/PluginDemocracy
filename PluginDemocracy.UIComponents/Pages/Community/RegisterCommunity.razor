@@ -152,8 +152,10 @@
         //Assign language if all looks good
         if (finalCheckBeforePosting())
         {
-            if (officialLanguageEnglish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("en-US"));
-            if (officialLanguageSpanish) communityDto.OfficialLanguages.Add(new System.Globalization.CultureInfo("es-MX"));
+            if (officialLanguageEnglish) communityDto.AddLanguage(new System.Globalization.CultureInfo("en-US"));
+            if (officialLanguageSpanish) communityDto.AddLanguage(new System.Globalization.CultureInfo("es-MX"));
+            // If false, USA, if true, MXN
+            communityDto.OfficialCurrency = currencyBool ? "MXN" : "USD";
             await Services.PostDataAsync<ResidentialCommunityDTO>(ApiEndPoints.RegisterCommunity, communityDto);
         }
         else return;

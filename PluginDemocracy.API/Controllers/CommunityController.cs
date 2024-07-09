@@ -21,7 +21,7 @@ namespace PluginDemocracy.API.Controllers
         private readonly IConfiguration _configuration = configuration;
 
         [Authorize]
-        [HttpPost("registercommunity")]
+        [HttpPost(ApiEndPoints.RegisterCommunity)]
         public async Task<ActionResult<PDAPIResponse>> Register(ResidentialCommunityDTO communityDto)
         {
             PDAPIResponse response = new();

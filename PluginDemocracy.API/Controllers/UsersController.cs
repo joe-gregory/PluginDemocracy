@@ -77,7 +77,6 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
                     return BadRequest(apiResponse);
                 }
-                //await _context.Entry(existingUser).Collection(u => u.HomeOwnerships).Query().Include(ho => ho.Home).LoadAsync();
             }
             catch (Exception ex)
             {
@@ -100,7 +99,6 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
                 //Convert User to UserDto
                 apiResponse.User = new(existingUser);
-                //apiResponse.User = UserDto.ReturnUserDtoFromUser(existingUser);
 
                 //Send a SessionJWT to the client so that they can maintain a session
                 apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
