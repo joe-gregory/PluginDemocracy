@@ -11,7 +11,7 @@
         <MudText>Application date: @jcr.DateRequested.Date</MudText>
         <MudText>Joining As: @(jcr.JoiningAsOwner == true ? "Owner" : "Resident")</MudText>
         <MudText Color="@(jcr.Approved == null ? Color.Info : jcr.Approved == true ? Color.Primary : Color.Error)">Status: @(jcr.Approved == null ? "pending" : jcr.Approved == true ? "Approved" : "Rejected")</MudText>
-        <MudButton Variant="Variant.Filled" Color = "Color.Primary" Href="@($"{FrontEndPages.JoinCommunityRequest}/requestId={jcr.Id}")">Request# @jcr.Id</MudButton>
+        <MudButton Variant="Variant.Filled" Color = "Color.Primary" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={jcr.Id}")">Request# @jcr.Id</MudButton>
     </MudCard>
 }
 </MudCard>

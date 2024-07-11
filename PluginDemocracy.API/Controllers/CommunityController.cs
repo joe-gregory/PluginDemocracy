@@ -192,7 +192,7 @@ namespace PluginDemocracy.API.Controllers
                 //Search for all the roles that have CanEditHomeOwnership and CanEditResidency in the Community
                 //If user is joining as home owner, send notification to Roles with corresponding powers. If role is not there, default send notification to app admin.
                 List<User?> roleHoldersWithJoinPower = community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
-                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequest}?requestId={joinCommunityRequest.Id}";
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}";
                 string body = $"{existingUser.FullName} has requested to join the community as a {(joinCommunityRequest.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}.Please follow the following link to accept, reject or review:\n <a href=\"{link}\">{link}</a>.";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
                 
@@ -251,7 +251,7 @@ namespace PluginDemocracy.API.Controllers
                 }
                 _context.SaveChanges();
                 pdApiresponse.AddAlert("success", "Request sent successfully. La solicitud ha sido enviada.");
-                pdApiresponse.RedirectTo = $"{FrontEndPages.JoinCommunityRequest}?requestId={joinCommunityRequest.Id}";
+                pdApiresponse.RedirectTo = $"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}";
                 pdApiresponse.SuccessfulOperation = true;
                 return Ok(pdApiresponse);
             }
