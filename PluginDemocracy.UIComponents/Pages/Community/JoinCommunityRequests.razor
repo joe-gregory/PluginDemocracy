@@ -1,4 +1,126 @@
-﻿@inject Services Services
+﻿@using Microsoft.AspNetCore.Components.Forms
+@inject Services Services
 @inject BaseAppState AppState
-<MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunityRequest) #@joinCommunityRequestDTO.Id</MudText>
-<MudText Color="@statusColor">Status: @statusText</MudText>
+<MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunityRequest) #@joinCommunityRequestDTO?.Id</MudText>
+
+<MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+    <tbody>
+        <tr>
+            <td><MudText><b>Joining User:</b></MudText></td>
+            <td><MudText>@joinCommunityRequestDTO?.UserDTO?.FullName</MudText> <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.UserDTO"/></td>
+        </tr>
+        <tr>
+            <td><MudText><b>Status:</b></MudText></td>
+            <td><MudText Color="@statusColor">@statusText</MudText></td>
+        </tr>
+        <tr>
+            <td><MudText><b>Date Requested:</b></MudText></td>
+            <td><MudText>@joinCommunityRequestDTO?.DateRequested.Date.Date</MudText></td>
+        </tr>
+        <tr>
+            <td><MudText><b>Community To Join:</b></MudText></td>
+            <td><MudText>@joinCommunityRequestDTO?.CommunityDTO?.FullName</MudText></td>
+        </tr>
+        <tr>
+            <td><MudText><b>Home To Join:</b></MudText></td>
+            <td><MudText>@joinCommunityRequestDTO?.HomeDTO?.FullAddress</MudText></td>
+        </tr>
+        <tr>
+            <td><MudText><b>Joining As:</b></MudText></td>
+            <td><MudText>@(joinCommunityRequestDTO?.JoiningAsOwner == true ? "Owner" : "Resident")</MudText></td>
+        </tr>
+        @if (joinCommunityRequestDTO?.JoiningAsOwner == true)
+        {
+            <tr>
+                <td><MudText><b>Claimed Ownership % of Home:</b></MudText></td>
+                <td><MudText>@joinCommunityRequestDTO.OwnershipPercentage</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Currently Claimed Home Ownerships:</b></MudText></td>
+                <td></td>
+            </tr>
+            @foreach (KeyValuePair<UserDTO, double> kvp in homeToJoinDTO?.OwnersOwnerships ?? [])
+            {
+                <tr>
+                    <td>@kvp.Key.FullName</td>
+                    <td>@kvp.Value</td>
+                </tr>
+            }
+        }
+    </tbody>
+</MudSimpleTable>
+
+<MudCard Class="pa-3 ma-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Documents Attached To Request</MudText>
+    @foreach(string link in joinCommunityRequestDTO?.LinksToFiles ?? [])
+    {
+        <MudLink Href="@link" Class="mb-3">@link</MudLink>
+    }
+</MudCard>
+@if (AppState.User != null && joinCommunityRequestDTO?.UserDTO?.Id == AppState?.User?.Id)
+{
+    <MudCard Class="pa-3 ma-3">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5 ma-3">Attach Additional Documents</MudText>
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="AddSupportingDocumentsToUpload" Disabled="disableAll">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Class="ml-2"
+                           Color="Color.Info"
+                           StartIcon="@Icons.Material.Filled.AttachFile"
+                           for="@context.Id">
+                    @AppState.Translate(ResourceKeys.Select)
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+        <MudButton Variant="Variant.Filled" Class="ma-2" Color="Color.Primary" Disabled="disableAll" OnClick="UploadSupportingDocumentsToUpload">@AppState.Translate(ResourceKeys.Upload)</MudButton>
+        @if (spinnerOn)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="ma-1" />
+        }
+        @*Show files ready to upload*@
+        @if (files != null && files.Count > 0)
+        {
+            <MudCard Elevation="25">
+                <MudText>@AppState.Translate(ResourceKeys.FilesReadyToUpload)</MudText>
+                <MudList>
+                    @foreach (IBrowserFile file in files)
+                    {
+                        <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                            @file.Name <code>@file.Size bytes</code>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveSupportingDocumentToBeUploaded(file)" />
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudCard>
+        }
+    </MudCard>
+}
+
+<MudCard Class="pa-3 ma-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Messages</MudText>
+        @foreach (MessageDTO message in joinCommunityRequestDTO?.Messages ?? [])
+        {
+        <MudCard Class="pa-3 ma-3" Outlined="true">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <UserAvatar User="@message.Sender"/>"
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText>@message?.Sender?.FullName</MudText>
+                        <MudText>@message.Date</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>@message.Content</MudText>
+                </MudCardContent>
+            </MudCard>
+        }
+    
+</MudCard>
+<MudCard Class="pa-3 ma-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="pa-3 ma-3">Add Message</MudText>
+    <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="newMessageText" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ma-1" OnClick="SendNewMessage" EndIcon="@Icons.Material.Filled.Send">Send</MudButton>
+</MudCard>
+

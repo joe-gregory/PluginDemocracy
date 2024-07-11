@@ -16,7 +16,7 @@ namespace PluginDemocracy.DTOs
         public bool? Approved { get; set; } = null;
         
         public List<string> LinksToFiles { get; set; } = [];
-        public List<Message> Messages { get; set; } = [];
+        public List<MessageDTO> Messages { get; set; } = [];
         public JoinCommunityRequestDTO() { }
         public JoinCommunityRequestDTO(JoinCommunityRequest jcr)
         {
@@ -45,27 +45,5 @@ namespace PluginDemocracy.DTOs
             }
         }
     }
-    public class Message
-    {
-        public int Id { get; init; }
-        public UserDTO? Sender { get; init; }
-        public DateTime Date { get; init; }
-        /// <summary>
-        /// The actual message content.
-        /// </summary>
-        public string Content { get; init; }
-        /// <summary>
-        /// Private constructor for the benefit of EFC
-        /// </summary>
-        public Message()
-        {
-            Content = string.Empty;
-        }
-        public Message(UserDTO author, string content, DateTime date)
-        {
-            Sender = author;
-            Date = date;
-            Content = content;
-        }
-    }
+    
 }

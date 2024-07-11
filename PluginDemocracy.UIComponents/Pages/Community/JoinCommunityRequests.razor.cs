@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 
 namespace PluginDemocracy.UIComponents.Pages.Community
 {
+    /// <summary>
+    /// This is the page that gives you the summary of a given request.
+    /// </summary>
     public partial class JoinCommunityRequests
     {
         [SupplyParameterFromQuery]
@@ -11,6 +15,11 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private MudBlazor.Color statusColor = MudBlazor.Color.Primary;
         private string statusText = "Pending";
         private JoinCommunityRequestDTO? joinCommunityRequestDTO;
+        private HomeDTO? homeToJoinDTO;
+        private readonly IList<IBrowserFile> files = [];
+        private bool disableAll = false;
+        private bool spinnerOn = false;
+        private string? newMessageText;
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
@@ -31,8 +40,75 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     statusColor = MudBlazor.Color.Error;
                     statusText = "Denied";
                 }
+                homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>(ApiEndPoints.GetHomeForJoinCommunityRequestInfo);
+                if (homeToJoinDTO == null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
                 StateHasChanged();
             }
+        }
+        private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
+        {
+            foreach (IBrowserFile file in files)
+            {
+                this.files.Add(file);
+            }
+        }
+        private void RemoveSupportingDocumentToBeUploaded(IBrowserFile file)
+        {
+            files.Remove(file);
+            Services.AddSnackBarMessage("success", "Removed " + file.Name);
+        }
+        private async void RefreshJoinCommunityRequestDTO()
+        {
+            joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
+            StateHasChanged();
+        }
+        private async void UploadSupportingDocumentsToUpload()
+        {
+            disableAll = true;
+            spinnerOn = true;
+            AppState.IsLoading = true;
+            if (files.Count > 0)
+            {
+                MultipartFormDataContent multiPartFormDataContent = [];
+                int maxAllowedSize = 100 * 1024 * 1024; // 100MB
+                foreach (IBrowserFile file in files)
+                {
+                    StreamContent streamContent = new(file.OpenReadStream(maxAllowedSize: maxAllowedSize));
+                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "files",
+                        FileName = file.Name
+                    };
+                    multiPartFormDataContent.Add(streamContent);
+                }
+                string endpoint = $"{ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
+                HttpRequestMessage request = new(HttpMethod.Post, endpoint);
+                if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
+                request.Content = multiPartFormDataContent;
+                PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
+                if (apiResponse.SuccessfulOperation)
+                {
+                    files.Clear();
+                    Services.AddSnackBarMessages(apiResponse.Alerts);
+                    RefreshJoinCommunityRequestDTO();
+                }
+                else
+                {
+                    Services.AddSnackBarMessage("error", "Error uploading files.");
+                }
+            }
+            else
+            {
+                Services.AddSnackBarMessage("warning", "No files to upload.");
+            }
+            spinnerOn = false;
+            disableAll = false;
+            AppState.IsLoading = false;
+        }
+        private async void SendNewMessage()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -79,7 +79,6 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 await RefreshPetition();
             }
         }
-
         private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
             foreach (IBrowserFile file in files)

@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Common;
@@ -154,7 +155,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(pdApiresponse);
             }
             //Does the user from claims match the user in the request?
-            if(joinCommunityRequestUploadDTO.CommunityId == 0)
+            if (joinCommunityRequestUploadDTO.CommunityId == 0)
             {
                 pdApiresponse.AddAlert("error", "CommunityId for request is zero");
                 return BadRequest(pdApiresponse);
@@ -165,7 +166,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(pdApiresponse);
             }
             //Does the community exist?
-            if(joinCommunityRequestUploadDTO.JoiningAsOwner == joinCommunityRequestUploadDTO.JoiningAsResident)
+            if (joinCommunityRequestUploadDTO.JoiningAsOwner == joinCommunityRequestUploadDTO.JoiningAsResident)
             {
                 pdApiresponse.AddAlert("error", "Both flags for joining as owner and joining as resident set.");
                 return BadRequest(pdApiresponse);
@@ -176,7 +177,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiresponse.AddAlert("error", "Community not found in database with given Id.");
                 return BadRequest(pdApiresponse);
             }
-            if(joinCommunityRequestUploadDTO.JoiningAsOwner == false && joinCommunityRequestUploadDTO.JoiningAsResident == false)
+            if (joinCommunityRequestUploadDTO.JoiningAsOwner == false && joinCommunityRequestUploadDTO.JoiningAsResident == false)
             {
                 pdApiresponse.AddAlert("error", "Both Request.JoiningAsOwner and Request.JoiningAsResident can't be false.");
                 return BadRequest(pdApiresponse);
@@ -195,8 +196,8 @@ namespace PluginDemocracy.API.Controllers
                 string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}";
                 string body = $"{existingUser.FullName} has requested to join the community as a {(joinCommunityRequest.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}.Please follow the following link to accept, reject or review:\n <a href=\"{link}\">{link}</a>.";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
-                
-                
+
+
                 if (joinCommunityRequest.JoiningAsOwner)
                 {
                     foreach (User? user in roleHoldersWithJoinPower)
@@ -275,16 +276,18 @@ namespace PluginDemocracy.API.Controllers
 
             foreach (JoinCommunityRequest joinRequest in joinCommunityRequests)
             {
-                JoinCommunityRequestDTO jcr = new();
-                jcr.Id = joinRequest.Id;
-                jcr.CommunityDTO = new()
+                JoinCommunityRequestDTO jcr = new()
                 {
-                    Name = joinRequest.Community.Name
+                    Id = joinRequest.Id,
+                    CommunityDTO = new()
+                    {
+                        Name = joinRequest.Community.Name
+                    },
+                    JoiningAsOwner = joinRequest.JoiningAsOwner,
+                    JoiningAsResident = joinRequest.JoiningAsResident,
+                    Approved = joinRequest.Approved,
+                    DateRequested = joinRequest.DateRequested
                 };
-                jcr.JoiningAsOwner = joinRequest.JoiningAsOwner;
-                jcr.JoiningAsResident = joinRequest.JoiningAsResident;
-                jcr.Approved = joinRequest.Approved;
-                jcr.DateRequested = joinRequest.DateRequested;
 
                 joinCommunityRequestDTOs.Add(jcr);
             }
@@ -311,9 +314,93 @@ namespace PluginDemocracy.API.Controllers
                     role.Powers.CanEditHomeOwnership &&
                     role.Powers.CanEditResidency);
             }
+            if (existingUser.Admin == true) canThisPersonViewIt = true;
             if (!canThisPersonViewIt) return Forbid();
             return Ok(new JoinCommunityRequestDTO(joinRequest));
         }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetHomeForJoinCommunityRequestInfo)]
+        public async Task<ActionResult<HomeDTO>> GetHomeForJoinCommunityRequestInfo([FromQuery] int requestId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            if (joinRequest == null) return BadRequest();
+            //Only the user with the Id as the request and individuals with roles in the community can see the request
+            //if this is the user from the request, return the request
+            bool canThisPersonViewIt = joinRequest.User.Id == existingUser.Id;
+
+            // Does this person have roles in this community?
+            if (!canThisPersonViewIt)
+            {
+                canThisPersonViewIt = existingUser.Roles.Any(role =>
+                    role.Community.Id == joinRequest.Community.Id &&
+                    role.Powers.CanEditHomeOwnership &&
+                    role.Powers.CanEditResidency);
+            }
+            if (existingUser.Admin == true) canThisPersonViewIt = true;
+            if (!canThisPersonViewIt) return Forbid();
+            return Ok(new HomeDTO(joinRequest.Home));
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest)]
+        public async Task<ActionResult<PDAPIResponse>> AddAdditionalSupportingDocumentsToJoinCommunityRequest([FromForm] List<IFormFile> files, [FromQuery] int requestId)
+        {
+            PDAPIResponse pdApiResponse = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, pdApiResponse);
+            if (existingUser == null) return BadRequest(pdApiResponse);
+            if (requestId == 0)
+            {
+                pdApiResponse.AddAlert("error", "petitionId is zero.");
+                return BadRequest(pdApiResponse);
+            }
+            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            if (joinCommunityRequest == null)
+            {
+                pdApiResponse.AddAlert("error", "Request not found");
+                return BadRequest(pdApiResponse);
+            }
+            //Only the user from the request can upload files
+            if (joinCommunityRequest.User.Id != existingUser.Id)
+            {
+                pdApiResponse.AddAlert("error", "User from claims does not match user from request.");
+                return BadRequest(pdApiResponse);
+            }
+            try
+            {
+                string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
+                string blobSASToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
+                if (string.IsNullOrEmpty(blobContainerURL) || string.IsNullOrEmpty(blobSASToken) || string.IsNullOrEmpty(readOnlyBlobSASToken)) throw new Exception("One of the environment variables for blob storage is null or empty");
+                BlobContainerClient containerClient = new(new Uri($"{blobContainerURL}?{blobSASToken}"));
+                //Files to add to blob
+                foreach (IFormFile file in files)
+                {
+                    string blobName = $"joinCommunityRequests/{joinCommunityRequest.Id}/{file.FileName}";
+                    BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                    await using Stream fileStream = file.OpenReadStream();
+                    //upload the document
+                    await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = file.ContentType });
+                    //Remove Sas write token:
+                    UriBuilder uriBuilder = new(blobClient.Uri);
+                    System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    query.Clear();
+                    uriBuilder.Query = query.ToString();
+                    string blobUrlWithoutSas = uriBuilder.ToString();
+                    joinCommunityRequest.AddLinkToFile($"{blobUrlWithoutSas}?{readOnlyBlobSASToken}");
+                }
+                _context.SaveChanges();
+                pdApiResponse.AddAlert("success", "Files uploaded successfully.");
+                pdApiResponse.SuccessfulOperation = true;
+                return Ok(pdApiResponse);
+            }
+            catch (Exception ex)
+            {
+                pdApiResponse.AddAlert("error", ex.Message);
+                return BadRequest(pdApiResponse);
+            }
+        }
+
         [Authorize]
         [HttpPost(ApiEndPoints.CreateNewPost)]
         public async Task<ActionResult<PDAPIResponse>> CreateNewPost([FromForm] CreatePostRequestDto request)
@@ -395,7 +482,7 @@ namespace PluginDemocracy.API.Controllers
             PDAPIResponse response = new();
             try
             {
-                
+
                 //Extract User from claims
                 User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
                 if (existingUser == null)
@@ -426,7 +513,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", ex.Message);
                 return BadRequest(response);
             }
-            
+
         }
         [Authorize]
         [HttpDelete(ApiEndPoints.DeletePost)]
@@ -455,7 +542,7 @@ namespace PluginDemocracy.API.Controllers
                     return BadRequest(response);
                 }
                 //If post has images in the blob storage, delete them
-                #pragma warning disable CS8602 // Suppressing warning dereference of a possibly null reference because checking for nullability inside try statement.
+#pragma warning disable CS8602 // Suppressing warning dereference of a possibly null reference because checking for nullability inside try statement.
                 if (post.ImagesLinks.Count != 0)
                 {
                     string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
@@ -476,7 +563,7 @@ namespace PluginDemocracy.API.Controllers
                         await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                     }
                 }
-                #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 _context.Posts.Remove(post);
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", "Post deleted successfully");
@@ -496,7 +583,7 @@ namespace PluginDemocracy.API.Controllers
             //Extract User from claims
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            
+
             Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).FirstOrDefaultAsync(p => p.Id == reactionDto.PostId);
             if (post == null) return BadRequest();
 
@@ -509,7 +596,7 @@ namespace PluginDemocracy.API.Controllers
             }
             catch
             {
-                 return BadRequest();
+                return BadRequest();
             }
         }
         [Authorize]

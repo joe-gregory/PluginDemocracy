@@ -28,6 +28,8 @@
         public const string DeleteDocumentFromPetition = UsersController + "deletedocumentfrompetition";
         public const string AuthorReadyToPublishPetition = UsersController + "authorreadytopublishpetition";
         public const string GetAllJoinCommunityRequestsForUser = UsersController + "getalljoincommunityrequestsforuser";
+        
+         
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
@@ -37,7 +39,9 @@
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
         public const string GetJoinCommunityRequest = CommunityController + "getjoincommunityrequest";
         public const string ProposalCreate = CommunityController + "/proposal/create";
-        
+        public const string GetHomeForJoinCommunityRequestInfo = CommunityController + "gethomeforjoincommunityrequestinfo";
+        public const string AddAdditionalSupportingDocumentsToJoinCommunityRequest = CommunityController + "addadditionalsupportingdocumentstojoincommunityrequest";
+
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
         public const string GetFeed = CommunityController + "getfeed";
