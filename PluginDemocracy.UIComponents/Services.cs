@@ -77,7 +77,13 @@ namespace PluginDemocracy.UIComponents
                     return default;
                 }
                 string responseBody = await response.Content.ReadAsStringAsync();
-                return await response.Content.ReadFromJsonAsync<T>();
+                var settings = new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    TypeNameHandling = TypeNameHandling.Auto
+                };
+                T? returnObject =  JsonConvert.DeserializeObject<T>(responseBody, settings);
+                return returnObject;
             }
             catch (Exception ex)
             {

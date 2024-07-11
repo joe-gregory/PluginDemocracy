@@ -2,10 +2,17 @@
 @inject Services Services
 
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudText>
-<MudCard Class="mb-5">
+<MudCard Class="ma-5 pa-5">
     @foreach (JoinCommunityRequestDTO jcr in joinCommunityRequests ?? [])
 {
-    <MudLink Href="">#@jcr.Id Community: @jcr.CommunityDTO?.Name Application date: @jcr.DateRequested Status: @(jcr.Approved == null ? "pending" : jcr.Approved == true ? "Approved" : "Rejected")</MudLink>
+    <MudCard Class="mt-4 pa-2">
+        <MudText Typo="Typo.h3">Request # @jcr.Id</MudText>
+        <MudText>Community: @jcr.CommunityDTO?.Name</MudText>
+        <MudText>Application date: @jcr.DateRequested.Date</MudText>
+        <MudText>Joining As: @(jcr.JoiningAsOwner == true ? "Owner" : "Resident")</MudText>
+        <MudText Color="@(jcr.Approved == null ? Color.Info : jcr.Approved == true ? Color.Primary : Color.Error)">Status: @(jcr.Approved == null ? "pending" : jcr.Approved == true ? "Approved" : "Rejected")</MudText>
+        <MudButton Variant="Variant.Filled" Color = "Color.Primary" Href="@($"{FrontEndPages.JoinCommunityRequest}/requestId={jcr.Id}")">Request# @jcr.Id</MudButton>
+    </MudCard>
 }
 </MudCard>
 

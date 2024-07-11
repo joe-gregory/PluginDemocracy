@@ -65,7 +65,7 @@
             <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
-            <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequest)</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudNavLink>
         </MudNavMenu>
     }
     else if (AppState.IsLoggedIn)
@@ -73,7 +73,7 @@
         <MudNavMenu>
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
-            <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequest)</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudNavLink>
         </MudNavMenu>
     }
     else
