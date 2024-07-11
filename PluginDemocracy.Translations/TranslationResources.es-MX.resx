@@ -288,6 +288,9 @@
   <data name="HomesStartingNumber" xml:space="preserve">
     <value>Número de dirección con el que comienzan los hogares</value>
   </data>
+  <data name="IfJoiningAsOwnerAdditionalDocumentsNeeded" xml:space="preserve">
+    <value>Tu comunidad requiere que, si te unes como propietario, agregues documentos adicionales como prueba. Tu comunidad requiere una foto de ti mismo (selfie) y una foto de una identificación válida (como una licencia de conducir). Se podría solicitar documentación adicional (como documentos de propiedad) si los registros públicos no coinciden con la información que proporcionaste (por ejemplo, si compraste esta casa recientemente).</value>
+  </data>
   <data name="InternalAddress" xml:space="preserve">
     <value>Dirección interior</value>
   </data>
@@ -305,6 +308,12 @@
   </data>
   <data name="JoinCommunity" xml:space="preserve">
     <value>Unete a una comunidad</value>
+  </data>
+  <data name="JoinCommunityRequest" xml:space="preserve">
+    <value>Solicitud De Ingreso A Comunidad</value>
+  </data>
+  <data name="JoinCommunityRequests" xml:space="preserve">
+    <value>Solicituds De Ingreso A Comunidades</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Lenguaje</value>

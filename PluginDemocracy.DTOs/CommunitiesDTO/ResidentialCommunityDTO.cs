@@ -13,8 +13,8 @@ namespace PluginDemocracy.DTOs
         public string? Name { get; set; }
         public string? Address { get; set; }
         public string? ProfilePicture { get; set; }
-        public string FullName { get; set; }
-        public string Initials { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Initials { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public string? OfficialCurrency { get; set; } = "USD";
         public List<string> OfficialLanguagesCodes { get; set; } = [];
@@ -28,7 +28,7 @@ namespace PluginDemocracy.DTOs
                 return languages;
             }
         }
-        public List<HomeDTO> Homes { get; set; }
+        public List<HomeDTO> Homes { get; set; } = [];
         [JsonIgnore]
         public IReadOnlyList<HomeOwnershipDTO> HomeOwnerships
         {

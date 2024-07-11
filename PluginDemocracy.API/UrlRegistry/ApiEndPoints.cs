@@ -27,6 +27,7 @@
         public const string GetPetitionDraft = UsersController + "getpetitiondraft";
         public const string DeleteDocumentFromPetition = UsersController + "deletedocumentfrompetition";
         public const string AuthorReadyToPublishPetition = UsersController + "authorreadytopublishpetition";
+        public const string GetAllJoinCommunityRequestsForUser = UsersController + "getalljoincommunityrequestsforuser";
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";
@@ -34,6 +35,7 @@
         public const string GetListOfAllCommunities = CommunityController + "getlistofallcommunities";
         public const string GetListOfHomesForCommunity = CommunityController + "getlistofhomesforcommunity";
         public const string JoinCommunityRequest = CommunityController + "joincommunityrequest";
+        public const string GetJoinCommunityRequest = CommunityController + "getjoincommunityrequest";
         public const string ProposalCreate = CommunityController + "/proposal/create";
         
         #region Feed

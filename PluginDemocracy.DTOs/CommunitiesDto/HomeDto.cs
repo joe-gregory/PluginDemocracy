@@ -125,9 +125,9 @@ namespace PluginDemocracy.DTOs
             }
             JoinCommunityRequestDTO request = new()
             {
-                CommunityDto = Community,
-                HomeDto = this,
-                UserDto = user,
+                CommunityDTO = Community,
+                HomeDTO = this,
+                UserDTO = user,
             };
             if (joiningAsOwner)
             {

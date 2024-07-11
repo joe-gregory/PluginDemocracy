@@ -198,7 +198,7 @@ namespace PluginDemocracy.API.Controllers
                 //Send an email with a link to reset the password.
                 try
                 {
-                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSubject, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailBody, existingUser.Culture) + $"/n<a href=\"{link}\">{link}</a>");
+                    await _utilityClass.SendEmailAsync(toEmail: existingUser.Email, subject: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailSubject, existingUser.Culture), body: _utilityClass.Translate(ResourceKeys.ResetPasswordEmailBody, existingUser.Culture) + $"\n<a href=\"{link}\">{link}</a>");
                 }
                 catch (Exception ex)
                 {
@@ -567,10 +567,7 @@ namespace PluginDemocracy.API.Controllers
                     string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
                     string blobSASToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
                     string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
-                    //string blobSasUrl = Environment.GetEnvironmentVariable("BlobSASURL") ?? string.Empty;
-                    //string readonlyBlobSasUrl = Environment.GetEnvironmentVariable("ReadOnlyBlobSASURL") ?? string.Empty;
                     if (string.IsNullOrEmpty(blobContainerURL) || string.IsNullOrEmpty(blobSASToken) || string.IsNullOrEmpty(readOnlyBlobSASToken)) throw new Exception("One of the environment variables for blob storage is null or empty");
-                    //if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
                     BlobContainerClient containerClient = new(new Uri($"{blobContainerURL}?{blobSASToken}"));
                     //Files to add to blob
                     foreach (IFormFile file in petitionDTO.SupportingDocumentsToAdd)

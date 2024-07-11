@@ -1,8 +1,10 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Common;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
@@ -132,66 +134,70 @@ namespace PluginDemocracy.API.Controllers
         /// Otherwise, save changes. The constructor for JoinCommunityReques also makes some verifications like you can only be joining 
         /// as owner or resident, not both.
         /// </summary>
-        /// <param name="requestDto"></param>
+        /// <param name="joinCommunityRequestUploadDTO"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPost(ApiEndPoints.JoinCommunityRequest)]
-        public async Task<ActionResult<PDAPIResponse>> JoinCommunityRequest(JoinCommunityRequestDTO requestDto)
+        public async Task<ActionResult<PDAPIResponse>> JoinCommunityRequest([FromForm] JoinCommunityRequestUploadDTO joinCommunityRequestUploadDTO)
         {
-            PDAPIResponse response = new();
-            //Ensure User from claims is valid, that it matches the UserId in the request and that the Community exists.
-            //All other verifications are done by the Community object. 
+            PDAPIResponse pdApiresponse = new();
+            if (joinCommunityRequestUploadDTO == null)
+            {
+                pdApiresponse.AddAlert("error", "Request is null");
+                return BadRequest(pdApiresponse);
+            }
             //Extract User from claims
-            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, pdApiresponse);
             if (existingUser == null)
             {
-                response.AddAlert("error", "User from claims not found");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "User from claims not found");
+                return BadRequest(pdApiresponse);
             }
             //Does the user from claims match the user in the request?
-            if(requestDto.UserDto == null)
+            if(joinCommunityRequestUploadDTO.CommunityId == 0)
             {
-                response.AddAlert("error", "UserDto is null");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "CommunityId for request is zero");
+                return BadRequest(pdApiresponse);
             }
-            if (existingUser.Id != requestDto.UserDto.Id)
+            if (joinCommunityRequestUploadDTO.HomeId == 0)
             {
-                response.AddAlert("error", "User from claims does not match user in request");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "HomeId is zero.");
+                return BadRequest(pdApiresponse);
             }
             //Does the community exist?
-            if(requestDto.CommunityDto == null)
+            if(joinCommunityRequestUploadDTO.JoiningAsOwner == joinCommunityRequestUploadDTO.JoiningAsResident)
             {
-                response.AddAlert("error", "CommunityDto is null");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "Both flags for joining as owner and joining as resident set.");
+                return BadRequest(pdApiresponse);
             }
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == requestDto.CommunityDto.Id);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == joinCommunityRequestUploadDTO.CommunityId);
             if (community == null)
             {
-                response.AddAlert("error", "Community not found");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "Community not found in database with given Id.");
+                return BadRequest(pdApiresponse);
             }
-            if(requestDto.JoiningAsOwner == false && requestDto.JoiningAsResident == false)
+            if(joinCommunityRequestUploadDTO.JoiningAsOwner == false && joinCommunityRequestUploadDTO.JoiningAsResident == false)
             {
-                response.AddAlert("error", "Both Request.JoiningAsOwner and Request.JoiningAsResident can't be false.");
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", "Both Request.JoiningAsOwner and Request.JoiningAsResident can't be false.");
+                return BadRequest(pdApiresponse);
             }
             try
             {
-                Home home = community.Homes.First(h => h.Id == requestDto.HomeDto?.Id);
-                if(requestDto.JoiningAsResident == true) requestDto.JoiningAsOwner = false;
-                //at this point requestDto.JoiningAsOwner should not be null, so I am going to go ahead and add this bool variable
-                JoinCommunityRequest request = new(community, home, existingUser, requestDto.JoiningAsOwner, requestDto.OwnershipPercentage);
-                community.AddJoinCommunityRequest(request);
+                Home home = community.Homes.First(h => h.Id == joinCommunityRequestUploadDTO.HomeId);
+                JoinCommunityRequest joinCommunityRequest = new(community, home, existingUser, joinCommunityRequestUploadDTO.JoiningAsOwner, joinCommunityRequestUploadDTO.OwnershipPercentage);
+                community.AddJoinCommunityRequest(joinCommunityRequest);
 
                 //Send notifications to the corresponding parties
                 //Send notification to role that has the capability to accept new home owners. Lookup all the Roles that have CanEditHomeOwnership and CanEditResidency
                 //Search for all the roles that have CanEditHomeOwnership and CanEditResidency in the Community
                 //If user is joining as home owner, send notification to Roles with corresponding powers. If role is not there, default send notification to app admin.
                 List<User?> roleHoldersWithJoinPower = community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
-                string body = $"{existingUser.FullName} has requested to join the community as a {(request.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}";
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequest}?requestId={joinCommunityRequest.Id}";
+                string body = $"{existingUser.FullName} has requested to join the community as a {(joinCommunityRequest.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}.Please follow the following link to accept, reject or review:\n <a href=\"{link}\">{link}</a>.";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
-                if (request.JoiningAsOwner)
+                
+                
+                if (joinCommunityRequest.JoiningAsOwner)
                 {
                     foreach (User? user in roleHoldersWithJoinPower)
                     {
@@ -202,7 +208,7 @@ namespace PluginDemocracy.API.Controllers
                             await _utilityClass.SendEmailAsync(user.Email, title, body);
                         }
                     }
-                    if (roleHoldersWithJoinPower.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
+                    if (appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
                 }
                 //If user is joining as resident, send notification to home owner AND roles with powers, default to app admin otherwise. 
                 else
@@ -216,20 +222,97 @@ namespace PluginDemocracy.API.Controllers
                         user.AddNotification(_utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
                         await _utilityClass.SendEmailAsync(user.Email, _utilityClass.Translate(ResourceKeys.NewJoinRequest, user.Culture), body);
                     }
-                    if (home.Owners.Count == 0 && appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
+                    if (appManagerEmail != null) await _utilityClass.SendEmailAsync(appManagerEmail, _utilityClass.Translate(ResourceKeys.NewJoinRequest), body);
                 }
                 //The emails and notifications have been sent.
 
                 //At this point the request should be validated and the notifications sent. It can be saved to database. 
+                //But before, I will save the files to the blob. If that fails, don't save any changes. 
+                string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
+                string blobSASToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
+                if (string.IsNullOrEmpty(blobContainerURL) || string.IsNullOrEmpty(blobSASToken) || string.IsNullOrEmpty(readOnlyBlobSASToken)) throw new Exception("One of the environment variables for blob storage is null or empty");
+                BlobContainerClient containerClient = new(new Uri($"{blobContainerURL}?{blobSASToken}"));
+                //Files to add to blob
+                foreach (IFormFile file in joinCommunityRequestUploadDTO.SupportingDocumentsToAdd)
+                {
+                    string blobName = $"joinCommunityRequests/{joinCommunityRequest.Id}/{file.FileName}";
+                    BlobClient blobClient = containerClient.GetBlobClient(blobName);
+                    await using Stream fileStream = file.OpenReadStream();
+                    //upload the document
+                    await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = file.ContentType });
+                    //Remove Sas write token: 
+                    UriBuilder uriBuilder = new(blobClient.Uri);
+                    System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    query.Clear();
+                    uriBuilder.Query = query.ToString();
+                    string blobUrlWithoutSas = uriBuilder.ToString();
+                    joinCommunityRequest.AddLinkToFile($"{blobUrlWithoutSas}?{readOnlyBlobSASToken}");
+                }
                 _context.SaveChanges();
-                response.AddAlert("success", "Request sent successfully. La solicitud ha sido enviada.");
-                return Ok(response);
+                pdApiresponse.AddAlert("success", "Request sent successfully. La solicitud ha sido enviada.");
+                pdApiresponse.RedirectTo = $"{FrontEndPages.JoinCommunityRequest}?requestId={joinCommunityRequest.Id}";
+                pdApiresponse.SuccessfulOperation = true;
+                return Ok(pdApiresponse);
             }
             catch (Exception exception)
             {
-                response.AddAlert("error", exception.Message);
-                return BadRequest(response);
+                pdApiresponse.AddAlert("error", exception.Message);
+                return BadRequest(pdApiresponse);
             }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetAllJoinCommunityRequestsForUser)]
+        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> GetAlLJoinCommunityRequestsForUser()
+        {
+
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            List<JoinCommunityRequest>? joinCommunityRequests = await _context.JoinCommunityRequests.Where(j => j.User.Id == existingUser.Id).ToListAsync();
+            joinCommunityRequests ??= [];
+
+            List<JoinCommunityRequestDTO> joinCommunityRequestDTOs = [];
+
+            foreach (JoinCommunityRequest joinRequest in joinCommunityRequests)
+            {
+                JoinCommunityRequestDTO jcr = new();
+                jcr.Id = joinRequest.Id;
+                jcr.CommunityDTO = new()
+                {
+                    Name = joinRequest.Community.Name
+                };
+                jcr.JoiningAsOwner = joinRequest.JoiningAsOwner;
+                jcr.JoiningAsResident = joinRequest.JoiningAsResident;
+                jcr.Approved = joinRequest.Approved;
+                jcr.DateRequested = joinRequest.DateRequested;
+
+                joinCommunityRequestDTOs.Add(jcr);
+            }
+
+            return Ok(joinCommunityRequestDTOs);
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetJoinCommunityRequest)]
+        public async Task<ActionResult<JoinCommunityRequestDTO>> GetJoinCommunityRequest([FromQuery] int requestId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            if (joinRequest == null) return BadRequest();
+            //Only the user with the Id as the request and individuals with roles in the community can see the request
+            //if this is the user from the request, return the request
+            bool canThisPersonViewIt = joinRequest.User.Id == existingUser.Id;
+
+            // Does this person have roles in this community?
+            if (!canThisPersonViewIt)
+            {
+                canThisPersonViewIt = existingUser.Roles.Any(role =>
+                    role.Community.Id == joinRequest.Community.Id &&
+                    role.Powers.CanEditHomeOwnership &&
+                    role.Powers.CanEditResidency);
+            }
+            if (!canThisPersonViewIt) return Forbid();
+            return Ok(new JoinCommunityRequestDTO(joinRequest));
         }
         [Authorize]
         [HttpPost(ApiEndPoints.CreateNewPost)]

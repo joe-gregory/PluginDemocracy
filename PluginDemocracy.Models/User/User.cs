@@ -149,7 +149,6 @@ namespace PluginDemocracy.Models
             _citizenships = [];
             _notifications = [];
         }
-
         public void AddCitizenship(ResidentialCommunity community)
         {
             _citizenships.Add(community);

@@ -1,22 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using PluginDemocracy.DTOs;
-using System.Net.Mail;
-using PluginDemocracy.API.UrlRegistry;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using PluginDemocracy.Translations;
-using System.Text.Json;
-using System.Runtime.CompilerServices;
-using System.Text;
-using Azure.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Newtonsoft.Json;
-using static MudBlazor.CategoryTypes;
-using System.Net.Http.Json;
-using Microsoft.IdentityModel.Tokens;
+using PluginDemocracy.API.UrlRegistry;
+using PluginDemocracy.DTOs;
+using PluginDemocracy.Translations;
+using System.Net.Mail;
+using System.Text;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {

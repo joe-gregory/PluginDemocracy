@@ -1,0 +1,23 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudText>
+<MudCard Class="mb-5">
+    @foreach (JoinCommunityRequestDTO jcr in joinCommunityRequests ?? [])
+{
+    <MudLink Href="">#@jcr.Id Community: @jcr.CommunityDTO?.Name Application date: @jcr.DateRequested Status: @(jcr.Approved == null ? "pending" : jcr.Approved == true ? "Approved" : "Rejected")</MudLink>
+}
+</MudCard>
+
+@code{
+    List<JoinCommunityRequestDTO>? joinCommunityRequests = [];
+    protected override async Task OnInitializedAsync()
+    {
+        //Request Id, Name of community, As owner/resident, status, date requested
+        if (Services != null)
+        {
+            joinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.GetAllJoinCommunityRequestsForUser);
+            StateHasChanged();
+        }
+    }
+}

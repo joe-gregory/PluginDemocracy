@@ -19,6 +19,12 @@ namespace PluginDemocracy.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Configure Kestrel server limits
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = 314572800; // 300MB
+            });
+
             //Logging 
             // Add services to the container.
             builder.Services

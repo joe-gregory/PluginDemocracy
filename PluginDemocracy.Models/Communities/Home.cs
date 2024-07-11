@@ -84,10 +84,15 @@ namespace PluginDemocracy.Models
         {
             get => OwnersOwnerships.Keys.Union(Residents).ToList();
         }
-        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-        #pragma warning disable CS8618
-        private Home(){}
-        #pragma warning restore CS8618
+        /// <summary>
+        /// Private constructor for the benefit of EFC
+        /// </summary>
+        private Home()
+        {
+            InternalAddress = string.Empty;
+            _ownerships = [];
+            _residents = [];
+        }
         public Home(ResidentialCommunity community, int number, string internalAddress)
         {
             ResidentialCommunity = community;

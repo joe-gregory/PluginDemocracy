@@ -71,19 +71,12 @@ namespace PluginDemocracy.UIComponents
             {
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 
-                //return await response.Content.ReadFromJsonAsync<T>();
                 if (!response.IsSuccessStatusCode)
                 {
                     AddSnackBarMessage("error", $"HTTP Error: {response.StatusCode}");
                     return default;
                 }
                 string responseBody = await response.Content.ReadAsStringAsync();
-                //return JsonSerializer.Deserialize<T>(responseBody, new JsonSerializerOptions
-                //{
-                //    PropertyNameCaseInsensitive = true,
-                //    ReferenceHandler = ReferenceHandler.Preserve,
-                //    WriteIndented = true
-                //});
                 return await response.Content.ReadFromJsonAsync<T>();
             }
             catch (Exception ex)

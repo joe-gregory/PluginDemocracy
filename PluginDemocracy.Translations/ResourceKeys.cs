@@ -49,6 +49,8 @@ namespace PluginDemocracy.Translations
         public const string Communities = "Communities";
         public const string Feed = "Feed";
         public const string JoinCommunity = "JoinCommunity";
+        public const string JoinCommunityRequest = "JoinCommunityRequest";
+        public const string JoinCommunityRequests = "JoinCommunityRequests";
         public const string SelectCommunityFromDropDown = "SelectCommunityFromDropDown";
         public const string SelectHomeDescriptionInJoinCommunity = "SelectHomeDescriptionInJoinCommunity";
         public const string JoinAHome = "JoinAHome";
@@ -67,6 +69,7 @@ namespace PluginDemocracy.Translations
         public const string Read = "Read";
         public const string DeletePost = "DeletePost";
         public const string DeletePostCannotBeUndone = "DeletePostCannotBeUndone";
+        public const string IfJoiningAsOwnerAdditionalDocumentsNeeded = "IfJoiningAsOwnerAdditionalDocumentsNeeded";
         
         public const string CreateProposal = "CreateProposal";
 

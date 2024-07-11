@@ -574,6 +574,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your community requires that if you are joining as owner, to add additional documents for proof. Your community requires a picture of yourself (selfie) and a picture of a valid Id (such as a drivers license). Additional documentation might be requested (such as ownership documents) if public records don’t match the information you provided (for example, if you purchased this home recently)..
+        /// </summary>
+        internal static string IfJoiningAsOwnerAdditionalDocumentsNeeded {
+            get {
+                return ResourceManager.GetString("IfJoiningAsOwnerAdditionalDocumentsNeeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal address.
         /// </summary>
         internal static string InternalAddress {
@@ -624,6 +633,24 @@ namespace PluginDemocracy.Translations {
         internal static string JoinCommunity {
             get {
                 return ResourceManager.GetString("JoinCommunity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join Community Request.
+        /// </summary>
+        internal static string JoinCommunityRequest {
+            get {
+                return ResourceManager.GetString("JoinCommunityRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Join Community Requests.
+        /// </summary>
+        internal static string JoinCommunityRequests {
+            get {
+                return ResourceManager.GetString("JoinCommunityRequests", resourceCulture);
             }
         }
         

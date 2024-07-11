@@ -1,13 +1,14 @@
 ﻿@inject BaseAppState AppState
 @inject Services Services
 @inject IDialogService DialogService
+@using Microsoft.AspNetCore.Components.Forms
 
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunity)</MudText>
 <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
 <MudGrid Class="mt-5 mb-10">
     <MudItem>
-        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDto">
+        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDTO">
             @foreach (ResidentialCommunityDTO communityDtoOption in communitiesDtos)
             {
                 <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
@@ -76,8 +77,36 @@
             </MudRadioGroup>
             @if (residentOrOwner == true)
             {
-                <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDto?.AvailableOwnershipPercentage}%")</MudText>
+                <MudText>@AppState.Translate(ResourceKeys.AvailableOwnership) : @($"{selectedHomeDTO?.AvailableOwnershipPercentage}%")</MudText>
                 <MudNumericField T="double" @bind-Value="selectedOwnershipPercentage" Immediate="false" Label="@AppState.Translate(ResourceKeys.Percentage)" />
+                <MudText Color="Color.Error">@AppState.Translate(ResourceKeys.IfJoiningAsOwnerAdditionalDocumentsNeeded)</MudText>
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="AddSupportingDocumentsToUpload">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.AttachFile"
+                                   for="@context.Id">
+                            @AppState.Translate(ResourceKeys.Select)
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+                @*Show files ready to upload*@
+                @if (files != null && files.Count > 0)
+                {
+                    <MudCard Elevation="25">
+                        <MudText>@AppState.Translate(ResourceKeys.FilesReadyToUpload)</MudText>
+                        <MudList>
+                            @foreach (IBrowserFile file in files)
+                            {
+                                <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                                    @file.Name <code>@file.Size bytes</code>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveSupportingDocumentToBeUploaded(file)" />
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudCard>
+                }
             }
         </MudForm>
         @if (displayDialogErrorMessage)
@@ -87,7 +116,11 @@
         
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-5 mb-5" OnClick="SendRequest">@AppState.Translate(ResourceKeys.SendRequest)</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-5 mb-5" Disabled="disableSendButton" OnClick="SendRequest">@AppState.Translate(ResourceKeys.SendRequest)</MudButton>
+        @if(showSpinner)
+        {
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true"/>
+        }
     </DialogActions>
 </MudDialog>
 
