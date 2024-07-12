@@ -12,6 +12,5 @@
         /// </summary>
         public bool CanEditResidency { get; set; }
         public bool CanModifyAccounting { get; set; }
-
     }
 }

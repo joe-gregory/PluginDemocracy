@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using PluginDemocracy.Models;
@@ -145,6 +146,19 @@ namespace PluginDemocracy.DTOs
                 Admin = user.Admin,
             };
             return userDto;
+        }
+        public static UserDTO ReturnAvatarMinimumUserDTOFromUser(User user)
+        {
+            UserDTO newUserDTO = new()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                MiddleName = user.MiddleName,
+                LastName = user.LastName,
+                SecondLastName = user.SecondLastName,
+                ProfilePicture = user.ProfilePicture
+            };
+            return newUserDTO;
         }
         /// <summary>
         /// Two userDtos are equal if their Ids are equal

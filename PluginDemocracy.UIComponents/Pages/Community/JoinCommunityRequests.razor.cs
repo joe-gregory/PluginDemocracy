@@ -20,6 +20,12 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private bool disableAll = false;
         private bool spinnerOn = false;
         private string? message;
+        /// <summary>
+        /// This field is to know if the current user is either the requester of this join community request, 
+        /// an individual with a role on this community or and admin. This is used in the UI in order to determine
+        /// Which actions to show. 
+        /// </summary>
+        private bool? requesterOrRoleOrAdmin;
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
@@ -40,8 +46,8 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     statusColor = MudBlazor.Color.Error;
                     statusText = "Denied";
                 }
-                homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>(ApiEndPoints.GetHomeForJoinCommunityRequestInfo);
-                if (homeToJoinDTO == null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
+                if (Services != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>(ApiEndPoints.GetHomeForJoinCommunityRequestInfo);
+                if (homeToJoinDTO == null && Services != null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
                 StateHasChanged();
             }
         }

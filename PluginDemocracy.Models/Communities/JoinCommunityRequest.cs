@@ -45,7 +45,7 @@ namespace PluginDemocracy.Models
         /// True indicates that the request has been approved. 
         /// False indicates that the request has been denied.
         /// </summary>
-        public bool? Approved { get; set; }
+        public bool? Approved { get; private set; }
         /// <summary>
         /// Parameterless constructor for the benefit of EFC
         /// </summary>
@@ -77,6 +77,20 @@ namespace PluginDemocracy.Models
         public void AddMessage(User author, string message)
         {
             _messages.Add(new(author, message));
+        }
+        /// <summary>
+        /// This is internal as it is called by the parent community. 
+        /// </summary>
+        internal void Approve()
+        {
+            Approved = true;
+        }
+        /// <summary>
+        /// This is internal as it is called by the parent community.
+        /// </summary>
+        internal void Reject()
+        {
+            Approved = false;
         }
     }
     

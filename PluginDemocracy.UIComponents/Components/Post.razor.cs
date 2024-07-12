@@ -53,8 +53,8 @@ namespace PluginDemocracy.UIComponents.Components
         {
             if (AppState.User != null && PostDto != null)
             {
-                PostReactionDto reaction = new(PostDto.Id, AppState.User, reactionType);
-                List<PostReactionDto>? PostDtoReactions = await Services.PostDataGenericAsync<PostReactionDto, List<PostReactionDto>>(ApiEndPoints.ReactToPost, reaction);
+                PostReactionDTO reaction = new(PostDto.Id, AppState.User, reactionType);
+                List<PostReactionDTO>? PostDtoReactions = await Services.PostDataGenericAsync<PostReactionDTO, List<PostReactionDTO>>(ApiEndPoints.ReactToPost, reaction);
                 if (PostDtoReactions != null)
                 {
                     PostDto.Reactions = PostDtoReactions;

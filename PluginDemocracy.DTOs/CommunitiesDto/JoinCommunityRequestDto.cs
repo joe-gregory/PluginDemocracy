@@ -14,7 +14,6 @@ namespace PluginDemocracy.DTOs
         public bool JoiningAsResident { get; set; } = false;
         public double OwnershipPercentage { get; set; } = 0;
         public bool? Approved { get; set; } = null;
-        
         public List<string> LinksToFiles { get; set; } = [];
         public List<MessageDTO> Messages { get; set; } = [];
         public JoinCommunityRequestDTO() { }
@@ -30,7 +29,7 @@ namespace PluginDemocracy.DTOs
             OwnershipPercentage = jcr.OwnershipPercentage;
             Approved = jcr.Approved;
             foreach (string link in jcr.LinksToFiles) LinksToFiles.Add(link);
-            foreach (Models.Message message in jcr.Messages) 
+            foreach (Message message in jcr.Messages) 
             {
                 UserDTO author = new()
                 {

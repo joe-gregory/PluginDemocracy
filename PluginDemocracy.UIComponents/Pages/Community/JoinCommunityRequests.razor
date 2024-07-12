@@ -15,7 +15,7 @@
         </tr>
         <tr>
             <td><MudText><b>Date Requested:</b></MudText></td>
-            <td><MudText>@joinCommunityRequestDTO?.DateRequested.Date.Date</MudText></td>
+            <td><MudText>@joinCommunityRequestDTO?.DateRequested.Date.ToLocalTime().ToString("yyyy-MM-dd")</MudText></td>
         </tr>
         <tr>
             <td><MudText><b>Community To Join:</b></MudText></td>
@@ -69,11 +69,11 @@
                            Color="Color.Info"
                            StartIcon="@Icons.Material.Filled.AttachFile"
                            for="@context.Id">
-                    @AppState.Translate(ResourceKeys.Select)
+                    @AppState?.Translate(ResourceKeys.Select)
                 </MudButton>
             </ButtonTemplate>
         </MudFileUpload>
-        <MudButton Variant="Variant.Filled" Class="ma-2" Color="Color.Primary" Disabled="disableAll" OnClick="UploadSupportingDocumentsToUpload">@AppState.Translate(ResourceKeys.Upload)</MudButton>
+        <MudButton Variant="Variant.Filled" Class="ma-2" Color="Color.Primary" Disabled="disableAll" OnClick="UploadSupportingDocumentsToUpload">@AppState?.Translate(ResourceKeys.Upload)</MudButton>
         @if (spinnerOn)
         {
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="ma-1" />
@@ -82,7 +82,7 @@
         @if (files != null && files.Count > 0)
         {
             <MudCard Elevation="25">
-                <MudText>@AppState.Translate(ResourceKeys.FilesReadyToUpload)</MudText>
+                <MudText>@AppState?.Translate(ResourceKeys.FilesReadyToUpload)</MudText>
                 <MudList>
                     @foreach (IBrowserFile file in files)
                     {
@@ -108,7 +108,7 @@
                     </CardHeaderAvatar>
                     <CardHeaderContent>
                         <MudText>@message?.Sender?.FullName</MudText>
-                        <MudText>@message.Date</MudText>
+                        <MudText>@message.Date.ToLocalTime()</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
@@ -118,6 +118,7 @@
         }
     
 </MudCard>
+
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="pa-3 ma-3">Add Message</MudText>
     <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="message" />

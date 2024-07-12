@@ -21,7 +21,7 @@
 </MudForm>
 <MudLink Href="/forgotpassword">@AppState.Translate("ForgotPassword?")</MudLink>
 @code {
-    LoginInfoDto loginInfo = new();
+    LoginInfoDTO loginInfo = new();
 
     private bool success;
     private bool disabled; 
@@ -44,7 +44,7 @@
     {
         disabled = true;
         loginInfo.Culture = AppState.Culture;
-        await Services.PostDataAsync<LoginInfoDto>(ApiEndPoints.PostLogin, loginInfo);
+        await Services.PostDataAsync<LoginInfoDTO>(ApiEndPoints.PostLogin, loginInfo);
         disabled = false;
         StateHasChanged();
     }

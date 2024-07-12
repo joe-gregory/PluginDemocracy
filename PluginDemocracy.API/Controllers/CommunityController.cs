@@ -297,7 +297,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).Include(j => j.Messages).FirstOrDefaultAsync(j => j.Id == requestId);
             if (joinRequest == null) return BadRequest();
             //Only the user with the Id as the request and individuals with roles in the community can see the request
             //if this is the user from the request, return the request
@@ -615,7 +615,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.ReactToPost)]
-        public async Task<ActionResult<List<PostReactionDto>>> LikePost(PostReactionDto reactionDto)
+        public async Task<ActionResult<List<PostReactionDTO>>> LikePost(PostReactionDTO reactionDto)
         {
             //Extract User from claims
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);

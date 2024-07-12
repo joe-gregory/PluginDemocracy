@@ -15,21 +15,28 @@
         /// <summary>
         /// The person that holds the Role
         /// </summary>
-        public User? Holder { get; set; }
-        public DateTime? ExpirationDate { get; set; }
-        public bool Active { get; set; }
+        public User? Holder { get; internal set; }
+        public DateTime? ExpirationDate { get; internal set; }
+        public bool Active { get; internal set; }
         public RolePowers Powers { get; init; }
-        //Disabling CS8618 as this is a parameterless constructor for the benefit of EF Core
-        #pragma warning disable CS8618
-        private Role() { }
-        #pragma warning restore CS8618
-        public Role(string title, string description, ResidentialCommunity community)
+        /// <summary>
+        /// Private constructor for the benefit of EFC.
+        /// </summary>
+        private Role() 
+        {
+            Title = string.Empty;
+            Description = string.Empty;
+            Community = new(string.Empty, string.Empty);
+            Powers = new();
+        }
+        internal Role(string title, string description, ResidentialCommunity community, RolePowers? powers = null)
         {
             Title = title;
             Description = description;
-            Community = community;
             Active = true;
-            Powers = new();
+            if (powers != null) Powers = powers;
+            else Powers = new();
+            Community = community;
         }
         public void Update()
         {

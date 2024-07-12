@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PluginDemocracy.DTOs
 {
-    public class LoginInfoDto
+    public class LoginInfoDTO
     {
         public string? Email { get; set; }
         public string? Password { get; set; }

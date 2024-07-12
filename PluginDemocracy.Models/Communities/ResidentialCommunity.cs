@@ -225,42 +225,85 @@ namespace PluginDemocracy.Models
         {
            _joinCommunityRequests.Remove(request);
         }
-        public void AddRole(Role role)
-        {
-            if (!_roles.Contains(role)) _roles.Add(role);
-        }
-        public void RemoveRole(Role role)
-        {
-            _roles.Remove(role);
-        }
         /// <summary>
         /// Call to approve a JoinCommunityRequest. Approving sets the user as a homeowner or resident of the home which makes him 
         /// show up as a citizen in <see cref="ResidentialCommunity.Citizens"/>. 
         /// The request should be located in <see cref="ResidentialCommunity.JoinCommunityRequests"/> in order to be able to approve it. 
         /// </summary>
         /// <param name="request">The request you want to approve.</param>
+        /// <param name="approver">The individual making the approval.</param>
         /// <exception cref="ArgumentException">Thrown if request is not found in <see cref="ResidentialCommunity.JoinCommunityRequests"/> or
         /// if <see cref="JoinCommunityRequest.Home"/> does not match a <see cref="Home"/> in <see cref="ResidentialCommunity.Homes"/> or if
         /// <see cref="JoinCommunityRequest.User"/> is null.</exception>
-        public void ApproveJoinCommunityRequest(JoinCommunityRequest request)
+        public void ApproveJoinCommunityRequest(JoinCommunityRequest request, User approver)
         {
             if (request.User == null) throw new ArgumentException("Request.User is null");
             if (!JoinCommunityRequests.Contains(request)) throw new ArgumentException("Request not found in Community.JoinCommunityRequests");
             //Make sure the home belongs to this community
             if (!_homes.Contains(request.Home)) throw new ArgumentException("Home does not belong to this community");
+            //Does the individual making the approval have the right permissions? Either by role or admin
             if (request.JoiningAsOwner)
             {
+                //Does the approver have the power to approve the request?
+                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditHomeOwnership) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
                 request.Home.AddOwner(request.User, request.OwnershipPercentage);
             }
             else if (request.JoiningAsResident)
             {
+                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditResidency) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
                 request.Home.AddResident(request.User);
             }
             else
             {
                 throw new ArgumentException("JoiningAsOwner and JoiningAsResident are both false. At least one must be true.");
             }
-            request.Approved = true;
+            request.Approve();
+        }
+        public void RejectJoinCommunityRequest(JoinCommunityRequest request, User approver)
+        {
+            if (request.User == null) throw new ArgumentException("Request.User is null");
+            if (!JoinCommunityRequests.Contains(request)) throw new ArgumentException("Request not found in Community.JoinCommunityRequests");
+            //Make sure the home belongs to this community
+            if (!_homes.Contains(request.Home)) throw new ArgumentException("Home does not belong to this community");
+            //Does the individual making the approval have the right permissions? Either by role or admin
+            if (request.JoiningAsOwner)
+            {
+                //Does the approver have the power to approve the request?
+                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditHomeOwnership) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
+            }
+            else if (request.JoiningAsResident)
+            {
+                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditResidency) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
+            }
+            else
+            {
+                throw new ArgumentException("JoiningAsOwner and JoiningAsResident are both false. At least one must be true.");
+            }
+            request.Reject();
+        }
+        public Role AddRole(string title, string description, RolePowers? powers = null)
+        {
+            Role newRole = new(title, description, this, powers);
+            _roles.Add(newRole);
+            return newRole;
+        }
+        public void RemoveRole(Role role)
+        {
+            if (!_roles.Contains(role)) throw new ArgumentException("Role does not exist in this community.");
+            role.Holder?.RemoveRole(role);
+            _roles.Remove(role);
+        }
+        public void AssignRole(Role role, User user)
+        {
+            if (!_roles.Contains(role)) throw new ArgumentException("Role does not exist in this community.");
+            role.Holder = user;
+            user.AddRole(role);
+        }
+        public void UnassignRole(Role role, User assignee)
+        {
+            if (!_roles.Contains(role)) throw new ArgumentException("Role does not exist in this community.");
+            assignee.RemoveRole(role);
+            role.Holder = null;
         }
         public void AddPetition(Petition petition)
         {

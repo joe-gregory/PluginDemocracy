@@ -5,7 +5,7 @@ namespace PluginDemocracy.DTOs.CommunitiesDto
 {
 
     [method: JsonConstructor]
-    public class PostReactionDto(int postId, UserDTO user, ReactionType reactionType)
+    public class PostReactionDTO(int postId, UserDTO user, ReactionType reactionType)
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }

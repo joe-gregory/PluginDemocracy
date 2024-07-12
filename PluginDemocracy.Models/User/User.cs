@@ -149,35 +149,35 @@ namespace PluginDemocracy.Models
             _citizenships = [];
             _notifications = [];
         }
-        public void AddCitizenship(ResidentialCommunity community)
+        internal void AddCitizenship(ResidentialCommunity community)
         {
             _citizenships.Add(community);
         }
-        public void RemoveCitizenship(ResidentialCommunity community)
+        internal void RemoveCitizenship(ResidentialCommunity community)
         {
             _citizenships.Remove(community);
         }
-        public void AddHomeOwnership(HomeOwnership homeOwnership)
+        internal void AddHomeOwnership(HomeOwnership homeOwnership)
         {
             _homeOwnerships.Add(homeOwnership);
         }
-        public void RemoveHomeOwnership(HomeOwnership homeOwnership)
+        internal void RemoveHomeOwnership(HomeOwnership homeOwnership)
         {
             _homeOwnerships.Remove(homeOwnership);
         }
-        public void AddAsResidentOfHome(Home home)
+        internal void AddAsResidentOfHome(Home home)
         {
             if (!_residentOfHomes.Contains(home)) _residentOfHomes.Add(home);
         }
-        public void RemoveAsResidentOfHome(Home home)
+        internal void RemoveAsResidentOfHome(Home home)
         {
             _residentOfHomes.Remove(home);
         }
-        public void AddRole(Role role)
+        internal void AddRole(Role role)
         {
             if (!Roles.Contains(role)) _roles.Add(role);
         }
-        public void RemoveRole(Role role)
+        internal void RemoveRole(Role role)
         {
             _roles.Remove(role);
         }

@@ -55,7 +55,7 @@ namespace PluginDemocracy.API.Controllers
             return Ok(apiResponse);
         }
         [HttpPost(ApiEndPoints.PostLogin)]
-        public async Task<ActionResult<PDAPIResponse>> LogIn(LoginInfoDto loginInfo)
+        public async Task<ActionResult<PDAPIResponse>> LogIn(LoginInfoDTO loginInfo)
         {
             //Create response object
             PDAPIResponse apiResponse = new();
@@ -183,7 +183,7 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         [HttpPost("sendforgotpasswordemail")]
-        public async Task<ActionResult<PDAPIResponse>> ForgotPassword(LoginInfoDto loginInfo)
+        public async Task<ActionResult<PDAPIResponse>> ForgotPassword(LoginInfoDTO loginInfo)
         {
             PDAPIResponse response = new();
             //Generate a secure, unique token. It should expire after a certain time and should contain information about the user.
@@ -214,7 +214,7 @@ namespace PluginDemocracy.API.Controllers
 
         }
         [HttpPost("resetpassword")]
-        public async Task<ActionResult<PDAPIResponse>> ResetPassword(LoginInfoDto loginInfoDto, [FromQuery] string token)
+        public async Task<ActionResult<PDAPIResponse>> ResetPassword(LoginInfoDTO loginInfoDto, [FromQuery] string token)
         {
             PDAPIResponse response = new();
 
