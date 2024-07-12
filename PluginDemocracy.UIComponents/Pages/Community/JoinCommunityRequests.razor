@@ -120,7 +120,7 @@
 </MudCard>
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="pa-3 ma-3">Add Message</MudText>
-    <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="newMessageText" />
+    <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="message" />
     <MudButton Disabled="disableAll" Variant="Variant.Filled" Color="Color.Primary" Class="ma-1" OnClick="SendNewMessage" EndIcon="@Icons.Material.Filled.Send">Send</MudButton>
 </MudCard>
 

@@ -399,7 +399,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.AddMessageToJoinCommunityRequest)]
-        public async Task<ActionResult<PDAPIResponse>> AddMessageToJoinCommunityRequest(string message, int requestId)
+        public async Task<ActionResult<PDAPIResponse>> AddMessageToJoinCommunityRequest([FromBody] string message, [FromQuery] int requestId)
         {
             PDAPIResponse pdApiResponse = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User, pdApiResponse);

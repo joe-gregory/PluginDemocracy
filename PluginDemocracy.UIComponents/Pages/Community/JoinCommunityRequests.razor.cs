@@ -19,7 +19,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private readonly IList<IBrowserFile> files = [];
         private bool disableAll = false;
         private bool spinnerOn = false;
-        private string? newMessageText;
+        private string? message;
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
@@ -108,24 +108,24 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         }
         private async void SendNewMessage()
         {
-            if (!string.IsNullOrEmpty(newMessageText))
+            if (!string.IsNullOrEmpty(message))
             {
                 disableAll = true;
                 AppState.IsLoading = true;
                 string endpoint = $"{ApiEndPoints.AddMessageToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
-                PDAPIResponse pdApiResponse = await Services.PostDataAsync<string>(endpoint, newMessageText);
+                PDAPIResponse pdApiResponse = await Services.PostDataAsync<string>(endpoint, message);
                 if (pdApiResponse.SuccessfulOperation) 
                 {                     
-                    newMessageText = null;
+                    message = null;
                     RefreshJoinCommunityRequestDTO();
                 }
                 else
                 {
                     Services.AddSnackBarMessage("error", "Error sending message.");
                 }
-                disableAll = false;
-                AppState.IsLoading = false;
             }
+            disableAll = false;
+            AppState.IsLoading = false;
         }
     }
 }
