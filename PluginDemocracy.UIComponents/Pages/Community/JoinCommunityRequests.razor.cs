@@ -108,7 +108,24 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         }
         private async void SendNewMessage()
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(newMessageText))
+            {
+                disableAll = true;
+                AppState.IsLoading = true;
+                string endpoint = $"{ApiEndPoints.AddMessageToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
+                PDAPIResponse pdApiResponse = await Services.PostDataAsync<string>(endpoint, newMessageText);
+                if (pdApiResponse.SuccessfulOperation) 
+                {                     
+                    newMessageText = null;
+                    RefreshJoinCommunityRequestDTO();
+                }
+                else
+                {
+                    Services.AddSnackBarMessage("error", "Error sending message.");
+                }
+                disableAll = false;
+                AppState.IsLoading = false;
+            }
         }
     }
 }

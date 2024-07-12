@@ -1,11 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
@@ -400,7 +397,47 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(pdApiResponse);
             }
         }
-
+        [Authorize]
+        [HttpPost(ApiEndPoints.AddMessageToJoinCommunityRequest)]
+        public async Task<ActionResult<PDAPIResponse>> AddMessageToJoinCommunityRequest(string message, int requestId)
+        {
+            PDAPIResponse pdApiResponse = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, pdApiResponse);
+            if (existingUser == null)
+            {
+                pdApiResponse.AddAlert("error", "User from claims not found");
+                return BadRequest(pdApiResponse);
+            }
+            if (requestId == 0)
+            {
+                pdApiResponse.AddAlert("error", "requestId is zero.");
+                return BadRequest(pdApiResponse);
+            }
+            if (string.IsNullOrEmpty(message))
+            {
+                pdApiResponse.AddAlert("error", "Message text is null or empty.");
+                return BadRequest(pdApiResponse);
+            }
+            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            if (joinCommunityRequest == null)
+            {
+                pdApiResponse.AddAlert("error", "Request not found");
+                return BadRequest(pdApiResponse);
+            }
+            try
+            {
+                joinCommunityRequest.AddMessage(existingUser, message);
+                await _context.SaveChangesAsync();
+                pdApiResponse.SuccessfulOperation = true;
+                pdApiResponse.AddAlert("success", "Message added successfully.");
+                return Ok(pdApiResponse);
+            }
+            catch (Exception ex)
+            {
+                pdApiResponse.AddAlert("error", ex.Message);
+                return BadRequest(pdApiResponse);
+            }
+        }
         [Authorize]
         [HttpPost(ApiEndPoints.CreateNewPost)]
         public async Task<ActionResult<PDAPIResponse>> CreateNewPost([FromForm] CreatePostRequestDto request)

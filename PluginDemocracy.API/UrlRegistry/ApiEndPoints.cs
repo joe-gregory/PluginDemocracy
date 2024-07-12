@@ -41,6 +41,7 @@
         public const string ProposalCreate = CommunityController + "/proposal/create";
         public const string GetHomeForJoinCommunityRequestInfo = CommunityController + "gethomeforjoincommunityrequestinfo";
         public const string AddAdditionalSupportingDocumentsToJoinCommunityRequest = CommunityController + "addadditionalsupportingdocumentstojoincommunityrequest";
+        public const string AddMessageToJoinCommunityRequest = CommunityController + "addmessagetojoincommunityrequest";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
