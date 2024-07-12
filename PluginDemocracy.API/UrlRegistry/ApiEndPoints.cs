@@ -59,6 +59,9 @@
         public const string AdminGetPendingJoinCommunityRequests = AdminController + "getpendingjoincommunityrequests"; 
         public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
         public const string AdminAcceptJoinRequest = AdminController + "acceptjoinrequest";
+        
+        public const string AdminCreateAndAssignRole = AdminController + "createandassignrole";
+        public const string AdminDeleteAndUnassignRole = AdminController + "deleteandunassignrole";
         #endregion
 
     }
