@@ -684,6 +684,31 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest();
             }
         }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetListOfAvatarUsersForACommunity)]
+        public async Task<ActionResult<List<UserDTO>>> GetListOfAvatarUsersForACommunity([FromQuery] int communityId)
+        {
+            //You need to be admin, a citizen of this community or someone holding a role for this community
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("Users from headers not found.");
+            ResidentialCommunity? community = await _context.ResidentialCommunities
+                .Include(c => c.Roles)
+                    .ThenInclude(r => r.Holder)
+                .Include(c => c.Citizens)
+                .FirstOrDefaultAsync(c => c.Id == communityId);
+
+            if (community == null) return BadRequest("community from communityId not found.");
+            if (!(existingUser.Admin || community.Citizens.Any(c => c.Id == existingUser.Id) || community.Roles.Any(r => r.Holder?.Id == existingUser.Id)))
+            {
+                return Forbid("User does not have permission to view this information.");
+            }
+            List<UserDTO> userAvatars = [];
+            foreach (User user in community.Citizens)
+            {
+                userAvatars.Add(UserDTO.ReturnAvatarMinimumUserDTOFromUser(user));
+            }
+            return Ok(userAvatars);
+        }
 
     }
 }
