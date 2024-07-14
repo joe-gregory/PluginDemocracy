@@ -460,6 +460,45 @@ namespace PluginDemocracy.API.Controllers
             }
         }
         [Authorize]
+        [HttpPost(ApiEndPoints.AcceptOrRejectJoinCommunityRequest)]
+        public async Task<ActionResult<PDAPIResponse>> AcceptOrRejectJoinCommunityRequest([FromBody] bool accepted, [FromQuery] int requestId)
+        {
+            PDAPIResponse apiResponse = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User, apiResponse);
+            if (existingUser == null)
+            {
+                apiResponse.AddAlert("error", "User from claims not found");
+                return BadRequest(apiResponse);
+            }
+            if (requestId == 0)
+            {
+                apiResponse.AddAlert("error", "requestId is zero.");
+                return BadRequest(apiResponse);
+            }
+            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).ThenInclude(c => c.Roles).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            if (joinCommunityRequest == null)
+            {
+                apiResponse.AddAlert("error", "No request found with given id.");
+                return BadRequest(apiResponse);
+            }
+            //Community method already checks if the user is a role holder or an admin.
+            try
+            {
+                if (accepted) joinCommunityRequest.Community.ApproveJoinCommunityRequest(joinCommunityRequest, existingUser);
+                else joinCommunityRequest.Community.RejectJoinCommunityRequest(joinCommunityRequest, existingUser);
+                await _context.SaveChangesAsync();
+                apiResponse.SuccessfulOperation = true;
+                apiResponse.AddAlert("success", "Request accepted or rejected successfully.");
+                return Ok(apiResponse);
+            }
+            catch (Exception ex)
+            {
+                apiResponse.AddAlert("error", ex.Message);
+                return BadRequest(apiResponse);
+            }
+
+        }
+        [Authorize]
         [HttpPost(ApiEndPoints.CreateNewPost)]
         public async Task<ActionResult<PDAPIResponse>> CreateNewPost([FromForm] CreatePostRequestDto request)
         {
