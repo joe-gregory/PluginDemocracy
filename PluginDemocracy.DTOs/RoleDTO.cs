@@ -16,7 +16,7 @@ namespace PluginDemocracy.DTOs
         public UserDTO? Holder { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public bool Active { get; set; }
-        public RolePowers? Powers { get; set; }
+        public RolePowers Powers { get; set; } = new();
         public RoleDTO() { }
         public RoleDTO(Role role)
         {

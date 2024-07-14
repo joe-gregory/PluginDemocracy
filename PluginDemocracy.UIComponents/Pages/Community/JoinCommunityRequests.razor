@@ -125,3 +125,8 @@
     <MudButton Disabled="disableAll" Variant="Variant.Filled" Color="Color.Primary" Class="ma-1" OnClick="SendNewMessage" EndIcon="@Icons.Material.Filled.Send">Send</MudButton>
 </MudCard>
 
+@if (AppState?.User?.Admin == true || AppState?.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditResidency == true && r.Powers.CanEditHomeOwnership == true) == true)
+{
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AcceptRequest">Accept Request</MudButton>
+    <MudButton Color="Color.Error" Variant = "Variant.Filled" OnClick="RejectRequest">Reject </MudButton>
+}

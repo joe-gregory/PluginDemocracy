@@ -25,7 +25,6 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         /// an individual with a role on this community or and admin. This is used in the UI in order to determine
         /// Which actions to show. 
         /// </summary>
-        private bool? requesterOrRoleOrAdmin;
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
@@ -132,6 +131,14 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             }
             disableAll = false;
             AppState.IsLoading = false;
+        }
+        private async void AcceptRequest()
+        {
+
+        }
+        private async void RejectRequest()
+        {
+
         }
     }
 }
