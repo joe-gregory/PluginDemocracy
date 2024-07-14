@@ -87,6 +87,7 @@ namespace PluginDemocracy.API.Controllers
                 {
                     Id = community.Id,
                     Name = community.Name,
+                    FullName = community.FullName,
                     Description = community.Description,
                     Address = community.Address,
                 });

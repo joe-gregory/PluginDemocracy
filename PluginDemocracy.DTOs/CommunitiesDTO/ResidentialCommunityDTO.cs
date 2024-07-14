@@ -116,6 +116,7 @@ namespace PluginDemocracy.DTOs
             {
                 Id = community.Id,
                 Name = community.Name,
+                FullName = community.FullName,
                 Description = community.Description,
                 OfficialCurrency = community.OfficialCurrency,
                 Address = community.Address,

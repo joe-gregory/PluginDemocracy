@@ -6,7 +6,13 @@
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.JoinCommunity)</MudText>
 <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
-<MudGrid Class="mt-5 mb-10">
+<MudSelect Variant="Variant.Outlined" ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDTO">
+    @foreach (ResidentialCommunityDTO communityDtoOption in communitiesDtos)
+    {
+        <MudSelectItem Value="@communityDtoOption">@communityDtoOption.FullName</MudSelectItem>
+    }
+</MudSelect>
+@* <MudGrid Class="mt-5 mb-10">
     <MudItem>
         <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDTO">
             @foreach (ResidentialCommunityDTO communityDtoOption in communitiesDtos)
@@ -15,7 +21,7 @@
             }
         </MudRadioGroup>
     </MudItem>
-</MudGrid>
+</MudGrid> *@
 
 @if (homesDtosFromSelectedCommunity.Count > 0)
 {
