@@ -76,6 +76,7 @@ namespace PluginDemocracy.DTOs
         [JsonIgnore]
         public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         public List<PetitionDTO> PetitionDrafts = [];
+        public List<RoleDTO> Roles = [];
         public UserDTO() { }
         public UserDTO(User user)
         {
@@ -97,6 +98,24 @@ namespace PluginDemocracy.DTOs
             foreach(ResidentialCommunity community in user.Citizenships) Citizenships.Add(ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
             foreach (HomeOwnership homeOwnership in user.HomeOwnerships) HomeOwnerships.Add(HomeOwnershipDTO.ReturnSimpleHomeOwnershipDTOFromHomeOwnership(homeOwnership));
             foreach (Home home in user.ResidentOfHomes) ResidentOfHomes.Add(new(home));
+            foreach (Role role in user.Roles)
+            {
+                RoleDTO roleDTO = new()
+                {
+                    Id = role.Id,
+                    Title = role.Title,
+                    Description = role.Description,
+                    Powers = role.Powers,
+                    Community = new()
+                    {
+                        Id = role.Community.Id,
+                        Name = role.Community.Name,
+                        FullName = role.Community.FullName,
+                        Address = role.Community.Address,
+                    }
+                };
+                Roles.Add(roleDTO);
+            }
         }
         [Obsolete("This method can lead to infinite recursions like when loggin in")]
         public static UserDTO ReturnUserDTOFromUser(User user)
