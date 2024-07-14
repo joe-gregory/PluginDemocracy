@@ -38,9 +38,9 @@
         }
     </MudSelect>
     <MudText Typo="Typo.h6" Class="mt-1 mb-1">Powers:</MudText>
-    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers?.CanEditHomeOwnership" Color="Color.Primary" Label="CanEditHomeOwnership" />
-    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers?.CanEditResidency" Color="Color.Primary" Label="CanEditResidency" />
-    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers?.CanModifyAccounting" Color="Color.Primary" Label="CanModifyAccounting" />
+    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanEditHomeOwnership" Color="Color.Primary" Label="CanEditHomeOwnership" />
+    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanEditResidency" Color="Color.Primary" Label="CanEditResidency" />
+    <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanModifyAccounting" Color="Color.Primary" Label="CanModifyAccounting" />
     <MudButton Disabled="disabledAll" Class="mt-2 mb-2" OnClick="CreateAndAssignRole">Create and Assign Role</MudButton>
 </MudCard>
 @if (SelectedCommunity != null)
