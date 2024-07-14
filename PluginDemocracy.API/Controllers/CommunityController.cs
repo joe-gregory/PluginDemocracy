@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
@@ -408,6 +409,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiResponse);
             }
+            
             if (requestId == 0)
             {
                 pdApiResponse.AddAlert("error", "requestId is zero.");
@@ -419,10 +421,28 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(pdApiResponse);
             }
             JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+
             if (joinCommunityRequest == null)
             {
                 pdApiResponse.AddAlert("error", "Request not found");
                 return BadRequest(pdApiResponse);
+            }
+            //User needs to be requester from joinCommunityRequest, Role with permissions or admin
+            bool canThisPersonViewIt = joinCommunityRequest.User.Id == existingUser.Id;
+
+            // Does this person have roles in this community?
+            if (!canThisPersonViewIt)
+            {
+                canThisPersonViewIt = existingUser.Roles.Any(role =>
+                    role.Community.Id == joinCommunityRequest.Community.Id &&
+                    role.Powers.CanEditHomeOwnership &&
+                    role.Powers.CanEditResidency);
+            }
+            if (existingUser.Admin == true) canThisPersonViewIt = true;
+            if (!canThisPersonViewIt) 
+            {
+                pdApiResponse.AddAlert("error", "You don't have permission to add a message.");
+                return Forbid(); 
             }
             try
             {
