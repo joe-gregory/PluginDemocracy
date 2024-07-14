@@ -5,29 +5,24 @@
 <MudCard Class="ma-3 pa-3">
     <MudText Typo="Typo.h5">Select Community</MudText>
     <MudSelect Disabled="disabledAll" T="ResidentialCommunityDTO" Variant="Variant.Outlined" Label="Community" ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
-        @foreach(ResidentialCommunityDTO communityDtoOption in CommunitiesDto ?? new())
+        @foreach (ResidentialCommunityDTO communityDtoOption in CommunitiesDto ?? new())
         {
             <MudSelectItem Value="@communityDtoOption">@communityDtoOption.Name</MudSelectItem>
         }
     </MudSelect>
 </MudCard>
 
-
-@* <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
-    @foreach (ResidentialCommunityDTO communityDtoOption in CommunitiesDto ?? new())
-    {
-        <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
-    }
-</MudRadioGroup> *@
-<MudCard Class="ma-3 pa-3">
-    <MudText Typo="Typo.h5" Class="mt-10">Pending Join Community Requests</MudText>
-    @foreach (JoinCommunityRequestDTO joinCommunityRequest in PendingJoinCommunityRequests ?? new())
-    {
-        <MudLink Class="mt-1 mb-1" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">@joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident" )}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")</MudLink>
-    }
+<MudCard Outlined = "true" Class="ma-3 pa-3">
+    <MudText Typo="Typo.h5">Pending Join Community Requests</MudText>
+    <ul>
+        @foreach (JoinCommunityRequestDTO joinCommunityRequest in PendingJoinCommunityRequests ?? new())
+        {
+            <li class="mt-1 mb-1"><UserAvatar User="joinCommunityRequest.UserDTO" Size="Size.Small" /><MudLink Class="mt-1 mb-1" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">@joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")</MudLink></li>
+        }
+    </ul>
 </MudCard>
-<MudCard Class="ma-3 pa-3">
-    <MudText Typo="Typo.h5" Class="mt-10">Create And Assign a Role</MudText>
+<MudCard Class="ma-3 pa-3" Outlined = "true">
+    <MudText Typo="Typo.h5">Create And Assign a Role</MudText>
     @*Title, description, holder, expirationDate, Powers*@
     <MudTextField Disabled="disabledAll" Label="Role Title" @bind-Value="roleToAdd.Title" Variant="Variant.Outlined" />
     <MudTextField Disabled="disabledAll" Label="Role Description" @bind-Value="roleToAdd.Description" Variant="Variant.Outlined" />
@@ -41,54 +36,5 @@
     <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanEditHomeOwnership" Color="Color.Primary" Label="CanEditHomeOwnership" />
     <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanEditResidency" Color="Color.Primary" Label="CanEditResidency" />
     <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanModifyAccounting" Color="Color.Primary" Label="CanModifyAccounting" />
-    <MudButton Disabled="disabledAll" Class="mt-2 mb-2" OnClick="CreateAndAssignRole">Create and Assign Role</MudButton>
+    <MudButton Disabled="disabledAll" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="CreateAndAssignRole">Create and Assign Role</MudButton>
 </MudCard>
-@if (SelectedCommunity != null)
-{
-    
-    <MudText>Selected Community: @SelectedCommunity.FullName</MudText>
-    <MudDataGrid Items="PendingJoinCommunityRequests" Bordered="true" T="JoinCommunityRequestDTO" ReadOnly="true" Elevation="25" RowClick="(e) => OnRowClicked(e.Item)">
-        <Columns>
-            @* //Request Info  *@
-            <PropertyColumn Property="request => request.Id" Title="Request Id" />
-            <PropertyColumn Property="request => request.JoiningAsResident" Title="Joining As Resident" />
-            <PropertyColumn Property="request => request.JoiningAsOwner" Title="Joining As Owner" />
-            <PropertyColumn Property="request => request.OwnershipPercentage" Title="Ownership Claimed" />
-            @* //Home Info: *@
-            <PropertyColumn Property="request => request.HomeDTO != null ? request.HomeDTO.InternalAddress : null" Title="Home Address" />
-            @* //User info: *@
-            <PropertyColumn Property="request => request.UserDTO != null ? request.UserDTO.FullName : null" Title="Name" />
-        </Columns>
-    </MudDataGrid>
-}
-<MudDialog @bind-IsVisible="IsDialogOpen">
-    <DialogContent>
-        <MudText>Approve or Reject Join Request</MudText>
-        <MudText>Details about applicant:</MudText>
-        <MudText>Name: @SelectedJoinRequest?.UserDTO?.FullName</MudText>
-        <MudText>Age: @SelectedJoinRequest?.UserDTO?.Age</MudText>
-        <MudText>Email: @SelectedJoinRequest?.UserDTO?.Email</MudText>
-        <MudText>Cel: @SelectedJoinRequest?.UserDTO?.PhoneNumber</MudText>
-        <MudText>Details about request:</MudText>
-        <MudText>Applying as: @(SelectedJoinRequest?.JoiningAsOwner == true ? "Owner" : "Resident")</MudText>
-        @if (SelectedJoinRequest?.JoiningAsOwner == true)
-        {
-            <MudText>Ownership Claimed: @SelectedJoinRequest?.OwnershipPercentage</MudText>
-        }
-        <MudText>Details about home: </MudText>
-        <MudText>Current owners: </MudText>
-        @foreach (var pair in SelectedJoinRequest?.HomeDTO?.OwnersOwnerships ?? [])
-        {
-            <MudLink Href=@($"/user/{pair.Key.Id}")>Owner: @pair.Key.FullName Ownership: @($"{pair.Value}%")</MudLink>
-        }
-        <MudText>Current Residents:</MudText>
-        @foreach (UserDTO resident in SelectedJoinRequest?.HomeDTO?.Residents ?? [])
-        {
-            <MudLink Href=@($"/user/{resident.Id}")>Resident: @resident.FullName</MudLink>
-        }
-    </DialogContent>
-    <DialogActions>
-        <MudIconButton Disabled="AppState.IsLoading" Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" OnClick="() => ApproveJoinRequest()" />
-        <MudIconButton Disabled="AppState.IsLoading" Icon="@Icons.Material.Filled.Cancel" Color="Color.Error" OnClick="() => RejectJoinRequest()" />
-    </DialogActions>
-</MudDialog>
