@@ -15,7 +15,8 @@ namespace PluginDemocracy.Data
             /// Since EFC has difficulty storing CultureInfo objects, I convert to string when saving and 
             /// convert back to CultureInfo when reading.
             modelBuilder.Entity<User>().Property(u => u.Culture).HasConversion(c => c.Name, s => new(s));
-
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            
             modelBuilder.Entity<ResidentialCommunity>().Ignore(ResidentialCommunity => ResidentialCommunity.OfficialLanguages);
             modelBuilder.Entity<ResidentialCommunity>().Property("_officialLanguagesCodes");
             modelBuilder.Entity<ResidentialCommunity>().Ignore(residentialCommunity => residentialCommunity.Citizens);
