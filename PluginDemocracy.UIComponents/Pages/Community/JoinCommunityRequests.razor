@@ -127,6 +127,6 @@
 
 @if (AppState?.User?.Admin == true || AppState?.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditResidency == true && r.Powers.CanEditHomeOwnership == true) == true)
 {
-    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AcceptRequest">Accept Request</MudButton>
-    <MudButton Color="Color.Error" Variant = "Variant.Filled" OnClick="RejectRequest">Reject </MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(true)">Accept Request</MudButton>
+    <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(false)">Reject </MudButton>
 }

@@ -131,7 +131,7 @@ namespace PluginDemocracy.UIComponents
         /// <param name="endpoint">The API endpoint to hit</param>
         /// <param name="data">Data load in post request</param>
         /// <returns>PDAPIResponse from server or if none an empty PDAPIResponse</returns>
-        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = null, bool referenceHandlerPreserve = true) where T : class
+        public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = default, bool referenceHandlerPreserve = true) 
         {
             _appState.IsLoading = true;
             string url = _appState.BaseUrl + endpoint;

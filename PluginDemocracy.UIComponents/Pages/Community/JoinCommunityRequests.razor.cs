@@ -132,13 +132,12 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             disableAll = false;
             AppState.IsLoading = false;
         }
-        private async void AcceptRequest()
+        private async void AcceptOrRejectRequest(bool accept)
         {
-
-        }
-        private async void RejectRequest()
-        {
-
+            disableAll = true;
+            string endpoint = $"{ApiEndPoints.AcceptOrRejectJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
+            await Services.PostDataAsync<bool>(endpoint, accept);
+            disableAll = false;
         }
     }
 }
