@@ -38,3 +38,28 @@
     <MudCheckBox Disabled="disabledAll" @bind-Value="roleToAdd.Powers.CanModifyAccounting" Color="Color.Primary" Label="CanModifyAccounting" />
     <MudButton Disabled="disabledAll" Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="CreateAndAssignRole">Create and Assign Role</MudButton>
 </MudCard>
+
+<MudCard Class="ma-3 pa-3" Outlined = "true">
+    <MudText Typo="Typo.h5">Unassign and Delete Role</MudText>
+    <MudSelect Disabled="disabledAll" Label="Select Role to Delete" Variant="Variant.Outlined" T="RoleDTO" @bind-Value="roleToDelete">
+        @foreach (RoleDTO role in selectedJoinRequest?.CommunityDTO?.Roles ?? [])
+        {
+            <MudSelectItem Value="@role">@role.Title</MudSelectItem>
+        }
+    </MudSelect>
+</MudCard>
+
+<MudCard Class="ma-3 pa-3" Outlined = "true">
+    <MudText Typo="Typo.h5">Role to Delete Selected: </MudText>
+    <MudText>Role Id: @roleToDelete?.Id </MudText>
+    <MudText>Title: @roleToDelete?.Title</MudText>
+    <MudText>Description: @roleToDelete?.Description</MudText>
+    <MudText>Holder FullName: @roleToDelete?.Holder?.FullName</MudText>
+    <MudText>Role Expiration Date: @roleToDelete?.ExpirationDate</MudText>
+    <MudText>Active: @roleToDelete?.Active</MudText>
+    <MudText>Can Edit Home Ownership: @roleToDelete?.Powers.CanEditHomeOwnership</MudText>
+    <MudText>Can Edit Residency: @roleToDelete?.Powers.CanEditResidency</MudText>
+    <MudText>Can Modify Accounting: @roleToDelete?.Powers.CanModifyAccounting</MudText>
+    <MudButton Disabled="disabledAll" Variant="Variant.Filled" Color="Color.Error" Class="mt-2 mb-2" OnClick="UnassignAndDeleteRole">Unassign and Delete Role</MudButton>
+</MudCard>
+

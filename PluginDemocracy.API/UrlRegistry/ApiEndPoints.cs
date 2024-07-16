@@ -43,7 +43,6 @@
         public const string AddAdditionalSupportingDocumentsToJoinCommunityRequest = CommunityController + "addadditionalsupportingdocumentstojoincommunityrequest";
         public const string AddMessageToJoinCommunityRequest = CommunityController + "addmessagetojoincommunityrequest";
         public const string GetListOfAvatarUsersForACommunity = CommunityController + "getlistofavatarusersforacommunity";
-        public const string AcceptOrRejectJoinCommunityRequest = CommunityController + "acceptortejectjoincommunityrequest";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
@@ -58,7 +57,7 @@
         public const string AdminController = Base + "admin/";
         public const string AdminGetListOfAllSimpleCommunitiesDtos = AdminController + "getlistofallsimplecommunitiesdtos";
         public const string AdminIsCurrentUserAdmin = AdminController +"iscurrentuseradmin";
-        public const string AdminGetPendingJoinCommunityRequests = AdminController + "getpendingjoincommunityrequests"; 
+        public const string AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles = AdminController + "getpendingjoincommunityrequests"; 
         public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
         public const string AdminAcceptJoinRequest = AdminController + "acceptjoinrequest";
         
