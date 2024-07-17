@@ -45,7 +45,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     statusColor = MudBlazor.Color.Error;
                     statusText = "Denied";
                 }
-                if (Services != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>(ApiEndPoints.GetHomeForJoinCommunityRequestInfo);
+                if (Services != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>($"{ApiEndPoints.GetHomeForJoinCommunityRequestInfo}?requestId={joinCommunityRequestDTO.Id}");
                 if (homeToJoinDTO == null && Services != null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
                 StateHasChanged();
             }
