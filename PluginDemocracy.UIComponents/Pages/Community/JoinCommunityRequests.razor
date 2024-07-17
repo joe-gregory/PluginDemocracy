@@ -13,6 +13,17 @@
             <td><MudText><b>Status:</b></MudText></td>
             <td><MudText Color="@statusColor">@statusText</MudText></td>
         </tr>
+        @if (joinCommunityRequestDTO != null && joinCommunityRequestDTO.Approved != null)
+        {
+            <tr>
+                <td><MudText><b>Decision made by:</b></MudText></td>
+                <td><MudText>@joinCommunityRequestDTO.ApprovalDecisionMadeBy?.FullName <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.ApprovalDecisionMadeBy"/></MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Date of decision: </b></MudText></td>
+                <td><MudText>@(joinCommunityRequestDTO.DateOfApprovalDecision.HasValue ? joinCommunityRequestDTO.DateOfApprovalDecision.Value.Date.ToLocalTime().ToString("yyyy-MM-dd") : "N/A")</MudText></td>
+            </tr>
+        }
         <tr>
             <td><MudText><b>Date Requested:</b></MudText></td>
             <td><MudText>@joinCommunityRequestDTO?.DateRequested.Date.ToLocalTime().ToString("yyyy-MM-dd")</MudText></td>
@@ -128,7 +139,7 @@
 @if (AppState?.User?.Admin == true || AppState?.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditResidency == true && r.Powers.CanEditHomeOwnership == true) == true)
 {
 <MudCard Class="ma-3 pa-3">
-    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(true)">Accept Request</MudButton>
-    <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(false)">Reject Request</MudButton>
+    <MudButton Disabled="@(joinCommunityRequestDTO?.Approved != null)" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(true)">Accept Request</MudButton>
+        <MudButton Disabled="@(joinCommunityRequestDTO?.Approved != null)" Color="Color.Error" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(false)">Reject Request</MudButton>
 </MudCard>
 }

@@ -30,6 +30,16 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
             if (joinCommunityRequestDTO != null)
             {
+                UpdateStatusText();
+                if (Services != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>($"{ApiEndPoints.GetHomeForJoinCommunityRequestInfo}?requestId={joinCommunityRequestDTO.Id}");
+                if (homeToJoinDTO == null && Services != null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
+                StateHasChanged();
+            }
+        }
+        private void UpdateStatusText()
+        {
+            if (joinCommunityRequestDTO != null)
+            {
                 if (joinCommunityRequestDTO.Approved == null)
                 {
                     statusColor = MudBlazor.Color.Info;
@@ -45,9 +55,6 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     statusColor = MudBlazor.Color.Error;
                     statusText = "Denied";
                 }
-                if (Services != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>($"{ApiEndPoints.GetHomeForJoinCommunityRequestInfo}?requestId={joinCommunityRequestDTO.Id}");
-                if (homeToJoinDTO == null && Services != null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
-                StateHasChanged();
             }
         }
         private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
@@ -65,6 +72,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private async void RefreshJoinCommunityRequestDTO()
         {
             joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
+            UpdateStatusText();
             StateHasChanged();
         }
         private async void UploadSupportingDocumentsToUpload()
@@ -137,6 +145,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             disableAll = true;
             string endpoint = $"{ApiEndPoints.AcceptOrRejectJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
             await Services.PostDataAsync<bool>(endpoint, accept);
+            RefreshJoinCommunityRequestDTO();
             disableAll = false;
         }
     }
