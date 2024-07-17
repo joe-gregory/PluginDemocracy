@@ -45,7 +45,7 @@
 
 </MudAppBar>
 
-<MudDrawer @bind-Open="@communityMenuOpen" Elevation="25" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl" Height="100vh">
+<MudDrawer @bind-Open="@communityMenuOpen" Elevation="25" Anchor="Anchor.Start" Breakpoint="Breakpoint.Xl" Height="100vh" Variant="DrawerVariant.Temporary">
     <MudDrawerHeader>
         <MudText @onclick='() => NavMan.NavigateTo(FrontEndPages.Feed)' Typo="Typo.h6">@AppState.Translate("Community")</MudText>
     </MudDrawerHeader>
@@ -84,7 +84,7 @@
         </MudNavMenu>
     }
 </MudDrawer>
-<MudDrawer @bind-Open="@userMenuOpen" Elevation="25" Breakpoint="Breakpoint.Xl" Height="100vh">
+<MudDrawer @bind-Open="@userMenuOpen" Elevation="25" Anchor="Anchor.Right" Breakpoint="Breakpoint.Xl" Height="100vh" Variant="DrawerVariant.Temporary">
     <MudDrawerHeader>
         <MudIcon Icon="@Icons.Material.Filled.Person" />
         <MudSpacer />
