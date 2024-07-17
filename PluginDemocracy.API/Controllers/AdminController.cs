@@ -27,7 +27,7 @@ namespace PluginDemocracy.API.Controllers
             if (user == null) return BadRequest();
             return Ok(user.Admin);
         }
-        [HttpGet("getlistofallsimplecommunitiesdtos")]
+        [HttpGet(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDTOs)]
         public async Task<ActionResult<List<ResidentialCommunityDTO>>> GetListOfAllSimpleCommunitiesDtos()
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
@@ -53,7 +53,7 @@ namespace PluginDemocracy.API.Controllers
         /// <param name="communityId"></param>
         /// <returns></returns>
         [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles)]
-        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> GetJoinCommunityRequests([FromQuery] int? communityId)
+        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles([FromQuery] int? communityId)
         {
             User? user = await _utilityClass.ReturnUserFromClaims(User);
             if (user == null) return BadRequest();

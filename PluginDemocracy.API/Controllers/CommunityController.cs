@@ -751,19 +751,11 @@ namespace PluginDemocracy.API.Controllers
             //You need to be admin, a citizen of this community or someone holding a role for this community
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest("Users from headers not found.");
-            ResidentialCommunity? community = await _context.ResidentialCommunities
-                .Include(c => c.Roles)
-                    .ThenInclude(r => r.Holder)
-                .Include(c => c.Citizens)
-                .FirstOrDefaultAsync(c => c.Id == communityId);
-
-            if (community == null) return BadRequest("community from communityId not found.");
-            if (!(existingUser.Admin || community.Citizens.Any(c => c.Id == existingUser.Id) || community.Roles.Any(r => r.Holder?.Id == existingUser.Id)))
-            {
-                return Forbid("User does not have permission to view this information.");
-            }
+            List<User> citizensOrRoleOrAdmin = await _context.Users.Include(u => u.Roles).Include(u => u.Citizenships).Where(u => u.Citizenships.Where(c => c.Id == communityId).Any() || u.Roles.Where(r => r.Community.Id == communityId).Any() || u.Admin).ToListAsync();
+            if (!citizensOrRoleOrAdmin.Any(u => u.Id == existingUser.Id)) return Forbid("User does not have permission to view this information.");
+            
             List<UserDTO> userAvatars = [];
-            foreach (User user in community.Citizens)
+            foreach (User user in citizensOrRoleOrAdmin)
             {
                 userAvatars.Add(UserDTO.ReturnAvatarMinimumUserDTOFromUser(user));
             }

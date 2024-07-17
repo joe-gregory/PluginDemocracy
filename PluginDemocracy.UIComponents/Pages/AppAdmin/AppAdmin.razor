@@ -4,7 +4,7 @@
 <MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary">Plugin Democracy Application Administrator Panel</MudText>
 <MudCard Class="ma-3 pa-3">
     <MudText Typo="Typo.h5">Select Community</MudText>
-    <MudSelect Disabled="disabledAll" T="ResidentialCommunityDTO" Variant="Variant.Outlined" Label="Community" ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="SelectedCommunity">
+    <MudSelect Disabled="disabledAll" T="ResidentialCommunityDTO" Variant="Variant.Outlined" Label="Community" ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDTOChanged))" Value="SelectedCommunity">
         @foreach (ResidentialCommunityDTO communityDtoOption in CommunitiesDto ?? new())
         {
             <MudSelectItem Value="@communityDtoOption">@communityDtoOption.Name</MudSelectItem>
@@ -17,7 +17,7 @@
     <ul>
         @foreach (JoinCommunityRequestDTO joinCommunityRequest in PendingJoinCommunityRequests ?? new())
         {
-            <li class="mt-1 mb-1"><UserAvatar User="joinCommunityRequest.UserDTO" Size="Size.Small" /><MudLink Class="mt-1 mb-1" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">@joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")</MudLink></li>
+            <li class="mt-3 mb-3"><UserAvatar User="joinCommunityRequest.UserDTO" Size="Size.Small" /><MudLink Class="mt-1 mb-1 ml-2" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">@joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")</MudLink></li>
         }
     </ul>
 </MudCard>

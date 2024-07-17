@@ -56,7 +56,7 @@
         #endregion
         #region Admin
         public const string AdminController = Base + "admin/";
-        public const string AdminGetListOfAllSimpleCommunitiesDtos = AdminController + "getlistofallsimplecommunitiesdtos";
+        public const string AdminGetListOfAllSimpleCommunitiesDTOs = AdminController + "getlistofallsimplecommunitiesdtos";
         public const string AdminIsCurrentUserAdmin = AdminController +"iscurrentuseradmin";
         public const string AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles = AdminController + "getpendingjoincommunityrequests"; 
         public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
