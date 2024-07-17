@@ -472,7 +472,7 @@ namespace PluginDemocracy.API.Controllers
             }
             if (requestId == 0)
             {
-                apiResponse.AddAlert("error", "requestId is zero.");
+                apiResponse.AddAlert("error", "Invalid request Id.");
                 return BadRequest(apiResponse);
             }
             JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).ThenInclude(c => c.Roles).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
@@ -496,7 +496,6 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", ex.Message);
                 return BadRequest(apiResponse);
             }
-
         }
         [Authorize]
         [HttpPost(ApiEndPoints.CreateNewPost)]
