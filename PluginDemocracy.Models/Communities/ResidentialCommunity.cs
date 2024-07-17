@@ -257,7 +257,7 @@ namespace PluginDemocracy.Models
             {
                 throw new ArgumentException("JoiningAsOwner and JoiningAsResident are both false. At least one must be true.");
             }
-            request.Approve();
+            request.Approve(approver);
         }
         public void RejectJoinCommunityRequest(JoinCommunityRequest request, User approver)
         {
@@ -279,7 +279,7 @@ namespace PluginDemocracy.Models
             {
                 throw new ArgumentException("JoiningAsOwner and JoiningAsResident are both false. At least one must be true.");
             }
-            request.Reject();
+            request.Reject(approver);
         }
         public Role AddRole(string title, string description, RolePowers? powers = null)
         {

@@ -46,6 +46,9 @@ namespace PluginDemocracy.Models
         /// False indicates that the request has been denied.
         /// </summary>
         public bool? Approved { get; private set; }
+        public User? ApprovalDecisionMadeBy { get; private set; }
+        public DateTime DateOfApprovalDecision { get; private set; }
+
         /// <summary>
         /// Parameterless constructor for the benefit of EFC
         /// </summary>
@@ -81,16 +84,20 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This is internal as it is called by the parent community. 
         /// </summary>
-        internal void Approve()
+        internal void Approve(User approver)
         {
             Approved = true;
+            ApprovalDecisionMadeBy = approver;
+            DateOfApprovalDecision = DateTime.UtcNow;
         }
         /// <summary>
         /// This is internal as it is called by the parent community.
         /// </summary>
-        internal void Reject()
+        internal void Reject(User approver)
         {
             Approved = false;
+            ApprovalDecisionMadeBy = approver;
+            DateOfApprovalDecision = DateTime.UtcNow;
         }
     }
     
