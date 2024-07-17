@@ -13,8 +13,6 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         private List<ResidentialCommunityDTO>? CommunitiesDto = [];
         private ResidentialCommunityDTO? SelectedCommunity = null;
         private List<JoinCommunityRequestDTO>? PendingJoinCommunityRequests = null;
-        private bool IsDialogOpen = false;
-        private JoinCommunityRequestDTO? selectedJoinRequest = null;
         private readonly RoleDTO roleToAdd = new()
         {
             Powers = new()
@@ -44,31 +42,6 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
                  await GetListOfUserAvatarsForCommunity();
             }
             disabledAll = false;
-        }
-        //private async Task ApproveJoinRequest()
-        //{
-        //    //Make a post request to approve the request
-        //    await Services.PostDataAsync<JoinCommunityRequestDTO>(ApiEndPoints.AdminAcceptJoinRequest, selectedJoinRequest);
-        //    //Reload the requests
-
-        //    await CommonDecision();
-        //}
-        //private async Task RejectJoinRequest()
-        //{
-        //    //Make a post request to reject the request
-        //    await Services.PostDataAsync<JoinCommunityRequestDTO>(ApiEndPoints.AdminRejectJoinRequest, selectedJoinRequest);
-        //    //Reload the requests
-        //    await CommonDecision();
-        //}
-        private async Task GetPendingJoinCommunityRequests()
-        {
-            PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles + "?communityId=" + SelectedCommunity?.Id);
-            IsDialogOpen = false;
-        }
-        private void OnRowClicked(JoinCommunityRequestDTO request)
-        {
-            selectedJoinRequest = request;
-            IsDialogOpen = true;
         }
         private async Task GetListOfUserAvatarsForCommunity()
         {
