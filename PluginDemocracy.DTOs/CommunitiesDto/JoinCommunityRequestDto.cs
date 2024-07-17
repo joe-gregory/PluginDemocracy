@@ -13,9 +13,11 @@ namespace PluginDemocracy.DTOs
         public bool JoiningAsOwner { get; set; } = false;
         public bool JoiningAsResident { get; set; } = false;
         public double OwnershipPercentage { get; set; } = 0;
-        public bool? Approved { get; set; } = null;
         public List<string> LinksToFiles { get; set; } = [];
         public List<MessageDTO> Messages { get; set; } = [];
+        public bool? Approved { get; set; } = null;
+        public UserDTO? ApprovalDecisionMadeBy { get; set; }
+        public DateTime? DateOfApprovalDecision { get; set; }
         public JoinCommunityRequestDTO() { }
         public JoinCommunityRequestDTO(JoinCommunityRequest jcr)
         {
@@ -28,6 +30,11 @@ namespace PluginDemocracy.DTOs
             JoiningAsResident = jcr.JoiningAsResident;
             OwnershipPercentage = jcr.OwnershipPercentage;
             Approved = jcr.Approved;
+            if (jcr.ApprovalDecisionMadeBy != null) 
+            { 
+                ApprovalDecisionMadeBy = UserDTO.ReturnAvatarMinimumUserDTOFromUser(jcr.ApprovalDecisionMadeBy);
+                DateOfApprovalDecision = jcr.DateOfApprovalDecision;
+            } 
             foreach (string link in jcr.LinksToFiles) LinksToFiles.Add(link);
             foreach (Message message in jcr.Messages) 
             {

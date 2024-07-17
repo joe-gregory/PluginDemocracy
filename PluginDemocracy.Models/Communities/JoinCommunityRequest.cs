@@ -47,7 +47,7 @@ namespace PluginDemocracy.Models
         /// </summary>
         public bool? Approved { get; private set; }
         public User? ApprovalDecisionMadeBy { get; private set; }
-        public DateTime DateOfApprovalDecision { get; private set; }
+        public DateTime? DateOfApprovalDecision { get; private set; }
 
         /// <summary>
         /// Parameterless constructor for the benefit of EFC
