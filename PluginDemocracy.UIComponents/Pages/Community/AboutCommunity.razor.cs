@@ -2,14 +2,10 @@
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 
-namespace PluginDemocracy.UIComponents.Community
+namespace PluginDemocracy.UIComponents.Pages.Community
 {
-    public class AboutCommunity : ComponentBase
+    public partial class AboutCommunity
     {
-        [Inject]
-        Services Services { get; set; } = default!;
-        [Inject]
-        BaseAppState AppState { get; set; } = default!;
         [SupplyParameterFromQuery]
         protected int? CommunityId { get; set; }
         protected ResidentialCommunityDTO? CommunityDTO;
