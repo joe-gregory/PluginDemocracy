@@ -269,11 +269,11 @@ namespace PluginDemocracy.Models
             if (request.JoiningAsOwner)
             {
                 //Does the approver have the power to approve the request?
-                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditHomeOwnership) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
+                    if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditHomeOwnership) && !approver.Admin) throw new ArgumentException("Approver does not have the right permissions.");
             }
             else if (request.JoiningAsResident)
             {
-                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditResidency) || approver.Admin == false) throw new ArgumentException("Approver does not have the right permissions.");
+                if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditResidency) && !approver.Admin) throw new ArgumentException("Approver does not have the right permissions.");
             }
             else
             {
