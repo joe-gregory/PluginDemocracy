@@ -50,6 +50,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         private async void CreateAndAssignRole()
         {
             disabledAll = true;
+            roleToAdd.Community = SelectedCommunity;
             await Services.PostDataAsync(ApiEndPoints.AdminCreateAndAssignRole, roleToAdd);
             disabledAll = false;
         }
