@@ -15,6 +15,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="Pages\Community\AboutCommunity.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="Icons\CommunityIcon.svg" />
 	</ItemGroup>
 
@@ -60,6 +64,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Pages\Community\AboutCommunity.razor" />
 		<_ContentIncludedByDefault Remove="Pages\ConfirmEmail.razor" />
 		<_ContentIncludedByDefault Remove="Pages\GenericMessage.razor" />
 		<_ContentIncludedByDefault Remove="Pages\RegisterCommunity.razor" />
@@ -76,6 +81,14 @@
 	<PropertyGroup>
 		<AssemblyNeutralLanguage>en-US</AssemblyNeutralLanguage>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Pages\Community\AboutCommunity.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Pages\Community\AboutCommunity.razor" />
+	</ItemGroup>
 
 
 </Project>

@@ -763,6 +763,13 @@ namespace PluginDemocracy.API.Controllers
             }
             return Ok(userAvatars);
         }
-
+        [HttpGet(ApiEndPoints.GetCommunityAbout)]
+        public async Task<ActionResult<ResidentialCommunityDTO>> GetCommunityAbout([FromQuery] int communityId)
+        {
+            //Include Homes, include roles
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).Include(c => c.Roles).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null) return BadRequest("Community not found.");
+            return Ok(new ResidentialCommunityDTO(community));
+        }
     }
 }

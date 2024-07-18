@@ -44,6 +44,7 @@
         public const string AddMessageToJoinCommunityRequest = CommunityController + "addmessagetojoincommunityrequest";
         public const string GetListOfAvatarUsersForACommunity = CommunityController + "getlistofavatarusersforacommunity";
         public const string AcceptOrRejectJoinCommunityRequest = CommunityController + "acceptorrejectjoincommunityrequest";
+        public const string GetCommunityAbout = CommunityController + "getcommunityabout";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";

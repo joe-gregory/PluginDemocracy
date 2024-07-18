@@ -20,11 +20,6 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private bool disableAll = false;
         private bool spinnerOn = false;
         private string? message;
-        /// <summary>
-        /// This field is to know if the current user is either the requester of this join community request, 
-        /// an individual with a role on this community or and admin. This is used in the UI in order to determine
-        /// Which actions to show. 
-        /// </summary>
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");

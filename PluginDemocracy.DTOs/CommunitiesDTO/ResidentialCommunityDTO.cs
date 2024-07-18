@@ -81,6 +81,18 @@ namespace PluginDemocracy.DTOs
                     InternalAddress = home.InternalAddress,
                     Community = this,
                 };
+                foreach (HomeOwnership homeOwnership in home.Ownerships)
+                {
+                    HomeOwnershipDTO homeOwnershipDTO = new()
+                    {
+                        Id = homeOwnership.Id,
+                        OwnershipPercentage = homeOwnership.OwnershipPercentage,
+                        Home = homeDTO,
+                        Owner = homeOwnership.Owner != null ? UserDTO.ReturnAvatarMinimumUserDTOFromUser(homeOwnership.Owner) : null,
+                    };
+                    homeDTO.Ownerships.Add(homeOwnershipDTO);
+                }
+                foreach (User resident in home.Residents) homeDTO.Residents.Add(UserDTO.ReturnAvatarMinimumUserDTOFromUser(resident));
                 Homes.Add(homeDTO);
             }
             foreach (Post post in community.Posts) Posts.Add(new PostDTO(post));

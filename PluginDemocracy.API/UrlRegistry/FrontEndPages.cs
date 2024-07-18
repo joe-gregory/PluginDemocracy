@@ -26,12 +26,12 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string CreatePetition = "/createpetition";
         public const string JoinCommunityRequests = "/joincommunityrequests";
         public const string CurrentJoinCommunityRequests = "/currentjoincommunityrequests";
+        public const string AboutCommunity = "/aboutcommunity";
 
         //Admin pages
         public const string AppAdmin = "/appadmin";
 
         //About pages
         public const string AboutUser = "/aboutuser";
-        public const string AboutCommunity = "/aboutcommunity"; 
     }
 }
