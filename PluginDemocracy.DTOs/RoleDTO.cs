@@ -18,6 +18,11 @@ namespace PluginDemocracy.DTOs
         public bool Active { get; set; }
         public RolePowers Powers { get; set; } = new();
         public RoleDTO() { }
+        /// <summary>
+        /// Returns a simplified version of a RoleDTO. The <see cref="ResidentialCommunity"/> only includes Name and Id.
+        /// <see cref="Holder"/> is a minimum User Avatr provided by <see cref="UserDTO.ReturnAvatarMinimumUserDTOFromUser(User)"/>
+        /// </summary>
+        /// <param name="role">The <see cref="PluginDemocracy.Models.Role"/> type as parameter.</param>
         public RoleDTO(Role role)
         {
             Id = role.Id;

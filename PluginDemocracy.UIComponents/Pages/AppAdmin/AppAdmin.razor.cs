@@ -10,7 +10,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
 {
     public partial class AppAdmin
     {
-        private List<ResidentialCommunityDTO>? CommunitiesDto = [];
+        private List<ResidentialCommunityDTO>? CommunitiesDTO = [];
         private ResidentialCommunityDTO? SelectedCommunity = null;
         private List<JoinCommunityRequestDTO>? PendingJoinCommunityRequests = null;
         private readonly RoleDTO roleToAdd = new()
@@ -28,7 +28,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
             bool isUserAdmin = await Services.GetDataGenericAsync<bool>(ApiEndPoints.AdminIsCurrentUserAdmin);
             if (!isUserAdmin) Services.NavigateTo(FrontEndPages.Home);
             //Get a list of all the communities
-            CommunitiesDto = await Services.GetDataGenericAsync<List<ResidentialCommunityDTO>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDTOs);
+            CommunitiesDTO = await Services.GetDataGenericAsync<List<ResidentialCommunityDTO>>(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDTOsWithRoles);
         }
         private async Task OnSelectCommunityDTOChanged(ResidentialCommunityDTO newValue)
         {
@@ -38,7 +38,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
             if (SelectedCommunity != null)
             {
                 //Make a Get request for the JoinCommunityRequests for that community.
-                PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles + "?communityId=" + SelectedCommunity.Id);
+                PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequestsForACommunity + "?communityId=" + SelectedCommunity.Id);
                  await GetListOfUserAvatarsForCommunity();
             }
             disabledAll = false;

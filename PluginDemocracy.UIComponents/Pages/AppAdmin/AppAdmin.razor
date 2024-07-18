@@ -5,7 +5,7 @@
 <MudCard Class="ma-3 pa-3">
     <MudText Typo="Typo.h5">Select Community</MudText>
     <MudSelect Disabled="disabledAll" T="ResidentialCommunityDTO" Variant="Variant.Outlined" Label="Community" ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDTOChanged))" Value="SelectedCommunity">
-        @foreach (ResidentialCommunityDTO communityDtoOption in CommunitiesDto ?? new())
+        @foreach (ResidentialCommunityDTO communityDtoOption in CommunitiesDTO ?? new())
         {
             <MudSelectItem Value="@communityDtoOption">@communityDtoOption.Name</MudSelectItem>
         }
@@ -42,7 +42,7 @@
 <MudCard Class="ma-3 pa-3" Outlined="true">
     <MudText Typo="Typo.h5">Unassign and Delete Role</MudText>
     <MudSelect Disabled="disabledAll" Label="Select Role to Delete" Variant="Variant.Outlined" T="RoleDTO" @bind-Value="roleToDelete">
-        @foreach (RoleDTO role in selectedJoinRequest?.CommunityDTO?.Roles ?? [])
+        @foreach (RoleDTO role in SelectedCommunity?.Roles ?? [])
         {
             <MudSelectItem Value="@role">@role.Title</MudSelectItem>
         }

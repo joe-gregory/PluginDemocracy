@@ -27,8 +27,8 @@ namespace PluginDemocracy.API.Controllers
             if (user == null) return BadRequest();
             return Ok(user.Admin);
         }
-        [HttpGet(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDTOs)]
-        public async Task<ActionResult<List<ResidentialCommunityDTO>>> GetListOfAllSimpleCommunitiesDtos()
+        [HttpGet(ApiEndPoints.AdminGetListOfAllSimpleCommunitiesDTOsWithRoles)]
+        public async Task<ActionResult<List<ResidentialCommunityDTO>>> GetListOfAllSimpleCommunitiesDTOsWithRoles()
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return Unauthorized();
@@ -37,9 +37,15 @@ namespace PluginDemocracy.API.Controllers
                 User? user = await _context.Users.FirstOrDefaultAsync(u => u.Id == existingUser.Id);
                 if(user == null) return BadRequest();
                 if (user.Admin == false) return Unauthorized();
-                List<ResidentialCommunity> communities = await _context.ResidentialCommunities.ToListAsync();
+                List<ResidentialCommunity> communities = await _context.ResidentialCommunities.Include(c => c.Roles).ToListAsync();
                 List<ResidentialCommunityDTO> communityDtos = [];
-                foreach (ResidentialCommunity community in communities) communityDtos.Add(ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community));
+                foreach (ResidentialCommunity community in communities)
+                {
+                    ResidentialCommunityDTO communityDTO = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
+                    foreach (Role role in community.Roles) communityDTO.Roles.Add(new RoleDTO(role));
+                    communityDtos.Add(communityDTO);
+
+                }
                 return Ok(communityDtos);
             }
             catch (Exception e)
@@ -52,7 +58,7 @@ namespace PluginDemocracy.API.Controllers
         /// </summary>
         /// <param name="communityId"></param>
         /// <returns></returns>
-        [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles)]
+        [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequestsForACommunity)]
         public async Task<ActionResult<List<JoinCommunityRequestDTO>>> AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles([FromQuery] int? communityId)
         {
             User? user = await _utilityClass.ReturnUserFromClaims(User);
@@ -61,7 +67,7 @@ namespace PluginDemocracy.API.Controllers
             if (communityId == null) return BadRequest();
             try
             {
-                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.User).Include(j => j.Home).Include(j => j.Community).ThenInclude(c => c.Roles).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
+                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.User).Include(j => j.Home).Include(j => j.Community).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
                 List<JoinCommunityRequestDTO> joinCommunityRequestDtos = [];
                 foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDTO(joinCommunityRequest));
                 return Ok(joinCommunityRequestDtos);
