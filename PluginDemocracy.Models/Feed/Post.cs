@@ -3,19 +3,34 @@
     public class Post
     {
         public int Id { get; init; }
-        private User? UserAuthor;
-        private ResidentialCommunity? CommunityAuthor;
+        private User? _userAuthor;
+        public User? UserAuthor 
+        { 
+            get
+            {
+
+               return _userAuthor;
+            }
+        }
+        private ResidentialCommunity? _communityAuthor;
+        public ResidentialCommunity? CommunityAuthor
+        {
+            get
+            {
+                return _communityAuthor;
+            }
+        }
         public IAvatar? Author
         {
             get
             {
-                if(UserAuthor != null) return UserAuthor;
-                return CommunityAuthor;
+                if(_userAuthor != null) return _userAuthor;
+                return _communityAuthor;
             }
             set
             {
-                if (value is User user) UserAuthor = user;
-                else if (value is ResidentialCommunity community) CommunityAuthor = community;
+                if (value is User user) _userAuthor = user;
+                else if (value is ResidentialCommunity community) _communityAuthor = community;
                 else throw new ArgumentException("Author must be either a User or a ResidentialCommunity");
             }
         }

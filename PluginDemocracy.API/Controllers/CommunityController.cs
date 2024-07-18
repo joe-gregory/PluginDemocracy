@@ -588,7 +588,6 @@ namespace PluginDemocracy.API.Controllers
                 }
                 ResidentialCommunity? community = await _context.ResidentialCommunities
                     .Include(c => c.Posts)
-                        .ThenInclude(p => p.Author)
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Reactions)
                     .Include(c => c.Posts)

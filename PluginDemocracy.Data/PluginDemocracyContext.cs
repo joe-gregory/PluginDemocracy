@@ -48,9 +48,9 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Petition>().Property("_linksToSupportingDocuments");
 
             modelBuilder.Entity<Post>().Ignore(post => post.Author);
-            modelBuilder.Entity<Post>().HasOne("CommunityAuthor").WithMany("Posts");
-            modelBuilder.Entity<Post>().HasOne("UserAuthor");
-            modelBuilder.Entity<Post>().Property("_imagesLinks");
+            //modelBuilder.Entity<Post>().Property("_userAuthor");
+            //modelBuilder.Entity<Post>().Property("_communityAuthor"); apparently not needed because of next line
+            modelBuilder.Entity<Post>().HasOne("_communityAuthor").WithMany("Posts");
 
         }
     }
