@@ -63,12 +63,27 @@ namespace PluginDemocracy.Models
         public bool PhoneNumberConfirmed { get; set; }
         public CultureInfo Culture { get; set; }
         public bool Admin { get; set; }
-        private readonly List<ResidentialCommunity> _citizenships;
+        /// <summary>
+        /// Thinking about Citizenships having its own backing field in case you want to
+        /// be part of communities without homes. 
+        /// </summary>
         public IReadOnlyList<ResidentialCommunity> Citizenships
         {
             get
             {
-                return _citizenships.AsReadOnly();
+                //ull-forgiving operator (!) to assert that the ResidentialCommunity
+                //will not be null, after ensuring that null values are filtered out.
+                List<ResidentialCommunity> communities = _residentOfHomes
+                    .Select(home => home.ResidentialCommunity)
+                    .Where(community => community != null)
+                    .Select(community => community!)
+                    .Union(_homeOwnerships.Select(ownership => ownership.Home.ResidentialCommunity)
+                    .Where(community => community != null)
+                    .Select(community => community!))
+                    .Distinct()
+                    .ToList();
+
+                return communities.AsReadOnly();
             }
         }
         private readonly List<HomeOwnership> _homeOwnerships;
@@ -127,7 +142,6 @@ namespace PluginDemocracy.Models
             _residentOfHomes = [];
             _roles = [];
             _petitionDrafts = [];
-            _citizenships = [];
             _notifications = [];
         }
         public User(string firstName, string lastName, string email, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
@@ -146,16 +160,7 @@ namespace PluginDemocracy.Models
             _residentOfHomes = [];
             _roles = [];
             _petitionDrafts = [];
-            _citizenships = [];
             _notifications = [];
-        }
-        internal void AddCitizenship(ResidentialCommunity community)
-        {
-            _citizenships.Add(community);
-        }
-        internal void RemoveCitizenship(ResidentialCommunity community)
-        {
-            _citizenships.Remove(community);
         }
         internal void AddHomeOwnership(HomeOwnership homeOwnership)
         {

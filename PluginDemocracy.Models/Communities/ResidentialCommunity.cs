@@ -246,12 +246,15 @@ namespace PluginDemocracy.Models
             {
                 //Does the approver have the power to approve the request?
                 if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditHomeOwnership) && !approver.Admin) throw new ArgumentException("Approver does not have the right permissions.");
-                request.Home.AddOwner(request.User, request.OwnershipPercentage);
+                //find the home. It has to be in Community.Homes to represent actual object in memory that will save it. 
+                Home homeToJoin = Homes.First(h => h.Id == request.Home.Id);
+                homeToJoin.AddOwner(request.User, request.OwnershipPercentage);
             }
             else if (request.JoiningAsResident)
             {
                 if (!approver.Roles.Any(r => r.Community == this && r.Powers.CanEditResidency) && !approver.Admin) throw new ArgumentException("Approver does not have the right permissions.");
-                request.Home.AddResident(request.User);
+                Home homeToJoin = Homes.First(h => h.Id == request.Home.Id);
+                homeToJoin.AddResident(request.User);
             }
             else
             {
