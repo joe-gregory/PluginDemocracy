@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.Models;
+using System.Globalization;
 
 namespace PluginDemocracy.Data
 {
@@ -16,7 +17,45 @@ namespace PluginDemocracy.Data
             /// convert back to CultureInfo when reading.
             modelBuilder.Entity<User>().Property(u => u.Culture).HasConversion(c => c.Name, s => new(s));
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
-            
+            modelBuilder.Entity<User>().Ignore(u => u.Citizenships);
+
+
+            //modelBuilder.Entity<User>().Property(u => u.HomeOwnerships).UsePropertyAccessMode(PropertyAccessMode.Field);
+            //modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne();
+            //modelBuilder.Entity<User>().Property(u => u.ResidentOfHomes).UsePropertyAccessMode(PropertyAccessMode.Field);
+            //modelBuilder.Entity<User>().HasMany(u => u.ResidentOfHomes).WithMany(h => h.Residents);
+            //modelBuilder.Entity<User>().Property(u => u.Roles).UsePropertyAccessMode(PropertyAccessMode.Field);
+            //modelBuilder.Entity<User>().HasMany(u => u.Roles).WithOne(r => r.Holder);
+            //modelBuilder.Entity<User>().Property(u => u.Notifications).UsePropertyAccessMode(PropertyAccessMode.Field);
+            //modelBuilder.Entity<User>().Property(u => u.PetitionDrafts).UsePropertyAccessMode(PropertyAccessMode.Field);
+            //modelBuilder.Entity<User>().HasMany(u => u.PetitionDrafts).WithMany(p => p.Authors);
+            modelBuilder.Entity<User>()
+       .HasMany(u => u.HomeOwnerships)
+       .WithOne(h => h.Owner);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.ResidentOfHomes)
+                .WithMany(h => h.Residents);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Roles)
+                .WithOne(r => r.Holder);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notifications)
+                .WithOne();
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.PetitionDrafts)
+                .WithMany(p => p.Authors);
+
+            // Apply UsePropertyAccessMode for collections
+            modelBuilder.Entity<User>().Navigation(u => u.HomeOwnerships).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<User>().Navigation(u => u.ResidentOfHomes).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<User>().Navigation(u => u.Roles).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<User>().Navigation(u => u.Notifications).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<User>().Navigation(u => u.PetitionDrafts).UsePropertyAccessMode(PropertyAccessMode.Field);
+
             modelBuilder.Entity<ResidentialCommunity>().Ignore(ResidentialCommunity => ResidentialCommunity.OfficialLanguages);
             modelBuilder.Entity<ResidentialCommunity>().Property("_officialLanguagesCodes");
             modelBuilder.Entity<ResidentialCommunity>().Ignore(residentialCommunity => residentialCommunity.Citizens);

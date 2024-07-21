@@ -451,16 +451,11 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("_officialLanguagesCodes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ResidentialCommunities");
                 });
@@ -808,13 +803,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PluginDemocracy.Models.ResidentialCommunity", b =>
-                {
-                    b.HasOne("PluginDemocracy.Models.User", null)
-                        .WithMany("Citizenships")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("PluginDemocracy.Models.Role", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.ResidentialCommunity", "Community")
@@ -885,8 +873,6 @@ namespace PluginDemocracy.Data.Migrations
 
             modelBuilder.Entity("PluginDemocracy.Models.User", b =>
                 {
-                    b.Navigation("Citizenships");
-
                     b.Navigation("HomeOwnerships");
 
                     b.Navigation("Notifications");

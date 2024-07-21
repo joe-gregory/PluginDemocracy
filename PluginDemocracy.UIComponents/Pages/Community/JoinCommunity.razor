@@ -12,16 +12,6 @@
         <MudSelectItem Value="@communityDtoOption">@communityDtoOption.FullName</MudSelectItem>
     }
 </MudSelect>
-@* <MudGrid Class="mt-5 mb-10">
-    <MudItem>
-        <MudRadioGroup ValueChanged="@(EventCallback.Factory.Create<ResidentialCommunityDTO>(this, OnSelectCommunityDtoChanged))" Value="selectedCommunityDTO">
-            @foreach (ResidentialCommunityDTO communityDtoOption in communitiesDtos)
-            {
-                <MudRadio Color="Color.Primary" Class="mt-2 mb-2" Value="@communityDtoOption">@(communityDtoOption.Name + ", " + communityDtoOption.Address + ", " + communityDtoOption.Description)</MudRadio>
-            }
-        </MudRadioGroup>
-    </MudItem>
-</MudGrid> *@
 
 @if (homesDtosFromSelectedCommunity.Count > 0)
 {
