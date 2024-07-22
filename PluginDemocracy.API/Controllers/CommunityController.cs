@@ -424,7 +424,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiResponse);
             }
-            
+            pdApiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 pdApiResponse.AddAlert("error", "requestId is zero.");
@@ -484,6 +484,7 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(apiResponse);
             }
+            apiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 apiResponse.AddAlert("error", "Invalid request Id.");
@@ -531,6 +532,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response);
             }
+            response.User = new(existingUser);
             //Check the contents of the post
             if (string.IsNullOrEmpty(request.Body))
             {
@@ -608,6 +610,7 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
+                response.User = new(existingUser);
                 ResidentialCommunity? community = await _context.ResidentialCommunities
                     .Include(c => c.Posts)
                     .Include(c => c.Posts)
@@ -644,6 +647,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response);
             }
+            response.User = new(existingUser);
             Post? post = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == postId);
 
             try
@@ -743,7 +747,12 @@ namespace PluginDemocracy.API.Controllers
         {
             PDAPIResponse response = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
-            if (existingUser == null) return BadRequest();
+            if (existingUser == null) 
+            {
+                response.AddAlert("error", "Users from claims not found.");
+                return BadRequest();
+            }
+            response.User = new(existingUser);
             Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
             if (post == null) return BadRequest();
 
