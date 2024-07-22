@@ -120,6 +120,9 @@
   <data name="AboutCommunity" xml:space="preserve">
     <value>About Community</value>
   </data>
+  <data name="AboutMyCommunity" xml:space="preserve">
+    <value>About My Community</value>
+  </data>
   <data name="Accept" xml:space="preserve">
     <value>Accept</value>
   </data>

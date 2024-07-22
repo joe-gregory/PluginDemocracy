@@ -70,6 +70,7 @@ namespace PluginDemocracy.Translations
         public const string DeletePost = "DeletePost";
         public const string DeletePostCannotBeUndone = "DeletePostCannotBeUndone";
         public const string IfJoiningAsOwnerAdditionalDocumentsNeeded = "IfJoiningAsOwnerAdditionalDocumentsNeeded";
+        public const string AboutMyCommunity = "AboutMyCommunity";
         
         public const string CreateProposal = "CreateProposal";
 

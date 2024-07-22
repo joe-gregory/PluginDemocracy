@@ -66,6 +66,7 @@
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.AboutCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.AboutMyCommunity)</MudNavLink>"
         </MudNavMenu>
     }
     else if (AppState.IsLoggedIn)

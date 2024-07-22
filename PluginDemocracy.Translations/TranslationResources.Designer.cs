@@ -70,6 +70,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About My Community.
+        /// </summary>
+        internal static string AboutMyCommunity {
+            get {
+                return ResourceManager.GetString("AboutMyCommunity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Accept.
         /// </summary>
         internal static string Accept {

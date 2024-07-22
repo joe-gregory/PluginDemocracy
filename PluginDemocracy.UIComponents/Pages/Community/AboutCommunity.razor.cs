@@ -9,9 +9,9 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         [SupplyParameterFromQuery]
         protected int? CommunityId { get; set; }
         protected ResidentialCommunityDTO? CommunityDTO;
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    CommunityDTO = await Services.GetDataGenericAsync<ResidentialCommunityDTO>($"{ApiEndPoints.GetCommunityAbout}?communityId={CommunityId}");
-        //}
+        protected override async Task OnInitializedAsync()
+        {
+            CommunityDTO = await Services.GetDataGenericAsync<ResidentialCommunityDTO>($"{ApiEndPoints.GetCommunityAbout}?communityId={CommunityId}");
+        }
     }
 }
