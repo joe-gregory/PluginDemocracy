@@ -34,8 +34,7 @@
             Title = title;
             Description = description;
             Active = true;
-            if (powers != null) Powers = powers;
-            else Powers = new();
+            Powers = powers ?? new();
             Community = community;
         }
         public void Update()

@@ -25,7 +25,15 @@ namespace PluginDemocracy.API.Controllers
         [HttpPost(ApiEndPoints.RegisterCommunity)]
         public async Task<ActionResult<PDAPIResponse>> Register(ResidentialCommunityDTO communityDto)
         {
+            
             PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) 
+            { 
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response); 
+            }
+            response.User = new(existingUser);
 
             if (string.IsNullOrEmpty(communityDto.Name))
             {
@@ -153,6 +161,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiresponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiresponse);
             }
+            pdApiresponse.User = new(existingUser);
             //Does the user from claims match the user in the request?
             if (joinCommunityRequestUploadDTO.CommunityId == 0)
             {
@@ -347,7 +356,12 @@ namespace PluginDemocracy.API.Controllers
         {
             PDAPIResponse pdApiResponse = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User, pdApiResponse);
-            if (existingUser == null) return BadRequest(pdApiResponse);
+            if (existingUser == null) 
+            { 
+                pdApiResponse.AddAlert("error", "User from claims not found");
+                return BadRequest(pdApiResponse); 
+            }
+            pdApiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 pdApiResponse.AddAlert("error", "petitionId is zero.");
@@ -484,8 +498,16 @@ namespace PluginDemocracy.API.Controllers
             //Community method already checks if the user is a role holder or an admin.
             try
             {
-                if (accepted) joinCommunityRequest.Community.ApproveJoinCommunityRequest(joinCommunityRequest, existingUser);
-                else joinCommunityRequest.Community.RejectJoinCommunityRequest(joinCommunityRequest, existingUser);
+                if (accepted) 
+                { 
+                    joinCommunityRequest.Community.ApproveJoinCommunityRequest(joinCommunityRequest, existingUser); 
+                    joinCommunityRequest.User.AddNotification("Join request approved", $"Your request to join {joinCommunityRequest.Community.Name} community has been approved for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. Welcome to the community.");
+                }
+                else 
+                { 
+                    joinCommunityRequest.Community.RejectJoinCommunityRequest(joinCommunityRequest, existingUser); 
+                    joinCommunityRequest.User.AddNotification("Join request rejected", $"Your request to join {joinCommunityRequest.Community.Name} community has been rejected for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. If you think this was an error, contact an admin for the community or send another join request..");
+                }
                 await _context.SaveChangesAsync();
                 apiResponse.SuccessfulOperation = true;
                 apiResponse.AddAlert("success", "Request accepted or rejected successfully.");

@@ -1,5 +1,6 @@
 ﻿using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
+using PluginDemocracy.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         {
             Powers = new()
         };
+        private RolePowers powers = new();
         private List<UserDTO>? usersAvatarsOfCommunity;
         private bool disabledAll = false;
         private RoleDTO? roleToDelete;
@@ -51,6 +53,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         {
             disabledAll = true;
             roleToAdd.Community = SelectedCommunity;
+            roleToAdd.Powers = powers;
             await Services.PostDataAsync(ApiEndPoints.AdminCreateAndAssignRole, roleToAdd);
             disabledAll = false;
         }

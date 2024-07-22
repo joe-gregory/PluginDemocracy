@@ -8,7 +8,7 @@
         public bool Read { get; set; } = false; 
         public DateTime Date { get; set; } = DateTime.UtcNow;
         protected Notification() { }
-        public Notification(string title, string message)
+        internal Notification(string title, string message)
         {
             Title = title;
             Message = message;
