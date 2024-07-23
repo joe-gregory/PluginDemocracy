@@ -19,7 +19,6 @@
         public const string UpdateProfilePicture = UsersController + "updateprofilepicture";
         public const string MarkNotificationAsRead = UsersController + "marknotificationasread";
         public const string RefreshUserData = UsersController + "refreshuserdata";
-        public const string AboutUser = UsersController + "aboutuser";
         public const string GetUserDTOFromEmail = UsersController + "getuserdtofromemail";
         public const string GetUserPetitionDrafts = UsersController + "getuserpetitiondrafts";
         public const string SavePetitionDraft = UsersController + "savepetitiondraft";

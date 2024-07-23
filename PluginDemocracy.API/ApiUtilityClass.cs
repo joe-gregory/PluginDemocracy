@@ -4,16 +4,20 @@ using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Azure;
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using PluginDemocracy.API.Translations;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PluginDemocracy.API
 {
@@ -28,16 +32,16 @@ namespace PluginDemocracy.API
         private readonly string smtpHost;
         private readonly int smtpPort = 587;
         public readonly string WebAppBaseUrl;
-        public List<string> SupportedLanguages = ["en-US", "es-MX"]; 
+        public List<string> SupportedLanguages = ["en-US", "es-MX"];
         public readonly PluginDemocracyContext _context;
         public APIUtilityClass(IConfiguration configuration, PluginDemocracyContext context)
         {
             _configuration = configuration;
             _context = context;
-            
-            mailJetApiKey = _configuration["MailJet:ApiKey"]?? string.Empty;
-            mailJetSecretKey = _configuration["MailJet:SecretKey"]?? string.Empty;
-            smtpHost = _configuration["MailJet:SmtpServer"]?? string.Empty;
+
+            mailJetApiKey = _configuration["MailJet:ApiKey"] ?? string.Empty;
+            mailJetSecretKey = _configuration["MailJet:SecretKey"] ?? string.Empty;
+            smtpHost = _configuration["MailJet:SmtpServer"] ?? string.Empty;
 
             if (string.IsNullOrEmpty(mailJetApiKey)) throw new InvalidOperationException("Mailjet API key is not configured properly.");
             if (string.IsNullOrEmpty(mailJetSecretKey)) throw new InvalidOperationException("Mailjet secret key is not configured properly.");
@@ -72,7 +76,7 @@ namespace PluginDemocracy.API
         {
             string textToReturn = string.Empty;
 
-            for(int i = 0; i < SupportedLanguages.Count; i++)
+            for (int i = 0; i < SupportedLanguages.Count; i++)
             {
                 CultureInfo culture = new(SupportedLanguages[i]);
                 textToReturn += TranslationResources.ResourceManager.GetObject(text, culture);
@@ -101,7 +105,7 @@ namespace PluginDemocracy.API
             {
                 _context.SaveChanges();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 apiResponse.AddAlert("error", "Error saving User.EmailConfirmationToken to database: " + e.Message);
             }
@@ -134,7 +138,7 @@ namespace PluginDemocracy.API
         public string CreateJWT(int userId, int expirationDays)
         {
             JwtSecurityTokenHandler tokenHandler = new();
-            
+
             string secret = Environment.GetEnvironmentVariable("JsonWebTokenSecretKey") ?? string.Empty;
             if (string.IsNullOrEmpty(secret)) throw new Exception("JsonWebTokenSecretKey is null or empty");
             byte[] key = Encoding.ASCII.GetBytes(secret);
@@ -218,7 +222,7 @@ namespace PluginDemocracy.API
                 response?.AddAlert("error", $"Token expired: {e.Message}");
                 return false;
             }
-            catch (SecurityTokenException e) 
+            catch (SecurityTokenException e)
             {
                 response?.AddAlert("error", $"Error validating token: {e.Message}");
                 return false;
@@ -277,6 +281,44 @@ namespace PluginDemocracy.API
                 response?.AddAlert("error", "Error fetching user from database: " + e.Message);
                 return null;
             }
+        }
+        internal static string SerializeUserDTOWithNewtonSoft(UserDTO userDTO)
+        {
+            string userJson = JsonConvert.SerializeObject(userDTO, Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+            return userJson;
+        }
+        internal static string SerializePDAPIResponseWithNewtonSoft(PDAPIResponse apiResponse)
+        {
+            string apiResponseJson = JsonConvert.SerializeObject(apiResponse, Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+            return apiResponseJson;
+        }
+        /// <summary>
+        /// This uses the Newtonsoft.Json library to serialize PDAPIResponse which is the only way to currently preserve
+        /// <see cref="PDAPIResponse.User.Roles"/>
+        /// </summary>
+        /// <param name="apiResponse">The PDAPIResponse that will be returned to client.</param>
+        /// <param name="statusCode">Status code of content, such as 200, 300, 400, 500, etc.</param>
+        /// <returns></returns>
+        internal static ContentResult ReturnPDAPIResponseContentResult(PDAPIResponse apiResponse, int statusCode = 200)
+        {
+            string apiResponseJson = SerializePDAPIResponseWithNewtonSoft(apiResponse);
+            return new ContentResult
+            {
+                Content = apiResponseJson,
+                ContentType = "application/json",
+                StatusCode = statusCode
+            };
         }
     }
 }

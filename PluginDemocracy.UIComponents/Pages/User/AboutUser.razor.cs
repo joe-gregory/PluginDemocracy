@@ -17,8 +17,8 @@ namespace PluginDemocracy.UIComponents.Pages.User
         {
             base.OnInitialized();
             //Make get request for user base of user id
-            string url = ApiEndPoints.AboutUser + "?userId=" + UserId;
-            if (UserId.HasValue) User = await Services.GetDataGenericAsync<UserDTO>(url);
+           await Services.GetDataGenericAsync<UserDTO>(ApiEndPoints.RefreshUserData);
+            User = AppState.User;
 
         }
     }

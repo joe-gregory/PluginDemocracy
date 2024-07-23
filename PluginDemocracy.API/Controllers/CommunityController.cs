@@ -33,7 +33,6 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response); 
             }
-            response.User = new(existingUser);
 
             if (string.IsNullOrEmpty(communityDto.Name))
             {
@@ -161,7 +160,6 @@ namespace PluginDemocracy.API.Controllers
                 pdApiresponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiresponse);
             }
-            pdApiresponse.User = new(existingUser);
             //Does the user from claims match the user in the request?
             if (joinCommunityRequestUploadDTO.CommunityId == 0)
             {
@@ -308,7 +306,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).Include(j => j.Messages).FirstOrDefaultAsync(j => j.Id == requestId);
+            JoinCommunityRequest? joinRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).Include(j => j.Messages).ThenInclude(m => m.Sender).FirstOrDefaultAsync(j => j.Id == requestId);
             if (joinRequest == null) return BadRequest();
             //Only the user with the Id as the request and individuals with roles in the community can see the request
             //if this is the user from the request, return the request
@@ -361,7 +359,6 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiResponse); 
             }
-            pdApiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 pdApiResponse.AddAlert("error", "petitionId is zero.");
@@ -424,7 +421,6 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(pdApiResponse);
             }
-            pdApiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 pdApiResponse.AddAlert("error", "requestId is zero.");
@@ -507,7 +503,6 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", "User from claims not found");
                 return BadRequest(apiResponse);
             }
-            apiResponse.User = new(existingUser);
             if (requestId == 0)
             {
                 apiResponse.AddAlert("error", "Invalid request Id.");
@@ -561,7 +556,6 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response);
             }
-            response.User = new(existingUser);
             //Check the contents of the post
             if (string.IsNullOrEmpty(request.Body))
             {
@@ -639,7 +633,6 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "User from claims not found");
                     return BadRequest(response);
                 }
-                response.User = new(existingUser);
                 ResidentialCommunity? community = await _context.ResidentialCommunities
                     .Include(c => c.Posts)
                     .Include(c => c.Posts)
@@ -676,7 +669,6 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response);
             }
-            response.User = new(existingUser);
             Post? post = await _context.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.Id == postId);
 
             try
@@ -781,7 +773,6 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "Users from claims not found.");
                 return BadRequest();
             }
-            response.User = new(existingUser);
             Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
             if (post == null) return BadRequest();
 

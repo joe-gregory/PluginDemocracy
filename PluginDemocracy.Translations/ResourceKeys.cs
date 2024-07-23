@@ -44,6 +44,7 @@ namespace PluginDemocracy.Translations
         public const string Number = "Number";
         public const string Generate = "Generate";
         public const string Address = "Address";
+        public const string Roles = "Roles";
 
         public const string Community = "Community";
         public const string Communities = "Communities";
@@ -72,7 +73,11 @@ namespace PluginDemocracy.Translations
         public const string IfJoiningAsOwnerAdditionalDocumentsNeeded = "IfJoiningAsOwnerAdditionalDocumentsNeeded";
         public const string AboutMyCommunity = "AboutMyCommunity";
         
+        
         public const string CreateProposal = "CreateProposal";
+
+        
+        public const string PendingJoinCommunityRequests = "PendingJoinCommunityRequests";
 
         //Translations from PluginDemocracy.Models.Dictamens keys such as labelKep and DescriptionKey of UIInputAttribute
         public const string CreateArticleDictamenTitle = "CreateArticleDictamenTitle";

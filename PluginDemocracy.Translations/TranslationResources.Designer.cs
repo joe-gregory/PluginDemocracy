@@ -781,6 +781,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pending Join Community Requests.
+        /// </summary>
+        internal static string PendingJoinCommunityRequests {
+            get {
+                return ResourceManager.GetString("PendingJoinCommunityRequests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Percentage.
         /// </summary>
         internal static string Percentage {

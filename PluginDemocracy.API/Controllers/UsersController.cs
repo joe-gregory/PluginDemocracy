@@ -10,9 +10,6 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -69,6 +66,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 existingUser = await _context.Users
                     .Include(u => u.Notifications)
+                    .Include(u => u.Roles)
                     .Include(u => u.ResidentOfHomes)
                         .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
@@ -80,6 +78,30 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.EmailNotFound, loginInfo.Culture));
                     return BadRequest(apiResponse);
                 }
+
+                loginInfo.Password ??= string.Empty;
+
+                //Compare passwords
+                PasswordHasher<User> _passwordHasher = new();
+                PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.HashedPassword, loginInfo.Password);
+                if (result == PasswordVerificationResult.Failed)
+                {
+                    apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordMismatch, loginInfo.Culture));
+                    return BadRequest(apiResponse);
+                }
+                else
+                {
+                    apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
+                    //Convert User to UserDto
+                    apiResponse.User = new(existingUser);
+
+                    //Send a SessionJWT to the client so that they can maintain a session
+                    apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
+                    //Redirect to home feed after login in or join community page if no community
+                    apiResponse.RedirectTo = FrontEndPages.Feed;
+
+                    return APIUtilityClass.ReturnPDAPIResponseContentResult(apiResponse);
+                }
             }
             catch (Exception ex)
             {
@@ -87,41 +109,7 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, apiResponse);
             }
 
-            loginInfo.Password ??= string.Empty;
-
-            //Compare passwords
-            PasswordHasher<User> _passwordHasher = new();
-            PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.HashedPassword, loginInfo.Password);
-            if (result == PasswordVerificationResult.Failed)
-            {
-                apiResponse.AddAlert("error", _utilityClass.Translate(ResourceKeys.PasswordMismatch, loginInfo.Culture));
-                return BadRequest(apiResponse);
-            }
-            else
-            {
-                apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YouHaveLoggedIn, existingUser.Culture));
-                //Convert User to UserDto
-                apiResponse.User = new(existingUser);
-
-                //Send a SessionJWT to the client so that they can maintain a session
-                apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
-                //Redirect to home feed after login in or join community page if no community
-                apiResponse.RedirectTo = FrontEndPages.Feed;
-                return Ok(apiResponse);
-            }
-        }
-        [HttpGet(ApiEndPoints.AboutUser)]
-        public async Task<ActionResult<UserDTO>> AboutUser([FromQuery] int userId)
-        {
-            User? existingUser = await _context.Users
-                .Include(u => u.ResidentOfHomes)
-                    .ThenInclude(h => h.ResidentialCommunity)
-                .Include(u => u.HomeOwnerships)
-                    .ThenInclude(ho => ho.Home)
-                        .ThenInclude(h => h.ResidentialCommunity)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            if (existingUser == null) return NotFound();
-            return Ok(new UserDTO(existingUser));
+            
         }
         [HttpGet("confirmemail")]
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
@@ -153,7 +141,6 @@ namespace PluginDemocracy.API.Controllers
                     apiResponse.AddAlert("success", _utilityClass.Translate(ResourceKeys.YourEmailHasBeenConfirmed, existingUser.Culture));
                     apiResponse.RedirectParameters["Title"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedTitle, existingUser.Culture);
                     apiResponse.RedirectParameters["Body"] = _utilityClass.Translate(ResourceKeys.EmailOutEmailConfirmedBody, existingUser.Culture);
-                    apiResponse.User = new(existingUser);
                     //Send a SessionJWT to the client so that they can maintain a session
                     apiResponse.SessionJWT = _utilityClass.CreateJWT(existingUser.Id, 7);
 
@@ -305,38 +292,7 @@ namespace PluginDemocracy.API.Controllers
                 //Send a SessionJWT to the client so that they can maintain a session
                 response.SessionJWT = _utilityClass.CreateJWT(fullDataUser.Id, 7);
                 response.RedirectTo = null;
-
-                // Manually serialize the response
-                var options = new JsonSerializerOptions
-                {
-                    ReferenceHandler = ReferenceHandler.Preserve,
-                    WriteIndented = true // Optional: for pretty printing
-                };
-
-                string userJson = JsonConvert.SerializeObject(response.User, Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    });
-
-                string jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    });
-
-                // Return the serialized JSON
-                return new ContentResult
-                {
-                    Content = jsonResponse,
-                    ContentType = "application/json",
-                    StatusCode = 200
-                };
-
-                /*return Ok(response)*/
-                ;
+                return APIUtilityClass.ReturnPDAPIResponseContentResult(response);
             }
             catch (Exception ex)
             {
@@ -369,13 +325,13 @@ namespace PluginDemocracy.API.Controllers
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.CultureUpdatedSuccessfully, existingUser.Culture));
                 response.User = new(existingUser);
+                return APIUtilityClass.ReturnPDAPIResponseContentResult(response);
             }
             catch (Exception ex)
             {
                 response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
                 return StatusCode(500, response);
             }
-            return Ok(response);
         }
         [Authorize]
         [HttpPost(ApiEndPoints.PostUpdateAccount)]
@@ -429,13 +385,13 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.AccountUpdatedSuccessfully, existingUser.Culture));
                 //Attach user data to response object
                 response.User = new(existingUser);
+                return APIUtilityClass.ReturnPDAPIResponseContentResult(response);
             }
             catch (Exception ex)
             {
                 response.AddAlert("error", $"Unable to save changes to database\nError:\n{ex.Message}");
                 return StatusCode(500, response);
             }
-            return Ok(response);
         }
         [Authorize]
         [HttpPost("updateprofilepicture")]
@@ -496,7 +452,7 @@ namespace PluginDemocracy.API.Controllers
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.ProfilePictureUpdated, existingUser.Culture));
                 response.User = new(existingUser);
-                return Ok(response);
+                return APIUtilityClass.ReturnPDAPIResponseContentResult(response);
             }
             catch (Exception ex)
             {
@@ -550,7 +506,14 @@ namespace PluginDemocracy.API.Controllers
             {
                 return NotFound("User not found");
             }
-            return Ok(new UserDTO(userToReturn));
+            UserDTO userToReturnDTO = new(userToReturn);
+            string usertoReturnDTOJson = APIUtilityClass.SerializeUserDTOWithNewtonSoft(userToReturnDTO);
+            return new ContentResult
+            {
+                Content = usertoReturnDTOJson,
+                ContentType = "application/json",
+                StatusCode = 200
+            };
         }
         [Authorize]
         [HttpGet(ApiEndPoints.GetUserPetitionDrafts)]

@@ -357,6 +357,9 @@
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Las contraseñas no coinciden</value>
   </data>
+  <data name="PendingJoinCommunityRequests" xml:space="preserve">
+    <value>Solicitud De Ingreso A Comunidad Pendientes</value>
+  </data>
   <data name="Percentage" xml:space="preserve">
     <value>Porcentage</value>
   </data>

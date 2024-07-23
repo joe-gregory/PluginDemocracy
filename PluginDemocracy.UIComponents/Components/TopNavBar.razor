@@ -56,17 +56,25 @@
             <MudNavLink Href="@FrontEndPages.Feed">@AppState.Translate("Feed")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.CreatePetition">@AppState.Translate(ResourceKeys.CreatePetition)</MudNavLink>
             <MudNavLink Href="@FrontEndPages.PetitionDrafts">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
-            <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink>
+            @*             <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
+        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink> *@
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudNavLink>
-            <MudNavLink Href="@FrontEndPages.AboutCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.AboutMyCommunity)</MudNavLink>"
+            <MudNavLink Href="@FrontEndPages.AboutCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.AboutMyCommunity)</MudNavLink>
+            @if (AppState.User?.Roles.Count > 0)
+            {
+                <div style="padding-left:5px; padding-right:5px;">
+                    <hr style="height:1px; background:#@PluginDemocracyTheme.PrimaryColor; margin: 3px;" />
+                </div>
+                <MudText Align="Align.Center" Typo="Typo.h6">@AppState.Translate(ResourceKeys.Roles)</MudText>
+                <MudNavLink Href="@FrontEndPages.RolesPendingJCRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.PendingJoinCommunityRequests)</MudNavLink>
+            }
         </MudNavMenu>
     }
     else if (AppState.IsLoggedIn)
@@ -109,7 +117,7 @@
             <MudNavLink Href="@FrontEndPages.Notifications">
                 @AppState.Translate(ResourceKeys.Notifications)
                 <MudBadge Visible="@(AppState.User != null && AppState.User.AnyUnreadNotifications)" Content="@AppState.User?.HowManyUnreadNotifications" Overlap="true" Bordered="true" Color="Color.Info">
-                    <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Default"  />
+                    <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
                 </MudBadge>
             </MudNavLink>
             <MudNavLink OnClick="@(Services.LogOutAndRedirectHome)" Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>

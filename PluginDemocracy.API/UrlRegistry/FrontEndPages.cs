@@ -27,6 +27,10 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string JoinCommunityRequests = "/joincommunityrequests";
         public const string CurrentJoinCommunityRequests = "/currentjoincommunityrequests";
         public const string AboutCommunity = "/aboutcommunity";
+        /// <summary>
+        /// This takes you to the page where individuals with Roles can see pending join community requests. 
+        /// </summary>
+        public const string RolesPendingJCRequests = "/rolespendingjcrequests";
 
         //Admin pages
         public const string AppAdmin = "/appadmin";
