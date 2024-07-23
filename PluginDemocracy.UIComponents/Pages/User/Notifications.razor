@@ -24,7 +24,7 @@
         {
             <MudText Align="Align.Center"><b>@selectedNotification.Title</b></MudText>
             <br/>
-            <MudText>@selectedNotification.Message</MudText>
+            <MudText>@((MarkupString)selectedNotification.Message)</MudText>
         }
     </DialogContent>
     <DialogActions>

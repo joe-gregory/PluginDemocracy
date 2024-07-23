@@ -435,7 +435,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "Message text is null or empty.");
                 return BadRequest(pdApiResponse);
             }
-            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).ThenInclude(c => c.Roles).ThenInclude(r => r.Holder).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
 
             if (joinCommunityRequest == null)
             {
@@ -462,6 +462,29 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 joinCommunityRequest.AddMessage(existingUser, message);
+                //if the person leaving the message is not the requester, send a notification to the requester
+                if (joinCommunityRequest.User.Id != existingUser.Id)
+                {
+                    string title = "New message on your request to join community.";
+                    string body = $"{existingUser.FullName} has left a message on your join request for community {joinCommunityRequest.Community.Name} for home {joinCommunityRequest.Home.FullAddress}. Please follow the following link to review the message: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}\">{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}</a>.";
+                    joinCommunityRequest.User.AddNotification(title, body);
+                    await _utilityClass.SendEmailAsync(joinCommunityRequest.User.Email, title, body);
+                }
+                //if the person leaving the message is the requester, send message to all individuals in this community that have roles powers needed for the type of request
+                else
+                {
+                    string title = "New message on a join request.";
+                    string body = $"{existingUser.FullName} has left a message on a join request for community {joinCommunityRequest.Community.Name} for home {joinCommunityRequest.Home.FullAddress}. Please follow the following link to review the message: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}\">{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}</a>.";
+                    List<User?> roleHoldersWithJoinPower = joinCommunityRequest.Community.Roles.Where(r => r.Powers.CanEditHomeOwnership && r.Powers.CanEditResidency).Select(r => r.Holder).ToList();
+                    foreach (User? user in roleHoldersWithJoinPower)
+                    {
+                        if (user != null)
+                        {
+                            user.AddNotification(title, body);
+                            await _utilityClass.SendEmailAsync(user.Email, title, body);
+                        }
+                    }
+                }
                 await _context.SaveChangesAsync();
                 pdApiResponse.SuccessfulOperation = true;
                 pdApiResponse.AddAlert("success", "Message added successfully.");
