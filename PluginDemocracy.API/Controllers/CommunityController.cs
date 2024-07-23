@@ -501,13 +501,19 @@ namespace PluginDemocracy.API.Controllers
             {
                 if (accepted) 
                 { 
-                    joinCommunityRequest.Community.ApproveJoinCommunityRequest(joinCommunityRequest, existingUser); 
-                    joinCommunityRequest.User.AddNotification("Join request approved", $"Your request to join {joinCommunityRequest.Community.Name} community has been approved for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. Welcome to the community.");
+                    joinCommunityRequest.Community.ApproveJoinCommunityRequest(joinCommunityRequest, existingUser);
+                    string title = "Join Request Approved";
+                    string body = $"Your request to join {joinCommunityRequest.Community.Name} community has been approved for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. Welcome to the community.";
+                    joinCommunityRequest.User.AddNotification(title, body);
+                    await _utilityClass.SendEmailAsync(joinCommunityRequest.User.Email, title, body);
                 }
                 else 
                 { 
-                    joinCommunityRequest.Community.RejectJoinCommunityRequest(joinCommunityRequest, existingUser); 
-                    joinCommunityRequest.User.AddNotification("Join request rejected", $"Your request to join {joinCommunityRequest.Community.Name} community has been rejected for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. If you think this was an error, contact an admin for the community or send another join request..");
+                    joinCommunityRequest.Community.RejectJoinCommunityRequest(joinCommunityRequest, existingUser);
+                    string title = "Join Request Rejected";
+                    string body = $"Your request to join {joinCommunityRequest.Community.Name} community has been rejected for home {joinCommunityRequest.Home.FullAddress} as a {(joinCommunityRequest.JoiningAsOwner ? "owner" : "resident")}. If you think this was an error, contact an admin for the community or send another join request.";
+                    joinCommunityRequest.User.AddNotification(title, body);
+                    await _utilityClass.SendEmailAsync(joinCommunityRequest.User.Email, title, body);
                 }
                 await _context.SaveChangesAsync();
                 apiResponse.SuccessfulOperation = true;
@@ -798,7 +804,7 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<ResidentialCommunityDTO>> GetCommunityAbout([FromQuery] int communityId)
         {
             //Include Homes, include roles
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).Include(c => c.Roles).FirstOrDefaultAsync(c => c.Id == communityId);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Roles).FirstOrDefaultAsync(c => c.Id == communityId);
             if (community == null) return BadRequest("Community not found.");
             return Ok(new ResidentialCommunityDTO(community));
         }

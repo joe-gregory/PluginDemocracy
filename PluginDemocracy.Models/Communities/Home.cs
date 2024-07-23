@@ -20,7 +20,7 @@ namespace PluginDemocracy.Models
         }
         private readonly List<HomeOwnership> _ownerships;
         /// <summary>
-        /// Get only property. Returns all the ownerships of this home.
+        /// Property + backing field. Returns all the ownerships of this home.
         /// </summary>
         public IReadOnlyList<HomeOwnership> Ownerships
         {
@@ -68,7 +68,7 @@ namespace PluginDemocracy.Models
         }
         private readonly List<User> _residents;
         /// <summary>
-        /// Residents are individuals that live in this home but that do not own it. 
+        /// Property + backing field. Residents are individuals that live in this home but that do not own it. 
         /// </summary>
         public IReadOnlyList<User> Residents 
         { 

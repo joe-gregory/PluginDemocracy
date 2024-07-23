@@ -204,6 +204,14 @@ namespace PluginDemocracy.API.Controllers
             {
                 Role newRole = community.AddRole(roleDTO.Title, roleDTO.Description, roleDTO.Powers);
                 community.AssignRole(newRole, holder);
+                string title = "Role assigned to you.";
+                string messageBody = $"You have been assigned the role of {newRole.Title} in {community.FullName} with permissions to:\n";
+                if (newRole.Powers.CanEditHomeOwnership) messageBody += "Edit home ownerships\n";
+                if (newRole.Powers.CanEditResidency) messageBody += "Edit residency\n";
+                if (newRole.Powers.CanModifyAccounting) messageBody += "Modify accounting\n";
+                messageBody += "\n\nWith Great Power Comes Great Responsibility.";
+                holder.AddNotification(title, messageBody);
+                await _utilityClass.SendEmailAsync(holder.Email, title, messageBody);
                 _context.SaveChanges();
                 apiResponse.SuccessfulOperation = true;
                 apiResponse.AddAlert("success", "Role created and assigned successfully.");
@@ -223,7 +231,7 @@ namespace PluginDemocracy.API.Controllers
             if (user.Admin == false) return Unauthorized();
             PDAPIResponse apiResponse = new();
             //Get the community.
-            ResidentialCommunity? community = _context.ResidentialCommunities.Include(c => c.Roles).FirstOrDefault(c => c.Roles.Any(r => r.Id == roleId));
+            ResidentialCommunity? community = _context.ResidentialCommunities.Include(c => c.Roles).ThenInclude(r => r.Holder).FirstOrDefault(c => c.Roles.Any(r => r.Id == roleId));
             if (community == null)
             {
                 apiResponse.AddAlert("error", "No community was found that had a role Id as provided");
@@ -238,6 +246,14 @@ namespace PluginDemocracy.API.Controllers
                     return BadRequest(apiResponse);
                 }
                 community.RemoveRole(role);
+                string title = $"Your role {role.Title} has been removed.";
+                string body = $"Your role {role.Title} in {community.FullName} has been removed. You no longer have the permissions granted by this role. If you feel this is a mistake, contact app administrator.\n";
+                if (role.Holder != null)
+                {
+                    role.Holder.AddNotification(title, body);
+                    await _utilityClass.SendEmailAsync(role.Holder.Email, title, body);
+                }
+                _context.Remove(role);
                 _context.SaveChanges();
                 apiResponse.SuccessfulOperation = true;
                 apiResponse.AddAlert("success", "Role deleted and unassigned successfully.");

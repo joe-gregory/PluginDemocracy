@@ -10,6 +10,9 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -28,7 +31,7 @@ namespace PluginDemocracy.API.Controllers
 
             //Check validity of input
             if (!ModelState.IsValid || !(registeringUser.Password.Length >= 7)) return BadRequest(ModelState);
-            User newUser = new(firstName: registeringUser.FirstName, lastName: registeringUser.LastName, email: registeringUser.Email, phoneNumber: registeringUser.PhoneNumber, address:registeringUser.Address, dateOfBirth:registeringUser.DateOfBirth, culture:registeringUser.Culture, middleName:registeringUser.MiddleName, secondLastName:registeringUser.SecondLastName);
+            User newUser = new(firstName: registeringUser.FirstName, lastName: registeringUser.LastName, email: registeringUser.Email, phoneNumber: registeringUser.PhoneNumber, address: registeringUser.Address, dateOfBirth: registeringUser.DateOfBirth, culture: registeringUser.Culture, middleName: registeringUser.MiddleName, secondLastName: registeringUser.SecondLastName);
             //hash password && assign
             PasswordHasher<User> _passwordHasher = new();
             newUser.HashedPassword = _passwordHasher.HashPassword(newUser, registeringUser.Password);
@@ -285,6 +288,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 User? fullDataUser = await _context.Users
                     .Include(u => u.Notifications)
+                    .Include(u => u.Roles)
                     .Include(u => u.ResidentOfHomes)
                         .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
@@ -301,7 +305,38 @@ namespace PluginDemocracy.API.Controllers
                 //Send a SessionJWT to the client so that they can maintain a session
                 response.SessionJWT = _utilityClass.CreateJWT(fullDataUser.Id, 7);
                 response.RedirectTo = null;
-                return Ok(response);
+
+                // Manually serialize the response
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true // Optional: for pretty printing
+                };
+
+                string userJson = JsonConvert.SerializeObject(response.User, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
+
+                string jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
+
+                // Return the serialized JSON
+                return new ContentResult
+                {
+                    Content = jsonResponse,
+                    ContentType = "application/json",
+                    StatusCode = 200
+                };
+
+                /*return Ok(response)*/
+                ;
             }
             catch (Exception ex)
             {
@@ -346,8 +381,8 @@ namespace PluginDemocracy.API.Controllers
         [HttpPost(ApiEndPoints.PostUpdateAccount)]
         public async Task<ActionResult<PDAPIResponse>> UpdateAccount([FromBody] UserDTO userDto)
         {
-                //Create response object
-                PDAPIResponse response = new();
+            //Create response object
+            PDAPIResponse response = new();
             //Extract User from claims
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User, response);
             if (existingUser == null) return BadRequest(response);
@@ -614,13 +649,13 @@ namespace PluginDemocracy.API.Controllers
                     }
                     //Checking to see if there are any new authors
                     //Check which Ids are missing or are extra
-                    
+
                     List<int> extraAuthors = [];
                     foreach (int authorDTOId in petitionDTO.AuthorsIds) if (!petition.Authors.Any(a => a.Id == authorDTOId)) extraAuthors.Add(authorDTOId);
-                    foreach(int id in extraAuthors)
+                    foreach (int id in extraAuthors)
                     {
                         User? extraAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (extraAuthor != null) extraAuthor.RemovePetitionDraft(petition); 
+                        if (extraAuthor != null) extraAuthor.RemovePetitionDraft(petition);
                         else response.AddAlert("error", $"Extra author with id {id} not found");
                         return BadRequest(response);
                     }
@@ -630,8 +665,8 @@ namespace PluginDemocracy.API.Controllers
                         petition.RemoveAuthor(existingUser);
                         response.AddAlert("success", "You have been removed as an author from this petition draft");
                         response.RedirectTo = FrontEndPages.PetitionDrafts;
-                    }   
-                    
+                    }
+
                     //if the petition doesn't have any authors now, delete it
                     if (petition.Authors.Count == 0)
                     {
@@ -737,7 +772,7 @@ namespace PluginDemocracy.API.Controllers
                     //Delete associated documents form blob storage
                     string readWriteSasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
                     if (string.IsNullOrEmpty(readWriteSasToken)) throw new Exception("BlobSASToken environment variable is null or empty");
-                    foreach(string fileLink in petition.LinksToSupportingDocuments)
+                    foreach (string fileLink in petition.LinksToSupportingDocuments)
                     {
                         string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
                         // Remove existing SAS token from URL if present

@@ -20,9 +20,14 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private bool disableAll = false;
         private bool spinnerOn = false;
         private string? message;
+        private bool isCurrentUserTheOneFromTheRequest;
+        private bool isCurrentUserAdmin;
+        private bool isCurrentUserRoleWithHomeOwnershipPowers;
+        private bool isCurrentUserRoleWithHomeResidencyPowers;
         protected override async Task OnInitializedAsync()
         {
             if (Services != null && RequestId != null) joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
+            if (Services != null) await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
             if (joinCommunityRequestDTO != null)
             {
                 UpdateStatusText();
@@ -30,6 +35,10 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                 if (homeToJoinDTO == null && Services != null) Services.AddSnackBarMessage("warning", "HomeDTO information was not received.");
                 StateHasChanged();
             }
+            isCurrentUserTheOneFromTheRequest = AppState.User?.Id == joinCommunityRequestDTO?.UserDTO?.Id;
+            isCurrentUserAdmin = AppState.User?.Admin == true;
+            isCurrentUserRoleWithHomeOwnershipPowers = AppState.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditHomeOwnership == true) ?? false;
+            isCurrentUserRoleWithHomeResidencyPowers = AppState.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditResidency == true) ?? false;
         }
         private void UpdateStatusText()
         {

@@ -7,7 +7,7 @@
     <tbody>
         <tr>
             <td><MudText><b>Joining User:</b></MudText></td>
-            <td><MudText>@joinCommunityRequestDTO?.UserDTO?.FullName</MudText> <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.UserDTO"/></td>
+            <td><MudText>@joinCommunityRequestDTO?.UserDTO?.FullName</MudText> <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.UserDTO" /></td>
         </tr>
         <tr>
             <td><MudText><b>Status:</b></MudText></td>
@@ -17,7 +17,7 @@
         {
             <tr>
                 <td><MudText><b>Decision made by:</b></MudText></td>
-                <td><MudText>@joinCommunityRequestDTO.ApprovalDecisionMadeBy?.FullName <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.ApprovalDecisionMadeBy"/></MudText></td>
+                <td><MudText>@joinCommunityRequestDTO.ApprovalDecisionMadeBy?.FullName <UserAvatar Size="Size.Small" User="@joinCommunityRequestDTO?.ApprovalDecisionMadeBy" /></MudText></td>
             </tr>
             <tr>
                 <td><MudText><b>Date of decision: </b></MudText></td>
@@ -63,12 +63,12 @@
 
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Documents Attached To Request</MudText>
-    @foreach(string link in joinCommunityRequestDTO?.LinksToFiles ?? [])
+    @foreach (string link in joinCommunityRequestDTO?.LinksToFiles ?? [])
     {
         <MudLink Href="@link" Class="mb-3">@link</MudLink>
     }
 </MudCard>
-@if (AppState.User != null && joinCommunityRequestDTO?.UserDTO?.Id == AppState?.User?.Id)
+@if (isCurrentUserTheOneFromTheRequest)
 {
     <MudCard Class="pa-3 ma-3">
         <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5 ma-3">Attach Additional Documents</MudText>
@@ -107,39 +107,42 @@
         }
     </MudCard>
 }
-
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Messages</MudText>
-        @foreach (MessageDTO message in joinCommunityRequestDTO?.Messages ?? [])
-        {
+    @foreach (MessageDTO message in joinCommunityRequestDTO?.Messages ?? [])
+    {
         <MudCard Class="pa-3 ma-3" Outlined="true">
-                <MudCardHeader>
-                    <CardHeaderAvatar>
-                        <UserAvatar User="@message.Sender"/>
-                    </CardHeaderAvatar>
-                    <CardHeaderContent>
-                        <MudText>@message?.Sender?.FullName</MudText>
-                        <MudText>@message.Date.ToLocalTime()</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText>@message.Content</MudText>
-                </MudCardContent>
-            </MudCard>
-        }
-    
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <UserAvatar User="@message.Sender" />
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText>@message?.Sender?.FullName</MudText>
+                    <MudText>@message.Date.ToLocalTime()</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>@message.Content</MudText>
+            </MudCardContent>
+        </MudCard>
+    }
 </MudCard>
 
-<MudCard Class="pa-3 ma-3">
-    <MudText Typo="Typo.h5" Align="Align.Center" Class="pa-3 ma-3">Add Message</MudText>
-    <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="message" />
-    <MudButton Disabled="disableAll" Variant="Variant.Filled" Color="Color.Primary" Class="ma-1" OnClick="SendNewMessage" EndIcon="@Icons.Material.Filled.Send">Send</MudButton>
-</MudCard>
 
-@if (AppState?.User?.Admin == true || AppState?.User?.Roles.Any(r => r.Community?.Id == joinCommunityRequestDTO?.CommunityDTO?.Id && r.Powers.CanEditResidency == true && r.Powers.CanEditHomeOwnership == true) == true)
+@if (isCurrentUserTheOneFromTheRequest || isCurrentUserRoleWithHomeOwnershipPowers || isCurrentUserRoleWithHomeResidencyPowers || isCurrentUserAdmin)
 {
-<MudCard Class="ma-3 pa-3">
-    <MudButton Disabled="@(joinCommunityRequestDTO?.Approved != null)" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(true)">Accept Request</MudButton>
+    <MudCard Class="pa-3 ma-3">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="pa-3 ma-3">Add Message</MudText>
+        <MudTextField T="string" Variant="Variant.Outlined" Lines="5" AutoGrow @bind-Value="message" />
+        <MudButton Disabled="disableAll" Variant="Variant.Filled" Color="Color.Primary" Class="ma-1" OnClick="SendNewMessage" EndIcon="@Icons.Material.Filled.Send">Send</MudButton>
+    </MudCard>
+}
+
+
+@if (isCurrentUserRoleWithHomeOwnershipPowers || isCurrentUserRoleWithHomeResidencyPowers || isCurrentUserAdmin)
+{
+    <MudCard Class="ma-3 pa-3">
+        <MudButton Disabled="@(joinCommunityRequestDTO?.Approved != null)" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(true)">Accept Request</MudButton>
         <MudButton Disabled="@(joinCommunityRequestDTO?.Approved != null)" Color="Color.Error" Variant="Variant.Filled" OnClick="() => AcceptOrRejectRequest(false)">Reject Request</MudButton>
-</MudCard>
+    </MudCard>
 }

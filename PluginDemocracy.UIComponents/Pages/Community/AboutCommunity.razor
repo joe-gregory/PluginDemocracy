@@ -23,17 +23,65 @@
         </tr>
         <tr>
             <td><MudText><b>Official Languages:</b></MudText></td>
-            <td><MudText>@foreach(string language in CommunityDTO?.OfficialLanguagesCodes ?? []){<MudText>language,</MudText>}</MudText></td>
-        </tr>
-    </tbody>
+            <td><MudText>@foreach (string language in CommunityDTO?.OfficialLanguagesCodes ?? [])
+                    {
+                        <span>@language , </span>
+                    }   
+                </MudText></td>
+            </tr>
+        </tbody>
 </MudSimpleTable>
 
+ @if (CommunityDTO?.Roles.Count > 0)
+{
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Roles</MudText>
+        @foreach (RoleDTO role in CommunityDTO?.Roles ?? [])
+        {
+            <MudCard Class="ma-3 pa-3">
+                <MudSimpleTable Class="pa-3 ma-3">
+                    <tbody>
+                        <tr>
+                            <td><MudText><b>Title:</b></MudText></td>
+                            <td><MudText>@role.Title</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Description:</b></MudText></td>
+                            <td><MudText>@role.Description</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Role Holder:</b></MudText></td>
+                            <td><MudText><UserAvatar User="role.Holder" />  @role.Holder?.FullName</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Active:</b></MudText></td>
+                            <td><MudText>@(role.Active ? "Yes" : "No")</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Can Accept Join Requests for Home Ownerships</b></MudText></td>
+                            <td><MudText>@(role.Powers.CanEditHomeOwnership ? "Yes" : "No")</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Can Accept Join Requests for Residents</b></MudText></td>
+                            <td><MudText>@(role.Powers.CanEditResidency ? "Yes" : "No")</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Can Edit Accounting: </b></MudText></td>
+                            <td><MudText>@(role.Powers.CanModifyAccounting ? "Yes" : "No")</MudText></td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudCard>
+        }
+    </MudCard>
+}
+
 <MudCard Class="ma-3 pa-3">
-    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Homes</MudText>
-    @foreach(HomeDTO homeDTO in CommunityDTO?.Homes ?? [])
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Community's Residences</MudText>
+    @foreach (HomeDTO homeDTO in CommunityDTO?.Homes ?? [])
     {
-        <MudCard Class="ma-3 pa-3">
-            
+        <MudCard Class="ma-3 pa-3" Outlined="true">
+            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Home #@homeDTO.Number</MudText>
             <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
                 <tbody>
                     <tr>
@@ -44,78 +92,38 @@
                         <td><MudText><b>Internal Address:</b></MudText></td>
                         <td><MudText>@homeDTO.InternalAddress</MudText></td>
                     </tr>
-                    <tr>
-                        <td><MudText><b>Number:</b></MudText></td>
-                        <td><MudText>@homeDTO.Number</MudText></td>
-                    </tr>
                 </tbody>
             </MudSimpleTable>
-            
-            <MudSimpleTable Class="pa-3 ma-3">
-                <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Ownerships</MudText>
-                <tbody>
-                    @foreach(KeyValuePair<UserDTO, double> kvp in homeDTO.OwnersOwnerships)
-                    {
-                        <tr>
-                            <td><UserAvatar User="@kvp.Key" /> @kvp.Key.FullName</td>
-                            <td>@kvp.Value</td>
-                        </tr>
-                    }
-                </tbody>
-            </MudSimpleTable>
-            
-            <MudSimpleTable Class="pa-3 ma-3">
-                <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Residents</MudText>
-                <tbody>
-                    @foreach(UserDTO resident in homeDTO.Residents)
-                    {
-                        <tr>
-                            <td><UserAvatar User="@resident" /> @resident.FullName</td>
-                        </tr>
-                    }
-                </tbody>
-            </MudSimpleTable>
+            @if (homeDTO.OwnersOwnerships.Count > 0)
+            {
+                <MudSimpleTable Class="pa-3 ma-3">
+                    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Ownerships</MudText>
+                    <tbody>
+                        @foreach (KeyValuePair<UserDTO, double> kvp in homeDTO.OwnersOwnerships)
+                        {
+                            <tr>
+                                <td><UserAvatar User="@kvp.Key" /> @kvp.Key.FullName</td>
+                                <td>@kvp.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            }
+            @if (homeDTO.Residents.Count > 0)
+            {
+                <MudSimpleTable Class="pa-3 ma-3">
+                    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Residents</MudText>
+                    <tbody>
+                        @foreach (UserDTO resident in homeDTO.Residents)
+                        {
+                            <tr>
+                                <td><UserAvatar User="@resident" /> @resident.FullName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            }
         </MudCard>
-        }
+    }
 </MudCard>
 
-<MudCard Class="ma-3 pa-3">
-    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Roles</MudText>
-    @foreach (RoleDTO role in CommunityDTO?.Roles ?? [])
-    {
-        <MudCard Class="ma-3 pa-3">
-            <MudSimpleTable Class="pa-3 ma-3">
-                <tbody>
-                    <tr>
-                        <td><MudText><b>Title:</b></MudText></td>
-                        <td><MudText>@role.Title</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Description:</b></MudText></td>
-                        <td><MudText>@role.Description</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Role Holder:</b></MudText></td>
-                        <td><MudText><UserAvatar User="role.Holder" />  @role.Holder?.FullName</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Active:</b></MudText></td>
-                        <td><MudText>@(role.Active ? "Yes" : "No")</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Can Accept Join Requests for Home Ownerships</b></MudText></td>
-                        <td><MudText>@(role.Powers.CanEditHomeOwnership ? "Yes" : "No")</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Can Accept Join Requests for Residents</b></MudText></td>
-                        <td><MudText>@(role.Powers.CanEditResidency ? "Yes" : "No")</MudText></td>
-                    </tr>
-                    <tr>
-                        <td><MudText><b>Can Edit Accounting: </b></MudText></td>
-                        <td><MudText>@(role.Powers.CanModifyAccounting ? "Yes" : "No")</MudText></td>
-                    </tr>
-                </tbody>
-            </MudSimpleTable>
-        </MudCard>
-        }
-</MudCard>
