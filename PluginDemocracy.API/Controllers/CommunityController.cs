@@ -822,5 +822,40 @@ namespace PluginDemocracy.API.Controllers
             if (community == null) return BadRequest("Community not found.");
             return Ok(new ResidentialCommunityDTO(community));
         }
-    }
+        [Authorize]
+        [HttpGet(ApiEndPoints.RolesGetListOfJCRequestsForGivenCommunity)]
+        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> RoleGetListOfJCRequestsForCommunity([FromQuery] int communityId)
+        {
+            //Make sure user has permissions to see this community. Does 
+            //the user show up as a role for this community?
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            if (!existingUser.Roles.Any(r => r.Community.Id == communityId)) return Forbid();
+
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.JoinCommunityRequests).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null) return BadRequest();
+
+            List<JoinCommunityRequestDTO> joinCommunityRequestDTOs = [];
+            foreach (JoinCommunityRequest joinRequest in community.JoinCommunityRequests.Where(jcr => jcr.Approved == null))
+            {
+                JoinCommunityRequestDTO jcr = new()
+                {
+                    Id = joinRequest.Id,
+                    UserDTO = UserDTO.ReturnAvatarMinimumUserDTOFromUser(joinRequest.User),
+                    CommunityDTO = new()
+                    {
+                        Id = joinRequest.Community.Id,
+                        Name = joinRequest.Community.Name
+                    },
+                    JoiningAsOwner = joinRequest.JoiningAsOwner,
+                    JoiningAsResident = joinRequest.JoiningAsResident,
+                    Approved = joinRequest.Approved,
+                    DateRequested = joinRequest.DateRequested
+                };
+
+                joinCommunityRequestDTOs.Add(jcr);
+            }
+            return Ok(joinCommunityRequestDTOs);
+        }
+    }   
 }

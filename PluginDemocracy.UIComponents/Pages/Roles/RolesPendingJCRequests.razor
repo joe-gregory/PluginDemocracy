@@ -1,4 +1,29 @@
 ﻿@namespace PluginDemocracy.UIComponents.Pages.Roles
+@inject BaseAppState AppState
+@inject Services Services
 
-<h3>RolesPendingJCRequests</h3>
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Pending Join Community Requests for: @(selectedCommunity?.FullName ?? "No selection.")</MudText>
 
+@if (possibleCommunities.Count > 1)
+{
+    <MudSelect T="int?" Label="Select Community" @bind-Value="selectedCommunityId" ValueChanged="OnSelectedCommunityChanged">
+        @foreach (ResidentialCommunityDTO community in possibleCommunities)
+        {
+            <MudSelectItem Value="@community.Id">@community.FullName</MudSelectItem>
+        }
+    </MudSelect>
+}
+
+<MudCard Class="ma-3 pa3" >
+    <ul>
+        @foreach (JoinCommunityRequestDTO joinCommunityRequest in joinCommunityRequestsForSelectedCommunity)
+        {
+            <li class="mt-3 mb-3">
+                <UserAvatar User="joinCommunityRequest.UserDTO" Size="Size.Small" />
+                <MudLink Class="mt-1 mb-1 ml-2" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">
+                    @joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")
+                </MudLink>
+            </li>
+        }
+    </ul>
+</MudCard>

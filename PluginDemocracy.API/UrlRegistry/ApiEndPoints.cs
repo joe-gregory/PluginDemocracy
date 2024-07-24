@@ -54,6 +54,9 @@
         public const string DeleteComment = CommunityController + "deletecomment";
         #endregion
         #endregion
+        #region Roles
+        public const string RolesGetListOfJCRequestsForGivenCommunity = CommunityController + "getlistofjcrrequestsforgivencommunity";
+        #endregion
         #region Admin
         public const string AdminController = Base + "admin/";
         public const string AdminGetListOfAllSimpleCommunitiesDTOsWithRoles = AdminController + "getlistofallsimplecommunitiesdtos";
