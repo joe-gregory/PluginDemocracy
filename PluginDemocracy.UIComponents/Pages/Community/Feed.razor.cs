@@ -19,7 +19,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             if (AppState.User?.Citizenships.Count == 1) AppState.SelectedCommunityInFeed = AppState.User.Citizenships[0].Id;
             //If user has multiple communities, let the user select a community
             //If a community had been selected previously, default to that one
-            if (AppState.SelectedCommunityInFeed != null) await OnCommunityChanged(AppState.SelectedCommunityInFeed);
+            if (AppState.SelectedCommunityInFeed != null) await OnCommunityChanged(AppState.SelectedCommunityInFeed.Value);
             AppState.OnChange += StateHasChangedSafe;
             AppState.OnPostCreatedAsync += RefreshFeed;
         }
@@ -41,7 +41,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         }
         private async Task OnCommunityChanged(int? newCommunityId)
         {
-            if (newCommunityId != null) AppState.SelectedCommunityInFeed = newCommunityId;
+            AppState.SelectedCommunityInFeed = newCommunityId;
             await GetFeed();
         }
         private async Task GetFeed()
@@ -56,6 +56,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         }
         public void Dispose()
         {
+            AppState.OnChange -= StateHasChangedSafe;
             AppState.OnChange -= StateHasChanged;
             AppState.OnPostCreatedAsync -= RefreshFeed;
             GC.SuppressFinalize(this); // Prevents finalizer from being called

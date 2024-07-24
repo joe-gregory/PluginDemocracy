@@ -4,10 +4,10 @@
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.Feed)</MudText>
 @if (AppState?.User?.Citizenships.Count > 1)
 {
-    <MudSelect T="int?" Label="@(AppState.Translate(ResourceKeys.Community))" ValueChanged="OnCommunityChanged">
+    <MudSelect T="int?" Label="@(AppState.Translate(ResourceKeys.Community))" ValueChanged="OnCommunityChanged" Placeholder="Please Select">
         @foreach (ResidentialCommunityDTO community in AppState.User.Citizenships)
         {
-            <MudSelectItem Value="@community.Id">@community.Name</MudSelectItem>
+            <MudSelectItem Value="@(community.Id as int?)">@community.Name</MudSelectItem>
         }
     </MudSelect>
 }

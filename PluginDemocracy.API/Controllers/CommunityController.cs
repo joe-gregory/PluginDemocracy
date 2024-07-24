@@ -831,12 +831,9 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
             if (!existingUser.Roles.Any(r => r.Community.Id == communityId)) return Forbid();
-
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.JoinCommunityRequests).FirstOrDefaultAsync(c => c.Id == communityId);
-            if (community == null) return BadRequest();
-
+            List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(jcr => jcr.User).Include(jcr => jcr.Home).Include(jcr => jcr.Community).Where(jcr => jcr.Community.Id == communityId).ToListAsync();
             List<JoinCommunityRequestDTO> joinCommunityRequestDTOs = [];
-            foreach (JoinCommunityRequest joinRequest in community.JoinCommunityRequests.Where(jcr => jcr.Approved == null))
+            foreach (JoinCommunityRequest joinRequest in joinCommunityRequests.Where(jcr => jcr.Approved == null))
             {
                 JoinCommunityRequestDTO jcr = new()
                 {
@@ -850,7 +847,14 @@ namespace PluginDemocracy.API.Controllers
                     JoiningAsOwner = joinRequest.JoiningAsOwner,
                     JoiningAsResident = joinRequest.JoiningAsResident,
                     Approved = joinRequest.Approved,
-                    DateRequested = joinRequest.DateRequested
+                    DateRequested = joinRequest.DateRequested,
+                    HomeDTO = new()
+                    {
+                        Id = joinRequest.Home.Id,
+                        Number = joinRequest.Home.Number,
+                        InternalAddress = joinRequest.Home.InternalAddress,
+                        FullAddress = joinRequest.Home.FullAddress
+                    }
                 };
 
                 joinCommunityRequestDTOs.Add(jcr);
