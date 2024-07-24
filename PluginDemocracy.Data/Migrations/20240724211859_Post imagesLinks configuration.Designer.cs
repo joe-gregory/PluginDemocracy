@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PluginDemocracy.Data;
 
@@ -12,9 +13,11 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    partial class PluginDemocracyContextModelSnapshot : ModelSnapshot
+    [Migration("20240724211859_Post imagesLinks configuration")]
+    partial class PostimagesLinksconfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,9 +364,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<int?>("ResidentialCommunityId1")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ResidentialCommunityId2")
-                        .HasColumnType("int");
-
                     b.Property<int?>("_communityAuthorId")
                         .HasColumnType("int");
 
@@ -375,8 +375,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasIndex("ResidentialCommunityId");
 
                     b.HasIndex("ResidentialCommunityId1");
-
-                    b.HasIndex("ResidentialCommunityId2");
 
                     b.HasIndex("_communityAuthorId");
 
@@ -759,19 +757,15 @@ namespace PluginDemocracy.Data.Migrations
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.ResidentialCommunity", null)
-                        .WithMany("Posts")
+                        .WithMany("PostsByLatestActivity")
                         .HasForeignKey("ResidentialCommunityId");
 
                     b.HasOne("PluginDemocracy.Models.ResidentialCommunity", null)
-                        .WithMany("PostsByLatestActivity")
+                        .WithMany("PostsByPublishedDate")
                         .HasForeignKey("ResidentialCommunityId1");
 
-                    b.HasOne("PluginDemocracy.Models.ResidentialCommunity", null)
-                        .WithMany("PostsByPublishedDate")
-                        .HasForeignKey("ResidentialCommunityId2");
-
                     b.HasOne("PluginDemocracy.Models.ResidentialCommunity", "_communityAuthor")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("_communityAuthorId");
 
                     b.HasOne("PluginDemocracy.Models.User", "_userAuthor")

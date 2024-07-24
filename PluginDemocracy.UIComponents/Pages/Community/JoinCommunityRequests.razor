@@ -43,8 +43,8 @@
         @if (joinCommunityRequestDTO?.JoiningAsOwner == true)
         {
             <tr>
-                <td><MudText><b>Claimed Ownership % of Home:</b></MudText></td>
-                <td><MudText>@joinCommunityRequestDTO.OwnershipPercentage</MudText></td>
+                <td><MudText><b>Claimed Ownership of Home:</b></MudText></td>
+                <td><MudText>@joinCommunityRequestDTO.OwnershipPercentage%</MudText></td>
             </tr>
             <tr>
                 <td><MudText><b>Currently Claimed Home Ownerships:</b></MudText></td>
@@ -54,12 +54,58 @@
             {
                 <tr>
                     <td>@kvp.Key.FullName</td>
-                    <td>@kvp.Value</td>
+                    <td>@kvp.Value%</td>
                 </tr>
             }
         }
     </tbody>
 </MudSimpleTable>
+<MudCard Class="pa-3 ma-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Current Home's Information</MudText>
+    <MudSimpleTable>
+        <tbody>
+            <tr>
+                <td><MudText><b>Address:</b></MudText></td>
+                <td><MudText>@homeToJoinDTO?.FullAddress</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Current Residents:</b></MudText></td>
+                <td>
+                    <MudAvatarGroup>
+                        @foreach (UserDTO user in homeToJoinDTO?.Residents ?? [])
+                        {
+                            <UserAvatar User="@user" />
+                        }
+                    </MudAvatarGroup>
+                </td>
+            </tr>
+            <tr>
+                <td><MudText><b>Currently available home ownership:</b></MudText></td>
+                <td>
+                    @homeToJoinDTO?.AvailableOwnershipPercentage%
+                </td>
+            </tr>
+            <tr>
+                <td><MudText><b>Owners:</b></MudText></td>
+                <td>
+                    <MudAvatarGroup>
+                        @foreach (UserDTO user in homeToJoinDTO?.Owners ?? [])
+                        {
+                            <UserAvatar User="@user" />
+                        }
+                    </MudAvatarGroup>
+                </td>
+            </tr>
+            @foreach(KeyValuePair<UserDTO, double> kvp in homeToJoinDTO?.OwnersOwnerships ?? [])
+            {
+                <tr>
+                    <td><UserAvatar User="@kvp.Key"/> @kvp.Key.FullName</td>
+                    <td>@kvp.Value%</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
 
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Documents Attached To Request</MudText>

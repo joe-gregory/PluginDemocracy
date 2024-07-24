@@ -79,15 +79,7 @@ namespace PluginDemocracy.DTOs
                     Id = homeOwnership.Id,
                     OwnershipPercentage = homeOwnership.OwnershipPercentage,
                     Home = this,
-                    Owner = homeOwnership.Owner != null ? new UserDTO()
-                    {
-                        Id = homeOwnership.Owner.Id,
-                        FirstName = homeOwnership.Owner.FirstName,
-                        MiddleName = homeOwnership.Owner.MiddleName,
-                        LastName = homeOwnership.Owner.LastName,
-                        SecondLastName = homeOwnership.Owner.SecondLastName,
-                        ProfilePicture = homeOwnership.Owner.ProfilePicture,
-                    } : null,
+                    Owner = homeOwnership.Owner != null ? UserDTO.ReturnAvatarMinimumUserDTOFromUser(homeOwnership.Owner) : null,
                 };
                 Ownerships.Add(homeOwnershipDTO);
             }

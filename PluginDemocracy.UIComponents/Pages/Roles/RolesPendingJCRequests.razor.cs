@@ -24,6 +24,7 @@ namespace PluginDemocracy.UIComponents.Pages.Roles
         {
             if (value != null)
             {
+                selectedCommunity = possibleCommunities.FirstOrDefault(community => community.Id == value);
                 //Get new list of joinCommunityRequestsForSelectedCommunity
                 string url = ApiEndPoints.RolesGetListOfJCRequestsForGivenCommunity + $"?communityId={value.Value}";
                 joinCommunityRequestsForSelectedCommunity = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(url) ?? [];

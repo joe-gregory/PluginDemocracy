@@ -15,6 +15,14 @@
 
 @if (homesDtosFromSelectedCommunity.Count > 0)
 {
+    <MudPaper Class="ma-5 pa-5" Outlined="true">
+        <MudText Color="Color.Error">@AppState.Translate(ResourceKeys.YourCommunitysMembershipVerificationPolicy)</MudText>
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" class="d-flex justify-center">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" />
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
     <MudPaper Elevation="25" Class="mt-10 mb-10">
         <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary">@AppState.Translate(ResourceKeys.JoinAHome)</MudText>
         <MudText Class="ma-3">@AppState.Translate(ResourceKeys.SelectHomeDescriptionInJoinCommunity)</MudText>
@@ -26,7 +34,7 @@
                 <MudTh>@AppState.Translate(ResourceKeys.Join)</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Homes)">@context.InternalAddress</MudTd>
+                <MudTd DataLabel="@AppState.Translate(ResourceKeys.Homes)">@context.InternalAddress #@context.Number</MudTd>
                 <MudTd DataLabel="@AppState.Translate(ResourceKeys.Residents)">
                     <MudAvatarGroup>
                         @foreach (UserDTO user in context.Residents)

@@ -1256,5 +1256,14 @@ namespace PluginDemocracy.Translations {
                 return ResourceManager.GetString("YouHaveNoCommunities", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This community has a membership verification policy that requires a selfie photo and a photo of a valid ID (such as drivers license) if you are claiming to be an owner of the home. A community administrator will review your documents and accept your join request accordingly at which point you will have full access to your community&apos;s activities. If the current ownership of the home does not match public records, an administrator may request additional documentation on the following page. .
+        /// </summary>
+        internal static string YourCommunitysMembershipVerificationPolicy {
+            get {
+                return ResourceManager.GetString("YourCommunitysMembershipVerificationPolicy", resourceCulture);
+            }
+        }
     }
 }

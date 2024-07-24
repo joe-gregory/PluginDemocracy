@@ -21,17 +21,24 @@
         }
     </MudSelect>
 }
+@if (selectedCommunity != null)
+{
+    <MudCard Class="ma-3 pa-3">
+        <ul>
+            @foreach (JoinCommunityRequestDTO joinCommunityRequest in joinCommunityRequestsForSelectedCommunity)
+            {
+                <li class="mt-3 mb-3">
+                    <UserAvatar User="joinCommunityRequest.UserDTO" />
+                    <MudLink Class="mt-1 mb-1 ml-2" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">
+                        @joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")
+                    </MudLink>
+                </li>
+            }
+            @if (joinCommunityRequestsForSelectedCommunity.Count == 0)
+            {
+                <li class="mt-3 mb-3">No pending join requests for this community.</li>
+            }
+        </ul>
+    </MudCard>
+}
 
-<MudCard Class="ma-3 pa-3" >
-    <ul>
-        @foreach (JoinCommunityRequestDTO joinCommunityRequest in joinCommunityRequestsForSelectedCommunity)
-        {
-            <li class="mt-3 mb-3">
-                <UserAvatar User="joinCommunityRequest.UserDTO" />
-                <MudLink Class="mt-1 mb-1 ml-2" Href="@($"{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}")">
-                    @joinCommunityRequest.UserDTO?.FullName as @($"{(joinCommunityRequest.JoiningAsOwner == true ? "owner" : "resident")}") for home @($"{joinCommunityRequest.HomeDTO?.FullAddress} for community {joinCommunityRequest.CommunityDTO?.FullName}")
-                </MudLink>
-            </li>
-        }
-    </ul>
-</MudCard>

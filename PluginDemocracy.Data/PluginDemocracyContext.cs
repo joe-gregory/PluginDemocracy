@@ -36,8 +36,12 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<ResidentialCommunity>().Ignore(residentialCommunity => residentialCommunity.Citizens);
             modelBuilder.Entity<ResidentialCommunity>().Ignore(rc => rc.HomeOwnerships);
             modelBuilder.Entity<ResidentialCommunity>().Ignore(rc => rc.HomeOwners);
-
             modelBuilder.Entity<ResidentialCommunity>().Property("_officialLanguagesCodes");
+            modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Posts);
+            // Ensure that Roles are deleted when removed from ResidentialCommunity.Roles
+            modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Roles).WithOne(r => r.Community).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Home>().Ignore(Home => Home.Citizens);
             modelBuilder.Entity<Home>().Ignore(Home => Home.Owners);
@@ -51,10 +55,13 @@ namespace PluginDemocracy.Data
                     j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
                     j => j.HasOne<Petition>().WithMany().HasForeignKey("PetitionId"));
             modelBuilder.Entity<Petition>().HasOne(p => p.Community).WithMany(c => c.Petitions);
-            modelBuilder.Entity<Petition>().Property("_linksToSupportingDocuments");
+            modelBuilder.Entity<Petition>().Property(p => p.LinksToSupportingDocuments).HasField("_linksToSupportingDocuments").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Post>().Ignore(post => post.Author);
-            modelBuilder.Entity<Post>().HasOne("_communityAuthor").WithMany("Posts");
+            modelBuilder.Entity<Post>().HasOne("_userAuthor");
+            modelBuilder.Entity<Post>().HasOne("_communityAuthor");
+            modelBuilder.Entity<Post>().Property(p => p.ImagesLinks).HasField("_imagesLinks").UsePropertyAccessMode(PropertyAccessMode.Field);
+
 
             modelBuilder.Entity<Role>().ComplexProperty(r => r.Powers);
         }

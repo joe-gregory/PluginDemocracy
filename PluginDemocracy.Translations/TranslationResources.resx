@@ -516,4 +516,7 @@
   <data name="YouHaveNoCommunities" xml:space="preserve">
     <value>You have not joined any communities. Join an existing community or register a new community. </value>
   </data>
+  <data name="YourCommunitysMembershipVerificationPolicy" xml:space="preserve">
+    <value>This community has a membership verification policy that requires a selfie photo and a photo of a valid ID (such as drivers license) if you are claiming to be an owner of the home. A community administrator will review your documents and accept your join request accordingly at which point you will have full access to your community's activities. If the current ownership of the home does not match public records, an administrator may request additional documentation on the following page. </value>
+  </data>
 </root>

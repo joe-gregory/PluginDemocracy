@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PluginDemocracy.Models
+﻿namespace PluginDemocracy.Models
 {
     /// <summary>
     /// This represents a request to join a community by stating if you are an owner (of some %) or a resident of a home listed in the community's <see cref="ResidentialCommunity.Homes"/>.
@@ -23,11 +17,11 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Link to files that the user will need to upload in order to 
         /// </summary>
-        public IReadOnlyList<string> LinksToFiles 
+        public List<string> LinksToFiles 
         {
             get
             {
-                return _linksToFiles.AsReadOnly();
+                return _linksToFiles;
             }
         }
         private readonly List<Message> _messages;

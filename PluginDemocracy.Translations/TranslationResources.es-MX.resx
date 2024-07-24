@@ -516,4 +516,7 @@
   <data name="YouHaveNoCommunities" xml:space="preserve">
     <value>No te has unido a ninguna comunidad. Únete a una comunidad existente o registra una nueva comunidad.</value>
   </data>
+  <data name="YourCommunitysMembershipVerificationPolicy" xml:space="preserve">
+    <value>Esta comunidad tiene una política de verificación de membresía que requiere una foto selfie y una foto de una identificación válida (como una licencia de conducir) si estás reclamando ser el propietario de la vivienda. Un administrador de la comunidad revisará tus documentos y aceptará tu solicitud de ingreso en consecuencia, momento en el cual tendrás acceso completo a las actividades de tu comunidad. Si la propiedad actual de la vivienda no coincide con los registros públicos, un administrador puede solicitar documentación adicional en la página siguiente.</value>
+  </data>
 </root>

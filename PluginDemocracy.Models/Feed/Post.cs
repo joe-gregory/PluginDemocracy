@@ -37,7 +37,6 @@
         public string? Body { get; private set; }
         public DateTime PublishedDate { get; init; }
         public DateTime? LatestActivity { get; private set; } = null;
-
         private readonly List<PostComment> _comments;
         public IReadOnlyList<PostComment> Comments
         {
@@ -47,11 +46,11 @@
             }
         }
         private readonly List<string> _imagesLinks;
-        public IReadOnlyList<string> ImagesLinks
+        public List<string> ImagesLinks
         {
             get
             {
-                return _imagesLinks.AsReadOnly();
+                return _imagesLinks;
             }
         }
         private readonly List<PostReaction> _reactions;
@@ -66,7 +65,7 @@
         /// Parameterless constructor for the benefit of EFC
         /// </summary>
         private Post() 
-        { 
+        {
             _comments = [];
             _imagesLinks = [];
             _reactions = [];

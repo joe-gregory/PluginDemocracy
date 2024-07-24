@@ -76,6 +76,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private async void RefreshJoinCommunityRequestDTO()
         {
             joinCommunityRequestDTO = await Services.GetDataGenericAsync<JoinCommunityRequestDTO>($"{ApiEndPoints.GetJoinCommunityRequest}?requestId={RequestId}");
+            if (joinCommunityRequestDTO != null) homeToJoinDTO = await Services.GetDataGenericAsync<HomeDTO>($"{ApiEndPoints.GetHomeForJoinCommunityRequestInfo}?requestId={joinCommunityRequestDTO.Id}");
             UpdateStatusText();
             StateHasChanged();
         }

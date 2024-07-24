@@ -150,7 +150,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// This documents will be stored in blob storage and the link to those documents will be stored here. 
         /// </summary>
-        public IReadOnlyList<string> LinksToSupportingDocuments => _linksToSupportingDocuments.AsReadOnly();
+        public List<string> LinksToSupportingDocuments => _linksToSupportingDocuments;
         private readonly List<User> _authors = [];
         /// <summary>
         /// The User(s) who created the petition and can modify it when not published.
