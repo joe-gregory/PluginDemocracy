@@ -424,7 +424,8 @@ namespace PluginDemocracy.UIComponents
                 var settings = new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    MissingMemberHandling = MissingMemberHandling.Ignore // Ignores missing members in the JSON data
                 };
                 apiResponse = JsonConvert.DeserializeObject<PDAPIResponse>(jsonString, settings);
             }

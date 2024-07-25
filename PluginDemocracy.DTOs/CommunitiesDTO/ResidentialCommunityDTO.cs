@@ -18,7 +18,8 @@ namespace PluginDemocracy.DTOs
         public string? Description { get; set; } = string.Empty;
         public string? OfficialCurrency { get; set; } = "USD";
         public List<string> OfficialLanguagesCodes { get; set; } = [];
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<CultureInfo> OfficialLanguages
         {
             get
@@ -29,7 +30,8 @@ namespace PluginDemocracy.DTOs
             }
         }
         public List<HomeDTO> Homes { get; set; } = [];
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public IReadOnlyList<HomeOwnershipDTO> HomeOwnerships
         {
             get
@@ -37,7 +39,8 @@ namespace PluginDemocracy.DTOs
                 return Homes.SelectMany(home => home.Ownerships).ToList().AsReadOnly();
             }
         }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         virtual public List<UserDTO> Citizens
         {
             get

@@ -12,7 +12,8 @@ namespace PluginDemocracy.DTOs
     {
         public string? Email { get; set; }
         public string? Password { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public CultureInfo Culture { get => new(CultureCode); set => CultureCode = value.Name; }
         public string CultureCode { get; set; } = "en-US";
     }

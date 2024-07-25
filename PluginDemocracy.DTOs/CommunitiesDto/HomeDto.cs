@@ -2,6 +2,7 @@
 using PluginDemocracy.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace PluginDemocracy.DTOs
 {
@@ -14,12 +15,14 @@ namespace PluginDemocracy.DTOs
         public ResidentialCommunityDTO? Community { get; set; }
         public string? FullAddress { get; set; }
         public List<HomeOwnershipDTO> Ownerships { get; set; } = [];
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<UserDTO, double> OwnersOwnerships
         {
             get => Ownerships.Where(o => o.Owner != null).ToDictionary(o => o.Owner!, o => o.OwnershipPercentage);
         }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<UserDTO> Owners
         {
             get
@@ -27,7 +30,8 @@ namespace PluginDemocracy.DTOs
                 return [.. OwnersOwnerships.Keys];
             }
         }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public double CurrentlyOwnedPercentage
         {
             get
@@ -38,7 +42,8 @@ namespace PluginDemocracy.DTOs
         /// <summary>
         /// The percentage of ownership that is available to be owned by new owners. This is calculated by subtracting the sum of the ownership percentages of the current owners from 100.
         /// </summary>
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public double AvailableOwnershipPercentage 
         { 
             get
@@ -52,7 +57,8 @@ namespace PluginDemocracy.DTOs
         /// Citizen.Citizenships can be updated for both the GatedCommunity and the Home. The Home doesn't have access to its parent GatedCommunity, so it must be done in the
         /// parent GatedCommunity in order to maintain Citizen.Citizenships.
         /// </summary>
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<UserDTO> Citizens
         {
             get 

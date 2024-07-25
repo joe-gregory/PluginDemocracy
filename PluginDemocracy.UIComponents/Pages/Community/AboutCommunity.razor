@@ -2,7 +2,17 @@
 @inject BaseAppState AppState
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@CommunityDTO?.FullName</MudText>
+@if (AppState.User?.Citizenships.Count > 1)
+{
+    <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
+    <MudSelect Variant="Variant.Outlined" T="int" ValueChanged="OnSelectedCommunityChanged">
+        @foreach (ResidentialCommunityDTO communityDtoOption in AppState.User.Citizenships)
+        {
+            <MudSelectItem Value="@communityDtoOption.Id">@communityDtoOption.FullName</MudSelectItem>
+        }
+    </MudSelect>
+}
 <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
     <tbody>
         <tr>
@@ -96,14 +106,14 @@
             </MudSimpleTable>
             @if (homeDTO.OwnersOwnerships.Count > 0)
             {
+                <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Ownerships</MudText>
                 <MudSimpleTable Class="pa-3 ma-3">
-                    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Ownerships</MudText>
                     <tbody>
                         @foreach (KeyValuePair<UserDTO, double> kvp in homeDTO.OwnersOwnerships)
                         {
                             <tr>
                                 <td><UserAvatar User="@kvp.Key" /> @kvp.Key.FullName</td>
-                                <td>@kvp.Value</td>
+                                <td>@kvp.Value%</td>
                             </tr>
                         }
                     </tbody>

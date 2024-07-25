@@ -15,12 +15,14 @@ namespace PluginDemocracy.DTOs
         [Required]
         public string LastName { get; set; } = string.Empty;
         public string? SecondLastName { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public string FullName
         {
             get => string.Join(" ", new string?[] {FirstName, LastName, SecondLastName}.Where(s => !string.IsNullOrEmpty(s)));
         }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public string Initials
         {
             get
@@ -33,7 +35,8 @@ namespace PluginDemocracy.DTOs
             }
         }
         public DateTime DateOfBirth { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public int Age
         {
             get
@@ -54,7 +57,8 @@ namespace PluginDemocracy.DTOs
         public string? PhoneNumber { get; set; }
         public bool? PhoneNumberConfirmed { get; set; }
         public string CultureCode { get; set; } = "en-US";
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public CultureInfo Culture 
         {
             get 
@@ -71,9 +75,11 @@ namespace PluginDemocracy.DTOs
         public List<HomeOwnershipDTO> HomeOwnerships { get; set; } = [];
         public List<HomeDTO> ResidentOfHomes { get; set; } = [];
         public List<NotificationDTO> Notifications { get; set; } = [];
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public bool AnyUnreadNotifications => Notifications.Any(notification => !notification.Read);
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public int HowManyUnreadNotifications => Notifications.Count(notification => !notification.Read);
         public List<PetitionDTO> PetitionDrafts = [];
         public List<RoleDTO> Roles = [];
