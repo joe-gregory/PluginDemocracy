@@ -17,10 +17,13 @@ namespace PluginDemocracy.UIComponents.Components
         [Parameter]
         public UserDTO? User { get; set; }
         [Parameter]
+        public ResidentialCommunityDTO? Community { get; set; }
+        [Parameter]
         public MudBlazor.Size Size { get; set; }
-        private void NavigateToProfile(int? id)
+        private void NavigateToProfile()
         {
-            if (id.HasValue) Services.NavigateTo($"{FrontEndPages.AboutUser}?userId={id}");
+            if (User != null) Services.NavigateTo($"{FrontEndPages.AboutUser}?userId={User.Id}");
+            else if (Community != null) Services.NavigateTo($"{FrontEndPages.AboutCommunity}?communityId={Community.Id}");
         }
     }
 }

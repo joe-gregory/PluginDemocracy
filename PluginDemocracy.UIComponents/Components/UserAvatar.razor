@@ -1,4 +1,4 @@
-﻿<MudAvatar Size="Size" @onclick="() => NavigateToProfile(User?.Id)">
+﻿<MudAvatar Size="Size" @onclick="NavigateToProfile">
     @if (User != null)
     {
         if (!string.IsNullOrEmpty(User.ProfilePicture))
@@ -7,7 +7,18 @@
         }
         else
         {
-           @User.Initials
+            @User.Initials
+        }
+    }
+    else if(Community != null)
+    {
+        if (!string.IsNullOrEmpty(Community.ProfilePicture))
+        {
+            <MudImage Src="@Community.ProfilePicture" />
+        }
+        else
+        {
+            @Community.Initials
         }
     }
     else
