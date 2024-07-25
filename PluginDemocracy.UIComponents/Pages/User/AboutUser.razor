@@ -1,4 +1,7 @@
-﻿<MudPaper Elevation="25" Class="mt-5 mb-5 pa-4">
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudPaper Elevation="25" Class="ma-3 pa-3">
     <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
         <MudAvatar Style="height:200px;width:200px;">
             @if (User != null)
@@ -14,11 +17,44 @@
             }
         </MudAvatar>
     </div>
-    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-5 mb-5">@User?.FullName</MudText>
-    <MudText Typo="Typo.h4" Class="mt-5 mb-5" Color="Color.Primary">@AppState.Translate(ResourceKeys.Communities):</MudText>
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mt-5 mb-5">@User?.FullName</MudText>
+    <MudText Class="mb-1" Align="Align.Center">Date of birth: @User?.DateOfBirth.Date.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
+    <MudText Class="mb-1" Align="Align.Center">Address: @User?.Address</MudText>
+    <MudText Class="mb-1" Align="Align.Center">Preffered language: @User?.CultureCode</MudText>
+    @if (User?.Admin == true)
+    {
+        <MudText Align="Align.Center">This user is an application admin.</MudText>
+    }
+</MudPaper>
+
+<MudPaper Class="ma-3 pa-3">
+    <MudText Typo="Typo.h4" Class="mt-5 mb-5" Align="Align.Center">@AppState.Translate(ResourceKeys.Communities):</MudText>
     @foreach (ResidentialCommunityDTO community in User?.Citizenships ?? [])
     {
-        <MudText Class="mt-5 mb-5">@community.FullName</MudText>
+        <div class="mt-5 mb-5">
+            <UserAvatar Community="@community" /> <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={community.Id}")"> @community.FullName</MudLink>
+        </div>
     }
-
 </MudPaper>
+
+@if (User?.Roles.Count > 0)
+{
+    <MudPaper Class="ma-3 pa-3">
+        <MudText Typo="Typo.h4" Class="mt-5 mb-5" Align="Align.Center">@AppState.Translate(ResourceKeys.Roles):</MudText>
+        @foreach (RoleDTO role in User.Roles)
+        {
+            <MudCard Class="ma-3 pa-3">
+                <MudText Align="Align.Center">Role Title: @role.Title</MudText>
+                <MudText>For Community: <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={role.Community?.Id}")">@role.Community?.Name</MudLink></MudText>
+                <MudText>Role Description: @role.Description</MudText>
+                <MudText>Role Active: @(role.Active ? "Active" : "Inactive")</MudText>
+                <div class="mt-3">
+                    <MudText>Can verify home ownerships: @(role.Powers.CanEditHomeOwnership ? "Yes" : "No")</MudText>
+                    <MudText>Can verify residency into Community: @(role.Powers.CanEditResidency ? "Yes" : "No")</MudText>
+                    <MudText>Can modify community's accounting: @(role.Powers.CanModifyAccounting ? "Yes" : "No")</MudText>
+                </div>
+                
+            </MudCard>
+        }
+    </MudPaper>
+}

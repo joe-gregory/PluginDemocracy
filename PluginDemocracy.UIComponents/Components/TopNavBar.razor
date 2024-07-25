@@ -56,13 +56,6 @@
             <MudNavLink Href="@FrontEndPages.Feed">@AppState.Translate("Feed")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.CreatePetition">@AppState.Translate(ResourceKeys.CreatePetition)</MudNavLink>
             <MudNavLink Href="@FrontEndPages.PetitionDrafts">@AppState.Translate(ResourceKeys.PetitionDrafts)</MudNavLink>
-            @*             <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Accounting")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Constitution")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("History")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Projects")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Roles")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("Community")</MudNavLink>
-        <MudNavLink Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("AboutCommunity")</MudNavLink> *@
             <MudNavLink Href="@FrontEndPages.JoinCommunity">@AppState.Translate("JoinAnExistingCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.RegisterCommunity" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate("RegisterANewCommunity")</MudNavLink>
             <MudNavLink Href="@FrontEndPages.CurrentJoinCommunityRequests" Disabled="@CommunityMenuButtonDisabled">@AppState.Translate(ResourceKeys.JoinCommunityRequests)</MudNavLink>
@@ -113,7 +106,6 @@
         }
         else
         {
-            @* <MudNavLink Disabled="@(AppState.User == null)">@AppState.Translate("Account")</MudNavLink> *@
             <MudNavLink Href="@FrontEndPages.Notifications">
                 @AppState.Translate(ResourceKeys.Notifications)
                 <MudBadge Visible="@(AppState.User != null && AppState.User.AnyUnreadNotifications)" Content="@AppState.User?.HowManyUnreadNotifications" Overlap="true" Bordered="true" Color="Color.Info">
@@ -121,6 +113,7 @@
                 </MudBadge>
             </MudNavLink>
             <MudNavLink OnClick="@(Services.LogOutAndRedirectHome)" Disabled="@(AppState.User == null)">@AppState.Translate("LogOut")</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Person" Href="@FrontEndPages.AboutUser">@AppState.Translate(ResourceKeys.Profile)</MudNavLink>
         }
         <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/settings">@AppState.Translate("Settings")</MudNavLink>
     </MudNavMenu>

@@ -10,6 +10,8 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Azure;
+using Newtonsoft.Json;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -907,6 +909,57 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
-        #endregion
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetUserAbout)]
+        public async Task<ActionResult<UserDTO>> GetUserAbout([FromQuery] int userId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                return BadRequest();
+            }
+            
+            User? userFromRequest = _context.Users.Include(u => u.HomeOwnerships).ThenInclude(ho => ho.Home).Include(u => u.ResidentOfHomes).Include(u => u.Roles).FirstOrDefault(u => u.Id == userId);
+
+            if (userFromRequest == null)
+            {
+                return NotFound();
+            }
+            //You can only get information about this user if you are a citizen in a community where this user is a citizen,
+            //or you have a role in one of those communities or you are an admin.
+
+            // Check if existingUser has common citizenships with userFromRequest
+            bool hasCommonCitizenship = existingUser.Citizenships
+                .Any(c => userFromRequest.Citizenships.Any(uc => uc.Id == c.Id));
+
+            // Check if existingUser has a role in any of the communities userFromRequest is a citizen of
+            bool hasRoleInCommonCommunity = existingUser.Roles
+                .Any(r => userFromRequest.Citizenships.Any(uc => uc.Id == r.Community.Id));
+
+            // Check if existingUser is an admin
+            bool isAdmin = existingUser.Admin;
+
+            // Only proceed if the existingUser meets one of the conditions
+            if (hasCommonCitizenship || hasRoleInCommonCommunity || isAdmin)
+            {
+                UserDTO userToReturn = new(userFromRequest);
+
+                // Serialize the userToReturn using Newtonsoft.Json
+                var settings = new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+
+                string json = JsonConvert.SerializeObject(userToReturn, settings);
+                return Content(json, "application/json"); ;
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
     }
+        #endregion
 }

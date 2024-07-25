@@ -45,6 +45,7 @@ namespace PluginDemocracy.Translations
         public const string Generate = "Generate";
         public const string Address = "Address";
         public const string Roles = "Roles";
+        public const string Profile = "Profile";
 
         public const string Community = "Community";
         public const string Communities = "Communities";

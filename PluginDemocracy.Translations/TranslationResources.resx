@@ -393,6 +393,9 @@
   <data name="PrimaryLanguageAndCulture" xml:space="preserve">
     <value>Primary language and culture</value>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
   <data name="Projects" xml:space="preserve">
     <value>Projects</value>
   </data>

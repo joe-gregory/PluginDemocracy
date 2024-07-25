@@ -27,7 +27,7 @@
         public const string DeleteDocumentFromPetition = UsersController + "deletedocumentfrompetition";
         public const string AuthorReadyToPublishPetition = UsersController + "authorreadytopublishpetition";
         public const string GetAllJoinCommunityRequestsForUser = UsersController + "getalljoincommunityrequestsforuser";
-        
+        public const string GetUserAbout = UsersController + "getuserabout";
          
         #endregion
         #region Community
