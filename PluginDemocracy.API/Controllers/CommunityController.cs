@@ -241,8 +241,11 @@ namespace PluginDemocracy.API.Controllers
                 if (string.IsNullOrEmpty(blobContainerURL) || string.IsNullOrEmpty(blobSASToken) || string.IsNullOrEmpty(readOnlyBlobSASToken)) throw new Exception("One of the environment variables for blob storage is null or empty");
                 BlobContainerClient containerClient = new(new Uri($"{blobContainerURL}?{blobSASToken}"));
                 //Files to add to blob
+                //but first save the JCR so that it has an Id
+                await _context.SaveChangesAsync();
                 foreach (IFormFile file in joinCommunityRequestUploadDTO.SupportingDocumentsToAdd)
                 {
+                    
                     string blobName = $"joinCommunityRequests/{joinCommunityRequest.Id}/{file.FileName}";
                     BlobClient blobClient = containerClient.GetBlobClient(blobName);
                     await using Stream fileStream = file.OpenReadStream();

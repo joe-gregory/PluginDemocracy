@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc;
 using MudBlazor;
 using Newtonsoft.Json;
 using PluginDemocracy.API.UrlRegistry;
@@ -11,7 +12,23 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private List<ResidentialCommunityDTO> communitiesDtos = [];
         private ResidentialCommunityDTO? selectedCommunityDTO;
         private List<HomeDTO> homesDtosFromSelectedCommunity = [];
-        private bool isJoinHomeDialogVisible = false;
+        private bool _isJoinHomeDialogVisible = false;
+        private bool IsJoinHomeDialogVisible
+        {
+            get
+            {
+                return _isJoinHomeDialogVisible;
+            }
+            set
+            {
+                _isJoinHomeDialogVisible = value;
+                if (!value)
+                {
+                    files.Clear();
+                    memoryStreams.Clear();
+                }
+            }
+        }
         private bool disableSendButton = false;
         private bool showSpinner = false;
         private readonly DialogOptions dialogOptions = new()
@@ -29,6 +46,8 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private string dialogErrorMessage = string.Empty;
         private double selectedOwnershipPercentage = 100;
         private readonly IList<IBrowserFile> files = [];
+        private readonly List<MemoryStream> memoryStreams = [];
+        private readonly int maxFileSize = 100 * 1024 * 1024; // 100MB
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -59,13 +78,20 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             selectedHomeDTO = homesDtosFromSelectedCommunity.FirstOrDefault(h => h.Id == homeId);
             displayDialogErrorMessage = false;
             dialogErrorMessage = string.Empty;
-            isJoinHomeDialogVisible = true;
+            IsJoinHomeDialogVisible = true;
         }
-        private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
+        private async void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
-            foreach (IBrowserFile file in files)
+            foreach (IBrowserFile file in files) this.files.Add(file);
+            foreach(IBrowserFile file in files)
             {
-                this.files.Add(file);
+                MemoryStream memoryStream = new();
+                await using (Stream stream = file.OpenReadStream(maxAllowedSize: maxFileSize))
+                {
+                    await stream.CopyToAsync(memoryStream);
+                }
+                memoryStream.Position = 0;
+                memoryStreams.Add(memoryStream);
             }
         }
         private void RemoveSupportingDocumentToBeUploaded(IBrowserFile file)
@@ -106,18 +132,18 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     multiPartFormDataContent.Add(new StringContent(joinRequestUploadDTO.JoiningAsOwner.ToString()), nameof(joinRequestUploadDTO.JoiningAsOwner));
                     multiPartFormDataContent.Add(new StringContent(joinRequestUploadDTO.JoiningAsResident.ToString()), nameof(joinRequestUploadDTO.JoiningAsResident));
                     multiPartFormDataContent.Add(new StringContent(joinRequestUploadDTO.OwnershipPercentage.ToString()), nameof(joinRequestUploadDTO.OwnershipPercentage));
-                    // Add files if any
-                    if (files.Count > 0)
+                    if(memoryStreams.Count > 0)
                     {
-                        int maxAllowedSize = 100 * 1024 * 1024; // 100MB
-                        foreach (IBrowserFile file in files)
+                        for (int i = 0; i < memoryStreams.Count; i++)
                         {
-                            StreamContent streamContent = new(file.OpenReadStream(maxAllowedSize: maxAllowedSize));
-                            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                            MemoryStream memoryStream = memoryStreams[i];
+                            
+                            StreamContent streamContent = new(memoryStream);
+                            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(files[i].ContentType);
                             streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
                             {
                                 Name = nameof(joinRequestUploadDTO.SupportingDocumentsToAdd),
-                                FileName = file.Name
+                                FileName = files[i].Name
                             };
                             multiPartFormDataContent.Add(streamContent);
                         }
@@ -129,7 +155,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     }
                     //send the request: 
                     string endpoint = AppState.BaseUrl + ApiEndPoints.JoinCommunityRequest;
-                    HttpRequestMessage request = new(HttpMethod.Post, endpoint);
+                    using HttpRequestMessage request = new(HttpMethod.Post, endpoint);
                     if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
                     request.Content = multiPartFormDataContent;
                     PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
@@ -142,7 +168,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     {
                         Services.AddSnackBarMessage("error", "Error sending request.");
                     }
-                    isJoinHomeDialogVisible = false;
+                    IsJoinHomeDialogVisible = false;
                     disableSendButton = false;
                     showSpinner = false;
                 }
@@ -153,7 +179,14 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                     Services.AddSnackBarMessage("error", e.Message);
                     disableSendButton = false;
                     showSpinner = false;
+                    
                     return;
+                }
+                finally
+                {
+                    AppState.IsLoading = false;
+                    files.Clear();
+                    memoryStreams.Clear();
                 }
             }
             disableSendButton = false;

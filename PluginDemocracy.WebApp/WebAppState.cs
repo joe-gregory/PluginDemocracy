@@ -11,7 +11,7 @@ namespace PluginDemocracy.WebApp
     {
         public override string BaseUrl { get; protected set; }
         public override bool HasInternet { get; protected set; } = true;
-        public WebAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory) : base(configuration, serviceProvider, httpClientFactory)
+        public WebAppState(IConfiguration configuration, IServiceProvider serviceProvider) : base(configuration, serviceProvider)
         {
             BaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
         }

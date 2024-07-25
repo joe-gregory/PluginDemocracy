@@ -96,10 +96,10 @@
                     </MudAvatarGroup>
                 </td>
             </tr>
-            @foreach(KeyValuePair<UserDTO, double> kvp in homeToJoinDTO?.OwnersOwnerships ?? [])
+            @foreach (KeyValuePair<UserDTO, double> kvp in homeToJoinDTO?.OwnersOwnerships ?? [])
             {
                 <tr>
-                    <td><UserAvatar User="@kvp.Key"/> @kvp.Key.FullName</td>
+                    <td><UserAvatar User="@kvp.Key" /> @kvp.Key.FullName</td>
                     <td>@kvp.Value%</td>
                 </tr>
             }
@@ -109,10 +109,12 @@
 
 <MudCard Class="pa-3 ma-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Documents Attached To Request</MudText>
-    @foreach (string link in joinCommunityRequestDTO?.LinksToFiles ?? [])
-    {
-        <MudLink Href="@link" Class="mb-3">@link</MudLink>
-    }
+    <ul>
+        @foreach (string link in joinCommunityRequestDTO?.LinksToFiles ?? [])
+        {
+            <li class="mt-5 mb-5 overflow-hidden"><MudLink Href="@link">@link.Remove(link.IndexOf('?'))</MudLink></li>
+        }
+    </ul>
 </MudCard>
 @if (isCurrentUserTheOneFromTheRequest)
 {

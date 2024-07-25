@@ -122,12 +122,12 @@
     private async Task PostFiledAdded(IReadOnlyList<IBrowserFile> files)
     {
         isImageUploadLoading = true;
-        long maxSize = 5 * 1024 * 1024; //5 MB
+        long maxSize = 20 * 1024 * 1024; //5 MB
         foreach (IBrowserFile file in files)
         {
             if (file.Size > maxSize)
             {
-                Services.AddSnackBarMessage("error", $"File is too big. Keep below 5 MB");
+                Services.AddSnackBarMessage("error", $"File is too big. Keep below 20 MB");
                 return;
             }
 

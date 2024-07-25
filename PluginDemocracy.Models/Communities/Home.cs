@@ -113,6 +113,7 @@ namespace PluginDemocracy.Models
             if (user == null) throw new ArgumentException("citizen cannot be null");
             if (percentage <= 0 || percentage > 100) throw new ArgumentException("Ownership percentage needs to be between 1 and 100");
             if (percentage > AvailableOwnershipPercentage) throw new ArgumentException("Total ownership percentage exceeds 100. Readjust for this or other owners.");
+            if (Owners.Any(u => u.Id == user.Id)) throw new InvalidOperationException("User is already listed as an owner of this home. If you need to change ownership %, remove and add again.");
             HomeOwnership newHomeOwnership = new(this, user, percentage);
             _ownerships.Add(newHomeOwnership);
             user.AddHomeOwnership(newHomeOwnership);

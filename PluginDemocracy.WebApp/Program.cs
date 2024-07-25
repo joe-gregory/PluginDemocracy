@@ -16,7 +16,18 @@ namespace PluginDemocracy.WebApp
             // Add services to the container.
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient("MyHttpClient").ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(5);
+                client.MaxResponseContentBufferSize = 629145600; // 600MB
+            });
+            builder.Services.AddScoped(sp =>
+            {
+                // Create a named HttpClient using the HttpClientFactory
+                var factory = sp.GetRequiredService<IHttpClientFactory>();
+                return factory.CreateClient("MyHttpClient");
+            });
+
             builder.Services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
@@ -34,7 +45,7 @@ namespace PluginDemocracy.WebApp
 
             builder.Services.AddSingleton<BaseAppState, WebAppState>();
             builder.Services.AddScoped<Services>();
-            
+
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -45,12 +56,23 @@ namespace PluginDemocracy.WebApp
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+#if DEBUG
+            // Configure logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            builder.Logging.AddFilter("Microsoft", LogLevel.Debug);
+            builder.Logging.AddFilter("System", LogLevel.Debug);
+            builder.Logging.AddFilter("Default", LogLevel.Debug);
+#endif
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
+                app.UseDeveloperExceptionPage();
             }
             else
             {

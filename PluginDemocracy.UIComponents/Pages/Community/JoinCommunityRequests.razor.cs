@@ -16,10 +16,15 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private string statusText = "Pending";
         private JoinCommunityRequestDTO? joinCommunityRequestDTO;
         private HomeDTO? homeToJoinDTO;
-        private readonly IList<IBrowserFile> files = [];
+
         private bool disableAll = false;
         private bool spinnerOn = false;
         private string? message;
+
+        private readonly IList<IBrowserFile> files = [];
+        private readonly List<MemoryStream> memoryStreams = [];
+        private readonly int maxFileSize = 100 * 1024 * 1024; // 100MB
+
         private bool isCurrentUserTheOneFromTheRequest;
         private bool isCurrentUserAdmin;
         private bool isCurrentUserRoleWithHomeOwnershipPowers;
@@ -61,11 +66,18 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                 }
             }
         }
-        private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
+        private async void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
+            foreach (IBrowserFile file in files) this.files.Add(file);
             foreach (IBrowserFile file in files)
             {
-                this.files.Add(file);
+                MemoryStream memoryStream = new();
+                await using (Stream stream = file.OpenReadStream(maxAllowedSize: maxFileSize))
+                {
+                    await stream.CopyToAsync(memoryStream);
+                }
+                memoryStream.Position = 0;
+                memoryStreams.Add(memoryStream);
             }
         }
         private void RemoveSupportingDocumentToBeUploaded(IBrowserFile file)
@@ -82,47 +94,61 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         }
         private async void UploadSupportingDocumentsToUpload()
         {
-            disableAll = true;
-            spinnerOn = true;
-            AppState.IsLoading = true;
-            if (files.Count > 0)
+            try
             {
-                MultipartFormDataContent multiPartFormDataContent = [];
-                int maxAllowedSize = 100 * 1024 * 1024; // 100MB
-                foreach (IBrowserFile file in files)
+                disableAll = true;
+                spinnerOn = true;
+                AppState.IsLoading = true;
+                if (memoryStreams.Count > 0)
                 {
-                    StreamContent streamContent = new(file.OpenReadStream(maxAllowedSize: maxAllowedSize));
-                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-                    streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    MultipartFormDataContent multiPartFormDataContent = [];
+
+                    for (int i = 0; i < memoryStreams.Count; i++)
                     {
-                        Name = "files",
-                        FileName = file.Name
-                    };
-                    multiPartFormDataContent.Add(streamContent);
-                }
-                string endpoint = $"{ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
-                HttpRequestMessage request = new(HttpMethod.Post, endpoint);
-                if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
-                request.Content = multiPartFormDataContent;
-                PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
-                if (apiResponse.SuccessfulOperation)
-                {
-                    files.Clear();
-                    Services.AddSnackBarMessages(apiResponse.Alerts);
-                    RefreshJoinCommunityRequestDTO();
+                        MemoryStream memoryStream = memoryStreams[i];
+
+                        StreamContent streamContent = new(memoryStream);
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(files[i].ContentType);
+                        streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                        {
+                            Name = "files",
+                            FileName = files[i].Name
+                        };
+                        multiPartFormDataContent.Add(streamContent);
+                    }
+                    string endpoint = $"{AppState.BaseUrl}{ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
+                    HttpRequestMessage request = new(HttpMethod.Post, endpoint);
+                    if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
+                    request.Content = multiPartFormDataContent;
+                    PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
+                    if (apiResponse.SuccessfulOperation)
+                    {
+                        files.Clear();
+                        Services.AddSnackBarMessages(apiResponse.Alerts);
+                        RefreshJoinCommunityRequestDTO();
+                    }
+                    else
+                    {
+                        Services.AddSnackBarMessage("error", "Error uploading files.");
+                    }
                 }
                 else
                 {
-                    Services.AddSnackBarMessage("error", "Error uploading files.");
+                    Services.AddSnackBarMessage("warning", "No files to upload.");
                 }
             }
-            else
+            catch (Exception e)
             {
-                Services.AddSnackBarMessage("warning", "No files to upload.");
+                Services.AddSnackBarMessage("error", e.Message);
             }
-            spinnerOn = false;
-            disableAll = false;
-            AppState.IsLoading = false;
+            finally
+            {
+                spinnerOn = false;
+                disableAll = false;
+                AppState.IsLoading = false;
+                files.Clear();
+                memoryStreams.Clear();
+            }
         }
         private async void SendNewMessage()
         {

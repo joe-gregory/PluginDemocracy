@@ -22,7 +22,8 @@ namespace PluginDemocracy.API
             // Configure Kestrel server limits
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.Limits.MaxRequestBodySize = 314572800; // 300MB
+                options.Limits.MaxRequestBodySize = 629145600; // 600MB
+                options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
             });
 
             //Logging 

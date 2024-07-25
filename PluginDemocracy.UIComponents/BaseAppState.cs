@@ -9,11 +9,10 @@ namespace PluginDemocracy.UIComponents
     /// TODO: a loading method wherever I am storing data on web or maui that obtains this class. The SessionJWT is particuarly important for keeping session. 
     /// TODO: When a user opens up the app, the app needs to make sure that its token is still valid and if not, it should logout the user to ask for credentials again. Maybe the app needs to make a get request when just booting up to make sure the JWT is still valid. 
     /// </summary>
-    public abstract class BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
+    public abstract class BaseAppState(IConfiguration configuration, IServiceProvider serviceProvider)
     {
         protected readonly IServiceProvider _serviceProvider = serviceProvider;
         protected readonly IConfiguration _configuration = configuration;
-        protected readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private bool _isLoading = false;
         public bool IsLoading 
         { 

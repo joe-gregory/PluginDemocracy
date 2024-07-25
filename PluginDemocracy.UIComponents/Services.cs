@@ -504,14 +504,9 @@ namespace PluginDemocracy.UIComponents
         {
             try
             {
-                // Ensure the request contains the SessionJWT if available
-                if (!string.IsNullOrEmpty(_appState.SessionJWT))
-                {
-                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
-                }
-
                 // Send the request
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                HttpClient newHttpClient = CreateHttpClient();
+                HttpResponseMessage response = await newHttpClient.SendAsync(request);
                 return await CommunicationCommon(response);
             }
             catch (Exception ex)
@@ -522,7 +517,7 @@ namespace PluginDemocracy.UIComponents
         }
         internal HttpClient CreateHttpClient()
         {
-            HttpClient client = _httpClientFactory.CreateClient();
+            HttpClient client = _httpClientFactory.CreateClient("MyHttpClient");
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
             return client;
         }
