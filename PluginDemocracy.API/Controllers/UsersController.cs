@@ -953,7 +953,7 @@ namespace PluginDemocracy.API.Controllers
                 };
 
                 string json = JsonConvert.SerializeObject(userToReturn, settings);
-                return Content(json, "application/json"); ;
+                return Content(json, "application/json");
             }
             else
             {

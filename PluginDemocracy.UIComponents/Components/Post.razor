@@ -1,16 +1,21 @@
 ﻿<MudCard Elevation="25" Class="mt-5 mb-5">
     <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
-            <MudAvatar onclick="@(() => NavigateToAboutPage())">
-                @if (!string.IsNullOrEmpty(PostDTO?.Author?.ProfilePicture))
-                {
-                    <MudImage Src="@PostDTO.Author.ProfilePicture" />
-                }
-                else
-                {
-                   @PostDTO?.Author?.Initials
-                }
-            </MudAvatar>
+            @if (PostDTO?.UserAuthor != null)
+            {
+                <UserAvatar User="PostDTO.UserAuthor" />
+
+            }
+            else if (PostDTO?.CommunityAuthor != null)
+            {
+                <UserAvatar Community="PostDTO.CommunityAuthor" />
+            }
+            else
+            {
+                <MudAvatar>
+                    @PostDTO?.Author?.Initials
+                </MudAvatar>
+            }
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Style="color:white">@PostDTO?.Author?.FullName</MudText>
@@ -31,12 +36,12 @@
         <img src="@PostDTO.Images[0]" class="full-image-fit" />
         @* <MudCardMedia Class="full-image-fit" Image="@PostDto.Images[0]" /> *@
     }
-    else if(PostDTO?.Images.Count > 1)
+    else if (PostDTO?.Images.Count > 1)
     {
         <MudCarousel Class="mud-carousel-custom mb-5" ItemsSource="PostDTO.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
             <ItemTemplate>
                 <div class="d-flex flex-column flex-column justify-center mt-10 mb-10" style="height:100%">
-                    <MudImage Src="@context"/>
+                    <MudImage Src="@context" />
                 </div>
             </ItemTemplate>
         </MudCarousel>
@@ -55,7 +60,7 @@
         <MudExpansionPanel>
             <TitleContent>
                 <div class="d-flex">
-                    <MudIcon Icon="@Icons.Material.Filled.Comment" Color="Color.Primary"/>
+                    <MudIcon Icon="@Icons.Material.Filled.Comment" Color="Color.Primary" />
                     <MudText Color="Color.Primary" Class="ml-1">Comments</MudText>
                 </div>
             </TitleContent>
@@ -69,6 +74,6 @@
     }
     <MudItem>
         <MudTextField Class="ma-1" @bind-Value="newCommentText" Placeholder="Write a comment..." Variant="Variant.Outlined" Immediate="true" AutoGrow="true" />
-        <MudButton  Class="ma-1" OnClick="SubmitComment" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(string.IsNullOrEmpty(newCommentText))">Post Comment</MudButton>
+        <MudButton Class="ma-1" OnClick="SubmitComment" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(string.IsNullOrEmpty(newCommentText))">Post Comment</MudButton>
     </MudItem>
 </MudCard>

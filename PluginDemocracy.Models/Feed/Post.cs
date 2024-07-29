@@ -24,8 +24,8 @@
         {
             get
             {
-                if(_userAuthor != null) return _userAuthor;
-                return _communityAuthor;
+                if(_userAuthor != null) return _userAuthor as IAvatar;
+                else return _communityAuthor as IAvatar;
             }
             set
             {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
@@ -657,7 +658,14 @@ namespace PluginDemocracy.API.Controllers
                 }
 
                 foreach (Post post in community.PostsByLatestActivity) response.Posts.Add(new PostDTO(post));
-                return Ok(response);
+                var settings = new JsonSerializerSettings
+                {
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                string json = JsonConvert.SerializeObject(response, settings);
+                return Content(json, "application/json");
             }
             catch (Exception ex)
             {
