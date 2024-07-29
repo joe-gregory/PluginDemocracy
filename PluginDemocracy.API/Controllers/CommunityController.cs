@@ -203,8 +203,6 @@ namespace PluginDemocracy.API.Controllers
                 string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}";
                 string body = $"{existingUser.FullName} has requested to join the community as a {(joinCommunityRequest.JoiningAsOwner ? $"home owner" : "resident")} for home {home.InternalAddress} in community {community.FullName}.Please follow the following link to accept, reject or review:\n <a href=\"{link}\">{link}</a>.";
                 string? appManagerEmail = _configuration["PluginDemocracy:AppManagerEmail"];
-
-
                 if (joinCommunityRequest.JoiningAsOwner)
                 {
                     foreach (User? user in roleHoldersWithJoinPower)
@@ -368,7 +366,7 @@ namespace PluginDemocracy.API.Controllers
                 pdApiResponse.AddAlert("error", "petitionId is zero.");
                 return BadRequest(pdApiResponse);
             }
-            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
+            JoinCommunityRequest? joinCommunityRequest = await _context.JoinCommunityRequests.Include(j => j.Community).ThenInclude(c => c.Roles).ThenInclude(r => r.Holder).Include(j => j.Home).Include(j => j.User).FirstOrDefaultAsync(j => j.Id == requestId);
             if (joinCommunityRequest == null)
             {
                 pdApiResponse.AddAlert("error", "Request not found");
@@ -402,6 +400,19 @@ namespace PluginDemocracy.API.Controllers
                     uriBuilder.Query = query.ToString();
                     string blobUrlWithoutSas = uriBuilder.ToString();
                     joinCommunityRequest.AddLinkToFile($"{blobUrlWithoutSas}?{readOnlyBlobSASToken}");
+                }
+                string link = $"{_utilityClass.WebAppBaseUrl}{FrontEndPages.JoinCommunityRequests}?requestId={joinCommunityRequest.Id}";
+
+                string title = $"New files uploaded to join request {joinCommunityRequest.Id}.";
+                string body = $"New files have been added to join community request {joinCommunityRequest.Id}. Follow this link: <a href=\"{link}\">{link}</a>";
+
+                foreach (Role role in joinCommunityRequest.Community.Roles)
+                {
+                    if (role.Holder != null)
+                    {
+                        role.Holder.AddNotification(title, body);
+                        await _utilityClass.SendEmailAsync(role.Holder.Email, title, body);
+                    }
                 }
                 _context.SaveChanges();
                 pdApiResponse.AddAlert("success", "Files uploaded successfully.");
