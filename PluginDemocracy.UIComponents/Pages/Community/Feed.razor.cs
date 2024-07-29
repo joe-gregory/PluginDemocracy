@@ -13,6 +13,8 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             //if AppState.PDAPIResponse.LastRefreshed is older than 30 seconds, refresh user data
             if (AppState.PDAPIResponse.LastRefreshed < DateTime.UtcNow.AddSeconds(-10)) await Services.GetDataAsync(ApiEndPoints.RefreshUserData);
             //If user doesn't have any communities, redirect to JoinOrRegisterCommunity page
+            AppState.Posts.Clear();
+            AppState.SelectedCommunityInFeed = null;
             if (AppState.User?.Citizenships.Count == 0) Services.NavigateTo(FrontEndPages.JoinOrRegisterCommunity);
 
             //If user has only one community, set it as selected. By setting it automatically, GetFeed should be called in the property setter
@@ -27,6 +29,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         {
             if (IsCurrentPageVisible()) // Assuming you have or will implement a method to check visibility
             {
+                AppState.Posts.Clear();
                 // Code to refresh the feed
                 await GetFeed();
             }
@@ -42,7 +45,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         private async Task OnCommunityChanged(int? newCommunityId)
         {
             AppState.SelectedCommunityInFeed = newCommunityId;
-            await GetFeed();
+            await RefreshFeed();
         }
         private async Task GetFeed()
         {

@@ -2,6 +2,7 @@
 using PluginDemocracy.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
 
 namespace PluginDemocracy.DTOs
@@ -103,7 +104,7 @@ namespace PluginDemocracy.DTOs
         }
         public void AddHome(HomeDTO home)
         {
-            if (!Homes.Contains(home)) 
+            if (!Homes.Contains(home))
             {
                 home.Community = this;
                 Homes.Add(home);
@@ -112,7 +113,7 @@ namespace PluginDemocracy.DTOs
         public void RemoveHome(HomeDTO home)
         {
             Homes.Remove(home);
-        }   
+        }
         public void AddLanguage(CultureInfo culture)
         {
             OfficialLanguagesCodes.Add(culture.Name);
@@ -141,6 +142,18 @@ namespace PluginDemocracy.DTOs
             foreach (CultureInfo language in community.OfficialLanguages) communityDTO.AddLanguage(language);
 
             return communityDTO;
+        }
+        public static ResidentialCommunityDTO ReturnAvatarMinimumResidentialCommunityDTOFromResidentialCommunity(ResidentialCommunity residentialCommunity)
+        {
+            return new ResidentialCommunityDTO()
+            {
+                Id = residentialCommunity.Id,
+                Name = residentialCommunity.Name,
+                FullName = residentialCommunity.FullName,
+                Initials = residentialCommunity.Initials,
+                ProfilePicture = residentialCommunity.ProfilePicture,
+            };
+            
         }
         public override string ToString()
         {

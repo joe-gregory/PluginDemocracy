@@ -601,7 +601,7 @@ namespace PluginDemocracy.API.Controllers
                     }
 
                     Guid guid = Guid.NewGuid();
-                    string blobName = $"posts/{newPost.Id}/images/{guid}";
+                    string blobName = $"community/{community.Id}/posts/{newPost.Id}/images/{guid}";
 
                     //Create a blob client for the image
                     BlobClient blobClient = containerClient.GetBlobClient(blobName);
