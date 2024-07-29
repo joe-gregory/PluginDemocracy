@@ -20,7 +20,7 @@ namespace PluginDemocracy.UIComponents.Components
         /// This is the Post to display
         /// </summary>
         [Parameter]
-        public PostDTO? PostDto { get; set; }
+        public PostDTO? PostDTO { get; set; }
         /// <summary>
         /// This is the bind value for writing a comment on the text box. 
         /// </summary>
@@ -40,24 +40,24 @@ namespace PluginDemocracy.UIComponents.Components
         }
         private void NavigateToAboutPage()
         {
-            if (PostDto?.Author is UserDTO)
+            if (PostDTO?.Author is UserDTO)
             {
-                Services.NavigateTo($"{FrontEndPages.AboutUser}?userId ={PostDto?.Author?.Id}");
+                Services.NavigateTo($"{FrontEndPages.AboutUser}?userId ={PostDTO?.Author?.Id}");
             }
-            else if(PostDto?.Author is ResidentialCommunityDTO)
+            else if(PostDTO?.Author is ResidentialCommunityDTO)
             {
-                Services.NavigateTo($"{FrontEndPages.AboutCommunity}?communityId ={PostDto?.Author?.Id}");
+                Services.NavigateTo($"{FrontEndPages.AboutCommunity}?communityId ={PostDTO?.Author?.Id}");
             }
         }
         private async void ReactToPost(ReactionType reactionType)
         {
-            if (AppState.User != null && PostDto != null)
+            if (AppState.User != null && PostDTO != null)
             {
-                PostReactionDTO reaction = new(PostDto.Id, AppState.User, reactionType);
+                PostReactionDTO reaction = new(PostDTO.Id, AppState.User, reactionType);
                 List<PostReactionDTO>? PostDtoReactions = await Services.PostDataGenericAsync<PostReactionDTO, List<PostReactionDTO>>(ApiEndPoints.ReactToPost, reaction);
                 if (PostDtoReactions != null)
                 {
-                    PostDto.Reactions = PostDtoReactions;
+                    PostDTO.Reactions = PostDtoReactions;
                     RefreshLookOfThumbs();
                 }
             }
@@ -65,11 +65,11 @@ namespace PluginDemocracy.UIComponents.Components
         private void RefreshLookOfThumbs()
         {
             //Check if current user has already reacted to this post, color the corresponding thumb
-            if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Like) == true)
+            if (PostDTO?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Like) == true)
             {
                 PressThumbUp();
             }
-            else if (PostDto?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Dislike) == true)
+            else if (PostDTO?.Reactions?.Any(r => r.User.Equals(AppState.User) && r.ReactionType == ReactionType.Dislike) == true)
             {
                 PressThumbDown();
             }
@@ -111,15 +111,15 @@ namespace PluginDemocracy.UIComponents.Components
         private async void SubmitComment()
         {
             //Make post request to submit comment
-            if (AppState.User != null && PostDto != null && !string.IsNullOrEmpty(newCommentText))
+            if (AppState.User != null && PostDTO != null && !string.IsNullOrEmpty(newCommentText))
             {
-                PostCommentDTO postComment = new(PostDto.Id, AppState.User, newCommentText);
+                PostCommentDTO postComment = new(PostDTO.Id, AppState.User, newCommentText);
                 //Update this Post with this request:
                 PostDTO? refreshedPost = await Services.PostDataGenericAsync<PostCommentDTO, PostDTO>(ApiEndPoints.AddCommentToPost, postComment);
                 if (refreshedPost != null)
                 {
                     //If successful, add comment to PostDto. which refreshing the post should do:
-                    PostDto = refreshedPost;
+                    PostDTO = refreshedPost;
                     //Clear the text box
                     newCommentText = null;
                     StateHasChanged();
@@ -133,7 +133,7 @@ namespace PluginDemocracy.UIComponents.Components
         }
         private async void DeletePost()
         {
-            if (PostDto != null)
+            if (PostDTO != null)
             {
                 bool? confirmation = await DialogService.ShowMessageBox(
                     AppState.Translate(ResourceKeys.DeletePost),
@@ -142,19 +142,19 @@ namespace PluginDemocracy.UIComponents.Components
                     cancelText: "Cancel");
                 if (confirmation == true)
                 {
-                    bool success = await Services.DeletePostAsync(PostDto.Id);
+                    bool success = await Services.DeletePostAsync(PostDTO.Id);
                     if (success)
                     {
-                        AppState.DeletePost(PostDto);
+                        AppState.DeletePost(PostDTO);
                     }
                 }
             }
         }
         public void RemoveComment(PostCommentDTO comment)
         {
-            if (PostDto != null)
+            if (PostDTO != null)
             {
-                PostDto.Comments.Remove(comment);
+                PostDTO.Comments.Remove(comment);
                 StateHasChanged();
             }
         }

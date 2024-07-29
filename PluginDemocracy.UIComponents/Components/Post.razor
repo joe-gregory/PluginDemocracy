@@ -2,38 +2,38 @@
     <MudCardHeader Style="background-color:#008644">
         <CardHeaderAvatar>
             <MudAvatar onclick="@(() => NavigateToAboutPage())">
-                @if (!string.IsNullOrEmpty(PostDto?.Author?.ProfilePicture))
+                @if (!string.IsNullOrEmpty(PostDTO?.Author?.ProfilePicture))
                 {
-                    <MudImage Src="@PostDto.Author.ProfilePicture" />
+                    <MudImage Src="@PostDTO.Author.ProfilePicture" />
                 }
                 else
                 {
-                   @PostDto?.Author?.Initials
+                   @PostDTO?.Author?.Initials
                 }
             </MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText Style="color:white">@PostDto?.Author?.FullName</MudText>
-            <MudText Style="color:white">@PostDto?.PublishedDate</MudText>
+            <MudText Style="color:white">@PostDTO?.Author?.FullName</MudText>
+            <MudText Style="color:white">@PostDTO?.PublishedDate</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            @if (AppState?.User?.Equals(PostDto?.Author) ?? false)
+            @if (AppState?.User?.Equals(PostDTO?.Author) ?? false)
             {
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="DeletePost" />
             }
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <MudText Typo="Typo.h6">@PostDto?.Body</MudText>
+        <MudText Typo="Typo.h6">@PostDTO?.Body</MudText>
     </MudCardContent>
-    @if (PostDto?.Images.Count == 1)
+    @if (PostDTO?.Images.Count == 1)
     {
-        <img src="@PostDto.Images[0]" class="full-image-fit" />
+        <img src="@PostDTO.Images[0]" class="full-image-fit" />
         @* <MudCardMedia Class="full-image-fit" Image="@PostDto.Images[0]" /> *@
     }
-    else if(PostDto?.Images.Count > 1)
+    else if(PostDTO?.Images.Count > 1)
     {
-        <MudCarousel Class="mud-carousel-custom mb-5" ItemsSource="PostDto.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
+        <MudCarousel Class="mud-carousel-custom mb-5" ItemsSource="PostDTO.Images" BulletsColor="Color.Tertiary" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="false">
             <ItemTemplate>
                 <div class="d-flex flex-column flex-column justify-center mt-10 mb-10" style="height:100%">
                     <MudImage Src="@context"/>
@@ -43,14 +43,14 @@
     }
 
     <MudCardActions Style="background-color:#008644">
-        <MudBadge Content="PostDto?.NumberOfLikeReactions" Class="mr-3" Overlap="true" Color="Color.Success" Bordered="true">
+        <MudBadge Content="PostDTO?.NumberOfLikeReactions" Class="mr-3" Overlap="true" Color="Color.Success" Bordered="true">
             <MudIconButton Color="thumbUpColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbUp" OnClick="() => ReactToPost(ReactionType.Like)" />
         </MudBadge>
-        <MudBadge Content="PostDto?.NumberOfDislikeReactions" Overlap="true" Color="Color.Error" Bordered="true">
+        <MudBadge Content="PostDTO?.NumberOfDislikeReactions" Overlap="true" Color="Color.Error" Bordered="true">
             <MudIconButton Color="thumbDownColor" Class="@cssThumb" Icon="@Icons.Material.Filled.ThumbDown" OnClick="() => ReactToPost(ReactionType.Dislike)" />
         </MudBadge>
     </MudCardActions>
-    @if (PostDto?.Comments.Count > 0)
+    @if (PostDTO?.Comments.Count > 0)
     {
         <MudExpansionPanel>
             <TitleContent>
@@ -60,7 +60,7 @@
                 </div>
             </TitleContent>
             <ChildContent>
-                @foreach (PostCommentDTO comment in PostDto.Comments)
+                @foreach (PostCommentDTO comment in PostDTO.Comments)
                 {
                     <PostComment PostCommentDto="@comment" OnDeleteComment="RemoveComment" />
                 }

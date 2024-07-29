@@ -590,6 +590,7 @@ namespace PluginDemocracy.API.Controllers
                 string blobSasUrl = Environment.GetEnvironmentVariable("BlobSasUrl") ?? string.Empty;
                 if (string.IsNullOrEmpty(blobSasUrl)) throw new Exception("BlobSASURL environment variable is null or empty");
                 BlobContainerClient containerClient = new(new Uri(blobSasUrl));
+                string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
 
                 foreach (IFormFile file in request.Files)
                 {
@@ -608,8 +609,13 @@ namespace PluginDemocracy.API.Controllers
                     await using Stream filestream = file.OpenReadStream();
                     //Upload the image
                     await blobClient.UploadAsync(filestream, new BlobHttpHeaders { ContentType = file.ContentType });
-
-                    newPost.AddImage(blobClient.Uri.ToString());
+                    //Remove Sas Token: 
+                    UriBuilder uriBuilder = new(blobClient.Uri);
+                    System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    query.Clear();
+                    uriBuilder.Query = query.ToString();
+                    string blobUrlWithoutSas = uriBuilder.ToString();
+                    newPost.AddImage($"{blobUrlWithoutSas}?{readOnlyBlobSASToken}");
                 }
                 await _context.SaveChangesAsync();
                 response.AddAlert("success", _utilityClass.Translate(ResourceKeys.PostCreatedSuccessfully, existingUser.Culture));
