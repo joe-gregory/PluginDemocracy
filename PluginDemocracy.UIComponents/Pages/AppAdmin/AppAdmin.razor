@@ -1,4 +1,5 @@
-﻿@inject BaseAppState AppState
+﻿@using Microsoft.AspNetCore.Components.Forms
+@inject BaseAppState AppState
 @inject Services Services
 
 <MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary">Plugin Democracy Application Administrator Panel</MudText>
@@ -11,7 +12,13 @@
         }
     </MudSelect>
 </MudCard>
-
+@if (SelectedCommunity != null)
+{
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5">Link to community about</MudText>
+        <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={SelectedCommunity.Id}")">Click to go to community about</MudLink>
+    </MudCard>
+}
 <MudCard Outlined="true" Class="ma-3 pa-3">
     <MudText Typo="Typo.h5">Pending Join Community Requests</MudText>
     <ul>
@@ -64,5 +71,28 @@
         <MudButton Disabled="disabledAll" Variant="Variant.Filled" Color="Color.Error" Class="mt-2 mb-2" OnClick="UnassignAndDeleteRole">Unassign and Delete Role</MudButton>
     </MudCard>
 }
-
-
+@if (SelectedCommunity != null)
+{
+    <MudCard Class="ma-3 pa-3" Outlined="true">
+        <MudText Typo="Typo.h5">Edit Community's Info</MudText>
+        <MudTextField T="string" Label="Name" @bind-Value="SelectedCommunity.Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Address" @bind-Value="SelectedCommunity.Address" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Description" @bind-Value="SelectedCommunity.Description" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Official Currency" @bind-Value="SelectedCommunity.OfficialCurrency" Variant="Variant.Outlined" />
+        <MudText Typo="Typo.h6">Official Languages: </MudText>
+        <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="english"> English <img src="@usaFlag" height="14" class="mr-1" /></MudSwitch>
+        <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="spanish"> Spanish <img src="@mxnFlag" height="14" class="mr-1" /></MudSwitch>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="UpdateCommunityInfo">Update Community's Basic Info</MudButton>
+    </MudCard>
+    <MudCard Class="ma-3 pa-3" Outlined="true">
+        <MudText Typo="Typo.h5">Add image to community profile</MudText>
+        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg, .jpeg" FilesChanged="@( (IBrowserFile f) => file = f)" MaximumFileCount="1" Context="fileInput">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.AttachFile" for="@fileInput">
+                    Select @(file != null ? " (1)" : "")
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+        <MudButton Class="mt-5" Disabled="@(file == null)" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UpdateCommunityPicture">@AppState.Translate(ResourceKeys.Update)</MudButton>
+    </MudCard>
+}

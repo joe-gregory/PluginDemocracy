@@ -178,5 +178,31 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, apiResponse);
             }
         }
+        [HttpPost(ApiEndPoints.AdminUpdateCommunityPicture)]
+        public async Task<ActionResult<bool>> UpdateCommunityPicture([FromQuery] int communityId, [FromForm] IFormFile file)
+        {
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null) return BadRequest("User null");
+            if (user.Admin == false) return Unauthorized("Nice try. You are not admin.");
+            ResidentialCommunity? community = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null) return BadRequest("Community null");
+            try
+            {
+                //Save file to blob storage
+                //Remove write SAS
+                //Add read SAS
+                //Add link to community object
+                //Save changes
+                //Return true if successful
+                string fileName = await _utilityClass.SaveFileToAzureStorage(file);
+                community.Picture = fileName;
+                _context.SaveChanges();
+                return Ok(true);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
     }
 }

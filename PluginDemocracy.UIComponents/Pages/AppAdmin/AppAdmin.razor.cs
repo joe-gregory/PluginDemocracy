@@ -1,11 +1,8 @@
-﻿using PluginDemocracy.API.UrlRegistry;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore.Metadata;
+using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PluginDemocracy.UIComponents.Pages.AppAdmin
 {
@@ -23,6 +20,11 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         private bool disabledAll = false;
         private RoleDTO? roleToDelete;
 
+        private const string usaFlag = "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/2880px-Flag_of_the_United_States.svg.png";
+        private const string mxnFlag = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/2880px-Flag_of_Mexico.svg.png";
+        private bool english = false;
+        private bool spanish = false;
+        private IBrowserFile? file;
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -36,12 +38,16 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         {
             disabledAll = true;
             SelectedCommunity = newValue;
+            english = false;
+            spanish = false;
+            if (SelectedCommunity.OfficialLanguages.Contains(new System.Globalization.CultureInfo("en-US"))) english = true;
+            if (SelectedCommunity.OfficialLanguages.Contains(new System.Globalization.CultureInfo("es-MX"))) spanish = true;
             //Now load the requests for the selected community
             if (SelectedCommunity != null)
             {
                 //Make a Get request for the JoinCommunityRequests for that community.
                 PendingJoinCommunityRequests = await Services.GetDataGenericAsync<List<JoinCommunityRequestDTO>>(ApiEndPoints.AdminGetPendingJoinCommunityRequestsForACommunity + "?communityId=" + SelectedCommunity.Id);
-                 await GetListOfUserAvatarsForCommunity();
+                await GetListOfUserAvatarsForCommunity();
             }
             disabledAll = false;
         }
@@ -65,7 +71,23 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
                 await Services.PostDataAsync<object>($"{ApiEndPoints.AdminDeleteAndUnassignRole}?roleId={roleToDelete.Id}");
                 disabledAll = false;
             }
-            
+
+        }
+        
+        private async void UpdateCommunityInfo()
+        {
+
+        }
+        private async void UpdateCommunityPicture()
+        {
+            if (file == null)
+            {
+                Services.AddSnackBarMessage("warning", AppState.Translate(Translations.ResourceKeys.PleaseSelectAFile));
+                return;
+            }
+
+            //await Services.UploadFileAsync(ApiEndPoints.UpdateProfilePicture, file);
+            file = null;
         }
     }
 }
