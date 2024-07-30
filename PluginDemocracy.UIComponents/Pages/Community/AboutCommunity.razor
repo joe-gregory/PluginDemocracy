@@ -6,10 +6,10 @@
 {
     <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
 
-    <MudSelect Variant="Variant.Outlined" T="int" ValueChanged="OnSelectedCommunityChanged">
+    <MudSelect Variant="Variant.Outlined" T="int?" ValueChanged="OnSelectedCommunityChanged">
         @foreach (ResidentialCommunityDTO communityDtoOption in AppState.User.Citizenships)
         {
-            <MudSelectItem Value="@communityDtoOption.Id">@communityDtoOption.FullName</MudSelectItem>
+            <MudSelectItem Value="@(communityDtoOption.Id as int?)">@communityDtoOption.FullName</MudSelectItem>
         }
     </MudSelect>
 }

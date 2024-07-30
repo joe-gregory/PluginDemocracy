@@ -76,6 +76,23 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         
         private async void UpdateCommunityInfo()
         {
+            if (SelectedCommunity != null)
+            {
+                SelectedCommunity.OfficialLanguagesCodes = [];
+                if (english) SelectedCommunity.OfficialLanguagesCodes.Add("en-US");
+                if (spanish) SelectedCommunity.OfficialLanguagesCodes.Add("es-MX");
+                ResidentialCommunityDTO? updatedCommunity = await Services.PostDataGenericAsync<ResidentialCommunityDTO, ResidentialCommunityDTO>(ApiEndPoints.AdminUpdateCommunityInfo, SelectedCommunity);
+                if (updatedCommunity != null)
+                { 
+                    SelectedCommunity = updatedCommunity;
+                    StateHasChanged();
+                }
+                else Services.AddSnackBarMessage("error", "Expected a community object but got null");
+            }
+            else
+            {
+                Services.AddSnackBarMessage("error", "Error. Post not sent. SelectedCommunity null.");
+            }
 
         }
         private async void UpdateCommunityPicture()

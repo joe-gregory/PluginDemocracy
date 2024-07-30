@@ -171,7 +171,11 @@ namespace PluginDemocracy.UIComponents
             //Add request content if the data is not null
             try
             {
-                if (data != null) request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
+                };
+                if (data != null) request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(data, options), Encoding.UTF8, "application/json");
                 else request.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
             }
             catch (Exception ex)
@@ -184,7 +188,32 @@ namespace PluginDemocracy.UIComponents
             {
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 _appState.IsLoading = false;
-                return await response.Content.ReadFromJsonAsync<TResult>();
+                TResult? result;
+                try
+                {
+                    result = await response.Content.ReadFromJsonAsync<TResult>();
+                    return result;
+                }
+                catch
+                {
+                    try
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var settings = new JsonSerializerSettings
+                        {
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                            TypeNameHandling = TypeNameHandling.Auto,
+
+                        };
+                        TResult? returnObject = JsonConvert.DeserializeObject<TResult>(responseBody, settings);
+                        return returnObject;
+                    }
+                    catch(Exception e)
+                    {
+                        AddSnackBarMessage("error", $"{e.Message}");
+                        return default;
+                    }
+                }
             }
             catch (Exception ex)
             {

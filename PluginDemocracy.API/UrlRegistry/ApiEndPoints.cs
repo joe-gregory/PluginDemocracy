@@ -67,6 +67,8 @@
         
         public const string AdminCreateAndAssignRole = AdminController + "createandassignrole";
         public const string AdminDeleteAndUnassignRole = AdminController + "deleteandunassignrole";
+
+        public const string AdminUpdateCommunityInfo = AdminController + "updatecommunityinfo";
         public const string AdminUpdateCommunityPicture = AdminController + "updatecommunitypicture";
         #endregion
 

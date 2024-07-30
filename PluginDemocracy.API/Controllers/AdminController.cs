@@ -7,6 +7,7 @@ using PluginDemocracy.Models;
 using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.API.Translations;
+using System.Globalization;
 
 
 namespace PluginDemocracy.API.Controllers
@@ -35,7 +36,7 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 User? user = await _context.Users.FirstOrDefaultAsync(u => u.Id == existingUser.Id);
-                if(user == null) return BadRequest();
+                if (user == null) return BadRequest();
                 if (user.Admin == false) return Unauthorized();
                 List<ResidentialCommunity> communities = await _context.ResidentialCommunities.Include(c => c.Roles).ToListAsync();
                 List<ResidentialCommunityDTO> communityDtos = [];
@@ -108,7 +109,7 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("error", "No community found with the given community id information.");
                 return BadRequest(apiResponse);
             }
-            if(string.IsNullOrEmpty(roleDTO.Title) || string.IsNullOrEmpty(roleDTO.Description))
+            if (string.IsNullOrEmpty(roleDTO.Title) || string.IsNullOrEmpty(roleDTO.Description))
             {
                 apiResponse.AddAlert("error", "Title and description are required.");
                 return BadRequest(apiResponse);
@@ -130,7 +131,7 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("success", "Role created and assigned successfully.");
                 return Ok(apiResponse);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 apiResponse.AddAlert("error", e.Message);
                 return StatusCode(500, apiResponse);
@@ -172,11 +173,40 @@ namespace PluginDemocracy.API.Controllers
                 apiResponse.AddAlert("success", "Role deleted and unassigned successfully.");
                 return Ok(apiResponse);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 apiResponse.AddAlert("error", e.Message);
                 return StatusCode(500, apiResponse);
             }
+        }
+        [HttpPost(ApiEndPoints.AdminUpdateCommunityInfo)]
+        public async Task<ActionResult<ResidentialCommunityDTO>> UpdateCommunityInfo(ResidentialCommunityDTO community)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("User not found");
+            if (!existingUser.Admin) return Forbid("You are not an admin.");
+            ResidentialCommunity? existingCommunity = await _context.ResidentialCommunities.Include(c => c.Roles).FirstOrDefaultAsync(c => c.Id == community.Id);
+            if (existingCommunity == null) return BadRequest("Community not found");
+            //Update info
+            if (community.Name != null) existingCommunity.Name = community.Name;
+            if (community.Address != null) existingCommunity.Address = community.Address;
+            if (community.Description != null) existingCommunity.Description = community.Description;
+            if (community.OfficialCurrency != null) existingCommunity.OfficialCurrency = community.OfficialCurrency;
+            List<CultureInfo> newLanguages = [];
+            foreach (string languageCode in community.OfficialLanguagesCodes) newLanguages.Add(new(languageCode));
+            foreach(CultureInfo language in existingCommunity.OfficialLanguages) if (!newLanguages.Contains(language)) existingCommunity.RemoveOfficialLanguage(language);
+            foreach (CultureInfo language in newLanguages) if (!existingCommunity.OfficialLanguages.Contains(language)) existingCommunity.AddOfficialLanguage(language);
+
+            try
+            {
+                _context.SaveChanges();
+                return Ok(new ResidentialCommunityDTO(existingCommunity));
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, $"Internal error: {e.Message}");
+            }
+
         }
         [HttpPost(ApiEndPoints.AdminUpdateCommunityPicture)]
         public async Task<ActionResult<bool>> UpdateCommunityPicture([FromQuery] int communityId, [FromForm] IFormFile file)
@@ -194,9 +224,6 @@ namespace PluginDemocracy.API.Controllers
                 //Add link to community object
                 //Save changes
                 //Return true if successful
-                string fileName = await _utilityClass.SaveFileToAzureStorage(file);
-                community.Picture = fileName;
-                _context.SaveChanges();
                 return Ok(true);
             }
             catch (Exception e)

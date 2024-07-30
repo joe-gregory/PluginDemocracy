@@ -80,8 +80,8 @@
         <MudTextField T="string" Label="Description" @bind-Value="SelectedCommunity.Description" Variant="Variant.Outlined" />
         <MudTextField T="string" Label="Official Currency" @bind-Value="SelectedCommunity.OfficialCurrency" Variant="Variant.Outlined" />
         <MudText Typo="Typo.h6">Official Languages: </MudText>
-        <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="english"> English <img src="@usaFlag" height="14" class="mr-1" /></MudSwitch>
-        <MudSwitch T="bool" Size="Size.Large" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="spanish"> Spanish <img src="@mxnFlag" height="14" class="mr-1" /></MudSwitch>
+        <MudSwitch T="bool" Size="Size.Large" Color="Color.Primary" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="english"> English <img src="@usaFlag" height="14" class="mr-1" /></MudSwitch>
+        <MudSwitch T="bool" Size="Size.Large" Color="Color.Primary" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="spanish"> Spanish <img src="@mxnFlag" height="14" class="mr-1" /></MudSwitch>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="UpdateCommunityInfo">Update Community's Basic Info</MudButton>
     </MudCard>
     <MudCard Class="ma-3 pa-3" Outlined="true">
