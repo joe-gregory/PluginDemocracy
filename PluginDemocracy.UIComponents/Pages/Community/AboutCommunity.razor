@@ -2,6 +2,20 @@
 @inject BaseAppState AppState
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">@CommunityDTO?.FullName</MudText>
+
+<div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+    <MudAvatar Style="height:200px;width:200px;" Variant="Variant.Outlined">
+        @if (!string.IsNullOrEmpty(CommunityDTO?.ProfilePicture))
+        {
+            <MudImage Src=@CommunityDTO.ProfilePicture />
+        }
+        else
+        {
+            @CommunityDTO?.Initials
+        }
+    </MudAvatar>
+</div>
+
 @if (AppState.User?.Citizenships.Count > 1)
 {
     <MudText Align="Align.Center">@AppState.Translate(ResourceKeys.SelectCommunityFromDropDown)</MudText>
@@ -33,16 +47,19 @@
         </tr>
         <tr>
             <td><MudText><b>Official Languages:</b></MudText></td>
-            <td><MudText>@foreach (string language in CommunityDTO?.OfficialLanguagesCodes ?? [])
+            <td>
+                <MudText>
+                    @foreach (string language in CommunityDTO?.OfficialLanguagesCodes ?? [])
                     {
                         <span>@language , </span>
-                    }   
-                </MudText></td>
-            </tr>
-        </tbody>
+                    }
+                </MudText>
+            </td>
+        </tr>
+    </tbody>
 </MudSimpleTable>
 
- @if (CommunityDTO?.Roles.Count > 0)
+@if (CommunityDTO?.Roles.Count > 0)
 {
     <MudCard Class="ma-3 pa-3">
         <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Roles</MudText>

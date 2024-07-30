@@ -102,8 +102,8 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
                 Services.AddSnackBarMessage("warning", AppState.Translate(Translations.ResourceKeys.PleaseSelectAFile));
                 return;
             }
-
-            //await Services.UploadFileAsync(ApiEndPoints.UpdateProfilePicture, file);
+            string endpoint = $"{ApiEndPoints.AdminUpdateCommunityPicture}?communityId={SelectedCommunity?.Id}";
+            await Services.UploadFileAsync(endpoint, file);
             file = null;
         }
     }
