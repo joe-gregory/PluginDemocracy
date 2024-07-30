@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.API.Translations;
 using System.Globalization;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 
 namespace PluginDemocracy.API.Controllers
@@ -194,7 +196,7 @@ namespace PluginDemocracy.API.Controllers
             if (community.OfficialCurrency != null) existingCommunity.OfficialCurrency = community.OfficialCurrency;
             List<CultureInfo> newLanguages = [];
             foreach (string languageCode in community.OfficialLanguagesCodes) newLanguages.Add(new(languageCode));
-            foreach(CultureInfo language in existingCommunity.OfficialLanguages) if (!newLanguages.Contains(language)) existingCommunity.RemoveOfficialLanguage(language);
+            foreach (CultureInfo language in existingCommunity.OfficialLanguages) if (!newLanguages.Contains(language)) existingCommunity.RemoveOfficialLanguage(language);
             foreach (CultureInfo language in newLanguages) if (!existingCommunity.OfficialLanguages.Contains(language)) existingCommunity.AddOfficialLanguage(language);
 
             try
@@ -202,29 +204,97 @@ namespace PluginDemocracy.API.Controllers
                 _context.SaveChanges();
                 return Ok(new ResidentialCommunityDTO(existingCommunity));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return StatusCode(500, $"Internal error: {e.Message}");
             }
 
         }
         [HttpPost(ApiEndPoints.AdminUpdateCommunityPicture)]
-        public async Task<ActionResult<bool>> UpdateCommunityPicture([FromQuery] int communityId, [FromForm] IFormFile file)
+        public async Task<ActionResult<PDAPIResponse>> UpdateCommunityPicture([FromQuery] int communityId, [FromForm] IFormFile file)
         {
             User? user = await _utilityClass.ReturnUserFromClaims(User);
-            if (user == null) return BadRequest("User null");
-            if (user.Admin == false) return Unauthorized("Nice try. You are not admin.");
+            PDAPIResponse response = new();
+
+            if (user == null)
+            {
+                response.AddAlert("error", "User null");
+                return BadRequest(response);
+            }
+            if (user.Admin == false) 
+            { 
+                response.AddAlert("error", "You are not admin.");
+                return Unauthorized(response); 
+            }
             ResidentialCommunity? community = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == communityId);
-            if (community == null) return BadRequest("Community null");
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
             try
             {
-                //Save file to blob storage
-                //Remove write SAS
-                //Add read SAS
-                //Add link to community object
-                //Save changes
-                //Return true if successful
-                return Ok(true);
+                //SAVE FILE TO BLOB STORAGE:
+                //Get the blob container URL and SAS token from environment variables and create a BlobContainerClient
+                string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
+                if (string.IsNullOrEmpty(blobContainerURL))
+                {
+                    response.AddAlert("error", "Blob container URL not found in environment variables.");
+                    return BadRequest(response);
+                }
+                string blobSASToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                if (string.IsNullOrEmpty(blobSASToken))
+                {
+
+                   response.AddAlert("error", "Blob SAS token not found in environment variables.");
+                    return BadRequest(response);
+                }
+                string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
+                if (string.IsNullOrEmpty(readOnlyBlobSASToken))
+                {
+                    response.AddAlert("error", "Read only Blob SAS token not found in environment variables.");
+                    return BadRequest(response);
+                }
+                try
+                {
+                    BlobContainerClient blobContainerClient = new(new Uri($"{blobContainerURL}?{blobSASToken}"));
+                    //Add the file to the blob
+
+
+                    string fileExtension = Path.GetExtension(file.FileName).ToLower();
+                    if (!fileExtension.StartsWith('.')) fileExtension = "." + fileExtension;
+                    if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+                    {
+                        response.AddAlert("error", "File extension is not jpg, jpeg, or png");
+                        return BadRequest(response);
+                    }
+                    string blobName = $"community/{community.Id}/profileimage/{community.FullName}{fileExtension}";
+                    BlobClient blobClient = blobContainerClient.GetBlobClient(blobName);
+                    await using Stream fileStream = file.OpenReadStream();
+                    //Upload the document
+                    await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = file.ContentType });
+                    //Remove Sas write token: 
+                    UriBuilder uriBuilder = new(blobClient.Uri);
+                    System.Collections.Specialized.NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    query.Clear();
+                    uriBuilder.Query = query.ToString();
+                    //Add read SAS
+                    string blobUrlWithoutSas = uriBuilder.ToString();
+                    //Add link to community object
+                    community.ProfilePicture = $"{blobUrlWithoutSas}?{readOnlyBlobSASToken}";
+                    //Save changes
+                    _context.SaveChanges();
+                    //Return true if successful
+                    response.SuccessfulOperation = true;
+                    response.AddAlert("success", "Community's profile picture successfully updated.");
+                    return Ok(response);
+                }
+                catch(Exception e)
+                {
+                    response.AddAlert("error", $"Error: {e.Message}");
+                    return response;
+                }
+                
             }
             catch (Exception e)
             {
