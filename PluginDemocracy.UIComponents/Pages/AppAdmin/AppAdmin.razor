@@ -162,4 +162,10 @@
         <MudTextField Label="Internal Address" @bind-Value="HomeDTOToEdit.InternalAddress" Variant="Variant.Outlined"/>
         <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-2 mb-2" OnClick="EditHome">Edit Home</MudButton>
     </MudCard>
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5">Add Home To Community</MudText>
+        <MudTextField Label="Number" @bind-Value="HomeDTOToAdd.Number" Variant="Variant.Outlined" />
+        <MudTextField Label="Internal Address" @bind-Value="HomeDTOToAdd.InternalAddress" Variant="Variant.Outlined" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="AddHome">Add Home</MudButton>
+    </MudCard>
 }

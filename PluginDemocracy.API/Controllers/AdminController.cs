@@ -450,6 +450,12 @@ namespace PluginDemocracy.API.Controllers
             }
             try
             {
+                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(jcr => jcr.Home).Where(jcr => jcr.Home.Id == home.Id).ToListAsync();
+                foreach (JoinCommunityRequest jcr in joinCommunityRequests)
+                { 
+                    community.RemoveJoinCommunityRequest(jcr); 
+                    _context.Remove(jcr);
+                }
                 community.RemoveHome(home);
                 _context.Remove(home);
                 _context.SaveChanges();
@@ -514,8 +520,58 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", $"{e.Message}");
                 return response;
             }
+        }
+        [HttpPost(ApiEndPoints.AdminAddHome)]
+        public async Task<ActionResult<PDAPIResponse>> AddHomeToCommunity([FromQuery] int? communityId, [FromBody] HomeDTO? homeToAdd)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (user.Admin == false)
+            {
+                response.AddAlert("error", "Nice try, user is not admin.");
+                return Unauthorized(response);
+            }
+            if (communityId == null)
+            {
+                response.AddAlert("error", "communityId is null");
+                return BadRequest(response);
+            }
+            if (homeToAdd == null)
+            {
+                response.AddAlert("error", "home is null");
+                return BadRequest(response);
+            }
+            if (homeToAdd.Number < 1)
+            {
+                response.AddAlert("error", "Home number must be greater than 0");
+                return BadRequest(response);
+            }
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            try
+            {
+                Home newHome = new(community, homeToAdd.Number, homeToAdd.InternalAddress);
+                community.AddHome(newHome);
+                _context.SaveChanges();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success", "Home added to community");
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", e.Message);
+                return response;
+            }
             
-
         }
     }
 }

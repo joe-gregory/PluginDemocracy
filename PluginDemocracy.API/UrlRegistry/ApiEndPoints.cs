@@ -74,6 +74,7 @@
         public const string AdminRemoveResidencyFromHome = AdminController + "removeresidencyfromhome";
         public const string AdminDeleteHome = AdminController + "deletehome";
         public const string AdminEditHome = AdminController + "edithome";
+        public const string AdminAddHome = AdminController + "addhome";
         #endregion
 
     }

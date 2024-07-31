@@ -28,6 +28,7 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         private IBrowserFile? file;
 
         private HomeDTO HomeDTOToEdit = new();
+        private HomeDTO HomeDTOToAdd = new();
         
         protected override async Task OnInitializedAsync()
         {
@@ -147,13 +148,30 @@ namespace PluginDemocracy.UIComponents.Pages.AppAdmin
         }
         private async void EditHome()
         {
-            if (SelectedCommunity != null && HomeDTOToEdit != null)
+            if (SelectedCommunity != null)
             {
-                
                 PDAPIResponse response = await Services.PostDataAsync<HomeDTO>($"{ApiEndPoints.AdminEditHome}?communityId={SelectedCommunity.Id}", HomeDTOToEdit);
-                if (response.SuccessfulOperation) await GetFullCommunityDTOObject();
+                if (response.SuccessfulOperation) 
+                {
+                    HomeDTOToEdit = new();
+                    await GetFullCommunityDTOObject(); 
+                }
                 else Services.AddSnackBarMessage("error", "PDAPIResponse did not state successful operation.");
-                HomeDTOToEdit = new();
+            }
+        }
+        private async void AddHome()
+        {
+            if (SelectedCommunity != null)
+            {
+
+                PDAPIResponse response = await Services.PostDataAsync<HomeDTO>($"{ApiEndPoints.AdminAddHome}?communityId={SelectedCommunity.Id}", HomeDTOToAdd);
+                if (response.SuccessfulOperation) 
+                {
+                    HomeDTOToAdd = new();
+                    await GetFullCommunityDTOObject(); 
+                }
+                else Services.AddSnackBarMessage("error", "PDAPIResponse did not state successful operation.");
+                
             }
         }
     }
