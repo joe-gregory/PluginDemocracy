@@ -201,8 +201,9 @@ namespace PluginDemocracy.Models
                 home.ResidentialCommunity = this;
             }
         }
-        public void RemoveHome(Home home)
+        public void RemoveHome(Home homeToRemove)
         {
+            Home? home = _homes.FirstOrDefault(h => h.Id == homeToRemove.Id) ?? throw new ArgumentException("No home found to remove in Community.Homes.");
             _homes.Remove(home);
             home.ResidentialCommunity = null;
         }

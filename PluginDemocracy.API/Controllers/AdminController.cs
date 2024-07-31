@@ -56,31 +56,17 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, e.Message);
             }
         }
-        /// <summary>
-        /// This gets the pending requests, so requests where request.Approved == null
-        /// </summary>
-        /// <param name="communityId"></param>
-        /// <returns></returns>
-        [HttpGet(ApiEndPoints.AdminGetPendingJoinCommunityRequestsForACommunity)]
-        public async Task<ActionResult<List<JoinCommunityRequestDTO>>> AdminGetPendingJoinCommunityRequestsIncludeCommunityRoles([FromQuery] int? communityId)
+        [HttpGet(ApiEndPoints.AdminGetFullCommunityDTOObject)]
+        public async Task<ActionResult<ResidentialCommunityDTO>> GetFullCommunityDTOObject([FromQuery] int? communityId)
         {
-            User? user = await _utilityClass.ReturnUserFromClaims(User);
-            if (user == null) return BadRequest();
-            if (user.Admin == false) return Unauthorized();
-            if (communityId == null) return BadRequest();
-            try
-            {
-                List<JoinCommunityRequest> joinCommunityRequests = await _context.JoinCommunityRequests.Include(j => j.User).Include(j => j.Home).Include(j => j.Community).Where(j => j.Community.Id == communityId).Where(r => r.Approved == null).ToListAsync();
-                List<JoinCommunityRequestDTO> joinCommunityRequestDtos = [];
-                foreach (JoinCommunityRequest joinCommunityRequest in joinCommunityRequests) joinCommunityRequestDtos.Add(new JoinCommunityRequestDTO(joinCommunityRequest));
-                return Ok(joinCommunityRequestDtos);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            if (communityId == null) return BadRequest("CommunityId is null");
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("No user found with given credentials");
+            if (existingUser.Admin == false) return Unauthorized("This user is not admin");
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Roles).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.JoinCommunityRequests.Where(jcr => jcr.Approved == null)).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null) return BadRequest("No community found with given id");
+            return Ok(new ResidentialCommunityDTO(community));
         }
-
         [HttpPost(ApiEndPoints.AdminCreateAndAssignRole)]
         public async Task<ActionResult<PDAPIResponse>> CreateAndAssignRole(RoleDTO roleDTO)
         {
@@ -221,10 +207,10 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User null");
                 return BadRequest(response);
             }
-            if (user.Admin == false) 
-            { 
+            if (user.Admin == false)
+            {
                 response.AddAlert("error", "You are not admin.");
-                return Unauthorized(response); 
+                return Unauthorized(response);
             }
             ResidentialCommunity? community = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == communityId);
             if (community == null)
@@ -246,7 +232,7 @@ namespace PluginDemocracy.API.Controllers
                 if (string.IsNullOrEmpty(blobSASToken))
                 {
 
-                   response.AddAlert("error", "Blob SAS token not found in environment variables.");
+                    response.AddAlert("error", "Blob SAS token not found in environment variables.");
                     return BadRequest(response);
                 }
                 string readOnlyBlobSASToken = Environment.GetEnvironmentVariable("ReadOnlyBlobSASToken") ?? string.Empty;
@@ -289,17 +275,248 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("success", "Community's profile picture successfully updated.");
                     return Ok(response);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     response.AddAlert("error", $"Error: {e.Message}");
                     return response;
                 }
-                
+
             }
             catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
         }
+        [HttpPost(ApiEndPoints.AdminRemoveHomeOwnership)]
+        public async Task<ActionResult<PDAPIResponse>> RemoveHomeOnwership([FromQuery] int? communityId, [FromQuery] int? homeId, [FromQuery] int? homeOwnershipId)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null) 
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response); 
+            }
+            if (user.Admin == false)
+            {
+                response.AddAlert("error", "Nice try, user is not admin.");
+                return Unauthorized(response);
+            }
+            if (communityId == null)
+            {
+                response.AddAlert("error", "communityId is null");
+                return BadRequest(response);
+            }
+            if (homeId == null)
+            {
+                response.AddAlert("error", "homeId is null");
+                return BadRequest(response);
+            }
+            if (homeOwnershipId == null)
+            {
+                response.AddAlert("error", "homeOwnershipId is null");
+                return BadRequest(response);
+            }
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Homes).ThenInclude(h => h.Ownerships).ThenInclude(hw => hw.Owner).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            Home? home = community.Homes.FirstOrDefault(h => h.Id == homeId);
+            if (home == null)
+            {
+                response.AddAlert("error", "Home not found");
+                return BadRequest(response);
+            }
+            HomeOwnership? homeOwnership = home.Ownerships.FirstOrDefault(o => o.Id == homeOwnershipId);
+            if (homeOwnership == null)
+            {
+                response.AddAlert("error", "Home ownership not found");
+                return BadRequest(response);
+            }
+            try
+            {
+                home.RemoveOwner(homeOwnership.Owner);
+                _context.SaveChanges();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success", "Home ownership removed from home");
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", $"{e.Message}");
+                return response;
+            }
+        }
+        [HttpDelete(ApiEndPoints.AdminRemoveResidencyFromHome)]
+        public async Task<ActionResult<PDAPIResponse>> RemoveResidencyFromHome([FromQuery] int? communityId, [FromQuery] int? homeId, [FromQuery] int? residentId)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (user.Admin == false)
+            {
+                response.AddAlert("error", "Nice try, user is not admin.");
+                return Unauthorized(response);
+            }
+            if (communityId == null)
+            {
+                response.AddAlert("error", "communityId is null");
+                return BadRequest(response);
+            }
+            if (homeId == null)
+            {
+                response.AddAlert("error", "homeId is null");
+                return BadRequest(response);
+            }
+            if (residentId == null)
+            {
+                response.AddAlert("error", "residentId is null");
+                return BadRequest(response);
+            }
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Residents).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            Home? home = community.Homes.FirstOrDefault(h => h.Id == homeId);
+            if (home == null)
+            {
+                response.AddAlert("error", "Home not found");
+                return BadRequest(response);
+            }
+            User? resident = await _context.Users.Include(u => u.ResidentOfHomes).FirstOrDefaultAsync(u => u.Id == residentId);
+            if (resident == null)
+            {
+                response.AddAlert("error", "Resident not found");
+                return BadRequest(response);
+            }
+            try
+            {
+                home.RemoveResident(resident);
+                _context.SaveChanges();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success", "Residency removed from home");
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", $"{e.Message}");
+                return response;
+            }
+        }
+        [HttpDelete(ApiEndPoints.AdminDeleteHome)]
+        public async Task<ActionResult<PDAPIResponse>> DeleteHome([FromQuery] int? communityId, [FromQuery] int? homeId)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (user.Admin == false)
+            {
+                response.AddAlert("error", "Nice try, user is not admin.");
+                return Unauthorized(response);
+            }
+            if (communityId == null)
+            {
+                response.AddAlert("error", "communityId is null");
+                return BadRequest(response);
+            }
+            if (homeId == null)
+            {
+                response.AddAlert("error", "homeId is null");
+                return BadRequest(response);
+            }
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            Home? home = community.Homes.FirstOrDefault(h => h.Id == homeId);
+            if (home == null)
+            {
+                response.AddAlert("error", "Home not found");
+                return BadRequest(response);
+            }
+            try
+            {
+                community.RemoveHome(home);
+                _context.Remove(home);
+                _context.SaveChanges();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success", "Home removed from community");
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", $"{e.Message}");
+                return response;
+            }
+        }
+        [HttpPost(ApiEndPoints.AdminEditHome)]
+        public async Task<ActionResult<PDAPIResponse>> EditHome([FromQuery] int? communityId, [FromBody] HomeDTO? home)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (user.Admin == false)
+            {
+                response.AddAlert("error", "Nice try, user is not admin.");
+                return Unauthorized(response);
+            }
+            if (communityId == null)
+            {
+                response.AddAlert("error", "communityId is null");
+                return BadRequest(response);
+            }
+            if (home == null)
+            {
+                response.AddAlert("error", "home is null");
+                return BadRequest(response);
+            }
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).FirstOrDefaultAsync(c => c.Id == communityId);
+            if (community == null)
+            {
+                response.AddAlert("error", "Community not found");
+                return BadRequest(response);
+            }
+            Home? existingHome = community.Homes.FirstOrDefault(h => h.Id == home.Id);
+            if (existingHome == null)
+            {
+                response.AddAlert("error", "Home not found in community list.");
+                return BadRequest(response);
+            }
+            try
+            {
+                if (home.Number != existingHome.Number) existingHome.Number = home.Number;
+                if (home.InternalAddress != existingHome.InternalAddress) existingHome.InternalAddress = home.InternalAddress;
+                _context.SaveChanges();
+                response.SuccessfulOperation = true;
+                response.AddAlert("success","Home updated successfully");
+                return response;
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", $"{e.Message}");
+                return response;
+            }
+            
+
+        }
     }
 }
+

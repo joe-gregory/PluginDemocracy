@@ -52,6 +52,7 @@ namespace PluginDemocracy.DTOs
             }
         }
         public List<PostDTO>? Posts { get; set; } = [];
+        public List<JoinCommunityRequestDTO> JoinCommunityRequests { get; set; } = [];
         public List<RoleDTO> Roles { get; set; } = [];
         #endregion
         #region METHODS
@@ -101,6 +102,7 @@ namespace PluginDemocracy.DTOs
             }
             foreach (Post post in community.Posts) Posts.Add(new PostDTO(post));
             foreach (Role role in community.Roles) Roles.Add(new RoleDTO(role));
+            foreach (JoinCommunityRequest jcr in community.JoinCommunityRequests) JoinCommunityRequests.Add(new JoinCommunityRequestDTO(jcr));
         }
         public void AddHome(HomeDTO home)
         {

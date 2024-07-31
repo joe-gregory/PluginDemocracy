@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
@@ -174,9 +175,11 @@ namespace PluginDemocracy.Models
         {
             if (!_residentOfHomes.Contains(home)) _residentOfHomes.Add(home);
         }
-        internal void RemoveAsResidentOfHome(Home home)
+        internal void RemoveAsResidentOfHome(Home homeToRemove)
         {
-            _residentOfHomes.Remove(home);
+            Home? home = _residentOfHomes.FirstOrDefault(h => h.Id == homeToRemove.Id);
+            if (home != null) _residentOfHomes.Remove(home);
+            else throw new ArgumentException("No home found to remove in User.Residents.");
         }
         internal void AddRole(Role role)
         {

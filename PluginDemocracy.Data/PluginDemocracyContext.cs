@@ -22,7 +22,6 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne(h => h.Owner);
             modelBuilder.Entity<User>().HasMany(u => u.ResidentOfHomes).WithMany(h => h.Residents);
             modelBuilder.Entity<User>().HasMany(u => u.Roles).WithOne(r => r.Holder);
-            
             modelBuilder.Entity<User>().HasMany(u => u.Notifications).WithOne();
             modelBuilder.Entity<User>().HasMany(u => u.PetitionDrafts).WithMany(p => p.Authors);
             // Apply UsePropertyAccessMode for collections
@@ -40,11 +39,13 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Posts);
             // Ensure that Roles are deleted when removed from ResidentialCommunity.Roles
             modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Roles).WithOne(r => r.Community).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ResidentialCommunity>().HasMany(c => c.Homes).WithOne(h => h.ResidentialCommunity);
 
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Home>().Ignore(Home => Home.Citizens);
             modelBuilder.Entity<Home>().Ignore(Home => Home.Owners);
+            modelBuilder.Entity<Home>().HasMany(h => h.Ownerships).WithOne(ho => ho.Home).OnDelete(DeleteBehavior.Cascade);
 
             // Configure the many-to-many relationship between Petition and User for AuthorsReadyToPublish
             modelBuilder.Entity<Petition>()

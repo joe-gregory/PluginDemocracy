@@ -61,7 +61,6 @@
         public const string AdminController = Base + "admin/";
         public const string AdminGetListOfAllSimpleCommunitiesDTOsWithRoles = AdminController + "getlistofallsimplecommunitiesdtos";
         public const string AdminIsCurrentUserAdmin = AdminController +"iscurrentuseradmin";
-        public const string AdminGetPendingJoinCommunityRequestsForACommunity = AdminController + "getpendingjoincommunityrequests"; 
         public const string AdminRejectJoinRequest = AdminController + "rejectjoinrequest";
         public const string AdminAcceptJoinRequest = AdminController + "acceptjoinrequest";
         
@@ -70,6 +69,11 @@
 
         public const string AdminUpdateCommunityInfo = AdminController + "updatecommunityinfo";
         public const string AdminUpdateCommunityPicture = AdminController + "updatecommunitypicture";
+        public const string AdminGetFullCommunityDTOObject = AdminController + "getfullcommunitydtoobject";
+        public const string AdminRemoveHomeOwnership = AdminController + "removehomeownership";
+        public const string AdminRemoveResidencyFromHome = AdminController + "removeresidencyfromhome";
+        public const string AdminDeleteHome = AdminController + "deletehome";
+        public const string AdminEditHome = AdminController + "edithome";
         #endregion
 
     }

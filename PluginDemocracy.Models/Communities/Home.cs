@@ -122,12 +122,13 @@ namespace PluginDemocracy.Models
         {
             if (citizen == null) throw new ArgumentException("Citizen cannot be null");
 
-            var ownership = Ownerships.FirstOrDefault(o => o.Owner == citizen);
+            var ownership = Ownerships.FirstOrDefault(o => o.Owner.Id == citizen.Id);
             if (ownership != null)
             {
                 _ownerships.Remove(ownership);
                 citizen.RemoveHomeOwnership(ownership);
             }
+            else throw new ArgumentException("No home ownership found with given citizen.");
         }
         public void AddResident(User citizen)
         {
@@ -138,10 +139,10 @@ namespace PluginDemocracy.Models
         }
         public void RemoveResident(User citizen)
         {
-            if (citizen == null) throw new ArgumentException("Citizen cannot be null");
-
-            if (Residents.Contains(citizen)) _residents.Remove(citizen);
-            if (citizen.ResidentOfHomes.Contains(this)) citizen.RemoveAsResidentOfHome(this);
+            User? resident = Residents.FirstOrDefault(r => r.Id == citizen.Id);
+            if (resident == null) throw new ArgumentException("No resident found with given citizen.");
+            _residents.Remove(resident);
+            citizen.RemoveAsResidentOfHome(this);
         }
     }
 }

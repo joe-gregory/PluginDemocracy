@@ -82,7 +82,7 @@
         <MudText Typo="Typo.h6">Official Languages: </MudText>
         <MudSwitch T="bool" Size="Size.Large" Color="Color.Primary" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="english"> English <img src="@usaFlag" height="14" class="mr-1" /></MudSwitch>
         <MudSwitch T="bool" Size="Size.Large" Color="Color.Primary" ThumbIcon="@Icons.Material.Filled.Flag" @bind-Value="spanish"> Spanish <img src="@mxnFlag" height="14" class="mr-1" /></MudSwitch>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="UpdateCommunityInfo">Update Community's Basic Info</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 mb-2" OnClick="UpdateBasicCommunityInfo">Update Community's Basic Info</MudButton>
     </MudCard>
     <MudCard Class="ma-3 pa-3" Outlined="true">
         <MudText Typo="Typo.h5">Add image to community profile</MudText>
@@ -94,5 +94,72 @@
             </ButtonTemplate>
         </MudFileUpload>
         <MudButton Class="mt-5" Disabled="@(file == null)" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" OnClick="UpdateCommunityPicture">@AppState.Translate(ResourceKeys.Update)</MudButton>
+    </MudCard>
+
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Community's Residences</MudText>
+        @foreach (HomeDTO homeDTO in SelectedCommunity?.Homes ?? [])
+        {
+            <MudCard Class="ma-3 pa-3" Outlined="true">
+                <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Home #@homeDTO.Number</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@(() => DeleteHome(homeDTO))">Delete Home</MudButton>
+
+                <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+                    <tbody>
+                        <tr>
+                            <td><MudText><b>Number:</b></MudText></td>
+                            <td><MudText>@homeDTO.Number</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><MudText><b>Internal Address:</b></MudText></td>
+                            <td><MudText>@homeDTO.InternalAddress</MudText></td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+                @if (homeDTO.OwnersOwnerships.Count > 0)
+                {
+                    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Ownerships</MudText>
+                    <MudSimpleTable Class="pa-3 ma-3">
+                        <tbody>
+                            @foreach (HomeOwnershipDTO homeOwnershipDTO in homeDTO.Ownerships)
+                            {
+                                <tr>
+                                    <td><UserAvatar User="@homeOwnershipDTO.Owner" /> @homeOwnershipDTO.Owner?.FullName</td>
+                                    <td>@homeOwnershipDTO.OwnershipPercentage%</td>
+                                    <td><MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@( () => RemoveOwnership(homeDTO, homeOwnershipDTO))">Remove Ownership</MudButton></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                }
+                @if (homeDTO.Residents.Count > 0)
+                {
+                    <MudSimpleTable Class="pa-3 ma-3">
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-5">Residents</MudText>
+                        <tbody>
+                            @foreach (UserDTO resident in homeDTO.Residents)
+                            {
+                                <tr>
+                                    <td><UserAvatar User="@resident" /> @resident.FullName</td>
+                                    <td><MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@( () => RemoveResident(homeDTO, resident))">Remove Resident</MudButton></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                }
+            </MudCard>
+        }
+    </MudCard>
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5">Edit Home's Info</MudText>
+        <MudSelect T="HomeDTO" Variant="Variant.Outlined" Label="Home To Edit" @bind-Value="HomeDTOToEdit">
+            @foreach (HomeDTO home in SelectedCommunity?.Homes ?? new())
+            {
+                <MudSelectItem Value="@home">@home.Number @home.InternalAddress</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField Label="Number" @bind-Value="HomeDTOToEdit.Number" Variant="Variant.Outlined"/>
+        <MudTextField Label="Internal Address" @bind-Value="HomeDTOToEdit.InternalAddress" Variant="Variant.Outlined"/>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-2 mb-2" OnClick="EditHome">Edit Home</MudButton>
     </MudCard>
 }
