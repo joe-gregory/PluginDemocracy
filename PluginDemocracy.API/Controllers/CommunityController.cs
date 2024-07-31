@@ -846,7 +846,7 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<ResidentialCommunityDTO>> GetCommunityAbout([FromQuery] int communityId)
         {
             //Include Homes, include roles
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Roles).FirstOrDefaultAsync(c => c.Id == communityId);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Roles).ThenInclude(r => r.Holder).FirstOrDefaultAsync(c => c.Id == communityId);
             if (community == null) return BadRequest("Community not found.");
             return Ok(new ResidentialCommunityDTO(community));
         }
