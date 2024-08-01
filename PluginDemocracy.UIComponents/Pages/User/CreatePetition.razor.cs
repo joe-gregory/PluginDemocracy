@@ -20,6 +20,8 @@ namespace PluginDemocracy.UIComponents.Pages.User
         public int? PetitionId { get; set; }
         private PetitionDTO petitionDTO = new();
         private readonly IList<IBrowserFile> files = [];
+        private readonly List<MemoryStream> memoryStreams = [];
+        private readonly int maxFileSize = 100 * 1024 * 1024; // 100MB
         private string? temporaryAddAuthor;
         private bool disableAll = false;
         protected override async void OnInitialized()
@@ -79,16 +81,28 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 await RefreshPetition();
             }
         }
-        private void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
+        private async void AddSupportingDocumentsToUpload(IReadOnlyList<IBrowserFile> files)
         {
+            foreach (IBrowserFile file in files) this.files.Add(file);
             foreach (IBrowserFile file in files)
             {
-                this.files.Add(file);
+                MemoryStream memoryStream = new();
+                await using (Stream stream = file.OpenReadStream(maxAllowedSize: maxFileSize))
+                {
+                    await stream.CopyToAsync(memoryStream);
+                }
+                memoryStream.Position = 0;
+                memoryStreams.Add(memoryStream);
             }
         }
         private void RemoveSupportingDocumentToBeUploaded(IBrowserFile file)
         {
-            files.Remove(file);
+            int index = files.IndexOf(file);
+            if (index >= 0)
+            {
+                files.RemoveAt(index);
+                memoryStreams.RemoveAt(index);
+            }
             Services.AddSnackBarMessage("success", "Removed " + file.Name);
         }
         private async void RemoveSupportingDocument(string fileLink)
@@ -191,15 +205,15 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 }
 
                 //Add each file
-                int maxAllowedSize = 100 * 1024 * 1024; //100MB
-                foreach (IBrowserFile file in files)
+                for (int i = 0; i < memoryStreams.Count; i++)
                 {
-                    StreamContent streamContent = new(file.OpenReadStream(maxAllowedSize: maxAllowedSize));
-                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                    MemoryStream memoryStream = memoryStreams[i];
+                    StreamContent streamContent = new(memoryStream);
+                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(files[i].ContentType);
                     streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
                     {
                         Name = "SupportingDocumentsToAdd",
-                        FileName = file.Name
+                        FileName = files[i].Name
                     };
                     multiPartFormDataContent.Add(streamContent);
                 }
@@ -214,8 +228,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (apiResponse.SuccessfulOperation)
                 {
                     files.Clear();
-                    if (apiResponse.Petition != null && PetitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
-                    else await RefreshPetition();
+                    memoryStreams.Clear();
+                    await RefreshPetition();
+                    //if (apiResponse.Petition != null && PetitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
+                    //else await RefreshPetition();
                 }
                 Services.AddSnackBarMessages(apiResponse.Alerts);
             }

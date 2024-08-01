@@ -90,7 +90,7 @@
                         fileName = fileName.Substring(0, index);
                     }
                     <MudListItem Icon="@Icons.Material.Filled.CheckCircle"><MudLink Href="@fileLink">@fileName</MudLink></MudListItem>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveSupportingDocument(fileLink)" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveSupportingDocument(fileLink)" Disabled="disableAll" />
                 }
             </MudList>
         </MudCard>
@@ -113,7 +113,7 @@
                     @author.FullName
                     @if (AppState?.User?.Equals(author) == true)
                     {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveYourselfAsAuthor(author)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveYourselfAsAuthor(author)" Disabled="disableAll" />
                     }
 
                 </MudListItem>
