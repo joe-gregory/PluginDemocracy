@@ -149,6 +149,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             else
             {
                 petitionDTO.Authors.Add(newAuthor);
+                petitionDTO.AuthorsIds.Add(newAuthor.Id);
                 Services.AddSnackBarMessage("success", "Added " + newAuthor.FullName + " to the petition. Don't forget to save!");
                 //If successful Clear the temporary placeholder for the author to add 
                 temporaryAddAuthor = null;
@@ -205,17 +206,20 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 }
 
                 //Add each file
-                for (int i = 0; i < memoryStreams.Count; i++)
+                if (memoryStreams.Count > 0)
                 {
-                    MemoryStream memoryStream = memoryStreams[i];
-                    StreamContent streamContent = new(memoryStream);
-                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(files[i].ContentType);
-                    streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                    for (int i = 0; i < memoryStreams.Count; i++)
                     {
-                        Name = "SupportingDocumentsToAdd",
-                        FileName = files[i].Name
-                    };
-                    multiPartFormDataContent.Add(streamContent);
+                        MemoryStream memoryStream = memoryStreams[i];
+                        StreamContent streamContent = new(memoryStream);
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(files[i].ContentType);
+                        streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
+                        {
+                            Name = "SupportingDocumentsToAdd",
+                            FileName = files[i].Name
+                        };
+                        multiPartFormDataContent.Add(streamContent);
+                    }
                 }
                 //send the request
                 string endpoint = AppState.BaseUrl + ApiEndPoints.SavePetitionDraft;
@@ -229,9 +233,13 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 {
                     files.Clear();
                     memoryStreams.Clear();
+                    if (apiResponse.Petition != null) 
+                    { 
+                        NavigationManager.NavigateTo($"{FrontEndPages.CreatePetition}?petitionId={apiResponse.Petition.Id}");
+                        PetitionId = apiResponse.Petition.Id; 
+                    }
+                    else Services.AddSnackBarMessage("warning", "No petition returned on response.");
                     await RefreshPetition();
-                    //if (apiResponse.Petition != null && PetitionId == null) Services.NavigateTo(FrontEndPages.CreatePetition + $"?petitionId={apiResponse.Petition.Id}");
-                    //else await RefreshPetition();
                 }
                 Services.AddSnackBarMessages(apiResponse.Alerts);
             }

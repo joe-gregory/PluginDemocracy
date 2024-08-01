@@ -562,6 +562,26 @@ namespace PluginDemocracy.API.Controllers
                     //Before adding the files, save the petition so an Id is assigned by SQL and it can be used as part of the document's urls
                     _context.Petitions.Add(petition);
                     await _context.SaveChangesAsync();
+                    //Add the other authors
+                    User? originalAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == petitionDTO.AuthorsIds[0]);
+                    if ( originalAuthor == null)
+                    {
+                        response.AddAlert("error", "Original author could not be determined.");
+                        return response;
+                    }
+                    string title = "You have been added as an author for a new petition draft";
+                    string body = $"You have been added as an author for the petition draft titled: {petition.Title}. Original author: {originalAuthor.FullName}. Please follow this link to the petition: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={originalAuthor.FullName}\">Click here.</a> You can remove yourself as an author at any time. \nPetition drafts with multiple authors can only be published if all authors mark the petition as ready to publish.";
+                    foreach (UserDTO userDTO in petitionDTO.Authors)
+                    {
+                        User? author = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDTO.Id);
+                        if (author != null) 
+                        { 
+                            petition.AddAuthor(author);
+                            author.AddNotification(title, body);
+                            await _utilityClass.SendEmailAsync(toEmail: author.Email, subject: title, body: body);
+                        }
+                        else response.AddAlert("error", $"Author {userDTO.FullName} with id {userDTO.Id} not found");
+                    }
 
                     //BLOB STORAGE SUPPORTING DOCUMENTS
                     string blobContainerURL = Environment.GetEnvironmentVariable("BlobContainerURL") ?? string.Empty;
@@ -616,11 +636,24 @@ namespace PluginDemocracy.API.Controllers
                     //Check which Ids are missing or are extra
 
                     List<int> extraAuthors = [];
+                    User? originalAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == petitionDTO.AuthorsIds[0]);
+                    if (originalAuthor == null)
+                    {
+                        response.AddAlert("error", "Original author could not be determined. Petition already existed.");
+                        return response;
+                    }
+                    string title = "You have been added as an author for a new petition draft";
+                    string body = $"You have been added as an author for the petition draft titled: {petition.Title}. Original author: {originalAuthor.FullName}. Please follow this link to the petition: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={petition.Id}\">Click here.</a> You can remove yourself as an author at any time. \nPetition drafts with multiple authors can only be published if all authors mark the petition as ready to publish.";
                     foreach (int authorDTOId in petitionDTO.AuthorsIds) if (!petition.Authors.Any(a => a.Id == authorDTOId)) extraAuthors.Add(authorDTOId);
                     foreach (int id in extraAuthors)
                     {
                         User? extraAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (extraAuthor != null) extraAuthor.RemovePetitionDraft(petition);
+                        if (extraAuthor != null) 
+                        { 
+                            petition.AddAuthor(extraAuthor);
+                            extraAuthor.AddNotification(title, body);
+                            await _utilityClass.SendEmailAsync(toEmail: extraAuthor.Email, subject: title, body: body);
+                        }
                         else response.AddAlert("error", $"Extra author with id {id} not found");
                         return BadRequest(response);
                     }

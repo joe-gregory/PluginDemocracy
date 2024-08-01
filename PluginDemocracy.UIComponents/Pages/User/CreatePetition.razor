@@ -1,5 +1,6 @@
 ﻿@inject Services Services
 @inject BaseAppState AppState
+@inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Forms
 
 <MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.CreatePetition)</MudText>
@@ -34,7 +35,6 @@
             }
         </MudSelect>
     }
-
 </MudCard>
 @*Title, Description, Action Requested, Supporting Arguments, Deadline for Response*@
 <MudCard Elevation="25" Class="mt-5 pa-5">
@@ -110,7 +110,7 @@
             @foreach (UserDTO author in petitionDTO.Authors)
             {
                 <MudListItem Icon="@Icons.Material.Filled.Person">
-                    @author.FullName
+                    <UserAvatar User="author" />
                     @if (AppState?.User?.Equals(author) == true)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveYourselfAsAuthor(author)" Disabled="disableAll" />
@@ -125,11 +125,11 @@
         <MudList>
             @foreach (UserDTO authorReadyToPublish in petitionDTO.AuthorsReadyToPublish)
             {
-                <MudListItem>@authorReadyToPublish.FullName <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /></MudListItem>
+                <MudListItem><UserAvatar User="authorReadyToPublish" /> <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /></MudListItem>
             }
             @foreach (UserDTO authorNotReadyToPublish in petitionDTO.Authors.Except(petitionDTO.AuthorsReadyToPublish))
             {
-                <MudListItem>@authorNotReadyToPublish.FullName <MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" /></MudListItem>
+                <MudListItem> <UserAvatar User="authorNotReadyToPublish" /><MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" /></MudListItem>
             }
         </MudList>
     </MudCard>
