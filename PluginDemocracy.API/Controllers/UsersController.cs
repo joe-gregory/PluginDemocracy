@@ -69,6 +69,7 @@ namespace PluginDemocracy.API.Controllers
                 existingUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.Roles)
+                        .ThenInclude(r => r.Community)
                     .Include(u => u.ResidentOfHomes)
                         .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
@@ -278,6 +279,7 @@ namespace PluginDemocracy.API.Controllers
                 User? fullDataUser = await _context.Users
                     .Include(u => u.Notifications)
                     .Include(u => u.Roles)
+                        .ThenInclude(r => r.Community)
                     .Include(u => u.ResidentOfHomes)
                         .ThenInclude(h => h.ResidentialCommunity)
                     .Include(u => u.HomeOwnerships)
@@ -969,9 +971,9 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest();
             }
             
-            User? userFromRequest = _context.Users.Include(u => u.HomeOwnerships).ThenInclude(ho => ho.Home).Include(u => u.ResidentOfHomes).Include(u => u.Roles).FirstOrDefault(u => u.Id == userId);
+            User? userToGetAbout = _context.Users.Include(u => u.HomeOwnerships).ThenInclude(ho => ho.Home).Include(u => u.ResidentOfHomes).Include(u => u.Roles).ThenInclude(r => r.Community).FirstOrDefault(u => u.Id == userId);
 
-            if (userFromRequest == null)
+            if (userToGetAbout == null)
             {
                 return NotFound();
             }
@@ -980,11 +982,11 @@ namespace PluginDemocracy.API.Controllers
 
             // Check if existingUser has common citizenships with userFromRequest
             bool hasCommonCitizenship = existingUser.Citizenships
-                .Any(c => userFromRequest.Citizenships.Any(uc => uc.Id == c.Id));
+                .Any(c => userToGetAbout.Citizenships.Any(uc => uc.Id == c.Id));
 
             // Check if existingUser has a role in any of the communities userFromRequest is a citizen of
             bool hasRoleInCommonCommunity = existingUser.Roles
-                .Any(r => userFromRequest.Citizenships.Any(uc => uc.Id == r.Community.Id));
+                .Any(r => userToGetAbout.Citizenships.Any(uc => uc.Id == r.Community.Id));
 
             // Check if existingUser is an admin
             bool isAdmin = existingUser.Admin;
@@ -992,7 +994,7 @@ namespace PluginDemocracy.API.Controllers
             // Only proceed if the existingUser meets one of the conditions
             if (hasCommonCitizenship || hasRoleInCommonCommunity || isAdmin)
             {
-                UserDTO userToReturn = new(userFromRequest);
+                UserDTO userToReturn = new(userToGetAbout);
 
                 // Serialize the userToReturn using Newtonsoft.Json
                 var settings = new JsonSerializerSettings

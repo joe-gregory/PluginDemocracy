@@ -299,6 +299,7 @@ namespace PluginDemocracy.API
                 new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
             return apiResponseJson;

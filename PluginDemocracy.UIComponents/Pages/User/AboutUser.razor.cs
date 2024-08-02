@@ -16,8 +16,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
 
             if (UserId == null)
             {
-                await Services.GetDataGenericAsync<UserDTO>(ApiEndPoints.RefreshUserData);
-                User = AppState.User;
+                User = await Services.GetDataGenericAsync<UserDTO>($"{ApiEndPoints.GetUserAbout}?userId={AppState.User?.Id}");
                 return;
             }
             //Make get request for user base of user id

@@ -13,8 +13,9 @@ namespace PluginDemocracy.UIComponents.Pages.Roles
             possibleCommunities = AppState.User?.Roles
                 .Select(role => role.Community)
                 .Where(community => community != null)
-                .Distinct()
-                .Select(community => community!) // Use the null-forgiving operator
+                .Select(community => community!)
+                .GroupBy(community => community.Id)
+                .Select(group => group.First())
                 .ToList() ?? [];
             if (possibleCommunities.Count == 1) selectedCommunity = possibleCommunities[0];
             string url = ApiEndPoints.RolesGetListOfJCRequestsForGivenCommunity + $"?communityId={selectedCommunity?.Id}";

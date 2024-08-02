@@ -112,6 +112,7 @@ namespace PluginDemocracy.DTOs
                     Title = role.Title,
                     Description = role.Description,
                     Powers = role.Powers,
+                    Active = role.Active,
                     Community = new()
                     {
                         Id = role.Community.Id,
