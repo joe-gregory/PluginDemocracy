@@ -533,6 +533,8 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<PDAPIResponse>> SavePetitionDraft([FromForm] PetitionDTO petitionDTO)
         {
             PDAPIResponse response = new();
+            //If the petition does not have a community specified, reject
+            
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
@@ -547,6 +549,11 @@ namespace PluginDemocracy.API.Controllers
             {
                 try
                 {
+                    if (petitionDTO.CommunityDTOId == 0)
+                    {
+                        response.AddAlert("error", "Petition must have a community specified");
+                        return BadRequest(response);
+                    }
                     petition = new(existingUser)
                     {
                         Title = petitionDTO.Title,
@@ -634,7 +641,17 @@ namespace PluginDemocracy.API.Controllers
                     }
                     //Checking to see if there are any new authors
                     //Check which Ids are missing or are extra
-
+                    
+                    //first, if petitionDTO.authors is empty, delete the petition
+                    if (petitionDTO.Authors.Count == 0)
+                    {
+                        existingUser.RemovePetitionDraft(petition);
+                        _context.Petitions.Remove(petition);
+                        _context.SaveChanges();
+                        response.AddAlert("success", "The petition has been deleted.");
+                        response.RedirectTo = FrontEndPages.CreatePetition;
+                        return Ok(response);
+                    }
                     List<int> extraAuthors = [];
                     User? originalAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == petitionDTO.AuthorsIds[0]);
                     if (originalAuthor == null)

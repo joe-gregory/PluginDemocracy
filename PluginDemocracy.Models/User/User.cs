@@ -203,7 +203,9 @@ namespace PluginDemocracy.Models
         }
         public void RemovePetitionDraft(Petition petition)
         {
-            _petitionDrafts.Remove(petition);
+            Petition? petitionToRemove = _petitionDrafts.FirstOrDefault(p => p.Id == petition.Id);
+            if (petitionToRemove != null) _petitionDrafts.Remove(petitionToRemove);
+            else throw new ArgumentException("No petition found to remove in User.PetitionDrafts.");
         }
     }
 }

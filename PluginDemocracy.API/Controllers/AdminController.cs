@@ -63,7 +63,7 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest("No user found with given credentials");
             if (existingUser.Admin == false) return Unauthorized("This user is not admin");
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Roles).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.JoinCommunityRequests.Where(jcr => jcr.Approved == null)).FirstOrDefaultAsync(c => c.Id == communityId);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Roles).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.JoinCommunityRequests.Where(jcr => jcr.Approved == null)).ThenInclude(jcr => jcr.User).Include(c => c.JoinCommunityRequests.Where(jcr => jcr.Approved == null)).ThenInclude(jcr => jcr.Home).FirstOrDefaultAsync(c => c.Id == communityId);
             if (community == null) return BadRequest("No community found with given id");
             return Ok(new ResidentialCommunityDTO(community));
         }

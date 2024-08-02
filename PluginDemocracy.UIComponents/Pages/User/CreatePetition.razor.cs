@@ -36,6 +36,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     MiddleName = AppState.User.MiddleName,
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
+                    ProfilePicture = AppState.User.ProfilePicture,
                 });
                 if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new ResidentialCommunityDTO()
                 {
@@ -69,6 +70,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     MiddleName = AppState.User.MiddleName,
                     LastName = AppState.User.LastName,
                     SecondLastName = AppState.User.SecondLastName,
+                    ProfilePicture = AppState.User.ProfilePicture
                 });
                 if (AppState?.User?.Citizenships.Count == 1) petitionDTO.CommunityDTO = new ResidentialCommunityDTO()
                 {
@@ -167,13 +169,25 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (result == true)
             {
                 petitionDTO.Authors.Remove(authorToRemove);
-                Services.AddSnackBarMessage("success", AppState.Translate(ResourceKeys.SuccessAuthorRemoved));
+                Services.AddSnackBarMessage("info", AppState.Translate(ResourceKeys.SuccessAuthorRemoved));
+                StateHasChanged();
             }
         }
         private async Task SavePetitionDraft()
         {
             try
             {
+                //if you removed yourself as author, refresh page
+                if (!petitionDTO.Authors.Any(a => a.Id == AppState.User?.Id))
+                {
+                    NavigationManager.NavigateTo(FrontEndPages.CreatePetition, forceLoad: true);
+                    Services.AddSnackBarMessage("info", "Petition draft refreshed.");
+                }
+                if(petitionDTO.CommunityDTO == null)
+                {
+                    Services.AddSnackBarMessage("warning", "Please select a community for the petition. Petition was not saved.");
+                    return;
+                }
                 //Disable everything during save
                 disableAll = true;
                 AppState.IsLoading = true;

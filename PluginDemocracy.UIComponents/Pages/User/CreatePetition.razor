@@ -85,7 +85,7 @@
                 {
                     string fileName = Path.GetFileName(fileLink);
                     int index = fileName.IndexOf("?");
-                    if (index >=0)
+                    if (index >= 0)
                     {
                         fileName = fileName.Substring(0, index);
                     }
@@ -109,27 +109,31 @@
         <MudList>
             @foreach (UserDTO author in petitionDTO.Authors)
             {
-                <MudListItem Icon="@Icons.Material.Filled.Person">
-                    <UserAvatar User="author" />
-                    @if (AppState?.User?.Equals(author) == true)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveYourselfAsAuthor(author)" Disabled="disableAll" />
-                    }
-
-                </MudListItem>
+                @if (AppState?.User?.Equals(author) == true)
+                {
+                    <MudListItem >
+                        <UserAvatar User="author" /> <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() => RemoveYourselfAsAuthor(author)" Disabled="disableAll" />
+                    </MudListItem>
+                }
+                else
+                {
+                    <MudListItem>
+                        <UserAvatar User="author" />
+                    </MudListItem>
+                }
             }
         </MudList>
     </MudCard>
     <MudCard Class="mt-1 pa-2">
-        <MudText Typo="Typo.h5" Class="mb-5">@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudText>
+        <MudText Typo="Typo.h6" Class="mb-5">@AppState.Translate(ResourceKeys.AuthorsReadyToPublish)</MudText>
         <MudList>
             @foreach (UserDTO authorReadyToPublish in petitionDTO.AuthorsReadyToPublish)
             {
-                <MudListItem><UserAvatar User="authorReadyToPublish" /> <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /></MudListItem>
+                <MudListItem><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /> <UserAvatar User="authorReadyToPublish" /> </MudListItem>
             }
             @foreach (UserDTO authorNotReadyToPublish in petitionDTO.Authors.Except(petitionDTO.AuthorsReadyToPublish))
             {
-                <MudListItem> <UserAvatar User="authorNotReadyToPublish" /><MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" /></MudListItem>
+                <MudListItem><MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" /> <UserAvatar User="authorNotReadyToPublish" /></MudListItem>
             }
         </MudList>
     </MudCard>
@@ -138,7 +142,7 @@
     @*Saving Petition Draft*@
     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info" OnClick="SavePetitionDraft" Disabled="disableAll">@AppState.Translate(ResourceKeys.Save)</MudButton>
     @*Delete Petition Draft - Currently deleting on the list page*@
-@*     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteDraft">@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudButton>
- *@    @*Publishing Petition *@
+    @*     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteDraft">@AppState.Translate(ResourceKeys.DeletePetitionDraft)</MudButton>
+    *@    @*Publishing Petition *@
     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Publish" Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishPetition" Disabled="disableAll">@AppState.Translate(ResourceKeys.Publish)</MudButton>
 </MudCard>
