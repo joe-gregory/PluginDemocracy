@@ -10,7 +10,6 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Azure;
 using Newtonsoft.Json;
 
 namespace PluginDemocracy.API.Controllers
@@ -579,17 +578,21 @@ namespace PluginDemocracy.API.Controllers
                         return response;
                     }
                     string title = "You have been added as an author for a new petition draft";
-                    string body = $"You have been added as an author for the petition draft titled: {petition.Title}. Original author: {originalAuthor.FullName}. Please follow this link to the petition: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={originalAuthor.FullName}\">Click here.</a> You can remove yourself as an author at any time. \nPetition drafts with multiple authors can only be published if all authors mark the petition as ready to publish.";
-                    foreach (UserDTO userDTO in petitionDTO.Authors)
+                    string body = $"You have been added as an author for the petition draft titled: {petition.Title}. Original author: {originalAuthor.FullName}. Please follow this link to the petition: <a href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={petition.Id}\">Click here.</a> You can remove yourself as an author at any time. \nPetition drafts with multiple authors can only be published if all authors mark the petition as ready to publish.";
+                    foreach (int userDTOId in petitionDTO.AuthorsIds)
                     {
-                        User? author = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDTO.Id);
-                        if (author != null) 
-                        { 
-                            petition.AddAuthor(author);
-                            author.AddNotification(title, body);
-                            await _utilityClass.SendEmailAsync(toEmail: author.Email, subject: title, body: body);
+                        if (!petition.Authors.Any(u => u.Id == userDTOId))
+                        {
+                            User? author = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDTOId);
+                            if (author != null)
+                            {
+
+                                petition.AddAuthor(author);
+                                author.AddNotification(title, body);
+                                await _utilityClass.SendEmailAsync(toEmail: author.Email, subject: title, body: body);
+                            }
+                            else response.AddAlert("error", $"Author with id {userDTOId} not found");
                         }
-                        else response.AddAlert("error", $"Author {userDTO.FullName} with id {userDTO.Id} not found");
                     }
 
                     //BLOB STORAGE SUPPORTING DOCUMENTS
@@ -645,10 +648,27 @@ namespace PluginDemocracy.API.Controllers
                     //Check which Ids are missing or are extra
                     
                     //first, if petitionDTO.authors is empty, delete the petition
-                    if (petitionDTO.Authors.Count == 0)
+                    if (petitionDTO.AuthorsIds.Count == 0)
                     {
                         existingUser.RemovePetitionDraft(petition);
-                        _context.Petitions.Remove(petition);
+
+                        //Delete associated documents form blob storage
+                        string readWriteSasToken = Environment.GetEnvironmentVariable("BlobSASToken") ?? string.Empty;
+                        if (string.IsNullOrEmpty(readWriteSasToken)) throw new Exception("BlobSASToken environment variable is null or empty");
+                        foreach (string fileLink in petition.LinksToSupportingDocuments)
+                        {
+                            string decodedFileLink = System.Net.WebUtility.UrlDecode(fileLink);
+                            // Remove existing SAS token from URL if present
+                            UriBuilder uriBuilder = new(decodedFileLink)
+                            {
+                                Query = null // This removes the existing query (SAS token)
+                            };
+                            // Append the new SAS token
+                            uriBuilder.Query = readWriteSasToken;
+                            BlobClient blobClient = new(uriBuilder.Uri);
+                            await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                        }
+                            _context.Petitions.Remove(petition);
                         _context.SaveChanges();
                         response.AddAlert("success", "The petition has been deleted.");
                         response.RedirectTo = FrontEndPages.CreatePetition;
@@ -673,8 +693,11 @@ namespace PluginDemocracy.API.Controllers
                             extraAuthor.AddNotification(title, body);
                             await _utilityClass.SendEmailAsync(toEmail: extraAuthor.Email, subject: title, body: body);
                         }
-                        else response.AddAlert("error", $"Extra author with id {id} not found");
-                        return BadRequest(response);
+                        else 
+                        { 
+                            response.AddAlert("error", $"Extra author with id {id} not found");
+                            return BadRequest(response);
+                        }
                     }
                     //You can only remove yourself as author. Did you removed yourself as an author? 
                     if (!petitionDTO.AuthorsIds.Any(id => id == existingUser.Id))

@@ -54,7 +54,11 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (PetitionId == null) return;
             string endpoint = ApiEndPoints.GetPetitionDraft + $"?petitionId={PetitionId}";
             PetitionDTO? petition = await Services.GetDataGenericAsync<PetitionDTO>(endpoint);
-            if (petition != null) petitionDTO = petition;
+            if (petition != null)
+            {
+                foreach (UserDTO author in petition.Authors) petitionDTO.AuthorsIds.Add(author.Id);
+                petitionDTO = petition;
+            }
             else Services.AddSnackBarMessage("error", "Could not load the petition");
             StateHasChanged();
         }
@@ -119,7 +123,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
             request.Content = content;
             PDAPIResponse apiResponse = await Services.SendRequestAsync(request);
-            
+
             if (apiResponse.SuccessfulOperation) await RefreshPetition();
         }
         /// <summary>
@@ -152,7 +156,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
             {
                 petitionDTO.Authors.Add(newAuthor);
                 petitionDTO.AuthorsIds.Add(newAuthor.Id);
-                Services.AddSnackBarMessage("success", "Added " + newAuthor.FullName + " to the petition. Don't forget to save!");
+                Services.AddSnackBarMessage("info", "Added " + newAuthor.FullName + " to the petition. Don't forget to save!");
                 //If successful Clear the temporary placeholder for the author to add 
                 temporaryAddAuthor = null;
             }
@@ -183,7 +187,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     NavigationManager.NavigateTo(FrontEndPages.CreatePetition, forceLoad: true);
                     Services.AddSnackBarMessage("info", "Petition draft refreshed.");
                 }
-                if(petitionDTO.CommunityDTO == null)
+                if (petitionDTO.CommunityDTO == null)
                 {
                     Services.AddSnackBarMessage("warning", "Please select a community for the petition. Petition was not saved.");
                     return;
@@ -204,7 +208,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 if (!string.IsNullOrEmpty(petitionDTO.SupportingArguments)) multiPartFormDataContent.Add(new StringContent(petitionDTO.SupportingArguments), nameof(petitionDTO.SupportingArguments));
                 if (petitionDTO.DeadlineForResponse.HasValue) multiPartFormDataContent.Add(new StringContent(petitionDTO.DeadlineForResponse.Value.ToString("o")), nameof(petitionDTO.DeadlineForResponse));
                 if (petitionDTO.CommunityDTO != null) multiPartFormDataContent.Add(new StringContent(petitionDTO.CommunityDTO.Id.ToString()), nameof(petitionDTO.CommunityDTOId));
-                foreach(UserDTO authorDTO in petitionDTO.Authors)
+                foreach (UserDTO authorDTO in petitionDTO.Authors)
                 {
                     if (authorDTO?.Id != null) multiPartFormDataContent.Add(new StringContent(authorDTO.Id.ToString()), nameof(petitionDTO.AuthorsIds));
                 }
@@ -247,10 +251,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 {
                     files.Clear();
                     memoryStreams.Clear();
-                    if (apiResponse.Petition != null) 
-                    { 
+                    if (apiResponse.Petition != null)
+                    {
                         NavigationManager.NavigateTo($"{FrontEndPages.CreatePetition}?petitionId={apiResponse.Petition.Id}");
-                        PetitionId = apiResponse.Petition.Id; 
+                        PetitionId = apiResponse.Petition.Id;
                     }
                     else Services.AddSnackBarMessage("warning", "No petition returned on response.");
                     await RefreshPetition();
