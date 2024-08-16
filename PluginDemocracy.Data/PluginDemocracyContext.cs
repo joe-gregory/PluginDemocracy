@@ -40,6 +40,9 @@ namespace PluginDemocracy.Data
             // Ensure that Roles are deleted when removed from ResidentialCommunity.Roles
             modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Roles).WithOne(r => r.Community).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ResidentialCommunity>().HasMany(c => c.Homes).WithOne(h => h.ResidentialCommunity);
+            modelBuilder.Entity<ResidentialCommunity>().HasMany(c => c.Petitions).WithOne(p => p.Community);
+            modelBuilder.Entity<ResidentialCommunity>().Ignore(c => c.PetitionsByLatestActivity);
+            modelBuilder.Entity<ResidentialCommunity>().Ignore(c => c.PublishedPetitions);
 
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 

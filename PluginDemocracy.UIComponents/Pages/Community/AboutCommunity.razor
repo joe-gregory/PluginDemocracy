@@ -58,7 +58,18 @@
         </tr>
     </tbody>
 </MudSimpleTable>
-
+@if (CommunityDTO?.Petitions.Count > 0)
+{
+    <MudCard Class="ma-3 pa-3">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Petitions</MudText>
+        <ul>
+            @foreach (PetitionDTO petition in CommunityDTO?.Petitions ?? [])
+            {
+                <li><MudLink Href="@($"{FrontEndPages.Petition}?petitionId={petition.Id}")">@petition.Title</MudLink></li>
+            }
+        </ul>
+    </MudCard>
+}
 @if (CommunityDTO?.Roles.Count > 0)
 {
     <MudCard Class="ma-3 pa-3">

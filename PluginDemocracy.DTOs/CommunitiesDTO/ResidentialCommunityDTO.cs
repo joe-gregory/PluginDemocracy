@@ -54,6 +54,7 @@ namespace PluginDemocracy.DTOs
         public List<PostDTO>? Posts { get; set; } = [];
         public List<JoinCommunityRequestDTO> JoinCommunityRequests { get; set; } = [];
         public List<RoleDTO> Roles { get; set; } = [];
+        public List<PetitionDTO> Petitions { get; set; } = [];
         #endregion
         #region METHODS
         public ResidentialCommunityDTO()
@@ -102,6 +103,7 @@ namespace PluginDemocracy.DTOs
             }
             foreach (Post post in community.Posts) Posts.Add(new PostDTO(post));
             foreach (Role role in community.Roles) Roles.Add(new RoleDTO(role));
+            foreach (Petition petition in community.PublishedPetitions) Petitions.Add(new() { Id = petition.Id, Title = petition.Title });
             foreach (JoinCommunityRequest jcr in community.JoinCommunityRequests) JoinCommunityRequests.Add(new JoinCommunityRequestDTO(jcr));
         }
         public void AddHome(HomeDTO home)
@@ -142,7 +144,6 @@ namespace PluginDemocracy.DTOs
                 Address = community.Address,
             };
             foreach (CultureInfo language in community.OfficialLanguages) communityDTO.AddLanguage(language);
-
             return communityDTO;
         }
         public static ResidentialCommunityDTO ReturnAvatarMinimumResidentialCommunityDTOFromResidentialCommunity(ResidentialCommunity residentialCommunity)

@@ -524,7 +524,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest("You are not logged in");
-            List<Petition> petitions = await _context.Petitions.Include(p => p.Authors).Where(p => p.Authors.Contains(existingUser)).ToListAsync();
+            List<Petition> petitions = await _context.Petitions.Include(p => p.Authors).Where(p => p.Authors.Contains(existingUser) && p.Published == false).ToListAsync();
             List<PetitionDTO> petitionDTOs = [];
             foreach (Petition petition in petitions) petitionDTOs.Add(new PetitionDTO(petition));
             return Ok(petitionDTOs);
@@ -642,6 +642,11 @@ namespace PluginDemocracy.API.Controllers
                     if (petition.Published)
                     {
                         response.AddAlert("error", "Cannot modify a published petition.");
+                        return BadRequest(response);
+                    }
+                    if(petition.AuthorsReadyToPublish.Count > 0)
+                    {
+                        response.AddAlert("error", "You cannot modify this petition because other authors marked it as ready to publish. They will need to unmark it to make further edits.");
                         return BadRequest(response);
                     }
                     //Checking to see if there are any new authors
@@ -938,7 +943,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.AuthorReadyToPublishPetition)]
-        public async Task<ActionResult<PDAPIResponse>> PublishPetition([FromQuery] int petitionId)
+        public async Task<ActionResult<PDAPIResponse>> MarkPetitionAsReadyToPublish([FromQuery] int petitionId)
         {
             PDAPIResponse response = new();
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
@@ -947,7 +952,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "User from claims not found");
                 return BadRequest(response);
             }
-            Petition? petition = await _context.Petitions.Include(p => p.Authors).FirstOrDefaultAsync(p => p.Id == petitionId);
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).Include(p => p.AuthorsReadyToPublish).FirstOrDefaultAsync(p => p.Id == petitionId);
 
             //if petition is null, bad request
             if (petition == null)
@@ -956,7 +961,7 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
             //If the current user is not an author, cannot publish
-            if (!petition.Authors.Contains(existingUser))
+            if (!petition.Authors.Any(a => a.Id == existingUser.Id))
             {
                 response.AddAlert("error", "User is not an author of this petition");
                 return BadRequest(response);
@@ -969,13 +974,97 @@ namespace PluginDemocracy.API.Controllers
             }
             try
             {
-                petition.ReadyToPublish(existingUser);
+                petition.MarkAsReadyToPublish(existingUser);
                 _context.SaveChanges();
                 if (petition.Published)
                 {
                     response.AddAlert("success", "Petition was published");
+                    response.RedirectTo = $"{FrontEndPages.Petition}?petitionId={petition.Id}";
+                    string title = $"Petition {petition.Id} has been published";
+                    string body = $"Petition {petition.Id} has been published and residents can e-sign it. Click on the following link to navigate to the petition page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Petition}?petitionId={petition.Id}\">Petition Page</a>";
+                    foreach (User author in petition.Authors)
+                    {
+                        author.AddNotification(title, body);
+                        await _utilityClass.SendEmailAsync(author.Email,title, body);
+                    }
+                    //Create Post and add it to community
+                    string titleForAllUsers = $"A new petition has been published in your community.";
+                    string bodyForAllUsers = $"A new petition has been published in your community. Click on the following link to navigate to the petition page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Petition}?petitionId={petition.Id}\">Petition Page</a>. If you agree with the petition, you can e-sign it.";
+                    #pragma warning disable CS8604 // Possible null reference argument. petition.Community is not null here because it is published.
+                    Post newPetitionPost = new(petition.Community, body);
+                    #pragma warning restore CS8604 // Possible null reference argument.
+                    petition.Community.AddPost(newPetitionPost);
+                    
+                    //Send Email to all citizens of that community and add Notificatin for all citizens
+                    foreach(User citizen in petition.Community.Citizens)
+                    {
+                        citizen.AddNotification(titleForAllUsers, bodyForAllUsers);
+                        _ = _utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers);
+                    }
+                    _context.SaveChanges();
                 }
-                else response.AddAlert("success", "You have marked the petition as ready to publish");
+                else 
+                { 
+                    response.AddAlert("success", "You have marked the petition as ready to publish");
+                    string title = $"{existingUser.FirstName} marked petition {petition.Id} as ready to publish.";
+                    string body = $"{existingUser.FirstName} marked petition {petition.Id} as ready to publish. Navigate to: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={petition.Id}\">Petition Draft Page</a>";
+                    foreach (User author in petition.Authors)
+                    {
+                        author.AddNotification(title, body);
+                        await _utilityClass.SendEmailAsync(author.Email, title, body);
+                    }
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.UnmarkPetitionReadyToPublish)]
+        public async Task<ActionResult<PDAPIResponse>> UnmarkPetitionAsReadyToPublish([FromQuery] int petitionId)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).Include(p => p.AuthorsReadyToPublish).FirstOrDefaultAsync(p => p.Id == petitionId);
+
+            //if petition is null, bad request
+            if (petition == null)
+            {
+                response.AddAlert("error", "Petition not found");
+                return BadRequest(response);
+            }
+            //If the current user is not an author, cannot publish
+            if (!petition.Authors.Any(a => a.Id == existingUser.Id))
+            {
+                response.AddAlert("error", "User is not an author of this petition");
+                return BadRequest(response);
+            }
+            //If the petition is already published, return bad request
+            if (petition.Published)
+            {
+                response.AddAlert("error", "Petition is already published");
+                return BadRequest(response);
+            }
+            try
+            {
+                petition.NotReadyToPublish(existingUser);
+                _context.SaveChanges();
+                response.AddAlert("success", "Your have removed your mark to publish this petition");
+                string title = $"{existingUser.FirstName} removed mark to publish petition {petition.Id}.";
+                string body = $"{existingUser.FirstName} removed mark to publish petition {petition.Id}. Navigate to: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={petition.Id}\"></a>";
+                foreach (User author in petition.Authors)
+                {
+                    author.AddNotification(title, body);
+                    await _utilityClass.SendEmailAsync(author.Email, title, body);
+                }
                 return Ok(response);
             }
             catch (Exception ex)

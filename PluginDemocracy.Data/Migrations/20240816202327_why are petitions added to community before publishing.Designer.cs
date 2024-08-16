@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PluginDemocracy.Data;
 
@@ -12,9 +13,11 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    partial class PluginDemocracyContextModelSnapshot : ModelSnapshot
+    [Migration("20240816202327_why are petitions added to community before publishing")]
+    partial class whyarepetitionsaddedtocommunitybeforepublishing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +38,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("ResidentsId");
 
-                    b.ToTable("HomeUser", (string)null);
+                    b.ToTable("HomeUser");
                 });
 
             modelBuilder.Entity("PetitionReadyToPublishAuthor", b =>
@@ -50,7 +53,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PetitionReadyToPublishAuthor", (string)null);
+                    b.ToTable("PetitionReadyToPublishAuthor");
                 });
 
             modelBuilder.Entity("PetitionUser", b =>
@@ -65,7 +68,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("PetitionDraftsId");
 
-                    b.ToTable("PetitionUser", (string)null);
+                    b.ToTable("PetitionUser");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.ESignature", b =>
@@ -107,7 +110,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("SignerId");
 
-                    b.ToTable("ESignature", (string)null);
+                    b.ToTable("ESignature");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Home", b =>
@@ -132,7 +135,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("ResidentialCommunityId");
 
-                    b.ToTable("Home", (string)null);
+                    b.ToTable("Home");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.HomeOwnership", b =>
@@ -158,7 +161,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("HomeOwnership", (string)null);
+                    b.ToTable("HomeOwnership");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.JoinCommunityRequest", b =>
@@ -213,7 +216,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("JoinCommunityRequests", (string)null);
+                    b.ToTable("JoinCommunityRequests");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Message", b =>
@@ -243,7 +246,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Message", (string)null);
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Notification", b =>
@@ -275,7 +278,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notification", (string)null);
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Petition", b =>
@@ -321,7 +324,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("CommunityId");
 
-                    b.ToTable("Petitions", (string)null);
+                    b.ToTable("Petitions");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
@@ -372,7 +375,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("_userAuthorId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.PostComment", b =>
@@ -402,7 +405,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostComment", (string)null);
+                    b.ToTable("PostComment");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.PostReaction", b =>
@@ -431,7 +434,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PostReaction", (string)null);
+                    b.ToTable("PostReaction");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.ResidentialCommunity", b =>
@@ -466,7 +469,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ResidentialCommunities", (string)null);
+                    b.ToTable("ResidentialCommunities");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Role", b =>
@@ -515,7 +518,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("HolderId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.User", b =>
@@ -581,7 +584,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("HomeUser", b =>

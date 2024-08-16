@@ -846,9 +846,10 @@ namespace PluginDemocracy.API.Controllers
         public async Task<ActionResult<ResidentialCommunityDTO>> GetCommunityAbout([FromQuery] int communityId)
         {
             //Include Homes, include roles
-            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Roles).ThenInclude(r => r.Holder).FirstOrDefaultAsync(c => c.Id == communityId);
+            ResidentialCommunity? community = await _context.ResidentialCommunities.Include(c => c.Homes).ThenInclude(h => h.Ownerships).Include(c => c.Homes).ThenInclude(h => h.Residents).Include(c => c.Roles).ThenInclude(r => r.Holder).Include(c => c.Petitions).FirstOrDefaultAsync(c => c.Id == communityId);
             if (community == null) return BadRequest("Community not found.");
-            return Ok(new ResidentialCommunityDTO(community));
+            ResidentialCommunityDTO communityDTO = new(community);
+            return Ok(communityDTO);
         }
         [Authorize]
         [HttpGet(ApiEndPoints.RolesGetListOfJCRequestsForGivenCommunity)]
@@ -889,6 +890,18 @@ namespace PluginDemocracy.API.Controllers
                 joinCommunityRequestDTOs.Add(jcr);
             }
             return Ok(joinCommunityRequestDTOs);
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetPetition)]
+        public async Task<ActionResult<PetitionDTO>> GetPetition([FromQuery] int? petitionId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).FirstOrDefaultAsync(p => p.Id == petitionId);
+            if (petition == null) return BadRequest("Petition not found.");
+            if (!petition.Published) return BadRequest("The petition has not been published.");
+            PetitionDTO petitionDTO = new(petition);
+            return Ok(petitionDTO);
         }
     }   
 }

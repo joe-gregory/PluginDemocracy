@@ -21,5 +21,4 @@
 		<ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
 		<ProjectReference Include="..\PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj" />
 	</ItemGroup>
-	
 </Project>

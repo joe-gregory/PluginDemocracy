@@ -59,7 +59,7 @@ namespace PluginDemocracy.Models
             }
             set
             {
-                if (Published) throw new System.InvalidOperationException("Cannot change community of a published petition.");
+                if (Published) throw new InvalidOperationException("Cannot change community of a published petition.");
                 _community = value;
                 _authorsReadyToPublish.Clear();
             }
@@ -183,13 +183,13 @@ namespace PluginDemocracy.Models
         protected void Publish()
         {
             IsItGoodToPublish();
-            Published = true;
-            foreach (User author in _authors) author.RemovePetitionDraft(this);
             #pragma warning disable CS8602 // IsItGoodToPublish() checks if Community is null. 
             Community.AddPetition(this);
-            #pragma warning restore CS8602 
+            #pragma warning restore CS8602
             PublishedDate = DateTime.UtcNow;
             LastUpdated = DateTime.UtcNow;
+            Published = true;
+            //foreach (User author in _authors) author.RemovePetitionDraft(this);
         }
         /// <summary>
         /// If the petition is published, this method will throw an error.
@@ -239,16 +239,17 @@ namespace PluginDemocracy.Models
         /// If there is only one author, then the petition will publish.
         /// </summary>
         /// <param name="author">The author saying he is ok with the current draft and is ready to publish</param>
-        public void ReadyToPublish(User author)
+        public void MarkAsReadyToPublish(User author)
         {
             IsItGoodToPublish();
-            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as ready to be published.");
-            _authorsReadyToPublish.Add(author);
+            if (!_authors.Any(a => a.Id == author.Id)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as ready to be published.");
+            if (!_authorsReadyToPublish.Any(a => a.Id == author.Id))_authorsReadyToPublish.Add(author);
             if (_authorsReadyToPublish.Count == _authors.Count) Publish();
         }
         public void NotReadyToPublish(User author)
         {
-            if (!_authors.Contains(author)) throw new System.InvalidOperationException("Author must be added to the petition before it can mark it as not ready to be published.");
+            User? auth = _authors.FirstOrDefault(a => a.Id == author.Id);
+            if (auth == null) throw new InvalidOperationException("No author found that matched Id");
             _authorsReadyToPublish.Remove(author);
             LastUpdated = DateTime.UtcNow;
         }

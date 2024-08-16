@@ -1,0 +1,69 @@
+﻿@inject Services Services
+@inject BaseAppState AppState
+
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Petition @PetitionId</MudText>
+
+
+<MudCard Class="ma-3 pa-3">
+    <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        <tbody>
+            <tr>
+                <td><MudText><b>Petition Id:</b></MudText></td>
+                <td><MudText>@PetitionDTO?.Id</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Published:</b></MudText></td>
+                <td><MudText>@PetitionDTO?.Published</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Published Date:</b></MudText></td>
+                <td><MudText>@(PetitionDTO?.PublishedDate?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date not set")</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Community:</b></MudText></td>
+                <td><UserAvatar Community="PetitionDTO?.CommunityDTO" /> <MudText>@PetitionDTO?.CommunityDTO?.FullName</MudText></td>
+            </tr>
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
+<MudCard Class="ma-3 pa-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Authors</MudText>
+    <ul>
+        @foreach (UserDTO author in PetitionDTO?.Authors ?? [])
+        {
+            <li><UserAvatar User="author" /> @author.FullName</li>
+        }
+    </ul>
+</MudCard>
+<MudCard Class="ma-3 pa-3">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-5">@PetitionDTO?.Title</MudText>
+    <MudText Typo="Typo.h6" Class="mb-5">Description</MudText>
+    <MudText>@PetitionDTO?.Description</MudText>
+    <MudText Typo="Typo.h6" Class="mb-5">Action Requested</MudText>
+    <MudText>@PetitionDTO?.ActionRequested</MudText>
+    <MudText Typo="Typo.h6" Class="mb-5">Supporting Arguments</MudText>
+    <MudText>@PetitionDTO?.SupportingArguments</MudText>
+    <MudText Typo="Typo.h6" Class="mb-5">Deadline for Response</MudText>
+    <MudText>@(PetitionDTO?.DeadlineForResponse?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date not set")</MudText>
+</MudCard>
+
+<MudCard Class="ma-3 pa-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Supporting Documents</MudText>
+    <ul>
+        @foreach (string supportingDocument in PetitionDTO?.LinksToSupportingDocuments ?? [])
+        {
+            string fileName = Path.GetFileName(supportingDocument);
+            int index = fileName.IndexOf("?");
+            if (index >= 0)
+            {
+                fileName = fileName.Substring(0, index);
+            }
+            <li><MudLink Href="@supportingDocument">@fileName</MudLink></li>
+        }
+    </ul>
+</MudCard>
+
+<MudCard Class="ma-3 pa-3">
+    <MudButton Color="Color.Primary">E-Sign Petition</MudButton>
+</MudCard>
+

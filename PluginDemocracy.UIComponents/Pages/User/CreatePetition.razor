@@ -129,7 +129,14 @@
         <MudList>
             @foreach (UserDTO authorReadyToPublish in petitionDTO.AuthorsReadyToPublish)
             {
-                <MudListItem><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /> <UserAvatar User="authorReadyToPublish" /> </MudListItem>
+                @if (AppState?.User?.Equals(authorReadyToPublish) == true)
+                {
+                    <MudListItem><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /> <UserAvatar User="authorReadyToPublish" /> <MudIconButton Icon="@Icons.Material.Filled.Unpublished" Color="Color.Error" @onclick="Unpublish" Disabled="disableAll" /></MudListItem>
+                }
+                else
+                {
+                    <MudListItem><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" /> <UserAvatar User="authorReadyToPublish" /> </MudListItem>
+                }
             }
             @foreach (UserDTO authorNotReadyToPublish in petitionDTO.Authors.Except(petitionDTO.AuthorsReadyToPublish))
             {

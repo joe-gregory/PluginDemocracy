@@ -149,6 +149,11 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 return;
             }
             //Get the UserDTO for the given email in the API request if email address is valid
+            if (temporaryAddAuthor == AppState.User?.Email)
+            {
+                Services.AddSnackBarMessage("error", "You are already an author of this petition.");
+                return;
+            }
             string endpoint = ApiEndPoints.GetUserDTOFromEmail + "?email=" + temporaryAddAuthor;
             UserDTO? newAuthor = await Services.GetDataGenericAsync<UserDTO>(endpoint);
             if (newAuthor == null) Services.AddSnackBarMessage("error", "Did not find a user with that email address");
@@ -271,11 +276,16 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 disableAll = false;
             }
         }
-        private void PublishPetition()
+        private async void PublishPetition()
         {
-            //modal window of are you sure to publish? No more changes! 
-            //If there are more authors, show which ones already published
-            throw new NotImplementedException();
+            if (petitionDTO.AuthorsReadyToPublish.Count == 0) await SavePetitionDraft();
+            PDAPIResponse response = await Services.PostDataAsync<string?>($"{ApiEndPoints.AuthorReadyToPublishPetition}?petitionId={petitionDTO.Id}", null);
+            if (string.IsNullOrEmpty(response.RedirectTo)) await RefreshPetition();
+        }
+        private async void Unpublish()
+        {
+            await Services.PostDataAsync<string?>($"{ApiEndPoints.UnmarkPetitionReadyToPublish}?petitionId={petitionDTO.Id}", null);
+            await RefreshPetition();
         }
     }
 }

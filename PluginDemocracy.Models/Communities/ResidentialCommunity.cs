@@ -142,7 +142,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                return Petitions.Where(p => p.Published == false).ToList().AsReadOnly();
+                return Petitions.Where(p => p.Published == true).ToList().AsReadOnly();
             }
         }
 

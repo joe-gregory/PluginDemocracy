@@ -28,6 +28,7 @@
         public const string AuthorReadyToPublishPetition = UsersController + "authorreadytopublishpetition";
         public const string GetAllJoinCommunityRequestsForUser = UsersController + "getalljoincommunityrequestsforuser";
         public const string GetUserAbout = UsersController + "getuserabout";
+        public const string UnmarkPetitionReadyToPublish = UsersController + "unmarkpetitionreadytopublish";
          
         #endregion
         #region Community
@@ -44,6 +45,7 @@
         public const string GetListOfAvatarUsersForACommunity = CommunityController + "getlistofavatarusersforacommunity";
         public const string AcceptOrRejectJoinCommunityRequest = CommunityController + "acceptorrejectjoincommunityrequest";
         public const string GetCommunityAbout = CommunityController + "getcommunityabout";
+        public const string GetPetition = CommunityController + "getpetition";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
