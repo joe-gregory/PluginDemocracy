@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PluginDemocracy.Models
 {
@@ -36,10 +32,11 @@ namespace PluginDemocracy.Models
             SignatureImage = signatureImage;
             Intent = intent;
             DocumentHash = ReturnHash();
+            SignedDate = DateTime.UtcNow;
         }
         public string ReturnHash()
         {
-            var hashInput = $"{Signer.FullName}{Signer.Email}{IPAddress}{SignedDate}{Intent}";
+            var hashInput = $"{Signer.FullName}{Signer.Email}{IPAddress}{SignedDate}{Intent}{Petition.Id}{SignatureImage}";
             var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(hashInput));
             return Convert.ToBase64String(hashBytes);
         }

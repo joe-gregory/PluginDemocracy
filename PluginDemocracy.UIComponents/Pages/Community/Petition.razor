@@ -1,5 +1,6 @@
 ﻿@inject Services Services
 @inject BaseAppState AppState
+@inject IDialogService DialogService
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Petition @PetitionId</MudText>
 
@@ -64,6 +65,50 @@
 </MudCard>
 
 <MudCard Class="ma-3 pa-3">
-    <MudButton Color="Color.Primary">E-Sign Petition</MudButton>
+    <MudButton OnClick="StartSignPetitionProcess" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(PetitionDTO == null || disableAll)">@AppState.Translate(ResourceKeys.ESignPetition)</MudButton>
 </MudCard>
+<MudCard Class="ma-3 pa-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Signatures</MudText>
+    <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>Signature</th>
+                <th>Signer</th>
+                <th>Signature Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ESignatureDTO signature in PetitionDTO?.Signatures ?? [])
+            {
+                string imageSrc = $"{signature?.SignatureImage}";
+                <tr>
+                    <td><img src="@imageSrc" /></td>
+                    <td><UserAvatar User="signature?.Signer" /> @signature?.Signer?.FullName</td>
+                    <td>@(signature?.SignedDate?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date Not Set")</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
+
+<MudDialog @bind-IsVisible="ShowESignDialog">
+    <DialogContent>
+        <MudText Typo="Typo.h5" Align="Align.Center"><b>@AppState.Translate(ResourceKeys.ESign)</b></MudText>
+        <br />
+        <MudText>@AppState.Translate(ResourceKeys.ESignModalWindowMainBody)</MudText>
+    </DialogContent>
+    <DialogActions>
+        <ul>
+            <li class="mt-3">
+                <MudCheckBox Disabled="disableAll" @bind-Value="agreeToESignCheckBox" Label="@AppState.Translate(ResourceKeys.ESignModalWindowCheckBox)" />
+            </li>
+            <li class="mt-3">
+                <SignaturePad.SignaturePad @bind-Value="Signature" style="width: 95%" Options="_options" Disabled="disableAll" />
+            </li>
+            <li class="mt-3">
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="!(agreeToESignCheckBox && Signature.Length > 0) || disableAll" OnClick="ESign">@AppState.Translate(ResourceKeys.ESign)</MudButton>
+            </li>
+        </ul>
+    </DialogActions>
+</MudDialog>
 

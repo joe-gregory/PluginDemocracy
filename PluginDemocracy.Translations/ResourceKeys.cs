@@ -132,6 +132,10 @@ namespace PluginDemocracy.Translations
         public const string PetitionDrafts = "PetitionDrafts";
         public const string LatestEdit = "LatestEdit";
         public const string DialogDeletePetitionDraftMultipleAuthors = "DialogDeletePetitionDraftMultipleAuthors";
+        public const string ESignPetition = "ESignPetition";
+        public const string ESign = "ESign";
+        public const string ESignModalWindowMainBody = "ESignModalWindowMainBody";
+        public const string ESignModalWindowCheckBox = "ESignModalWindowCheckBox";
         #endregion
     }
 }

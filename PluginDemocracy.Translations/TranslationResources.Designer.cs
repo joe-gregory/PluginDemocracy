@@ -484,6 +484,42 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to E-Sign.
+        /// </summary>
+        internal static string ESign {
+            get {
+                return ResourceManager.GetString("ESign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I agree to sign this petition electronically and understand that my electronic signature has the same legal effect as a handwritten signature..
+        /// </summary>
+        internal static string ESignModalWindowCheckBox {
+            get {
+                return ResourceManager.GetString("ESignModalWindowCheckBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By electronically signing this petition, you agree that your electronic signature is legally binding and equivalent to your handwritten signature. You acknowledge that you have read and understand the petition document, and you consent to signing it electronically..
+        /// </summary>
+        internal static string ESignModalWindowMainBody {
+            get {
+                return ResourceManager.GetString("ESignModalWindowMainBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-Sign Petition.
+        /// </summary>
+        internal static string ESignPetition {
+            get {
+                return ResourceManager.GetString("ESignPetition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feed.
         /// </summary>
         internal static string Feed {

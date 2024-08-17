@@ -258,6 +258,18 @@
   <data name="ErrorMessageJoinHomeWrongPercentage" xml:space="preserve">
     <value>El porcentaje de propiedad debe estar entre 1 y 100 y no puede ser mayor que lo que está disponible.</value>
   </data>
+  <data name="ESign" xml:space="preserve">
+    <value>Firmar Electrónicamente</value>
+  </data>
+  <data name="ESignModalWindowCheckBox" xml:space="preserve">
+    <value>Estoy de acuerdo en firmar esta petición electrónicamente y entiendo que mi firma electrónica tiene el mismo efecto legal que una firma manuscrita.</value>
+  </data>
+  <data name="ESignModalWindowMainBody" xml:space="preserve">
+    <value>Al firmar electrónicamente esta petición, usted acepta que su firma electrónica tiene la misma validez legal que su firma manuscrita. Usted reconoce que ha leído y comprendido el documento de la petición, y consiente en firmarlo electrónicamente.</value>
+  </data>
+  <data name="ESignPetition" xml:space="preserve">
+    <value>Firmar Petición Electrónicamente</value>
+  </data>
   <data name="Feed" xml:space="preserve">
     <value>Muro</value>
   </data>

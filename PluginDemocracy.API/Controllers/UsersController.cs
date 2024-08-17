@@ -1124,6 +1124,59 @@ namespace PluginDemocracy.API.Controllers
                 return Forbid();
             }
         }
+        [Authorize]
+        [HttpPost(ApiEndPoints.ESign)]
+        public async Task<ActionResult<PDAPIResponse>> ESign([FromQuery] int petitionId, [FromBody] ESignatureDTO? eSignatureDTO)
+        {
+            PDAPIResponse response = new();
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (eSignatureDTO == null)
+            {
+                response.AddAlert("error", "eSignatureDTO is null");
+                return BadRequest(response);
+            }
+            if (eSignatureDTO.SignatureImage == null)
+            {
+                response.AddAlert("error", "Signature image is null");
+                return BadRequest(response);
+            }
+            if (eSignatureDTO.Intent == null)
+            {
+                response.AddAlert("error", "Intent is null.");
+                return BadRequest(response);
+            }
+            Petition? petition = await _context.Petitions.Include(p => p.Community).FirstOrDefaultAsync(p => p.Id == petitionId);
+            //if petition is null, bad request
+            if (petition == null)
+            {
+                response.AddAlert("error", "Petition not found");
+                return BadRequest(response);
+            }
+            string? ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                response.AddAlert("error", "IP Address not found");
+                return BadRequest(response);
+            };
+            ESignature eSignature = new(existingUser, ipAddress,petition, eSignatureDTO.SignatureImage, eSignatureDTO.Intent);
+            try
+            {
+                petition.Sign(eSignature);
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "You have signed the petition");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", ex.Message);
+                return BadRequest(response);
+            }
+        }
     }
         #endregion
 }

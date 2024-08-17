@@ -258,6 +258,18 @@
   <data name="ErrorMessageJoinHomeWrongPercentage" xml:space="preserve">
     <value>Ownership percentage must be between 1 and 100 and can't be bigger that what is available.</value>
   </data>
+  <data name="ESign" xml:space="preserve">
+    <value>E-Sign</value>
+  </data>
+  <data name="ESignModalWindowCheckBox" xml:space="preserve">
+    <value>I agree to sign this petition electronically and understand that my electronic signature has the same legal effect as a handwritten signature.</value>
+  </data>
+  <data name="ESignModalWindowMainBody" xml:space="preserve">
+    <value>By electronically signing this petition, you agree that your electronic signature is legally binding and equivalent to your handwritten signature. You acknowledge that you have read and understand the petition document, and you consent to signing it electronically.</value>
+  </data>
+  <data name="ESignPetition" xml:space="preserve">
+    <value>E-Sign Petition</value>
+  </data>
   <data name="Feed" xml:space="preserve">
     <value>Feed</value>
   </data>

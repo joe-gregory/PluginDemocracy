@@ -36,6 +36,7 @@ namespace PluginDemocracy.DTOs
                 return commonCommunities.ToList();
             }
         }
+        public List<ESignatureDTO> Signatures { get; set; } = [];
         #endregion
         #region METHODS
         public PetitionDTO()
@@ -56,7 +57,15 @@ namespace PluginDemocracy.DTOs
             DeadlineForResponse = petition.DeadlineForResponse;
             LinksToSupportingDocuments = [..petition.LinksToSupportingDocuments];
             foreach (User author in petition.Authors) Authors.Add(UserDTO.ReturnSimpleUserDTOFromUser(author));
-            foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDTOFromUser(authorReadyToPublish)); 
+            foreach (User authorReadyToPublish in petition.AuthorsReadyToPublish) AuthorsReadyToPublish.Add(UserDTO.ReturnSimpleUserDTOFromUser(authorReadyToPublish));
+            foreach (ESignature signature in petition.Signatures) 
+            {
+                ESignatureDTO signDTO = new(signature)
+                {
+                    PetitionDTO = this
+                };
+                Signatures.Add(signDTO);
+            };
         }
         #endregion
 

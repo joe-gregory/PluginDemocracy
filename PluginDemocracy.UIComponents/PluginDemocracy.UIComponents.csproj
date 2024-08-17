@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazor.SignaturePad" Version="8.1.5" />
 		<PackageReference Include="MudBlazor" Version="6.15.0" />
 	</ItemGroup>
 

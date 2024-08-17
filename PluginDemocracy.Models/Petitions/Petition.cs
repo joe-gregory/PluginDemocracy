@@ -36,15 +36,8 @@ namespace PluginDemocracy.Models
                 return _lastUpdated;
             }
             set 
-            { 
-                if (!Published)
-                {
-                    _lastUpdated = value;
-                }
-                else
-                {
-                    throw new Exception("Cannot change LastUpdated date of a published petition.");
-                }
+            {
+                _lastUpdated = value;
             } 
         }
         private ResidentialCommunity? _community;

@@ -1,4 +1,6 @@
-﻿namespace PluginDemocracy.API.UrlRegistry
+﻿using System.Reflection.Metadata;
+
+namespace PluginDemocracy.API.UrlRegistry
 {
     public static class ApiEndPoints
     {
@@ -29,6 +31,7 @@
         public const string GetAllJoinCommunityRequestsForUser = UsersController + "getalljoincommunityrequestsforuser";
         public const string GetUserAbout = UsersController + "getuserabout";
         public const string UnmarkPetitionReadyToPublish = UsersController + "unmarkpetitionreadytopublish";
+        public const string ESign = UsersController + "esign";
          
         #endregion
         #region Community

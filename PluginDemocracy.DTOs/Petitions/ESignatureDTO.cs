@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PluginDemocracy.Models;
 
 namespace PluginDemocracy.DTOs
 {
@@ -17,5 +13,19 @@ namespace PluginDemocracy.DTOs
         public string? HashOfSignedDocument { get; set; }
         public DateTime? SignedDate { get; set; }
         public string? Intent { get; set; }
+        public ESignatureDTO()
+        {
+
+        }
+        public ESignatureDTO(ESignature eSignature)
+        {
+            Id = eSignature.Id;
+            if (eSignature.Signer != null) Signer = UserDTO.ReturnAvatarMinimumUserDTOFromUser(eSignature.Signer);
+            IPAddress = eSignature.IPAddress;
+            SignatureImage = eSignature.SignatureImage;
+            DocumentHash = eSignature.DocumentHash;
+            SignedDate = eSignature.SignedDate;
+            Intent = eSignature.Intent;
+        }
     }
 }
