@@ -897,10 +897,45 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).ThenInclude(c => c.Homes).ThenInclude(h => h.Ownerships).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
             if (petition == null) return BadRequest("Petition not found.");
             if (!petition.Published) return BadRequest("The petition has not been published.");
+            //Get petitionDTO ready:
             PetitionDTO petitionDTO = new(petition);
+            if (petition.Community == null) 
+            {
+                return BadRequest("Petition.Community is null");
+            }
+            petitionDTO.CommunityDTO = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(petition.Community);
+            //In order to display stats on the frontend, I will need information about the community
+            foreach (Home home in petition.Community.Homes)
+            {
+                HomeDTO homeDTO = new()
+                {
+                    Id = home.Id,
+                    Number = home.Number,
+                    InternalAddress = home.InternalAddress,
+                    FullAddress = home.FullAddress
+                };
+                //Get the residents of the house
+                foreach (User resident in home.Residents)
+                {
+                    homeDTO.Residents.Add(UserDTO.ReturnAvatarMinimumUserDTOFromUser(resident));
+                }
+                //get the home ownerships of the house
+                foreach (HomeOwnership homeOwnership in home.Ownerships)
+                {
+                    HomeOwnershipDTO homeOwnershipDTO = new()
+                    {
+                        Id = homeOwnership.Id,
+                        Owner = UserDTO.ReturnAvatarMinimumUserDTOFromUser(homeOwnership.Owner),
+                        OwnershipPercentage = homeOwnership.OwnershipPercentage
+                    };
+                    homeDTO.Ownerships.Add(homeOwnershipDTO);
+                }
+                //Add home to PetitionDTO.CommunityDTO
+                petitionDTO.CommunityDTO.Homes.Add(homeDTO);
+            }
             return Ok(petitionDTO);
         }
     }   

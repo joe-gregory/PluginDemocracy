@@ -70,10 +70,98 @@
 <MudCard Class="ma-3 pa-3">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">Signatures</MudText>
     <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        <tbody>
+            <tr>
+                <td><MudText><b>Majority homeowner signed:  </b></MudText></td>
+                <td>
+                    @if (majorityHomeOwnerSigned)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Primary" />
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" />
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td><MudText><b>Total Signatures: </b></MudText></td>
+                <td><MudText>@PetitionDTO?.Signatures.Count</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Total Number of Homes in Community: </b></MudText></td>
+                <td><MudText>@PetitionDTO?.CommunityDTO?.Homes?.Count</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Amount of homes that have signed: </b></MudText></td>
+                <td><MudText>@amountOfHomesThatHaveSigned</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Amount of homes needed for majority: </b></MudText></td>
+                <td><MudText>@amountOfHomesNeededForMajority</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Amount of homes that haven't signed: </b></MudText></td>
+                <td><MudText>@amountOfHomesThatHaventSigned</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Amount of signatures from home owners: </b></MudText></td>
+                <td><MudText>@amountOfSignaturesFromHomeOwners</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Amount of signatures from non owning residents: </b></MudText></td>
+                <td><MudText>@amountOfSignaturesFromNonOwningResidents</MudText></td>
+            </tr>
+        </tbody>
+    </MudSimpleTable>
+    <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        @foreach (HomeDTO homeDTO in PetitionDTO?.CommunityDTO?.Homes ?? [])
+        {
+            <MudCard Class="pa-3 ma-3">
+                <MudText Align="Align.Center" Typo="Typo.h6">@homeDTO.Number @homeDTO.InternalAddress</MudText>
+
+                <MudText><b>Owner Signatures:</b></MudText>
+                <tbody>
+                    @foreach (UserDTO homeOwnerDTO in homeDTO.Owners)
+                    {
+                        ESignatureDTO? signatureDTO = PetitionDTO?.Signatures?.FirstOrDefault(s => s?.Signer?.Equals(homeOwnerDTO) ?? false);
+                        if (signatureDTO != null)
+                        {
+                            <tr>
+                                <td><UserAvatar User="homeOwnerDTO" /> @homeOwnerDTO.FullName</td>
+                                <td><img src="@signatureDTO.SignatureImage" /></td>
+                                <td>@(signatureDTO?.SignedDate?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date Not Set")</td>
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+                <MudText><b>Nonowner (Residents) Signatures:</b></MudText>
+                <tbody>
+                    @foreach (UserDTO residentDTO in homeDTO.Residents)
+                    {
+                        ESignatureDTO? signatureDTO = PetitionDTO?.Signatures?.FirstOrDefault(s => s?.Signer?.Equals(residentDTO) ?? false);
+                        if (signatureDTO != null)
+                        {
+                            <tr>
+                                <td><UserAvatar User="residentDTO" /> @residentDTO.FullName</td>
+                                <td><img src="@signatureDTO.SignatureImage" /></td>
+                                <td>@(signatureDTO?.SignedDate?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date Not Set")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </MudCard>
+        }
+    </MudSimpleTable>
+</MudCard>
+<MudCard Class="ma-3 pa-3">
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-5">List of Signatures</MudText>
+    <MudSimpleTable Class="pa-3 ma-3">
         <thead>
             <tr>
-                <th>Signature</th>
                 <th>Signer</th>
+                <th>Signature</th>
                 <th>Signature Date</th>
             </tr>
         </thead>
@@ -82,8 +170,8 @@
             {
                 string imageSrc = $"{signature?.SignatureImage}";
                 <tr>
-                    <td><img src="@imageSrc" /></td>
                     <td><UserAvatar User="signature?.Signer" /> @signature?.Signer?.FullName</td>
+                    <td><img src="@imageSrc" /></td>
                     <td>@(signature?.SignedDate?.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date Not Set")</td>
                 </tr>
             }
@@ -103,7 +191,7 @@
                 <MudCheckBox Disabled="disableAll" @bind-Value="agreeToESignCheckBox" Label="@AppState.Translate(ResourceKeys.ESignModalWindowCheckBox)" />
             </li>
             <li class="mt-3">
-                <SignaturePad.SignaturePad @bind-Value="Signature" style="width: 95%" Options="_options" Disabled="disableAll" />
+                <SignaturePad.SignaturePad @bind-Value="Signature" Options="_options" Disabled="disableAll" />
             </li>
             <li class="mt-3">
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="!(agreeToESignCheckBox && Signature.Length > 0) || disableAll" OnClick="ESign">@AppState.Translate(ResourceKeys.ESign)</MudButton>

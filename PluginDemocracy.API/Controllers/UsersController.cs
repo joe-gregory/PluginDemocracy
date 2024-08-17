@@ -1163,7 +1163,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "IP Address not found");
                 return BadRequest(response);
             };
-            ESignature eSignature = new(existingUser, ipAddress,petition, eSignatureDTO.SignatureImage, eSignatureDTO.Intent);
+            ESignature eSignature = new(existingUser, ipAddress, petition, eSignatureDTO.SignatureImage, eSignatureDTO.Intent);
             try
             {
                 petition.Sign(eSignature);

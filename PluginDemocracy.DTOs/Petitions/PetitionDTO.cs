@@ -37,6 +37,11 @@ namespace PluginDemocracy.DTOs
             }
         }
         public List<ESignatureDTO> Signatures { get; set; } = [];
+        /// <summary>
+        /// Key: SignatureId with which Value: HomeId is associated. Assume SignatureIds are unique while
+        /// homeIds are repated since multiple signatures can share a house. 
+        /// </summary>
+        public Dictionary<int,int> SignatureIdWithAssociatedHomeId { get; set; } = [];
         #endregion
         #region METHODS
         public PetitionDTO()

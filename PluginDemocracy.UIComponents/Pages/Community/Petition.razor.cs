@@ -37,6 +37,13 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             BackgroundColor = "#fcf3cf",
         };
         private ESignatureDTO? ESignatureDTO = null;
+        //Stats
+        private double amountOfHomesThatHaveSigned;
+        private double amountOfHomesNeededForMajority;
+        private double amountOfHomesThatHaventSigned;
+        private double amountOfSignaturesFromHomeOwners;
+        private double amountOfSignaturesFromNonOwningResidents;
+        private bool majorityHomeOwnerSigned;
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,6 +53,60 @@ namespace PluginDemocracy.UIComponents.Pages.Community
         {
             if (PetitionId != null) PetitionDTO = await Services.GetDataGenericAsync<PetitionDTO>($"{ApiEndPoints.GetPetition}?petitionId={PetitionId}");
             if (PetitionDTO == null) Services.AddSnackBarMessage("warning", "No petition data received.");
+            CalculateStats();
+        }
+        private void CalculateStats()
+        {
+            amountOfHomesThatHaveSigned = 0;
+            amountOfHomesNeededForMajority = 0;
+            amountOfHomesThatHaventSigned = 0;
+            amountOfSignaturesFromHomeOwners = 0;
+            amountOfSignaturesFromNonOwningResidents = 0;
+            //amountOfHomesThatHaveSigned
+            double homesThatSigned = 0;
+            if (PetitionDTO?.CommunityDTO != null)
+            {
+                foreach (HomeDTO homeDTO in PetitionDTO?.CommunityDTO?.Homes ?? [])
+                {
+                    foreach (KeyValuePair<UserDTO, double> ownersOwnerships in homeDTO.OwnersOwnerships)
+                    {
+                        if (PetitionDTO?.Signatures.Any(s => s?.Signer?.Id == ownersOwnerships.Key.Id) ?? false)
+                        {
+                            homesThatSigned += ownersOwnerships.Value;
+                        }
+                    }
+                }
+            }
+            amountOfHomesThatHaveSigned = homesThatSigned/100;
+
+            //amountOfHomesNeededForMajority
+            int totalHomes = PetitionDTO?.CommunityDTO?.Homes.Count ?? 0;
+            amountOfHomesNeededForMajority = totalHomes / 2 + 1;
+
+            //amountOfHomesThatHaventSigned
+            double totalHomesPercentagesTotals = PetitionDTO?.CommunityDTO?.Homes.Count ?? 0;
+            amountOfHomesThatHaventSigned = totalHomesPercentagesTotals - amountOfHomesThatHaveSigned;
+
+            //amountOfSignaturesFromHomeOwners &
+            //amountOfSignaturesFromNonOwningResidents
+            double signaFromHomeOwners = 0;
+            double signaFromResidents = 0;
+            foreach (ESignatureDTO eSignatureDTO in PetitionDTO?.Signatures ?? [])
+            {
+                if (PetitionDTO?.CommunityDTO?.Homes.Any(h => h.OwnersOwnerships.Any(o => o.Key.Id == eSignatureDTO.Signer?.Id)) ?? false)
+                {
+                    signaFromHomeOwners++;
+                }
+                else if (PetitionDTO?.CommunityDTO?.Homes.Any(h => h.Residents.Any(r => r.Id == eSignatureDTO.Signer?.Id)) ?? false)
+                {
+                    signaFromResidents++;
+                }
+            }
+            amountOfSignaturesFromHomeOwners = signaFromHomeOwners;
+            amountOfSignaturesFromNonOwningResidents = signaFromResidents;
+
+            //majorityHomeOwnerSigned
+            majorityHomeOwnerSigned = amountOfHomesThatHaveSigned >= amountOfHomesNeededForMajority;
         }
         protected void StartSignPetitionProcess()
         {
