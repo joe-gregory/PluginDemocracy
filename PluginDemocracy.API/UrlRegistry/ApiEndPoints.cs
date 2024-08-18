@@ -49,6 +49,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string AcceptOrRejectJoinCommunityRequest = CommunityController + "acceptorrejectjoincommunityrequest";
         public const string GetCommunityAbout = CommunityController + "getcommunityabout";
         public const string GetPetition = CommunityController + "getpetition";
+        public const string GeneratePDFOfPetition = CommunityController + "generatepdfofpetition";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";

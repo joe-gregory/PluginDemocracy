@@ -1,9 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MigraDoc.DocumentObjectModel;
 using Newtonsoft.Json;
 using PluginDemocracy.API.UrlRegistry;
 using PluginDemocracy.Data;
@@ -11,6 +11,7 @@ using PluginDemocracy.DTOs;
 using PluginDemocracy.DTOs.CommunitiesDto;
 using PluginDemocracy.Models;
 using System.Globalization;
+using MigraDoc;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -937,6 +938,52 @@ namespace PluginDemocracy.API.Controllers
                 petitionDTO.CommunityDTO.Homes.Add(homeDTO);
             }
             return Ok(petitionDTO);
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GeneratePDFOfPetition)]
+        public async Task<ActionResult<FileContentResult>> GeneratePDFOfPetition([FromQuery] int? petitionId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).ThenInclude(c => c.Homes).ThenInclude(h => h.Ownerships).ThenInclude(ho => ho.Owner).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
+            if (petition == null) return BadRequest("Petition not found.");
+            if (!petition.Published) return BadRequest("The petition has not been published.");
+            
+            //Create a MigraDoc document
+            Document document = new();
+            document.Info.Title = petition.Title;
+            document.Info.Subject = petition.Title;
+            string authors = string.Empty;
+            foreach (User author in petition.Authors) authors += $"{author.FullName}, ";
+            authors = authors.TrimEnd(',', ' ');
+            document.Info.Author = authors;
+
+            //Cover page
+            Section section = document.AddSection();
+            Paragraph paragraph = section.AddParagraph();
+            paragraph.Format.SpaceAfter = "3cm";
+            paragraph = section.AddParagraph($"{petition.Title}");
+            paragraph = section.AddParagraph($"This is a petition by the citizens of {petition.Community.FullName} for the board members of the Home Owners Association.");
+            paragraph = section.AddParagraph($"Author(s): {authors}");
+            paragraph = section.AddParagraph($"Date this document was rendered: {DateTime.UtcNow.Date.ToLocalTime()}");
+
+            //Define table of contents
+
+            //Define Content Section
+            section = document.AddSection();
+            section.PageSetup.OddAndEvenPagesHeaderFooter = true;
+            section.PageSetup.StartingNumber = 1;
+            section.PageSetup.PageFormat = PageFormat.A4;
+
+            // Create a paragraph with centered page number. See definition of style "Footer".
+            paragraph = new Paragraph();
+            paragraph.AddTab();
+            paragraph.AddPageField();
+            // Add paragraph to footer for odd pages.
+            section.Footers.Primary.Add(paragraph);
+            // Add clone of paragraph to footer for odd pages. Cloning is necessary because an object must
+            // not belong to more than one other object. If you forget cloning an exception is thrown.
+            section.Footers.EvenPage.Add(paragraph.Clone());
         }
     }   
 }
