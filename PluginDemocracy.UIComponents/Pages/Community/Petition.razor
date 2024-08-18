@@ -190,7 +190,7 @@
             <li class="mt-3">
                 <MudCheckBox Disabled="disableAll" @bind-Value="agreeToESignCheckBox" Label="@AppState.Translate(ResourceKeys.ESignModalWindowCheckBox)" />
             </li>
-            <li class="mt-3">
+            <li class="mt-3" style="width: 95%">
                 <SignaturePad.SignaturePad @bind-Value="Signature" Options="_options" Disabled="disableAll" />
             </li>
             <li class="mt-3">

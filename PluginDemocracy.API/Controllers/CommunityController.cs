@@ -897,7 +897,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).ThenInclude(c => c.Homes).ThenInclude(h => h.Ownerships).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
+            Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).ThenInclude(c => c.Homes).ThenInclude(h => h.Ownerships).ThenInclude(ho => ho.Owner).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
             if (petition == null) return BadRequest("Petition not found.");
             if (!petition.Published) return BadRequest("The petition has not been published.");
             //Get petitionDTO ready:

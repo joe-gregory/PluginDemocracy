@@ -994,14 +994,19 @@ namespace PluginDemocracy.API.Controllers
                     Post newPetitionPost = new(petition.Community, body);
                     #pragma warning restore CS8604 // Possible null reference argument.
                     petition.Community.AddPost(newPetitionPost);
-                    
+
                     //Send Email to all citizens of that community and add Notificatin for all citizens
+                    List<Task> sendingEmails = [];
                     foreach(User citizen in petition.Community.Citizens)
                     {
                         citizen.AddNotification(titleForAllUsers, bodyForAllUsers);
-                        _ = _utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers);
+                        sendingEmails.Add(_utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers));
                     }
                     _context.SaveChanges();
+                    foreach (Task task in sendingEmails)
+                    {
+                        await task;
+                    }
                 }
                 else 
                 { 
