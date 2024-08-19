@@ -12,6 +12,7 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// Base64 encoded image of the signature
         /// </summary>
+        public string SignatureImageBase64 { get; init; }
         public string SignatureImage { get; init; }
         /// <summary>
         /// To ensure that the petition signed has not been tampered with. 
@@ -24,12 +25,13 @@ namespace PluginDemocracy.Models
         #pragma warning disable CS8618
         private ESignature() { }
         #pragma warning restore CS8618
-        public ESignature(User signer, string ipAddress, Petition petition, string signatureImage, string intent)
+        public ESignature(User signer, string ipAddress, Petition petition, string signatureImage, string signatureImageBase64, string intent)
         {
             Signer = signer;
             IPAddress = ipAddress;
             Petition = petition;
             SignatureImage = signatureImage;
+            SignatureImageBase64 = signatureImageBase64;
             Intent = intent;
             DocumentHash = ReturnHash();
             SignedDate = DateTime.UtcNow;

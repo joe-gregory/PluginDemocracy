@@ -154,7 +154,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                         multiPartFormDataContent.Add(new StringContent("[]"), nameof(joinRequestUploadDTO.SupportingDocumentsToAdd));
                     }
                     //send the request: 
-                    string endpoint = AppState.BaseUrl + ApiEndPoints.JoinCommunityRequest;
+                    string endpoint = AppState.ApiBaseUrl + ApiEndPoints.JoinCommunityRequest;
                     using HttpRequestMessage request = new(HttpMethod.Post, endpoint);
                     if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
                     request.Content = multiPartFormDataContent;

@@ -9,11 +9,11 @@ namespace PluginDemocracy.WebApp
 {
     public class WebAppState : BaseAppState
     {
-        public override string BaseUrl { get; protected set; }
+        public override string ApiBaseUrl { get; protected set; }
         public override bool HasInternet { get; protected set; } = true;
         public WebAppState(IConfiguration configuration, IServiceProvider serviceProvider) : base(configuration, serviceProvider)
         {
-            BaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
+            ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
         }
         /// <summary>
         /// TODO: Save the state of the app to local storage in browser

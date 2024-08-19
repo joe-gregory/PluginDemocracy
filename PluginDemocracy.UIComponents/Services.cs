@@ -35,7 +35,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> GetDataAsync(string endpoint)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
 
             using HttpRequestMessage request = new(HttpMethod.Get, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
@@ -62,7 +62,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<T?> GetDataGenericAsync<T>(string endpoint)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
 
             using HttpRequestMessage request = new(HttpMethod.Get, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
@@ -100,7 +100,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<bool> PutDataAsync<T>(string endpoint, T data)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
 
             using HttpRequestMessage request = new(HttpMethod.Put, url);
             // Add the JWT as a Bearer token in the Authorization header if it's available
@@ -134,7 +134,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> PostDataAsync<T>(string endpoint, T? data = default, bool referenceHandlerPreserve = true) 
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Post, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
@@ -164,7 +164,7 @@ namespace PluginDemocracy.UIComponents
             where TInput : class
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Post, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
@@ -225,7 +225,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> DeleteDataAsync(string endpoint)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Delete, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT))
@@ -246,7 +246,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> DeleteDataAsyncGeneric<TInput>(string endpoint, TInput data)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + endpoint;
+            string url = _appState.ApiBaseUrl + endpoint;
             //Add JWT to request if available
             using HttpRequestMessage request = new(HttpMethod.Delete, url);
             if (!string.IsNullOrEmpty(_appState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _appState.SessionJWT);
@@ -268,7 +268,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> UploadFileAsync(string apiEndpoint, IBrowserFile browserFile)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + apiEndpoint;
+            string url = _appState.ApiBaseUrl + apiEndpoint;
 
             // Use MultipartFormDataContent to send files
             MultipartFormDataContent content = [];
@@ -315,7 +315,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<PDAPIResponse> UploadMultitpleFilesAsync(string apiEndpoint, IList<IBrowserFile> files)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + apiEndpoint;
+            string url = _appState.ApiBaseUrl + apiEndpoint;
             MultipartFormDataContent content = [];
             try
             {
@@ -361,7 +361,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<bool> UploadPostAsync(string apiEndpoint, string postBody, Dictionary<string, FileData> fileDataDictionary, int communityId)
         {
             _appState.IsLoading = true;
-            string url = _appState.BaseUrl + apiEndpoint;
+            string url = _appState.ApiBaseUrl + apiEndpoint;
             MultipartFormDataContent content = [];
 
             //Add post text to the content
@@ -415,7 +415,7 @@ namespace PluginDemocracy.UIComponents
         public async Task<bool> DeletePostAsync(int postId)
         {
             HttpClient httpClient = CreateHttpClient();
-            string url = _appState.BaseUrl + ApiEndPoints.DeletePost + $"?postId={postId}";
+            string url = _appState.ApiBaseUrl + ApiEndPoints.DeletePost + $"?postId={postId}";
 
             HttpRequestMessage request = new(HttpMethod.Delete, url);
             try

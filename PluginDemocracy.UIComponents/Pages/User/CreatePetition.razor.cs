@@ -118,7 +118,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 { new StringContent(fileLink), "fileLink" },
                 { new StringContent(petitionDTO.Id.ToString()), "petitionId" }
             };
-            string endpoint = AppState.BaseUrl + ApiEndPoints.DeleteDocumentFromPetition;
+            string endpoint = AppState.ApiBaseUrl + ApiEndPoints.DeleteDocumentFromPetition;
             HttpRequestMessage request = new(HttpMethod.Delete, endpoint);
             if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
             request.Content = content;
@@ -245,7 +245,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                     }
                 }
                 //send the request
-                string endpoint = AppState.BaseUrl + ApiEndPoints.SavePetitionDraft;
+                string endpoint = AppState.ApiBaseUrl + ApiEndPoints.SavePetitionDraft;
                 HttpRequestMessage request = new(HttpMethod.Post, endpoint);
                 if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
 

@@ -124,7 +124,7 @@
         if (!string.IsNullOrEmpty(phoneNumber)) registeringUser.PhoneNumber = countryCode + phoneNumber;
 
         AppState.IsLoading = true;
-        string url = AppState.BaseUrl + ApiEndPoints.PostSignUp;
+        string url = AppState.ApiBaseUrl + ApiEndPoints.PostSignUp;
         try
         {
             HttpResponseMessage response = await Services._httpClient.PostAsJsonAsync<UserDTO>(url, registeringUser);

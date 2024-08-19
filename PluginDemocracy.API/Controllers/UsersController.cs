@@ -1155,6 +1155,11 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "Intent is null.");
                 return BadRequest(response);
             }
+            if (string.IsNullOrEmpty(eSignatureDTO.SignatureImageBase64))
+            {
+                response.AddAlert("error", "Signature image base64 is null or empty");
+                return BadRequest(response);
+            }
             Petition? petition = await _context.Petitions.Include(p => p.Community).FirstOrDefaultAsync(p => p.Id == petitionId);
             //if petition is null, bad request
             if (petition == null)
@@ -1168,7 +1173,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "IP Address not found");
                 return BadRequest(response);
             };
-            ESignature eSignature = new(existingUser, ipAddress, petition, eSignatureDTO.SignatureImage, eSignatureDTO.Intent);
+            ESignature eSignature = new(existingUser, ipAddress, petition, eSignatureDTO.SignatureImage, eSignatureDTO.SignatureImageBase64 ,eSignatureDTO.Intent);
             try
             {
                 petition.Sign(eSignature);

@@ -24,7 +24,7 @@ namespace PluginDemocracy.UIComponents
             } 
         }
         public PDAPIResponse PDAPIResponse { get; set; } = new();
-        public abstract string BaseUrl { get; protected set; }
+        public abstract string ApiBaseUrl { get; protected set; }
         //PROPERTIES:
         /// <summary>
         /// Subscribe to this event whenever you want to know when the state of AppState has changed. This event is internally

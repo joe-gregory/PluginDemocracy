@@ -8,6 +8,7 @@ namespace PluginDemocracy.DTOs
         public UserDTO? Signer { get; set; }
         public string? IPAddress { get; set; }
         public PetitionDTO? PetitionDTO { get; set; }
+        public string? SignatureImageBase64 { get; init; }
         public string? SignatureImage { get; set; }
         public string? DocumentHash { get; set; }
         public string? HashOfSignedDocument { get; set; }
@@ -23,6 +24,7 @@ namespace PluginDemocracy.DTOs
             if (eSignature.Signer != null) Signer = UserDTO.ReturnAvatarMinimumUserDTOFromUser(eSignature.Signer);
             IPAddress = eSignature.IPAddress;
             SignatureImage = eSignature.SignatureImage;
+            SignatureImageBase64 = eSignature.SignatureImageBase64;
             DocumentHash = eSignature.DocumentHash;
             SignedDate = eSignature.SignedDate;
             Intent = eSignature.Intent;

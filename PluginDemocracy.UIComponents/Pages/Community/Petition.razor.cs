@@ -119,6 +119,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             ESignatureDTO = new ESignatureDTO
             {
                 SignatureImage = Encoding.UTF8.GetString(Signature),
+                SignatureImageBase64 = Convert.ToBase64String(Signature),
                 Intent = AppState.Translate(ResourceKeys.ESignModalWindowCheckBox)
             };
             string url = $"{ApiEndPoints.ESign}?petitionId={PetitionId}";
@@ -127,6 +128,11 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             disableAll = false;
             ShowESignDialog = false;
             StateHasChanged();
+        }
+        private void GetPDF()
+        {
+            string url = $"{ApiEndPoints.GeneratePDFOfPetition}?petitionId={PetitionId}";
+            Navigation.NavigateTo($"{AppState.ApiBaseUrl}{url}", forceLoad: true);
         }
     }
 }

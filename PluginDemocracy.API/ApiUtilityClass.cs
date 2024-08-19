@@ -18,6 +18,9 @@ using PluginDemocracy.Data;
 using PluginDemocracy.DTOs;
 using PluginDemocracy.Models;
 using Microsoft.AspNetCore.Mvc;
+using QRCoder;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace PluginDemocracy.API
 {
@@ -280,6 +283,26 @@ namespace PluginDemocracy.API
             {
                 response?.AddAlert("error", "Error fetching user from database: " + e.Message);
                 return null;
+            }
+        }
+        public byte[] GenerateQRCode(string text)
+        {
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q))
+            using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
+            {
+                return qrCode.GetGraphic(20);
+            }
+        }
+        internal byte[] ConvertPngToArgb(byte[] imageData)
+        {
+            using (var ms = new MemoryStream(imageData))
+            using (var image = new Bitmap(ms))
+            using (var newImage = image.Clone(new Rectangle(0, 0, image.Width, image.Height), PixelFormat.Format32bppArgb))
+            using (var newMs = new MemoryStream())
+            {
+                newImage.Save(newMs, ImageFormat.Png);
+                return newMs.ToArray();
             }
         }
         internal static string SerializeUserDTOWithNewtonSoft(UserDTO userDTO)

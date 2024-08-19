@@ -116,7 +116,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
                         };
                         multiPartFormDataContent.Add(streamContent);
                     }
-                    string endpoint = $"{AppState.BaseUrl}{ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
+                    string endpoint = $"{AppState.ApiBaseUrl}{ApiEndPoints.AddAdditionalSupportingDocumentsToJoinCommunityRequest}?requestId={joinCommunityRequestDTO?.Id}";
                     HttpRequestMessage request = new(HttpMethod.Post, endpoint);
                     if (!string.IsNullOrEmpty(AppState.SessionJWT)) request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppState.SessionJWT);
                     request.Content = multiPartFormDataContent;

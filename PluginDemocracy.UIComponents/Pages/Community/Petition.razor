@@ -1,6 +1,7 @@
 ﻿@inject Services Services
 @inject BaseAppState AppState
 @inject IDialogService DialogService
+@inject NavigationManager Navigation
 
 <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Petition @PetitionId</MudText>
 
@@ -63,6 +64,13 @@
         }
     </ul>
 </MudCard>
+
+@if (PetitionDTO?.Authors.Any(a => a.Id == AppState?.User?.Id) ?? false)
+{
+    <MudCard Class="ma-3 pa-3">
+        <MudButton OnClick="GetPDF" Color="Color.Info" Variant="Variant.Filled" Disabled="disableAll">Generate PDF for Printing</MudButton>
+    </MudCard>
+}
 
 <MudCard Class="ma-3 pa-3">
     <MudButton OnClick="StartSignPetitionProcess" Color="Color.Primary" Variant="Variant.Filled" Disabled="@(PetitionDTO == null || disableAll)">@AppState.Translate(ResourceKeys.ESignPetition)</MudButton>
