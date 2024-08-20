@@ -1003,10 +1003,11 @@ namespace PluginDemocracy.API.Controllers
                         sendingEmails.Add(_utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers));
                     }
                     _context.SaveChanges();
-                    foreach (Task task in sendingEmails)
-                    {
-                        await task;
-                    }
+                    //TODO: Maybe not necessary to await the emails. Fire and forget for quicker publishing.
+                    //foreach (Task task in sendingEmails)
+                    //{
+                    //    await task;
+                    //}
                 }
                 else 
                 { 
