@@ -117,6 +117,11 @@ namespace PluginDemocracy.Models
             HomeOwnership newHomeOwnership = new(this, user, percentage);
             _ownerships.Add(newHomeOwnership);
             user.AddHomeOwnership(newHomeOwnership);
+            User? isResident = Residents.FirstOrDefault(r => r.Id == user.Id);
+            if (isResident != null)
+            {
+                RemoveResident(user);
+            }
         }
         public void RemoveOwner(User citizen)
         {
