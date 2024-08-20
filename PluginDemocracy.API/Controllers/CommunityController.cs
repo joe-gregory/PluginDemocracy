@@ -762,7 +762,7 @@ namespace PluginDemocracy.API.Controllers
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
-            Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).FirstOrDefaultAsync(p => p.Id == reactionDto.PostId);
+            Post? post = await _context.Posts.Include(p => p.Reactions).FirstOrDefaultAsync(p => p.Id == reactionDto.PostId);
             if (post == null) return BadRequest();
 
             try
@@ -905,7 +905,9 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Petition? petition = await _context.Petitions.Include(p => p.Authors).Include(p => p.Community).ThenInclude(c => c.Homes).ThenInclude(h => h.Ownerships).ThenInclude(ho => ho.Owner).Include(p => p.Signatures).ThenInclude(s => s.Signer).FirstOrDefaultAsync(p => p.Id == petitionId);
+
             if (petition == null) return BadRequest("Petition not found.");
             if (!petition.Published) return BadRequest("The petition has not been published.");
             //Get petitionDTO ready:
@@ -973,6 +975,7 @@ namespace PluginDemocracy.API.Controllers
             List<string> tempFilesToDelete = [];
             //DEFINE STYLES
             // Get the predefined style Normal.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             Style style = document.Styles["Normal"];
             style.ParagraphFormat.SpaceAfter = 2;
             // Because all styles are derived from Normal, the next line changes the 
@@ -1465,6 +1468,9 @@ namespace PluginDemocracy.API.Controllers
                 byte[] pdfContent = memoryStream.ToArray();
                 string fileName = $"Petition {petition.Title}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf";
                 return File(pdfContent, "application/pdf", fileName);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             }
         }
     }   
