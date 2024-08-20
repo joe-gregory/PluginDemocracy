@@ -783,7 +783,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
-            Post? post = await _context.Posts.Include(p => p.Author).Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
+            Post? post = await _context.Posts.Include(p => p.Reactions).Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == postCommentDto.PostId);
             if (post == null) return BadRequest();
 
             try
