@@ -1075,34 +1075,59 @@ namespace PluginDemocracy.API.Controllers
 
             paragraph = section.AddParagraph();
             paragraph.Style = "TOC";
-            Hyperlink hyperlink = paragraph.AddHyperlink("Paragraphs");
-            hyperlink.AddText("Paragraphs\t");
-            hyperlink.AddPageRefField("Paragraphs");
+            Hyperlink hyperlink = paragraph.AddHyperlink("Petition Statistics");
+            hyperlink.AddText("Petition Statistics\t");
+            hyperlink.AddPageRefField("Petition Statistics");
 
             paragraph = section.AddParagraph();
             paragraph.Style = "TOC";
-            hyperlink = paragraph.AddHyperlink("Tables");
-            hyperlink.AddText("Tables\t");
-            hyperlink.AddPageRefField("Tables");
+            hyperlink = paragraph.AddHyperlink("Petition");
+            hyperlink.AddText("Petition\t");
+            hyperlink.AddPageRefField("Petition");
 
             paragraph = section.AddParagraph();
             paragraph.Style = "TOC";
-            hyperlink = paragraph.AddHyperlink("Charts");
-            hyperlink.AddText("Charts\t");
-            hyperlink.AddPageRefField("Charts");
+            hyperlink = paragraph.AddHyperlink("Appendixes");
+            hyperlink.AddText("Appendixes\t");
+            hyperlink.AddPageRefField("Appendixes");
+
+            paragraph = section.AddParagraph();
+            paragraph.Style = "TOC";
+            hyperlink = paragraph.AddHyperlink("Appendix 1: E-Signatures");
+            hyperlink.AddText("Appendix 1: E-Signatures\t");
+            hyperlink.AddPageRefField("Appendix 1: E-Signatures");
+            
+            int apIndex = 1;
+            foreach (string link in petition.LinksToSupportingDocuments)
+            {
+                apIndex++;
+                paragraph = section.AddParagraph();
+                paragraph.Style = "TOC";
+                hyperlink = paragraph.AddHyperlink($"Appendix {apIndex}: Attached Document");
+                hyperlink.AddText($"Appendix {apIndex}: Attached Document\t");
+                hyperlink.AddPageRefField($"Appendix {apIndex}: Attached Document");
+            }
+            paragraph = section.AddParagraph();
+            paragraph.Style = "TOC";
+            hyperlink = paragraph.AddHyperlink("Board Members Signatures");
+            hyperlink.AddText("Board Members Signatures\t");
+            hyperlink.AddPageRefField("Board Members Signatures");
             #endregion
             //DEFINE CONTENT SECTION
             section = document.AddSection();
             section.PageSetup.OddAndEvenPagesHeaderFooter = true;
-            section.PageSetup.StartingNumber = 1;
+            //section.PageSetup.StartingNumber = 1;
             section.PageSetup.PageFormat = PageFormat.A4;
 
             // Create a paragraph with centered page number. See definition of style "Footer".
-            paragraph = new Paragraph();
+            //paragraph = new Paragraph();
+            paragraph = section.Footers.Primary.AddParagraph();
             paragraph.AddTab();
             paragraph.AddPageField();
+            paragraph.AddText(" of ");
+            paragraph.AddNumPagesField();
             // Add paragraph to footer for odd pages.
-            section.Footers.Primary.Add(paragraph);
+            //section.Footers.Primary.Add(paragraph);
             // Add clone of paragraph to footer for odd pages. Cloning is necessary because an object must
             // not belong to more than one other object. If you forget cloning an exception is thrown.
             section.Footers.EvenPage.Add(paragraph.Clone());
@@ -1347,6 +1372,7 @@ namespace PluginDemocracy.API.Controllers
             foreach (string link in petition.LinksToSupportingDocuments)
             {
                 appendixNumber++;
+                
                 section = document.AddSection();
                 string linkWithoutQuestion = string.Empty;
                 int index = link.IndexOf('?');
@@ -1356,10 +1382,10 @@ namespace PluginDemocracy.API.Controllers
                     linkWithoutQuestion = link.Substring(0, index); // Get the substring before the '?'
                 }
                 paragraph = document.LastSection.AddParagraph($"Appendix {appendixNumber}: Supporting Document:", "Heading1");
+                paragraph.AddBookmark($"Appendix {appendixNumber}: Attached Document");
                 paragraph.AddLineBreak();
                 paragraph.AddLineBreak();
                 paragraph = document.LastSection.AddParagraph($"{linkWithoutQuestion}", "Heading2");
-                paragraph.AddBookmark($"Appendix {appendixNumber}");
                 paragraph.AddLineBreak();
                 paragraph = document.LastSection.AddParagraph($"To view the supporting document, please visit the following link:");
                 paragraph.AddLineBreak();
@@ -1431,7 +1457,7 @@ namespace PluginDemocracy.API.Controllers
                 {
                     if (System.IO.File.Exists(tempFile))
                     {
-                        System.IO.File.Delete(tempFilePath);
+                        System.IO.File.Delete(tempFile);
                     }
                 }
                 
