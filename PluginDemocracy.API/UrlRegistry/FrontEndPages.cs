@@ -7,6 +7,7 @@ namespace PluginDemocracy.API.UrlRegistry
         //Generic pages
         public const string Home = "/";
         public const string GenericMessage = "/message";
+        public const string ReportABug = "/reportabug";
 
         //User pages
         public const string Login = "/login";

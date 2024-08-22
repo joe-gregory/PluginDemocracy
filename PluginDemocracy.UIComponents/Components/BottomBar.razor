@@ -12,7 +12,8 @@
     <DialogContent>
         <MudNavMenu>
             <MudNavLink Href="@FrontEndPages.CreatePetition" Class="mb-1"><MudIcon Icon="@Icons.Material.Filled.Description" /> @AppState.Translate(ResourceKeys.CreatePetition)</MudNavLink>
-            <MudNavLink OnClick="OpenCreatePost"><MudIcon Icon="@Icons.Material.Filled.PostAdd" /> Post</MudNavLink>
+            <MudNavLink OnClick="OpenCreatePost" Class="mb-1"><MudIcon Icon="@Icons.Material.Filled.PostAdd" /> Post</MudNavLink>
+            <MudNavLink Href="@FrontEndPages.ReportABug">@AppState.Translate(ResourceKeys.ReportABug)</MudNavLink>
         </MudNavMenu>
     </DialogContent>
 </MudDialog>

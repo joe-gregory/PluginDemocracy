@@ -81,6 +81,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string AdminDeleteHome = AdminController + "deletehome";
         public const string AdminEditHome = AdminController + "edithome";
         public const string AdminAddHome = AdminController + "addhome";
+        public const string AdminReportABug = AdminController + "reportabug";
         #endregion
 
     }

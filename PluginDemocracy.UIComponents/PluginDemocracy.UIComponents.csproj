@@ -15,6 +15,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="Pages\AppAdmin\ReportABug.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="Icons\CommunityIcon.svg">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -54,5 +58,17 @@
 	<PropertyGroup>
 		<AssemblyNeutralLanguage>en-US</AssemblyNeutralLanguage>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Pages\AppAdmin\ReportABug.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Pages\AppAdmin\ReportABug.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Pages\User\ReportABug.razor" />
+	</ItemGroup>
 
 </Project>

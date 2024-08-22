@@ -435,6 +435,9 @@
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="ReportABug" xml:space="preserve">
+    <value>Report a bug</value>
+  </data>
   <data name="Required" xml:space="preserve">
     <value>Required</value>
   </data>

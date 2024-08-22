@@ -11,6 +11,7 @@ namespace PluginDemocracy.Translations
     {
         public const string Cancel = "Cancel";
         public const string Accept = "Accept";
+        public const string ReportABug = "ReportABug";
         
         public const string NewPasswordTitle = "NewPasswordTitle";
         public const string PasswordsDoNotMatch = "PasswordsDoNotMatch";

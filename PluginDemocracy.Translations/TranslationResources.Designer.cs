@@ -1015,6 +1015,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report a bug.
+        /// </summary>
+        internal static string ReportABug {
+            get {
+                return ResourceManager.GetString("ReportABug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Required.
         /// </summary>
         internal static string Required {

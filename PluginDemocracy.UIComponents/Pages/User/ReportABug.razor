@@ -1,0 +1,19 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+<MudText Align="Align.Center" Typo="Typo.h3" Color="Color.Primary">@AppState.Translate(ResourceKeys.ReportABug)</MudText>
+
+<MudTextField T="string" Label="Subject" Required="true"  @bind-Value="subject" Variant="Variant.Outlined" Immediate="true" />
+<MudTextField T="string" Label="Description" Required="true" @bind-Value="body" Variant="Variant.Outlined" Immediate="true" Lines="10" />
+
+<MudButton Class="mt-2" Color="Color.Primary" Variant="Variant.Filled" OnClick="SendBug">Send</MudButton>
+
+@code {
+    private string subject;
+    private string body;
+
+    private async void SendBug()
+    {
+        string url = $"{ApiEndPoints.AdminReportABug}?title={subject}&body={body}";
+        await Services.PostDataAsync<string?>(url, null);
+    }
+}

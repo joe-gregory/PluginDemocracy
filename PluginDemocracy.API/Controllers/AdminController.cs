@@ -573,6 +573,39 @@ namespace PluginDemocracy.API.Controllers
             }
             
         }
+        [Authorize]
+        [HttpPost(ApiEndPoints.AdminReportABug)]
+        public async Task<ActionResult<PDAPIResponse>> ReportABug(string? title, string? body)
+        {
+            PDAPIResponse response = new();
+            User? user = await _utilityClass.ReturnUserFromClaims(User);
+            if (user == null)
+            {
+                response.AddAlert("error", "User from claims not found");
+                return BadRequest(response);
+            }
+            if (title == null || body == null)
+            {
+                response.AddAlert("error", "Title or body is null");
+                return BadRequest(response);
+            }
+            try
+            {
+                string subject = $"Bug Report {title}";
+                string messageBody = $"User Name: {user.FullName}\nUser Email: {user.Email}\nUser Message: {body}";
+                await _utilityClass.SendEmailAsync("bugs@plugindemocracy.com", subject, messageBody);
+                response.AddAlert("success", "Bug report sent successfully");
+                response.RedirectTo = FrontEndPages.GenericMessage;
+                response.RedirectParameters.Add("Title", "Bug Report Sent");
+                response.RedirectParameters.Add("Body", "Your bug report has been sent successfully. Thank you for helping us improve our platform.");
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                response.AddAlert("error", e.Message);
+                return response;
+            }
+        }
     }
 }
 
