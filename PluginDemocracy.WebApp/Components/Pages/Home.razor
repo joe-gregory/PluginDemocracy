@@ -1,18 +1,33 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject BaseAppState AppState
-@using System.Globalization
-@inject Services services
-@inject ISnackbar Snackbar
-
-
+@inject NavigationManager navigation
 
 <PageTitle>Home</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Medium">
     <div style="margin:20px; align-content:center">
-        
     </div>
 </MudContainer>
 
-    
+@code
+{
+    private bool _navigationHandled;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && !_navigationHandled)
+        {
+            _navigationHandled = true; // Prevents re-navigation on subsequent renders
+
+            if (AppState.IsLoggedIn)
+            {
+                navigation.NavigateTo(FrontEndPages.Feed);
+            }
+            else
+            {
+                navigation.NavigateTo(FrontEndPages.Login);
+            }
+        }
+    }
+}
