@@ -21,6 +21,9 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Clean the solution (optional but recommended for cache issues)
+        run: dotnet clean --configuration Release
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
