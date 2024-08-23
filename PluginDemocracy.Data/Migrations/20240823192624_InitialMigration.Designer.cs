@@ -13,8 +13,8 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    [Migration("20240724213209_Fixing relationship between community and posts")]
-    partial class Fixingrelationshipbetweencommunityandposts
+    [Migration("20240823192624_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,6 +95,10 @@ namespace PluginDemocracy.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SignatureImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignatureImageBase64")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -314,12 +318,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Property<DateTime?>("PublishedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ResidentialCommunityId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ResidentialCommunityId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("SupportingArguments")
                         .HasColumnType("nvarchar(max)");
 
@@ -329,10 +327,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CommunityId");
-
-                    b.HasIndex("ResidentialCommunityId");
-
-                    b.HasIndex("ResidentialCommunityId1");
 
                     b.ToTable("Petitions");
                 });
@@ -748,14 +742,6 @@ namespace PluginDemocracy.Data.Migrations
                         .WithMany("Petitions")
                         .HasForeignKey("CommunityId");
 
-                    b.HasOne("PluginDemocracy.Models.ResidentialCommunity", null)
-                        .WithMany("PetitionsByLatestActivity")
-                        .HasForeignKey("ResidentialCommunityId");
-
-                    b.HasOne("PluginDemocracy.Models.ResidentialCommunity", null)
-                        .WithMany("PublishedPetitions")
-                        .HasForeignKey("ResidentialCommunityId1");
-
                     b.Navigation("Community");
                 });
 
@@ -867,15 +853,11 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.Navigation("Petitions");
 
-                    b.Navigation("PetitionsByLatestActivity");
-
                     b.Navigation("Posts");
 
                     b.Navigation("PostsByLatestActivity");
 
                     b.Navigation("PostsByPublishedDate");
-
-                    b.Navigation("PublishedPetitions");
 
                     b.Navigation("Roles");
                 });
