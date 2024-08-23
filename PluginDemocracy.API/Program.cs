@@ -1,15 +1,11 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.Resource;
 using Microsoft.IdentityModel.Tokens;
 using PluginDemocracy.Data;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging.AzureAppServices;
 
 namespace PluginDemocracy.API
 {
@@ -26,7 +22,14 @@ namespace PluginDemocracy.API
                 options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(5);
             });
 
-            //Logging 
+            // Add logging services
+            builder.Services.AddLogging(logging =>
+            {
+                /*logging.ClearProviders();*/ // Optional: Clears default providers
+                logging.AddConsole(); // Adds console logging (stdout)
+                logging.AddDebug(); // Adds debug output logging
+                logging.AddAzureWebAppDiagnostics(); // Enables Azure logging
+            });
             // Add services to the container.
             builder.Services
                 .AddControllers(options =>
