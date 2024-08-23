@@ -45,7 +45,6 @@ namespace PluginDemocracy.API
                     o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 })
               ;
-            builder.Services.AddLogging();
 
             // Add services to the container.
             //Authentication
@@ -103,8 +102,6 @@ namespace PluginDemocracy.API
                     }));
 
             builder.Services.AddScoped<APIUtilityClass>();
-            builder.Logging.AddConsole();
-
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
