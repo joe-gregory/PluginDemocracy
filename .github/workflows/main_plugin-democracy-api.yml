@@ -28,7 +28,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish PluginDemocracy.API/PluginDemocracy.API.csproj -c Release -o ${{env.DOTNET_ROOT}}\PluginDemocracy.API
+        run: dotnet publish PluginDemocracy.API/PluginDemocracy.API.csproj -c Release -o "${{env.DOTNET_ROOT}}\PluginDemocracy.API"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
