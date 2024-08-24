@@ -27,6 +27,9 @@ jobs:
       - name: Publish API Project with dotnet
         run: dotnet publish PluginDemocracy.API/PluginDemocracy.API.csproj -c Release -o "${{env.DOTNET_ROOT}}\PluginDemocracy.API"
 
+      - name: List Directory Contents
+        run: dir "${{env.DOTNET_ROOT}}\PluginDemocracy.API"
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
