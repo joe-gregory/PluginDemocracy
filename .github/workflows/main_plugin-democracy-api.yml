@@ -30,7 +30,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
+          name: .net-api-app
           path: ${{env.DOTNET_ROOT}}\PluginDemocracy.API
 
   deploy:
@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'Plugin-Democracy-API'
           slot-name: 'Production'
-          package: .
+          package: ${{env.DOTNET_ROOT}}\PluginDemocracy.API
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_265009E2695B4B2FAE0981D723FF37E1 }}
