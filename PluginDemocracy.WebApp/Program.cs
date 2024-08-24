@@ -13,6 +13,9 @@ namespace PluginDemocracy.WebApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration
+                .AddJsonFile("appsettings.WebApp.json", optional: false, reloadOnChange: true);
+
             // Add services to the container.
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
