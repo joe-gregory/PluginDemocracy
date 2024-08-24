@@ -21,17 +21,20 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Clean the solution (optional but recommended for cache issues)
+        run: dotnet clean --configuration Release
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish PluginDemocracy.WebApp/PluginDemocracy.WebApp.csproj -c Release -o "${{env.DOTNET_ROOT}}\PluginDemocracy.WebApp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}\PluginDemocracy.WebApp
 
   deploy:
     runs-on: windows-latest
