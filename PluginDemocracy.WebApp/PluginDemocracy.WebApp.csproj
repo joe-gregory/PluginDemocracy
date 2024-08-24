@@ -23,4 +23,17 @@
 		<ProjectReference Include="..\PluginDemocracy.DTOs\PluginDemocracy.DTOs.csproj" />
 		<ProjectReference Include="..\PluginDemocracy.UIComponents\PluginDemocracy.UIComponents.csproj" />
 	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<None Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<None Update="appsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>
