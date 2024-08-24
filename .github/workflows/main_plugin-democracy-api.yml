@@ -55,5 +55,5 @@ jobs:
         with:
           app-name: 'Plugin-Democracy-API'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}\PluginDemocracy.API
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_265009E2695B4B2FAE0981D723FF37E1 }}
