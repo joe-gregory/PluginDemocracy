@@ -21,20 +21,17 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build API Project with dotnet
+        run: dotnet build PluginDemocracy.API/PluginDemocracy.API.csproj --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ./PluginDemocracy.API
-
-      - name: List directory contents
-        run: dir ./PluginDemocracy.API
+      - name: Publish API Project with dotnet
+        run: dotnet publish PluginDemocracy.API/PluginDemocracy.API.csproj -c Release -o "${{env.DOTNET_ROOT}}\PluginDemocracy.API"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-api-app
-          path: ./PluginDemocracy.API
+          path: ${{env.DOTNET_ROOT}}\PluginDemocracy.API
 
   deploy:
     runs-on: windows-latest
@@ -55,5 +52,5 @@ jobs:
         with:
           app-name: 'Plugin-Democracy-API'
           slot-name: 'Production'
-          package: ./PluginDemocracy.API
+          package: ${{env.DOTNET_ROOT}}\PluginDemocracy.API
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_265009E2695B4B2FAE0981D723FF37E1 }}
