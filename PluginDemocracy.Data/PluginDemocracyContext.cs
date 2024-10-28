@@ -44,8 +44,12 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<ResidentialCommunity>().HasMany(c => c.Petitions).WithOne(p => p.Community);
             modelBuilder.Entity<ResidentialCommunity>().Ignore(c => c.PetitionsByLatestActivity);
             modelBuilder.Entity<ResidentialCommunity>().Ignore(c => c.PublishedPetitions);
+            modelBuilder.Entity<ResidentialCommunity>().Navigation(rc => rc.Proposals).UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.Entity<ResidentialCommunity>().HasMany(rc => rc.Proposals).WithOne(p => p.Community);
 
+            modelBuilder.Entity<Proposal>().Navigation(p => p.Votes).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal);
+            
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Home>().Ignore(Home => Home.Citizens);
