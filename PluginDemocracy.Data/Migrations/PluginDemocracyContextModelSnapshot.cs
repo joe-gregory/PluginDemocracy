@@ -35,7 +35,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("ResidentsId");
 
-                    b.ToTable("HomeUser");
+                    b.ToTable("HomeUser", (string)null);
                 });
 
             modelBuilder.Entity("PetitionReadyToPublishAuthor", b =>
@@ -50,7 +50,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PetitionReadyToPublishAuthor");
+                    b.ToTable("PetitionReadyToPublishAuthor", (string)null);
                 });
 
             modelBuilder.Entity("PetitionUser", b =>
@@ -65,7 +65,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("PetitionDraftsId");
 
-                    b.ToTable("PetitionUser");
+                    b.ToTable("PetitionUser", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.ESignature", b =>
@@ -111,7 +111,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("SignerId");
 
-                    b.ToTable("ESignature");
+                    b.ToTable("ESignature", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Home", b =>
@@ -136,7 +136,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("ResidentialCommunityId");
 
-                    b.ToTable("Home");
+                    b.ToTable("Home", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.HomeOwnership", b =>
@@ -162,7 +162,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("HomeOwnership");
+                    b.ToTable("HomeOwnership", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.JoinCommunityRequest", b =>
@@ -217,7 +217,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("JoinCommunityRequests");
+                    b.ToTable("JoinCommunityRequests", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Message", b =>
@@ -247,7 +247,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Message", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Notification", b =>
@@ -279,7 +279,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notification", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Petition", b =>
@@ -325,7 +325,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("CommunityId");
 
-                    b.ToTable("Petitions");
+                    b.ToTable("Petitions", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Post", b =>
@@ -376,7 +376,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("_userAuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.PostComment", b =>
@@ -406,7 +406,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostComment");
+                    b.ToTable("PostComment", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.PostReaction", b =>
@@ -435,38 +435,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PostReaction");
-                });
-
-            modelBuilder.Entity("PluginDemocracy.Models.Proposal", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CommunityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("PublishedDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CommunityId");
-
-                    b.ToTable("Proposals");
+                    b.ToTable("PostReaction", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.ResidentialCommunity", b =>
@@ -501,7 +470,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ResidentialCommunities");
+                    b.ToTable("ResidentialCommunities", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Role", b =>
@@ -550,7 +519,7 @@ namespace PluginDemocracy.Data.Migrations
 
                     b.HasIndex("HolderId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.User", b =>
@@ -616,34 +585,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("PluginDemocracy.Models.Vote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Decision")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ProposalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("VoterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProposalId");
-
-                    b.HasIndex("VoterId");
-
-                    b.ToTable("Votes");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("HomeUser", b =>
@@ -861,23 +803,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PluginDemocracy.Models.Proposal", b =>
-                {
-                    b.HasOne("PluginDemocracy.Models.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PluginDemocracy.Models.ResidentialCommunity", "Community")
-                        .WithMany("Proposals")
-                        .HasForeignKey("CommunityId");
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Community");
-                });
-
             modelBuilder.Entity("PluginDemocracy.Models.Role", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.ResidentialCommunity", "Community")
@@ -893,25 +818,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("Community");
 
                     b.Navigation("Holder");
-                });
-
-            modelBuilder.Entity("PluginDemocracy.Models.Vote", b =>
-                {
-                    b.HasOne("PluginDemocracy.Models.Proposal", "Proposal")
-                        .WithMany()
-                        .HasForeignKey("ProposalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PluginDemocracy.Models.User", "Voter")
-                        .WithMany()
-                        .HasForeignKey("VoterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Proposal");
-
-                    b.Navigation("Voter");
                 });
 
             modelBuilder.Entity("PluginDemocracy.Models.Home", b =>
@@ -949,8 +855,6 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("PostsByLatestActivity");
 
                     b.Navigation("PostsByPublishedDate");
-
-                    b.Navigation("Proposals");
 
                     b.Navigation("Roles");
                 });

@@ -157,7 +157,7 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Post> PostsByLatestActivity => Posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
         public IReadOnlyList<Post> PostsByPublishedDate => Posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
         private readonly List<Proposal> _proposals;
-        public IReadOnlyList<Proposal> Proposals
+        public List<Proposal> Proposals
         {
             get
             {
