@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PluginDemocracy.Models;
-using System.Globalization;
 
 namespace PluginDemocracy.Data
 {
@@ -12,6 +11,8 @@ namespace PluginDemocracy.Data
         public DbSet<Petition> Petitions { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<Vote> Votes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             /// Since EFC has difficulty storing CultureInfo objects, I convert to string when saving and 

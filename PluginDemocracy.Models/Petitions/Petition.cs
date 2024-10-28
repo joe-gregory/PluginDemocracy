@@ -241,8 +241,7 @@ namespace PluginDemocracy.Models
         }
         public void NotReadyToPublish(User author)
         {
-            User? auth = _authors.FirstOrDefault(a => a.Id == author.Id);
-            if (auth == null) throw new InvalidOperationException("No author found that matched Id");
+            User? auth = _authors.FirstOrDefault(a => a.Id == author.Id) ?? throw new InvalidOperationException("No author found that matched Id");
             _authorsReadyToPublish.Remove(author);
             LastUpdated = DateTime.UtcNow;
         }

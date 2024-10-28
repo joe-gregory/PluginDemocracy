@@ -144,8 +144,7 @@ namespace PluginDemocracy.Models
         }
         public void RemoveResident(User citizen)
         {
-            User? resident = Residents.FirstOrDefault(r => r.Id == citizen.Id);
-            if (resident == null) throw new ArgumentException("No resident found with given citizen.");
+            User? resident = Residents.FirstOrDefault(r => r.Id == citizen.Id) ?? throw new ArgumentException("No resident found with given citizen.");
             _residents.Remove(resident);
             citizen.RemoveAsResidentOfHome(this);
         }
