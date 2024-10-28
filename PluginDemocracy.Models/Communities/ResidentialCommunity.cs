@@ -156,8 +156,7 @@ namespace PluginDemocracy.Models
         }
         public IReadOnlyList<Post> PostsByLatestActivity => Posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
         public IReadOnlyList<Post> PostsByPublishedDate => Posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
-        private readonly List<Proposal> _proposals = [];
-        [NotMapped]
+        private readonly List<Proposal> _proposals;
         public IReadOnlyList<Proposal> Proposals
         {
             get
@@ -165,13 +164,9 @@ namespace PluginDemocracy.Models
                 return [.. _proposals];
             }
         }
-        [NotMapped]
         public IReadOnlyList<Proposal> PublishedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Published).ToList().AsReadOnly();
-        [NotMapped]
         public IReadOnlyList<Proposal> PassedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Passed).ToList().AsReadOnly();
-        [NotMapped]
         public IReadOnlyList<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Rejected).ToList().AsReadOnly();
-        [NotMapped]
         public Dictionary<User, double> VotingWeights
         {
             get
@@ -211,6 +206,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitions = [];
             _posts = [];
+            _proposals = [];
         }
         public ResidentialCommunity(string name, string address)
         {
@@ -223,6 +219,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitions = [];
             _posts = [];
+            _proposals = [];
         }
         public void AddOfficialLanguage(CultureInfo culture)
         {
