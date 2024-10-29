@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PluginDemocracy.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Proposals2_B : Migration
+    public partial class ProposalsAndVotes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,8 +61,7 @@ namespace PluginDemocracy.Data.Migrations
                         name: "FK_Votes_Users_VoterId",
                         column: x => x.VoterId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

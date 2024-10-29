@@ -31,6 +31,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<User>().Navigation(u => u.Roles).UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.Entity<User>().Navigation(u => u.Notifications).UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.Entity<User>().Navigation(u => u.PetitionDrafts).UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<User>().Navigation(u => u.ProposalDrafts).UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<ResidentialCommunity>().Ignore(ResidentialCommunity => ResidentialCommunity.OfficialLanguages);
             modelBuilder.Entity<ResidentialCommunity>().Ignore(residentialCommunity => residentialCommunity.Citizens);
@@ -56,8 +57,10 @@ namespace PluginDemocracy.Data
 
             modelBuilder.Entity<Proposal>().Property(p => p.Votes).HasField("_votes").UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.Entity<Proposal>().Ignore(p => p.Votes);
-            modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal);
+            modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal).OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Vote>().HasOne(v => v.Voter).WithMany().OnDelete(DeleteBehavior.NoAction);
+            
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Home>().Ignore(Home => Home.Citizens);

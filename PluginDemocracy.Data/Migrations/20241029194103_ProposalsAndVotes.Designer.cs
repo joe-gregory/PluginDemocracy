@@ -13,8 +13,8 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    [Migration("20241029024913_Proposals2_B")]
-    partial class Proposals2_B
+    [Migration("20241029194103_ProposalsAndVotes")]
+    partial class ProposalsAndVotes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -867,7 +867,7 @@ namespace PluginDemocracy.Data.Migrations
             modelBuilder.Entity("PluginDemocracy.Models.Proposal", b =>
                 {
                     b.HasOne("PluginDemocracy.Models.User", "Author")
-                        .WithMany()
+                        .WithMany("ProposalDrafts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -909,7 +909,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasOne("PluginDemocracy.Models.User", "Voter")
                         .WithMany()
                         .HasForeignKey("VoterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Proposal");
@@ -968,6 +968,8 @@ namespace PluginDemocracy.Data.Migrations
                     b.Navigation("HomeOwnerships");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("ProposalDrafts");
 
                     b.Navigation("Roles");
                 });
