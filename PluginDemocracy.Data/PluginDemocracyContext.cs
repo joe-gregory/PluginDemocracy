@@ -56,6 +56,7 @@ namespace PluginDemocracy.Data
 
             modelBuilder.Entity<Proposal>().Property(p => p.Votes).HasField("_votes").UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.Entity<Proposal>().Ignore(p => p.Votes);
+            modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal);
 
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
