@@ -78,6 +78,7 @@ namespace PluginDemocracy.Translations
         
         
         public const string CreateProposal = "CreateProposal";
+        public const string CreateProposalDescription = "ProposalDescription";
 
         
         public const string PendingJoinCommunityRequests = "PendingJoinCommunityRequests";

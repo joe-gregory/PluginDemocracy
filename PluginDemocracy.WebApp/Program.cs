@@ -4,6 +4,7 @@ using PluginDemocracy.WebApp.Components;
 using PluginDemocracy.UIComponents;
 using MudBlazor.Services;
 using MudBlazor;
+using Syncfusion.Blazor;
 
 namespace PluginDemocracy.WebApp
 {
@@ -12,9 +13,13 @@ namespace PluginDemocracy.WebApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddJsonFile("appsettings.WebApp.json", optional: false, reloadOnChange: true);
 
-            builder.Configuration
-                .AddJsonFile("appsettings.WebApp.json", optional: false, reloadOnChange: true);
+
+            string syncFusionLicenseKey = builder.Configuration["SyncFusionLicense"] ?? string.Empty;
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
+            
+            builder.Services.AddSyncfusionBlazor();
 
             // Add services to the container.
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
@@ -59,7 +64,7 @@ namespace PluginDemocracy.WebApp
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-#if DEBUG
+            #if DEBUG
             // Configure logging
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
@@ -67,7 +72,7 @@ namespace PluginDemocracy.WebApp
             builder.Logging.AddFilter("Microsoft", LogLevel.Debug);
             builder.Logging.AddFilter("System", LogLevel.Debug);
             builder.Logging.AddFilter("Default", LogLevel.Debug);
-#endif
+            #endif
 
             var app = builder.Build();
 

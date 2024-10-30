@@ -943,6 +943,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A proposal is a document where a community member can suggest ideas, changes, or projects to be voted on by others in the community. Unlike a petition, which is primarily focused on gathering signatures to support a specific action, a proposal allows for open discussion and voting to decide if the suggested idea will be adopted or implemented..
+        /// </summary>
+        internal static string ProposalDescription {
+            get {
+                return ResourceManager.GetString("ProposalDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proposals.
         /// </summary>
         internal static string Proposals {

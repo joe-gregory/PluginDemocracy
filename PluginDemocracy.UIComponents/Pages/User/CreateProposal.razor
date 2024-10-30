@@ -1,0 +1,16 @@
+﻿@using Syncfusion.Blazor.RichTextEditor
+@inject BaseAppState AppState
+
+<MudText Typo="Typo.h3" Color="Color.Primary" Align="Align.Center" Class="mb-5">@AppState.Translate(ResourceKeys.CreateProposal)</MudText>
+<MudCard Elevation="25" Class="pa-5">
+    <MudText>@AppState.Translate(ResourceKeys.CreateProposalDescription)</MudText>
+</MudCard>
+
+<SfRichTextEditor>
+    <p>Rich Text Editor allows to insert images from online source as well as local computer where you want to insert the image in your content.</p>
+    <p><b>Get started Quick Toolbar to click on the image</b></p>
+    <p>It is possible to add custom style on the selected image inside the Rich Text Editor through quick toolbar.</p>
+</SfRichTextEditor>
+
+@code{
+}
