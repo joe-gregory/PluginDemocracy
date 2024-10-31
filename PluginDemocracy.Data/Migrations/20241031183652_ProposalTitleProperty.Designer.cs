@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PluginDemocracy.Data;
 
@@ -12,9 +13,11 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    partial class PluginDemocracyContextModelSnapshot : ModelSnapshot
+    [Migration("20241031183652_ProposalTitleProperty")]
+    partial class ProposalTitleProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -451,6 +454,7 @@ namespace PluginDemocracy.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PublishedDateTime")

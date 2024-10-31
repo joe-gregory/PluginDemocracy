@@ -156,6 +156,40 @@ namespace PluginDemocracy.Models
         }
         public IReadOnlyList<Post> PostsByLatestActivity => Posts.OrderByDescending(post => post.LatestActivity ?? post.PublishedDate).ToList().AsReadOnly();
         public IReadOnlyList<Post> PostsByPublishedDate => Posts.OrderByDescending(post => post.PublishedDate).ToList().AsReadOnly();
+        private readonly List<Proposal> _proposals;
+        public List<Proposal> Proposals
+        {
+            get
+            {
+                return [.. _proposals];
+            }
+        }
+        public IReadOnlyList<Proposal> PublishedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Published).ToList().AsReadOnly();
+        public IReadOnlyList<Proposal> PassedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Passed).ToList().AsReadOnly();
+        public IReadOnlyList<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Rejected).ToList().AsReadOnly();
+        public Dictionary<User, double> VotingWeights
+        {
+            get
+            {
+                Dictionary<User, double> votingWeights = [];
+
+                foreach (Home home in Homes)
+                {
+                    foreach (HomeOwnership ownership in home.Ownerships)
+                    {
+                        if (votingWeights.ContainsKey(ownership.Owner))
+                        {
+                            votingWeights[ownership.Owner] += ownership.OwnershipPercentage;
+                        }
+                        else
+                        {
+                            votingWeights[ownership.Owner] = ownership.OwnershipPercentage;
+                        }
+                    }
+                }
+                return votingWeights;
+            }
+        }
         #endregion
         #region METHODS
         /// <summary>
@@ -172,6 +206,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitions = [];
             _posts = [];
+            _proposals = [];
         }
         public ResidentialCommunity(string name, string address)
         {
@@ -184,6 +219,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitions = [];
             _posts = [];
+            _proposals = [];
         }
         public void AddOfficialLanguage(CultureInfo culture)
         {
@@ -321,6 +357,14 @@ namespace PluginDemocracy.Models
         public void RemovePost(Post post)
         {
             _posts.Remove(post);
+        }
+        public void PublishProposal(Proposal proposal)
+        {
+            if (proposal.Community.Id != this.Id) throw new ArgumentException("Proposal does not belong to this community.");
+            if (proposal.Status != ProposalStatus.Draft) throw new ArgumentException("Proposal is not in draft status before publishing.");
+            if (proposal.Votes.Count != 0) throw new ArgumentException("Proposal has votes. Cannot publish a proposal with votes.");
+            proposal.Publish();
+            _proposals.Add(proposal);
         }
         #endregion
     }

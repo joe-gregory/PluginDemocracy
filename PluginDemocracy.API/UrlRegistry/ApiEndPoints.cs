@@ -32,6 +32,8 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string GetUserAbout = UsersController + "getuserabout";
         public const string UnmarkPetitionReadyToPublish = UsersController + "unmarkpetitionreadytopublish";
         public const string ESign = UsersController + "esign";
+        public const string SaveProposalDraft = UsersController + "saveproposaldraft";
+        public const string GetProposalDraft = UsersController + "getproposaldraft";
          
         #endregion
         #region Community

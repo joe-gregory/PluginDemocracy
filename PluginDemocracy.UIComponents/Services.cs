@@ -483,7 +483,7 @@ namespace PluginDemocracy.UIComponents
             //if apiResponse.SessionJWT is sent, set it in AppState
             if (apiResponse.SessionJWT != null) _appState.SessionJWT = apiResponse.SessionJWT;
             //posts
-            if (apiResponse.Posts.Count > 0) _appState.Posts = apiResponse.Posts;
+            if (apiResponse.PostsDTO.Count > 0) _appState.Posts = apiResponse.PostsDTO;
             //if apiResponse.LogOut is sent, log out user and redirect to home
             if (apiResponse.LogOut == true)
             {

@@ -15,10 +15,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Pages\AppAdmin\ReportABug.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Icons\CommunityIcon.svg">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -30,7 +26,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazor.SignaturePad" Version="8.1.5" />
-		<PackageReference Include="MudBlazor" Version="6.15.0" />
+		<PackageReference Include="MudBlazor" Version="6.21.0" />
+		<PackageReference Include="Syncfusion.Blazor" Version="27.1.57" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,14 +59,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <UpToDateCheckInput Remove="Pages\AppAdmin\ReportABug.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Pages\AppAdmin\ReportABug.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
+	  <None Include="Pages\User\CreateProposal.razor">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Include="Pages\User\ReportABug.razor" />
 	</ItemGroup>
 

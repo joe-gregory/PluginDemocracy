@@ -129,6 +129,14 @@ namespace PluginDemocracy.Models
                 return _petitionDrafts.AsReadOnly();
             } 
         }
+        private readonly List<Proposal> _proposalDrafts;
+        public IReadOnlyList<Proposal> ProposalDrafts
+        {
+            get
+            {
+                return [.. _proposalDrafts];
+            }
+        }
         /// <summary>
         /// Parameterless constructor for the benefit of EF Core
         /// </summary>
@@ -144,6 +152,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitionDrafts = [];
             _notifications = [];
+            _proposalDrafts = [];
         }
         public User(string firstName, string lastName, string email, string? phoneNumber, string? address, DateTime dateOfBirth, CultureInfo culture, string? middleName = null, string? secondLastName = null)
         {
@@ -162,6 +171,7 @@ namespace PluginDemocracy.Models
             _roles = [];
             _petitionDrafts = [];
             _notifications = [];
+            _proposalDrafts = [];
         }
         internal void AddHomeOwnership(HomeOwnership homeOwnership)
         {

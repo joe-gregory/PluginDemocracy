@@ -256,10 +256,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 {
                     files.Clear();
                     memoryStreams.Clear();
-                    if (apiResponse.Petition != null)
+                    if (apiResponse.PetitionDTO != null)
                     {
-                        NavigationManager.NavigateTo($"{FrontEndPages.CreatePetition}?petitionId={apiResponse.Petition.Id}");
-                        PetitionId = apiResponse.Petition.Id;
+                        NavigationManager.NavigateTo($"{FrontEndPages.CreatePetition}?petitionId={apiResponse.PetitionDTO.Id}");
+                        PetitionId = apiResponse.PetitionDTO.Id;
                     }
                     else Services.AddSnackBarMessage("warning", "No petition returned on response.");
                     await RefreshPetition();
