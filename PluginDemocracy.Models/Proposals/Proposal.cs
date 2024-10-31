@@ -8,8 +8,21 @@ namespace PluginDemocracy.Models
         public User Author { get; init; }
         public ProposalStatus Status { get; private set; }
         public DateTime? PublishedDateTime { get; init; }
-        private string _content;
-        public string Content
+        private string _title;
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                if (Status == ProposalStatus.Draft) _title = value;
+                else throw new Exception("Cannot modify title of a published proposal");
+            }
+        }
+        private string? _content;
+        public string? Content
         {
             get
             {
@@ -50,15 +63,15 @@ namespace PluginDemocracy.Models
         /// <summary>
         /// protected constructor for the benefit of EFC
         /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         protected Proposal() { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public Proposal(User author, ResidentialCommunity community, string? content = null)
+        #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public Proposal(User author, ResidentialCommunity community, string title, string? content = null)
         {
             Author = author;
-            if (content != null) _content = content;
-            else _content = string.Empty;
+            _title = title;
             Community = community;
+            _content = content;
         }
         internal void Publish()
         {

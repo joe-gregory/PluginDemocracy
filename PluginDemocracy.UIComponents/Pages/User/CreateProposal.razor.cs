@@ -1,9 +1,22 @@
-﻿using Syncfusion.Blazor.RichTextEditor;
+﻿using Microsoft.AspNetCore.Components;
+using PluginDemocracy.API.UrlRegistry;
+using PluginDemocracy.DTOs;
+using Syncfusion.Blazor.RichTextEditor;
 
 namespace PluginDemocracy.UIComponents.Pages.User
 {
     public partial class CreateProposal
     {
+        
+
+        [SupplyParameterFromQuery]
+        public Guid? proposalId { get; set; }
+        private string? title;
+        private string? richTextEditorValue;
+        private ResidentialCommunityDTO? communityDTO;
+
+        private ProposalDTO proposalDTO = new();
+
         private static readonly List<ToolbarItemModel> Tools =
         [
             new() { Command = ToolbarCommand.Bold },
@@ -41,18 +54,61 @@ namespace PluginDemocracy.UIComponents.Pages.User
             new() { Command = ToolbarCommand.Undo },
             new() { Command = ToolbarCommand.Redo }
         ];
-        private bool disableAllButtons;
+        private bool disableAll = false;
+        protected override async Task OnInitializedAsync()
+        {
+            //if existing proposal draft 
+            if (proposalId != null)
+            {
+                //let's get the proposal draft
+                string endpoint = ApiEndPoints.GetProposalDraft + $"?proposalId={proposalId}";
+                ProposalDTO? proposalDTOMessage = await Services.GetDataGenericAsync<ProposalDTO>(endpoint);
+                if (proposalDTOMessage != null)
+                {
+                    proposalDTO = proposalDTOMessage;
+                    UpdateFieldsFromProposalDTO();
+                }
+                else proposalDTO = new();
+            }
+            //if it's a new proposal
+            else
+            {
+                title = "Please enter a title for your proposal";
+                communityDTO = AppState?.User?.Citizenships[0];
+            }
+        }
         private async void SaveProposalDraft()
         {
-            disableAllButtons = true;
+            disableAll = true;
+            UpdateProposalDTOFromFields();
 
-            disableAllButtons = false;
+            PDAPIResponse response = await Services.PostDataAsync<ProposalDTO>(ApiEndPoints.SaveProposalDraft, proposalDTO);
+            if (response.ProposalDTO != null)
+            {
+                proposalDTO = response.ProposalDTO;
+                UpdateFieldsFromProposalDTO();
+            }
+            disableAll = false;
         }
         private async void PublishProposal()
         {
-            disableAllButtons = true;
+            disableAll = true;
+            UpdateProposalDTOFromFields();
 
-            disableAllButtons = false;
+            disableAll = false;
+        }
+        private void UpdateProposalDTOFromFields()
+        {
+            proposalDTO.Id = proposalId;
+            proposalDTO.Title = title;
+            proposalDTO.Content = richTextEditorValue;
+            proposalDTO.Community = communityDTO;
+        }
+        private void UpdateFieldsFromProposalDTO()
+        {
+            title = proposalDTO.Title;
+            richTextEditorValue = proposalDTO.Content;
+            communityDTO = proposalDTO.Community;
         }
     }
 }

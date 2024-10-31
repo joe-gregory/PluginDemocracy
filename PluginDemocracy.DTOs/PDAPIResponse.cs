@@ -11,10 +11,11 @@
         public Dictionary<string, string> RedirectParameters { get; set; }
         public string? SessionJWT { get; set; }
         public bool? LogOut { get; set; }
-        public List<ResidentialCommunityDTO> AllCommunities { get; set; } = [];
-        public ResidentialCommunityDTO? Community { get; set; }
-        public List<PostDTO> Posts { get; set; } = [];
-        public PetitionDTO? Petition { get; set; }
+        public List<ResidentialCommunityDTO> AllCommunitiesDTO { get; set; } = [];
+        public ResidentialCommunityDTO? CommunityDTO { get; set; }
+        public List<PostDTO> PostsDTO { get; set; } = [];
+        public PetitionDTO? PetitionDTO { get; set; }
+        public ProposalDTO? ProposalDTO { get; set; }
         #endregion
         #region METHODS
         /// <summary>

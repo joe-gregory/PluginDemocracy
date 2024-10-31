@@ -111,7 +111,7 @@ namespace PluginDemocracy.API.Controllers
                 return StatusCode(500, apiResponse);
             }
 
-            
+
         }
         [HttpGet("confirmemail")]
         public async Task<ActionResult<PDAPIResponse>> ConfirmEmail([FromQuery] int userId, [FromQuery] string emailConfirmationToken)
@@ -535,7 +535,7 @@ namespace PluginDemocracy.API.Controllers
         {
             PDAPIResponse response = new();
             //If the petition does not have a community specified, reject
-            
+
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
@@ -572,7 +572,7 @@ namespace PluginDemocracy.API.Controllers
                     await _context.SaveChangesAsync();
                     //Add the other authors
                     User? originalAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == petitionDTO.AuthorsIds[0]);
-                    if ( originalAuthor == null)
+                    if (originalAuthor == null)
                     {
                         response.AddAlert("error", "Original author could not be determined.");
                         return response;
@@ -620,7 +620,7 @@ namespace PluginDemocracy.API.Controllers
                     petition.LastUpdated = DateTime.UtcNow;
                     //All done, save the petition
                     await _context.SaveChangesAsync();
-                    response.Petition = new PetitionDTO(petition);
+                    response.PetitionDTO = new PetitionDTO(petition);
                     response.AddAlert("success", "New petition draft saved successfully");
                     response.SuccessfulOperation = true;
                     return Ok(response);
@@ -644,14 +644,14 @@ namespace PluginDemocracy.API.Controllers
                         response.AddAlert("error", "Cannot modify a published petition.");
                         return BadRequest(response);
                     }
-                    if(petition.AuthorsReadyToPublish.Count > 0)
+                    if (petition.AuthorsReadyToPublish.Count > 0)
                     {
                         response.AddAlert("error", "You cannot modify this petition because other authors marked it as ready to publish. They will need to unmark it to make further edits.");
                         return BadRequest(response);
                     }
                     //Checking to see if there are any new authors
                     //Check which Ids are missing or are extra
-                    
+
                     //first, if petitionDTO.authors is empty, delete the petition
                     if (petitionDTO.AuthorsIds.Count == 0)
                     {
@@ -673,7 +673,7 @@ namespace PluginDemocracy.API.Controllers
                             BlobClient blobClient = new(uriBuilder.Uri);
                             await blobClient.DeleteAsync(DeleteSnapshotsOption.IncludeSnapshots);
                         }
-                            _context.Petitions.Remove(petition);
+                        _context.Petitions.Remove(petition);
                         _context.SaveChanges();
                         response.AddAlert("success", "The petition has been deleted.");
                         response.RedirectTo = FrontEndPages.CreatePetition;
@@ -692,14 +692,14 @@ namespace PluginDemocracy.API.Controllers
                     foreach (int id in extraAuthors)
                     {
                         User? extraAuthor = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (extraAuthor != null) 
-                        { 
+                        if (extraAuthor != null)
+                        {
                             petition.AddAuthor(extraAuthor);
                             extraAuthor.AddNotification(title, body);
                             await _utilityClass.SendEmailAsync(toEmail: extraAuthor.Email, subject: title, body: body);
                         }
-                        else 
-                        { 
+                        else
+                        {
                             response.AddAlert("error", $"Extra author with id {id} not found");
                             return BadRequest(response);
                         }
@@ -760,7 +760,7 @@ namespace PluginDemocracy.API.Controllers
                     petition.LastUpdated = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
                     response.AddAlert("success", "Petition draft updated successfully");
-                    response.Petition = new PetitionDTO(petition);
+                    response.PetitionDTO = new PetitionDTO(petition);
                     response.SuccessfulOperation = true;
                     return Ok(response);
                 }
@@ -985,19 +985,19 @@ namespace PluginDemocracy.API.Controllers
                     foreach (User author in petition.Authors)
                     {
                         author.AddNotification(title, body);
-                        await _utilityClass.SendEmailAsync(author.Email,title, body);
+                        await _utilityClass.SendEmailAsync(author.Email, title, body);
                     }
                     //Create Post and add it to community
                     string titleForAllUsers = $"A new petition has been published in your community.";
                     string bodyForAllUsers = $"A new petition has been published in your community. Click on the following link to navigate to the petition page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Petition}?petitionId={petition.Id}\">Petition Page</a>. If you agree with the petition, you can e-sign it.";
-                    #pragma warning disable CS8604 // Possible null reference argument. petition.Community is not null here because it is published.
+#pragma warning disable CS8604 // Possible null reference argument. petition.Community is not null here because it is published.
                     Post newPetitionPost = new(petition.Community, body);
-                    #pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8604 // Possible null reference argument.
                     petition.Community.AddPost(newPetitionPost);
 
                     //Send Email to all citizens of that community and add Notificatin for all citizens
                     List<Task> sendingEmails = [];
-                    foreach(User citizen in petition.Community.Citizens)
+                    foreach (User citizen in petition.Community.Citizens)
                     {
                         citizen.AddNotification(titleForAllUsers, bodyForAllUsers);
                         sendingEmails.Add(_utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers));
@@ -1009,8 +1009,8 @@ namespace PluginDemocracy.API.Controllers
                     //    await task;
                     //}
                 }
-                else 
-                { 
+                else
+                {
                     response.AddAlert("success", "You have marked the petition as ready to publish");
                     string title = $"{existingUser.FirstName} marked petition {petition.Id} as ready to publish.";
                     string body = $"{existingUser.FirstName} marked petition {petition.Id} as ready to publish. Navigate to: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.CreatePetition}?petitionId={petition.Id}\">Petition Draft Page</a>";
@@ -1088,7 +1088,7 @@ namespace PluginDemocracy.API.Controllers
             {
                 return BadRequest();
             }
-            
+
             User? userToGetAbout = _context.Users.Include(u => u.HomeOwnerships).ThenInclude(ho => ho.Home).Include(u => u.ResidentOfHomes).Include(u => u.Roles).ThenInclude(r => r.Community).FirstOrDefault(u => u.Id == userId);
 
             if (userToGetAbout == null)
@@ -1174,7 +1174,7 @@ namespace PluginDemocracy.API.Controllers
                 response.AddAlert("error", "IP Address not found");
                 return BadRequest(response);
             };
-            ESignature eSignature = new(existingUser, ipAddress, petition, eSignatureDTO.SignatureImage, eSignatureDTO.SignatureImageBase64 ,eSignatureDTO.Intent);
+            ESignature eSignature = new(existingUser, ipAddress, petition, eSignatureDTO.SignatureImage, eSignatureDTO.SignatureImageBase64, eSignatureDTO.Intent);
             try
             {
                 petition.Sign(eSignature);
@@ -1188,6 +1188,98 @@ namespace PluginDemocracy.API.Controllers
                 return BadRequest(response);
             }
         }
+        [Authorize]
+        [HttpPost(ApiEndPoints.SaveProposalDraft)]
+        public async Task<ActionResult<PDAPIResponse>> SaveProposalDraft([FromForm] ProposalDTO? proposalDTO)
+        {
+            PDAPIResponse response = new();
+
+            if (proposalDTO == null)
+            {
+                response.AddAlert("error", "proposalDTO was null");
+                return BadRequest(response);
+            }
+
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+
+            //Both saving new or existing require these checks: 
+            if (string.IsNullOrEmpty(proposalDTO.Title))
+            {
+                response.AddAlert("error", "Proposal must have a title");
+                return BadRequest(response);
+            }
+            if (proposalDTO.Community == null)
+            {
+                response.AddAlert("error", "Proposal must have a community specified");
+                return BadRequest(response);
+            }
+
+            //if proposalDTO.Id == null, it is a new proposal
+            if (proposalDTO.Id == null)
+            {
+                //Title, Community are required but Content is also added if it is present 
+                
+                ResidentialCommunity? communityForNewProposal = await _context.ResidentialCommunities.FirstOrDefaultAsync(c => c.Id == proposalDTO.Community.Id);
+                if (communityForNewProposal == null)
+                {
+                    response.AddAlert("error", "Community not found");
+                    return BadRequest(response);
+                }
+                Proposal newProposal = new(existingUser, communityForNewProposal, proposalDTO.Title, proposalDTO.Content);
+                _context.Proposals.Add(newProposal);
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "New proposal draft saved successfully");
+                response.ProposalDTO = new ProposalDTO(newProposal);
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            else
+            {
+                Proposal? proposal = await _context.Proposals
+                    .Include(p => p.Author)
+                    .Include(p => p.Community)
+                    .Include(p => p.Status)
+                    .FirstOrDefaultAsync(p => p.Id == proposalDTO.Id);
+
+                if (proposal == null)
+                {
+                    response.AddAlert("error", "No proposals were found with given Id.");
+                    return BadRequest(response);
+                }
+
+                proposal.Title = proposalDTO.Title;
+                proposal.Content = proposalDTO.Content;
+
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "Proposal draft updated successfully");
+                response.ProposalDTO = new ProposalDTO(proposal);
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetProposalDraft)]
+        public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] Guid proposalId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+
+            Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Community)
+                .Include(p => p.Status)
+                .FirstOrDefaultAsync(p => p.Id == proposalId);
+
+            if (proposal == null)
+            {
+                return NotFound("The proposal was not found.");
+            }
+            //Make sure user is an author of the proposal
+            if (proposal.Author.Id != existingUser.Id) return BadRequest("You are not an author of this proposal");
+            ProposalDTO proposalDTO = new(proposal);
+            return Ok(proposalDTO);
+        }
     }
-        #endregion
+    #endregion
 }

@@ -53,7 +53,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             await base.OnInitializedAsync();
             //Make get request to get list of communities
             PDAPIResponse response = await Services.GetDataAsync(ApiEndPoints.GetListOfAllCommunities);
-            communitiesDtos = response.AllCommunities;
+            communitiesDtos = response.AllCommunitiesDTO;
         }
         private async Task OnSelectCommunityDtoChanged(ResidentialCommunityDTO newValue)
         {
@@ -70,7 +70,7 @@ namespace PluginDemocracy.UIComponents.Pages.Community
             if (selectedCommunityDTO == null) return;
             string fullUrl = ApiEndPoints.GetListOfHomesForCommunity + $"?communityId={selectedCommunityDTO.Id}";
             PDAPIResponse response = await Services.GetDataAsync(fullUrl);
-            if (response.Community != null) homesDtosFromSelectedCommunity = response.Community.Homes;
+            if (response.CommunityDTO != null) homesDtosFromSelectedCommunity = response.CommunityDTO.Homes;
         }
         private void SelectedHome(int? homeId)
         {

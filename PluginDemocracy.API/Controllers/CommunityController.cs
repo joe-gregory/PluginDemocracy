@@ -99,7 +99,7 @@ namespace PluginDemocracy.API.Controllers
             try
             {
                 List<ResidentialCommunity> communities = await _context.ResidentialCommunities.ToListAsync();
-                foreach (ResidentialCommunity community in communities) response.AllCommunities.Add(new ResidentialCommunityDTO()
+                foreach (ResidentialCommunity community in communities) response.AllCommunitiesDTO.Add(new ResidentialCommunityDTO()
                 {
                     Id = community.Id,
                     Name = community.Name,
@@ -132,8 +132,8 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "Community not found");
                     return BadRequest(response);
                 }
-                response.Community = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
-                foreach (Home home in community.Homes) response.Community.Homes.Add(new(home));
+                response.CommunityDTO = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(community);
+                foreach (Home home in community.Homes) response.CommunityDTO.Homes.Add(new(home));
                 return Ok(response);
             }
             catch (Exception ex)
@@ -676,7 +676,7 @@ namespace PluginDemocracy.API.Controllers
                     return BadRequest(response);
                 }
 
-                foreach (Post post in community.PostsByLatestActivity) response.Posts.Add(new PostDTO(post));
+                foreach (Post post in community.PostsByLatestActivity) response.PostsDTO.Add(new PostDTO(post));
                 var settings = new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
