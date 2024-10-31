@@ -13,7 +13,13 @@ namespace PluginDemocracy.WebApp
         public override bool HasInternet { get; protected set; } = true;
         public WebAppState(IConfiguration configuration, IServiceProvider serviceProvider) : base(configuration, serviceProvider)
         {
-            ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
+#if DEBUG
+            // Use the local development URL when in Debug mode
+            ApiBaseUrl = "https://localhost:7042/"; // Replace with your actual local API URL
+#else
+        // Use the production URL from appsettings.json in Release mode
+        ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
+#endif
         }
         /// <summary>
         /// TODO: Save the state of the app to local storage in browser
@@ -21,7 +27,6 @@ namespace PluginDemocracy.WebApp
         /// <exception cref="NotImplementedException"></exception>
         public override void SaveState()
         {
-            throw new NotImplementedException();
         }
     }
 }
