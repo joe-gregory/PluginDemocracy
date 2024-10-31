@@ -6,11 +6,17 @@
     <MudText>@AppState.Translate(ResourceKeys.CreateProposalDescription)</MudText>
 </MudCard>
 
-<SfRichTextEditor>
-    <p>Rich Text Editor allows to insert images from online source as well as local computer where you want to insert the image in your content.</p>
-    <p><b>Get started Quick Toolbar to click on the image</b></p>
-    <p>It is possible to add custom style on the selected image inside the Rich Text Editor through quick toolbar.</p>
-</SfRichTextEditor>
+<div class="mt-5">
+    <SfRichTextEditor>
+        <RichTextEditorToolbarSettings Items="Tools" />
+        <p>Rich Text Editor allows to insert images from online source as well as local computer where you want to insert the image in your content.</p>
+        <p><b>Get started Quick Toolbar to click on the image</b></p>
+        <p>It is possible to add custom style on the selected image inside the Rich Text Editor through quick toolbar.</p>
+    </SfRichTextEditor>
+</div>
 
-@code{
-}
+
+<MudCard Class="mt-5 mb-5">
+    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info" OnClick="SaveProposalDraft" Disabled="disableAllButtons">@AppState.Translate(ResourceKeys.Save)</MudButton>
+    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Publish" Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishProposal" Disabled="disableAllButtons">@AppState.Translate(ResourceKeys.Publish)</MudButton>
+</MudCard>
