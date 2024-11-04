@@ -10,7 +10,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         
 
         [SupplyParameterFromQuery]
-        public Guid? proposalId { get; set; }
+        public Guid? ProposalId { get; set; }
         private string? title;
         private string? richTextEditorValue;
         private ResidentialCommunityDTO? communityDTO;
@@ -58,10 +58,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
         protected override async Task OnInitializedAsync()
         {
             //if existing proposal draft 
-            if (proposalId != null)
+            if (ProposalId != null)
             {
                 //let's get the proposal draft
-                string endpoint = ApiEndPoints.GetProposalDraft + $"?proposalId={proposalId}";
+                string endpoint = ApiEndPoints.GetProposalDraft + $"?proposalId={ProposalId}";
                 ProposalDTO? proposalDTOMessage = await Services.GetDataGenericAsync<ProposalDTO>(endpoint);
                 if (proposalDTOMessage != null)
                 {
@@ -81,14 +81,21 @@ namespace PluginDemocracy.UIComponents.Pages.User
         {
             disableAll = true;
             UpdateProposalDTOFromFields();
-
-            PDAPIResponse response = await Services.PostDataAsync<ProposalDTO>(ApiEndPoints.SaveProposalDraft, proposalDTO);
-            if (response.ProposalDTO != null)
+            try
             {
-                proposalDTO = response.ProposalDTO;
-                UpdateFieldsFromProposalDTO();
+                PDAPIResponse response = await Services.PostDataAsync<ProposalDTO>(ApiEndPoints.SaveProposalDraft, proposalDTO);
+                if (response.ProposalDTO != null)
+                {
+                    proposalDTO = response.ProposalDTO;
+                    UpdateFieldsFromProposalDTO();
+                }
+            }
+            catch
+            {
+                Services.AddSnackBarMessage("error", "There was an issue from the server response");
             }
             disableAll = false;
+            StateHasChanged();
         }
         private async void PublishProposal()
         {
@@ -99,7 +106,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         }
         private void UpdateProposalDTOFromFields()
         {
-            proposalDTO.Id = proposalId;
+            proposalDTO.Id = ProposalId;
             proposalDTO.Title = title;
             proposalDTO.Content = richTextEditorValue;
             proposalDTO.Community = communityDTO;

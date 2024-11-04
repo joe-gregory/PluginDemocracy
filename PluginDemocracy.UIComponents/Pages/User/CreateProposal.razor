@@ -8,7 +8,7 @@
     <MudText>@AppState.Translate(ResourceKeys.CreateProposalDescription)</MudText>
 </MudCard>
 
-<MudTextField Class="mt-5" @bind-Value="title" Text="@title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" />
+<MudTextField Class="mt-5" @bind-Value="title" Text="@title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" Immediate="true"/>
 
 <MudCard Elevation="25" Class="mt-5 pa-5">
     @if (AppState?.User?.Citizenships.Count > 1)

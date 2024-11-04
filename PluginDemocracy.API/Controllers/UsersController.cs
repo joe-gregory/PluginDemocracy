@@ -1190,7 +1190,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.SaveProposalDraft)]
-        public async Task<ActionResult<PDAPIResponse>> SaveProposalDraft([FromForm] ProposalDTO? proposalDTO)
+        public async Task<ActionResult<PDAPIResponse>> SaveProposalDraft(ProposalDTO? proposalDTO)
         {
             PDAPIResponse response = new();
 
