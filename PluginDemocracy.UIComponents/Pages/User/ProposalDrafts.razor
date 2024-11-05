@@ -42,5 +42,7 @@
     }
     private async void DeleteProposalDraft(Guid? proposalId)
     {
+        PDAPIResponse response = await Services.DeleteDataAsync(ApiEndPoints.DeleteProposalDraft + $"?proposalId={proposalId}");
+        if (response.SuccessfulOperation) await UpdateProposalDraftsListAsync();
     }
 }

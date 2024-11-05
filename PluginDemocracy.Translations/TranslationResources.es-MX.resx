@@ -237,6 +237,9 @@
   <data name="DeadlineForResponseDescription" xml:space="preserve">
     <value>(Opcional) Un cronograma sugerido o requerido para cuándo la petición debe ser revisada y respondida por la junta de la HOA.</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
   <data name="DeletePetitionDraft" xml:space="preserve">
     <value>Eliminar Borrador De Petición</value>
   </data>

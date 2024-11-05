@@ -1299,6 +1299,49 @@ namespace PluginDemocracy.API.Controllers
             foreach (Proposal proposal in proposals) proposalDTOs.Add(new ProposalDTO(proposal));
             return Ok(proposalDTOs);
         }
+        [Authorize]
+        [HttpDelete(ApiEndPoints.DeleteProposalDraft)]
+        public async Task<ActionResult<PDAPIResponse>> DeleteProposalDraft([FromQuery] string proposalId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            PDAPIResponse response = new();
+
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Community)
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
+
+                if (proposal == null)
+                {
+                    return NotFound("The proposal was not found.");
+                }
+                if(proposal.Author.Id != existingUser.Id)
+                {
+                    response.AddAlert("error", "You are not an author of this proposal");
+                    return BadRequest(response);
+                }
+                if(proposal.Status != ProposalStatus.Draft)
+                {
+                    response.AddAlert("error", "You cannot delete a proposal that is not in draft state.");
+                    return BadRequest(response);
+                }
+                _context.Proposals.Remove(proposal);
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "Proposal draft deleted successfully");
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Error deleting proposal draft: {ex.Message}");
+                return BadRequest(response);
+            }
+        }
     }
     #endregion
 }

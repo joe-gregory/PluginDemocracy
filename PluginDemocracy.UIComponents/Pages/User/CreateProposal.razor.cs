@@ -118,5 +118,12 @@ namespace PluginDemocracy.UIComponents.Pages.User
             communityDTO = proposalDTO.Community;
             StateHasChanged();
         }
+        private async void DeleteProposal()
+        {
+            disableAll = true;
+            PDAPIResponse response = await Services.DeleteDataAsync(ApiEndPoints.DeleteProposalDraft + $"?proposalId={proposalDTO.Id}");
+            if (response.SuccessfulOperation) Services.NavigateTo(FrontEndPages.ProposalDrafts);
+            disableAll = false;
+        }
     }
 }
