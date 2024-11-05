@@ -24,7 +24,7 @@
 
 
 <div class="mt-5">
-    <SfRichTextEditor Enabled="!disableAll" Value="@richTextEditorValue">
+    <SfRichTextEditor @ref="RteObj" Enabled="!disableAll" @bind-Value="@richTextEditorValue">
         <RichTextEditorToolbarSettings Items="Tools" />
     </SfRichTextEditor>
 </div>

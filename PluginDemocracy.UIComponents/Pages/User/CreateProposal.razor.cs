@@ -12,7 +12,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         [SupplyParameterFromQuery]
         public Guid? ProposalId { get; set; }
         private string? title;
-        private string? richTextEditorValue;
+        private string richTextEditorValue = string.Empty;
         private ResidentialCommunityDTO? communityDTO;
 
         private ProposalDTO proposalDTO = new();
@@ -114,8 +114,9 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private void UpdateFieldsFromProposalDTO()
         {
             title = proposalDTO.Title;
-            richTextEditorValue = proposalDTO.Content;
+            richTextEditorValue = proposalDTO.Content ?? string.Empty;
             communityDTO = proposalDTO.Community;
+            StateHasChanged();
         }
     }
 }

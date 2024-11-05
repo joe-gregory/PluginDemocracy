@@ -18,7 +18,11 @@ namespace PluginDemocracy.Models
             }
             set
             {
-                if (Status == ProposalStatus.Draft) _title = value;
+                if (Status == ProposalStatus.Draft) 
+                { 
+                    _title = value;
+                    UpdateLastUpdated();
+                }
                 else throw new Exception("Cannot modify title of a published proposal");
             }
         }
@@ -31,7 +35,11 @@ namespace PluginDemocracy.Models
             }
             set
             {
-                if (Status == ProposalStatus.Draft) _content = value;
+                if (Status == ProposalStatus.Draft) 
+                { 
+                    _content = value;
+                    UpdateLastUpdated();
+                }
                 else throw new Exception("Cannot modify content of a published proposal");
             }
         }
@@ -79,14 +87,14 @@ namespace PluginDemocracy.Models
         {
             if (string.IsNullOrEmpty(_content)) throw new Exception("Cannot publish a proposal with no content");
             Status = ProposalStatus.Published;
-            LastUpdated = DateTime.UtcNow;
+            UpdateLastUpdated();
         }
         public void Vote(User user, VoteDecision decision)
         {
             if (Status != ProposalStatus.Published) throw new Exception("Cannot vote on a proposal that is not published");
             if (_votes.Any(v => v.Voter == user)) throw new Exception("User has already voted on this proposal");
             _votes.Add(new Vote(user, decision, this));
-            LastUpdated = DateTime.UtcNow;
+            UpdateLastUpdated();
             CheckAndUpdateStatus();
         }
         internal void CheckAndUpdateStatus()
@@ -109,11 +117,17 @@ namespace PluginDemocracy.Models
             if (inFavorVotes > majorityThreshold)
             {
                 Status = ProposalStatus.Passed;
+                UpdateLastUpdated();
             }
             else if (againstVotes > majorityThreshold)
             {
                 Status = ProposalStatus.Rejected;
+                UpdateLastUpdated();
             }
+        }
+        private void UpdateLastUpdated()
+        {
+            LastUpdated = DateTime.UtcNow;
         }
     }
     public enum ProposalStatus

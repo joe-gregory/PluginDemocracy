@@ -1239,7 +1239,6 @@ namespace PluginDemocracy.API.Controllers
                 Proposal? proposal = await _context.Proposals
                     .Include(p => p.Author)
                     .Include(p => p.Community)
-                    .Include(p => p.Status)
                     .FirstOrDefaultAsync(p => p.Id == proposalDTO.Id);
 
                 if (proposal == null)
