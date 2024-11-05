@@ -34,7 +34,8 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string ESign = UsersController + "esign";
         public const string SaveProposalDraft = UsersController + "saveproposaldraft";
         public const string GetProposalDraft = UsersController + "getproposaldraft";
-         
+        public const string GetUserProposalDrafts = UsersController + "getuserproposaldrafts";
+
         #endregion
         #region Community
         public const string CommunityController = Base + "community/";

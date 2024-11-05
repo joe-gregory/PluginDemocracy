@@ -132,6 +132,7 @@ namespace PluginDemocracy.Translations
         public const string Publish = "Publish";
         public const string AuthorsReadyToPublish = "AuthorsReadyToPublish";
         public const string PetitionDrafts = "PetitionDrafts";
+        public const string ProposalDrafts = "ProposalDrafts";
         public const string LatestEdit = "LatestEdit";
         public const string DialogDeletePetitionDraftMultipleAuthors = "DialogDeletePetitionDraftMultipleAuthors";
         public const string ESignPetition = "ESignPetition";

@@ -1260,25 +1260,45 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpGet(ApiEndPoints.GetProposalDraft)]
-        public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] Guid proposalId)
+        public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] string proposalId)
         {
+
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
-            Proposal? proposal = await _context.Proposals
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
                 .Include(p => p.Author)
                 .Include(p => p.Community)
-                .Include(p => p.Status)
-                .FirstOrDefaultAsync(p => p.Id == proposalId);
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
 
-            if (proposal == null)
-            {
-                return NotFound("The proposal was not found.");
+                if (proposal == null)
+                {
+                    return NotFound("The proposal was not found.");
+                }
+                //Make sure user is an author of the proposal
+                if (proposal.Author.Id != existingUser.Id) return BadRequest("You are not an author of this proposal");
+                ProposalDTO proposalDTO = new(proposal);
+                return Ok(proposalDTO);
             }
-            //Make sure user is an author of the proposal
-            if (proposal.Author.Id != existingUser.Id) return BadRequest("You are not an author of this proposal");
-            ProposalDTO proposalDTO = new(proposal);
-            return Ok(proposalDTO);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetUserProposalDrafts)]
+        public async Task<ActionResult<List<ProposalDTO>>> GetUserProposalDraftsList()
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("You are not logged in");
+            List<Proposal> proposals = await _context.Proposals.Include(p => p.Author).Where(p => p.Author.Id == existingUser.Id).ToListAsync();
+            List<ProposalDTO> proposalDTOs = [];
+            foreach (Proposal proposal in proposals) proposalDTOs.Add(new ProposalDTO(proposal));
+            return Ok(proposalDTOs);
         }
     }
     #endregion

@@ -952,6 +952,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Proposal Drafts.
+        /// </summary>
+        internal static string ProposalDrafts {
+            get {
+                return ResourceManager.GetString("ProposalDrafts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proposals.
         /// </summary>
         internal static string Proposals {

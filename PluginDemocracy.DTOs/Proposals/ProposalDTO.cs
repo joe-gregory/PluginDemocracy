@@ -8,6 +8,7 @@ namespace PluginDemocracy.DTOs
         public UserDTO? Author { get; set; }
         public ProposalStatus Status { get; set; }
         public DateTime? PublishedDateTime { get; set; }
+        public DateTime LastUpdated { get; set; }
         public string? Title { get; set; }
         public string? Content { get; set; } = string.Empty;
         public ResidentialCommunityDTO? Community { get; set; }
@@ -18,6 +19,7 @@ namespace PluginDemocracy.DTOs
             Author = new UserDTO(proposal.Author);
             Status = proposal.Status;
             PublishedDateTime = proposal.PublishedDateTime;
+            LastUpdated = proposal.LastUpdated;
             Title = proposal.Title;
             Content = proposal.Content;
             Community = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(proposal.Community);

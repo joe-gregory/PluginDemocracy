@@ -8,6 +8,7 @@ namespace PluginDemocracy.Models
         public User Author { get; init; }
         public ProposalStatus Status { get; private set; }
         public DateTime? PublishedDateTime { get; init; }
+        public DateTime LastUpdated { get; private set; }
         private string _title;
         public string Title
         {
@@ -72,17 +73,20 @@ namespace PluginDemocracy.Models
             _title = title;
             Community = community;
             _content = content;
+            LastUpdated = DateTime.UtcNow;
         }
         internal void Publish()
         {
             if (string.IsNullOrEmpty(_content)) throw new Exception("Cannot publish a proposal with no content");
             Status = ProposalStatus.Published;
+            LastUpdated = DateTime.UtcNow;
         }
         public void Vote(User user, VoteDecision decision)
         {
             if (Status != ProposalStatus.Published) throw new Exception("Cannot vote on a proposal that is not published");
             if (_votes.Any(v => v.Voter == user)) throw new Exception("User has already voted on this proposal");
             _votes.Add(new Vote(user, decision, this));
+            LastUpdated = DateTime.UtcNow;
             CheckAndUpdateStatus();
         }
         internal void CheckAndUpdateStatus()

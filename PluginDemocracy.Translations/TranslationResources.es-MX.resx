@@ -414,6 +414,9 @@
   <data name="ProposalDescription" xml:space="preserve">
     <value>Una propuesta es un documento donde un miembro de la comunidad puede sugerir ideas, cambios o proyectos que serán sometidos a votación por otros miembros de la comunidad. A diferencia de una petición, que se enfoca principalmente en reunir firmas para apoyar una acción específica, una propuesta permite la discusión abierta y la votación para decidir si la idea sugerida será adoptada o implementada.</value>
   </data>
+  <data name="ProposalDrafts" xml:space="preserve">
+    <value>Borradores de Propuestas</value>
+  </data>
   <data name="Proposals" xml:space="preserve">
     <value>Propuestas</value>
   </data>

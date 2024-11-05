@@ -62,7 +62,16 @@
 	  <None Include="Pages\User\CreateProposal.razor">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Include="Pages\User\ProposalDrafts.razor" />
 	  <None Include="Pages\User\ReportABug.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Pages\User\ProposalDrafts.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Pages\User\ProposalDrafts.razor" />
 	</ItemGroup>
 
 </Project>
