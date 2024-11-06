@@ -7,8 +7,6 @@ namespace PluginDemocracy.UIComponents.Pages.User
 {
     public partial class CreateProposal
     {
-        
-
         [SupplyParameterFromQuery]
         public Guid? ProposalId { get; set; }
         private string? title;
@@ -100,8 +98,10 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private async void PublishProposal()
         {
             disableAll = true;
-            UpdateProposalDTOFromFields();
+            SaveProposalDraft();
 
+            await Services.PostDataAsync<string?>($"{ApiEndPoints.PublishProposal}?proposalId={proposalDTO.Id}", null);
+                        
             disableAll = false;
         }
         private void UpdateProposalDTOFromFields()

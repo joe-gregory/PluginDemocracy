@@ -36,6 +36,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string GetProposalDraft = UsersController + "getproposaldraft";
         public const string GetUserProposalDrafts = UsersController + "getuserproposaldrafts";
         public const string DeleteProposalDraft = UsersController + "deleteproposaldraft";
+        public const string PublishProposal = UsersController + "publishproposal";
 
         #endregion
         #region Community

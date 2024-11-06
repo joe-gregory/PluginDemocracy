@@ -1,0 +1,64 @@
+﻿<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Proposal: @proposalDTO.Title</MudText>
+
+<MudCard Class="ma-3 pa-3">
+    <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        <tbody>
+            <tr>
+                <td><MudText><b>Proposal Id:</b></MudText></td>
+                <td><MudText>@proposalDTO?.Id</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Latest Activity:</b></MudText></td>
+                <td><MudText>@(proposalDTO.LastUpdated.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date not set")</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Community:</b></MudText></td>
+                <td><UserAvatar Community="PetitionDTO?.CommunityDTO" /> <MudText>@PetitionDTO?.CommunityDTO?.FullName</MudText></td>
+            </tr>
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
+
+<MudGrid Spacing="2" Justify="Justify.Center">
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Info">Proposal Status:</MudText>
+            @if (proposalDTO.Status == ProposalStatus.Published)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Info">Proposal Still Undecided</MudText>
+            }
+            else if(proposalDTO.Status == ProposalStatus.Accepted)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Success">Proposal Accepted</MudText>
+            }
+            else if(proposalDTO.Status == ProposalStatus.Rejected)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Error">Proposal Rejected</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Primary">Votes in Favor: </MudText>
+            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Sucess">
+                @foreach (UserDTO user in proposalDTO.UsersThatVotedInFavor)
+                {
+                    <UserAvatar User="user" />
+                }
+            </MudAvatarGroup>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Error">Votes Against: </MudText>
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>
+
+@code{
+    ProposalDTO proposalDTO { get; set; }
+}

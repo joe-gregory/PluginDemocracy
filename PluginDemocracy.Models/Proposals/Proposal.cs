@@ -69,6 +69,23 @@ namespace PluginDemocracy.Models
                 return _votes.Where(v => v.Decision == VoteDecision.Against).ToList();
             }
         }
+        [NotMapped]
+        public IReadOnlyList<User> UsersThatVotedInFavor
+        {
+            get
+            {
+                return VotesInFavor.Select(v => v.Voter).ToList();
+            
+            }
+        }
+        [NotMapped]
+        public IReadOnlyList<User> UsersThatVotedAgainst
+        {
+            get
+            {
+                return VotesAgainst.Select(v => v.Voter).ToList();
+            }
+        }
         /// <summary>
         /// protected constructor for the benefit of EFC
         /// </summary>
@@ -83,7 +100,7 @@ namespace PluginDemocracy.Models
             _content = content;
             LastUpdated = DateTime.UtcNow;
         }
-        internal void Publish()
+        public void Publish()
         {
             if (string.IsNullOrEmpty(_content)) throw new Exception("Cannot publish a proposal with no content");
             Status = ProposalStatus.Published;
