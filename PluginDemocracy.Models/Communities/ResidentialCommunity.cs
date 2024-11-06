@@ -102,7 +102,6 @@ namespace PluginDemocracy.Models
                 return Homes?.SelectMany(home => home.OwnersOwnerships.Keys).Distinct().ToList() ?? [];
             }
         }
-
         private readonly List<JoinCommunityRequest> _joinCommunityRequests;
         /// <summary>
         /// Get only property. Represents all the requests to join the community.
@@ -188,6 +187,20 @@ namespace PluginDemocracy.Models
                     }
                 }
                 return votingWeights;
+            }
+        }
+        /// <summary>
+        /// Gets the total voting weight across all users in the community,
+        /// representing the sum of all individual ownership percentages.
+        /// This value signifies the total number of "weighted votes" in the community
+        /// and can be used to calculate majority thresholds or other vote-based decisions.
+        /// </summary>
+        [NotMapped]
+        public double SumOfVotingWeights
+        {
+            get
+            {
+                return VotingWeights.Values.Sum();
             }
         }
         #endregion

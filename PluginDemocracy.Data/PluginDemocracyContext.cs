@@ -79,7 +79,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Petition>().Property(p => p.LinksToSupportingDocuments).HasField("_linksToSupportingDocuments").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Post>().Ignore(post => post.Author);
-            modelBuilder.Entity<Post>().HasOne("_userAuthor");
+            modelBuilder.Entity<Post>().HasOne("_userAuthor").WithMany().HasForeignKey("_userAuthorId").OnDelete(DeleteBehavior.Restrict); ;
             modelBuilder.Entity<Post>().HasOne("_communityAuthor");
             modelBuilder.Entity<Post>().Property(p => p.ImagesLinks).HasField("_imagesLinks").UsePropertyAccessMode(PropertyAccessMode.Field);
 

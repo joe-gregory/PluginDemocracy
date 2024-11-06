@@ -664,7 +664,6 @@ namespace PluginDemocracy.API.Controllers
                 }
                 ResidentialCommunity? community = await _context.ResidentialCommunities
                     .Include(c => c.Posts)
-                    .Include(c => c.Posts)
                         .ThenInclude(p => p.Reactions)
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Comments)
@@ -1471,6 +1470,62 @@ namespace PluginDemocracy.API.Controllers
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
+            }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetProposal)]
+        public async Task<ActionResult<PDAPIResponse>> GetProposal([FromQuery] string proposalId)
+        {
+            PDAPIResponse response = new();
+
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims was not found.");
+                return BadRequest(response);
+            }
+
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Community)
+                    .ThenInclude(c => c.Homes)
+                        .ThenInclude(h => h.Ownerships)
+                .Include(p => p.Community)
+                    .ThenInclude(c => c.Homes)
+                        .ThenInclude(h => h.Residents)
+                .Include(p => p.Community)
+                    .ThenInclude(c => c.Citizens)
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
+
+                if (proposal == null)
+                {
+                    response.AddAlert("error", "The proposal was not found.");
+                    return BadRequest(response);
+                }
+                if (proposal.Status == ProposalStatus.Draft)
+                {
+                    response.AddAlert("error", "This proposal has not been published.");
+                    return BadRequest(response);
+                }
+                //Is user a citizen of this community?
+                if (!proposal.Community.Citizens.Any(c => c.Id == existingUser.Id))
+                {
+                    response.AddAlert("error", "You are not a citizen of this community");
+                    return BadRequest(response);
+                }
+
+                ProposalDTO proposalDTO = new(proposal);
+                response.ProposalDTO = proposalDTO;
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }   

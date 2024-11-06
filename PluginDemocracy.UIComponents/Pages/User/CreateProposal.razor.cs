@@ -75,7 +75,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
                 communityDTO = AppState?.User?.Citizenships[0];
             }
         }
-        private async void SaveProposalDraft()
+        private async Task SaveProposalDraft()
         {
             disableAll = true;
             UpdateProposalDTOFromFields();
@@ -98,7 +98,7 @@ namespace PluginDemocracy.UIComponents.Pages.User
         private async void PublishProposal()
         {
             disableAll = true;
-            SaveProposalDraft();
+            await SaveProposalDraft();
 
             await Services.PostDataAsync<string?>($"{ApiEndPoints.PublishProposal}?proposalId={proposalDTO.Id}", null);
                         

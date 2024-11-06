@@ -15,10 +15,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Pages\Community\Proposal.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Icons\CommunityIcon.svg">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -61,27 +57,5 @@
 		<AssemblyVersion>1.0.0</AssemblyVersion>
 		<FileVersion>1.0.0</FileVersion>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Include="Pages\Community\Proposal.razor" />
-	  <None Include="Pages\User\CreateProposal.razor">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Include="Pages\User\ProposalDrafts.razor" />
-	  <None Include="Pages\User\ReportABug.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Pages\User\ProposalDrafts.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Pages\Community\Proposal.razor" />
-	  <_ContentIncludedByDefault Remove="Pages\User\ProposalDrafts.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Pages\Community\Proposal.razor" />
-	</ItemGroup>
 
 </Project>

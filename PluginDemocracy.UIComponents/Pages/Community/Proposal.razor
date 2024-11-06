@@ -1,4 +1,7 @@
-﻿<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Proposal: @proposalDTO.Title</MudText>
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Proposal: @proposalDTO.Title</MudText>
 
 <MudCard Class="ma-3 pa-3">
     <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
@@ -13,7 +16,7 @@
             </tr>
             <tr>
                 <td><MudText><b>Community:</b></MudText></td>
-                <td><UserAvatar Community="PetitionDTO?.CommunityDTO" /> <MudText>@PetitionDTO?.CommunityDTO?.FullName</MudText></td>
+                <td><UserAvatar Community="proposalDTO?.Community" /> <MudText>@proposalDTO?.Community?.FullName</MudText></td>
             </tr>
         </tbody>
     </MudSimpleTable>
@@ -28,11 +31,11 @@
             {
                 <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Info">Proposal Still Undecided</MudText>
             }
-            else if(proposalDTO.Status == ProposalStatus.Accepted)
+            else if (proposalDTO.Status == ProposalStatus.Passed)
             {
-                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Success">Proposal Accepted</MudText>
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Success">Proposal Passed</MudText>
             }
-            else if(proposalDTO.Status == ProposalStatus.Rejected)
+            else if (proposalDTO.Status == ProposalStatus.Rejected)
             {
                 <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Error">Proposal Rejected</MudText>
             }
@@ -42,7 +45,9 @@
     <MudItem>
         <MudPaper Class="ma-3 pa-3">
             <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Primary">Votes in Favor: </MudText>
-            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Sucess">
+            <MudText>Votes in favor %: @(100 * proposalDTO.SumOfWeightedVotesInFavor / proposalDTO.SumOfVotingWeights)%</MudText>
+            <MudText>Sum of weighted votes in favor: @proposalDTO.SumOfWeightedVotesInFavor</MudText>
+            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Success">
                 @foreach (UserDTO user in proposalDTO.UsersThatVotedInFavor)
                 {
                     <UserAvatar User="user" />
@@ -54,11 +59,42 @@
     <MudItem>
         <MudPaper Class="ma-3 pa-3">
             <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Error">Votes Against: </MudText>
+            <MudText>Votes against %: @(100 * proposalDTO.SumOfWeightedVotesAgainst / proposalDTO.SumOfVotingWeights)%</MudText>
+            <MudText>Sum of weighted votes against: @proposalDTO.SumOfWeightedVotesAgainst</MudText>
+            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Error">
+                @foreach (UserDTO user in proposalDTO.UsersThatVotedAgainst)
+                {
+                    <UserAvatar User="user" />
+                }
+            </MudAvatarGroup>
         </MudPaper>
     </MudItem>
 
 </MudGrid>
 
-@code{
-    ProposalDTO proposalDTO { get; set; }
-}
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    @(proposalDTO.Content != null ? (MarkupString)proposalDTO.Content : (MarkupString)string.Empty)
+</MudCard>
+
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    <MudText>Democracy works better when everyone can validate voting results! </MudText>
+    <MudText>
+        Since your community is a Home Owners Association, each home owner gets a vote.
+        You are able to vote as a resident but only homeowners vote count towards passing 
+        or rejecting this proposal. If someone owns more than one home, they get one vote for each home they own.
+    </MudText>
+    <MudText>Here are statistics about your community so you can validate vote results yourself. If you want more specific information, you may need to visit your community's about page: <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={proposalDTO.Community?.Id}")">About @($"{proposalDTO.Community?.Name}")</MudLink></MudText>
+    <MudText>Total available votes for community: @proposalDTO.SumOfVotingWeights </MudText>
+    <MudText Typo="Typo.h5" Class="mt-5 mb-5" Align="Align.Center">Votes Weights per home owner: </MudText>
+    <MudSimpleTable Style="overflow-x:auto;">
+        <tbody>
+            @foreach (KeyValuePair<UserDTO, double> kvp in proposalDTO.VotingWeights)
+            {
+                <tr>
+                    <td><UserAvatar User="@kvp.Key" /></td>
+                    <td>@kvp.Value</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudCard>

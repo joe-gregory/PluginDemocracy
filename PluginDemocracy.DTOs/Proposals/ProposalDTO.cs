@@ -15,10 +15,40 @@ namespace PluginDemocracy.DTOs
         public string? Content { get; set; } = string.Empty;
         public ResidentialCommunityDTO? Community { get; set; }
         public List<VoteDTO> Votes { get; set; } = [];
+        [JsonIgnore] 
+        public List<VoteDTO> VotesInFavor => Votes.Where(v => v.Decision == VoteDecision.InFavor).ToList();
+        [JsonIgnore]
+        public List<VoteDTO> VotesAgainst => Votes.Where(v => v.Decision == VoteDecision.Against).ToList();
         [JsonIgnore]
         public List<UserDTO> UsersThatVotedInFavor => Votes.Where(v => v.Decision == VoteDecision.InFavor).Select(v => v.Voter).ToList();
         [JsonIgnore]
         public List<UserDTO> UsersThatVotedAgainst => Votes.Where(v => v.Decision == VoteDecision.Against).Select(v => v.Voter).ToList();
+        public Dictionary<int, double> SerializableVotingWeights { get; set; } = [];
+        public List<UserDTO> SerializableUsersForVotingWeights { get; set; } = [];
+        [JsonIgnore]
+        public Dictionary<UserDTO, double> VotingWeights
+        {
+            get
+            {
+                // Match each UserDTO with the corresponding voting weight in SerializableVotingWeights
+                return SerializableUsersForVotingWeights
+                    .Where(user => SerializableVotingWeights.ContainsKey(user.Id)) // Ensure a matching weight exists
+                    .ToDictionary(
+                        user => user, // Key is the UserDTO object
+                        user => SerializableVotingWeights[user.Id] // Value is the voting weight for this user
+                    );
+            }
+        }
+        [JsonIgnore]
+        public Dictionary<UserDTO, double> WeightedVotesInFavor => VotesInFavor.Where(vote => VotingWeights.ContainsKey(vote.Voter)) // Guard clause
+            .ToDictionary(vote => vote.Voter, vote => VotingWeights[vote.Voter]);
+        [JsonIgnore]
+        public Dictionary<UserDTO, double> WeightedVotesAgainst => VotesAgainst
+            .Where(vote => VotingWeights.ContainsKey(vote.Voter)) // Guard clause
+            .ToDictionary(vote => vote.Voter, vote => VotingWeights[vote.Voter]);
+        public double SumOfVotingWeights { get; set; }
+        public double SumOfWeightedVotesInFavor { get; set; }
+        public double SumOfWeightedVotesAgainst { get; set; }
         public ProposalDTO() { }
         public ProposalDTO(Proposal proposal)
         {
@@ -30,10 +60,15 @@ namespace PluginDemocracy.DTOs
             Title = proposal.Title;
             Content = proposal.Content;
             Community = ResidentialCommunityDTO.ReturnSimpleCommunityDTOFromCommunity(proposal.Community);
-            foreach (Vote vote in proposal.Votes)
+            foreach (var kvp in proposal.VotingWeights)
             {
-                Votes.Add(new VoteDTO(vote));
+                SerializableUsersForVotingWeights.Add(UserDTO.ReturnAvatarMinimumUserDTOFromUser(kvp.Key));
+                SerializableVotingWeights.Add(kvp.Key.Id, kvp.Value);
             }
+            foreach (Vote vote in proposal.Votes) Votes.Add(new VoteDTO(vote));
+            SumOfVotingWeights = proposal.SumOfVotingWeights;
+            SumOfWeightedVotesInFavor = proposal.SumOfWeightedVotesInFavor;
+            SumOfWeightedVotesAgainst = proposal.SumOfWeightedVotesAgainst;
         }   
     }
 }

@@ -1262,7 +1262,6 @@ namespace PluginDemocracy.API.Controllers
         [HttpGet(ApiEndPoints.GetProposalDraft)]
         public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] string proposalId)
         {
-
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
@@ -1295,7 +1294,7 @@ namespace PluginDemocracy.API.Controllers
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest("You are not logged in");
-            List<Proposal> proposals = await _context.Proposals.Include(p => p.Author).Where(p => p.Author.Id == existingUser.Id).ToListAsync();
+            List<Proposal> proposals = await _context.Proposals.Include(p => p.Author).Where(p => p.Author.Id == existingUser.Id && p.Status == ProposalStatus.Draft).ToListAsync();
             List<ProposalDTO> proposalDTOs = [];
             foreach (Proposal proposal in proposals) proposalDTOs.Add(new ProposalDTO(proposal));
             return Ok(proposalDTOs);
@@ -1374,8 +1373,13 @@ namespace PluginDemocracy.API.Controllers
                     response.AddAlert("error", "You cannot publish a proposal that is not in draft state.");
                     return BadRequest(response);
                 }
+                if (string.IsNullOrEmpty(proposal.Content))
+                {
+                    response.AddAlert("error", "You cannot publish a proposal without content.");
+                    return BadRequest(response);
+                }
                 proposal.Publish();
-                existingUser.RemoveProposalDraft(proposal);
+
                 //Add post to community: 
                 string body = $"Proposal {proposal.Id} {proposal.Title} has been published and home owners can now vote on it. Click on the following link to navigate to the proposal's page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Proposal}?proposalId={proposal.Id}\">Proposal Page</a>";
                 Post newPublishedProposalPost = new(proposal.Community, body);
