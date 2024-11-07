@@ -421,6 +421,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Petition Draft.
         /// </summary>
         internal static string DeletePetitionDraft {
@@ -952,6 +961,15 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Proposal Drafts.
+        /// </summary>
+        internal static string ProposalDrafts {
+            get {
+                return ResourceManager.GetString("ProposalDrafts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proposals.
         /// </summary>
         internal static string Proposals {
@@ -1290,6 +1308,24 @@ namespace PluginDemocracy.Translations {
         internal static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vote Against.
+        /// </summary>
+        internal static string VoteAgainst {
+            get {
+                return ResourceManager.GetString("VoteAgainst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vote In Favor.
+        /// </summary>
+        internal static string VoteInFavor {
+            get {
+                return ResourceManager.GetString("VoteInFavor", resourceCulture);
             }
         }
         

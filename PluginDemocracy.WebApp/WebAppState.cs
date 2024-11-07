@@ -15,7 +15,7 @@ namespace PluginDemocracy.WebApp
         {
 #if DEBUG
             // Use the local development URL when in Debug mode
-            ApiBaseUrl = "https://localhost:7042/"; // Replace with your actual local API URL
+            ApiBaseUrl = "https://localhost:7042"; // Replace with your actual local API URL
 #else
         // Use the production URL from appsettings.json in Release mode
         ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;

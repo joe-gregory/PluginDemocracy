@@ -58,11 +58,4 @@
 		<FileVersion>1.0.0</FileVersion>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <None Include="Pages\User\CreateProposal.razor">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Include="Pages\User\ReportABug.razor" />
-	</ItemGroup>
-
 </Project>

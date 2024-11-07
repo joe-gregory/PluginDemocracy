@@ -237,6 +237,9 @@
   <data name="DeadlineForResponseDescription" xml:space="preserve">
     <value>(Optional) A suggested or required timeline for when the petition should be reviewed and responded to by the HOA board.</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="DeletePetitionDraft" xml:space="preserve">
     <value>Delete Petition Draft</value>
   </data>
@@ -414,6 +417,9 @@
   <data name="ProposalDescription" xml:space="preserve">
     <value>A proposal is a document where a community member can suggest ideas, changes, or projects to be voted on by others in the community. Unlike a petition, which is primarily focused on gathering signatures to support a specific action, a proposal allows for open discussion and voting to decide if the suggested idea will be adopted or implemented.</value>
   </data>
+  <data name="ProposalDrafts" xml:space="preserve">
+    <value>Proposal Drafts</value>
+  </data>
   <data name="Proposals" xml:space="preserve">
     <value>Proposals</value>
   </data>
@@ -527,6 +533,12 @@
   </data>
   <data name="User" xml:space="preserve">
     <value>User</value>
+  </data>
+  <data name="VoteAgainst" xml:space="preserve">
+    <value>Vote Against</value>
+  </data>
+  <data name="VoteInFavor" xml:space="preserve">
+    <value>Vote In Favor</value>
   </data>
   <data name="Warning" xml:space="preserve">
     <value>Warning</value>

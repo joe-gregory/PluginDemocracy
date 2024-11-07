@@ -21,6 +21,7 @@
     <MudText Class="mb-1" Align="Align.Center">Date of birth: @User?.DateOfBirth.Date.ToLocalTime().ToString("yyyy-MM-dd")</MudText>
     <MudText Class="mb-1" Align="Align.Center">Address: @User?.Address</MudText>
     <MudText Class="mb-1" Align="Align.Center">Preffered language: @User?.CultureCode</MudText>
+    <MudText Class="mb-1" Align="Align.Center">Id: @User?.Id</MudText>
     @if (User?.Admin == true)
     {
         <MudText Align="Align.Center">This user is an application admin.</MudText>

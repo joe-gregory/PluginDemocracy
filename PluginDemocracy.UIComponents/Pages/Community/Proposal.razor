@@ -1,0 +1,110 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mb-5">Proposal: @proposalDTO.Title</MudText>
+
+<MudCard Class="ma-3 pa-3">
+    <MudSimpleTable Class="pa-3 ma-3" Style="overflow-x: auto;">
+        <tbody>
+            <tr>
+                <td><MudText><b>Proposal Id:</b></MudText></td>
+                <td><MudText>@proposalDTO?.Id</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Latest Activity:</b></MudText></td>
+                <td><MudText>@(proposalDTO.LastUpdated.Date.ToLocalTime().ToString("yyyy-MM-dd") ?? "Date not set")</MudText></td>
+            </tr>
+            <tr>
+                <td><MudText><b>Community:</b></MudText></td>
+                <td><UserAvatar Community="proposalDTO?.Community" /> <MudText>@proposalDTO?.Community?.FullName</MudText></td>
+            </tr>
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
+
+<MudGrid Spacing="2" Justify="Justify.Center">
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Info">Proposal Status:</MudText>
+            @if (proposalDTO.Status == ProposalStatus.Published)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Info">Proposal Still Undecided</MudText>
+            }
+            else if (proposalDTO.Status == ProposalStatus.Passed)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Success">Proposal Passed</MudText>
+            }
+            else if (proposalDTO.Status == ProposalStatus.Rejected)
+            {
+                <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Error">Proposal Rejected</MudText>
+            }
+            <MudText Class="mt-5">Total available votes for community: @proposalDTO.SumOfVotingWeights </MudText>
+
+        </MudPaper>
+    </MudItem>
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Primary">Votes in Favor: </MudText>
+            <MudText>Percentage in favor: @((100 * proposalDTO.SumOfWeightedVotesInFavor / proposalDTO.SumOfVotingWeights).ToString("F2"))%</MudText>
+            <MudText>Weighted votes in favor: @proposalDTO.SumOfWeightedVotesInFavor</MudText>
+            <MudAvatarGroup Max="20" Spacing="2" MaxColor="Color.Success">
+                @foreach (UserDTO user in proposalDTO.UsersThatVotedInFavor)
+                {
+                    <UserAvatar User="user" />
+                }
+            </MudAvatarGroup>
+            <MudButton Class="mt-2 mb-2" Variant="Variant.Filled" Color="Color.Success" Disabled="(disableVotingInFavorButton || disableBothVotingButtons)" OnClick="() => Vote(VoteDecision.InFavor)">@AppState.Translate(ResourceKeys.VoteInFavor)</MudButton>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem>
+        <MudPaper Class="ma-3 pa-3">
+            <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Error">Votes Against: </MudText>
+            <MudText Class="mt-5 mb-5">Percentage against: @((100 * proposalDTO.SumOfWeightedVotesAgainst / proposalDTO.SumOfVotingWeights).ToString("F2"))%</MudText>
+            <MudText Class="mt-5 mb-5">Weighted votes against: @proposalDTO.SumOfWeightedVotesAgainst</MudText>
+            <MudAvatarGroup Max="20" Spacing="2" MaxColor="Color.Error">
+                @foreach (UserDTO user in proposalDTO.UsersThatVotedAgainst)
+                {
+                    <UserAvatar User="user" />
+                }
+            </MudAvatarGroup>
+            <MudButton Class="mt-2 mb-2" Variant="Variant.Filled" Color="Color.Error" Disabled="(disableVotingAgainstButton || disableBothVotingButtons)" OnClick="() => Vote(VoteDecision.Against)">@AppState.Translate(ResourceKeys.VoteAgainst)</MudButton>
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>
+
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    @(proposalDTO.Content != null ? (MarkupString)proposalDTO.Content : (MarkupString)string.Empty)
+</MudCard>
+
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    <MudText Typo="Typo.h4" Class="mt-5 mb-5" Align="Align.Center" Color="Color.Primary">Voting Data</MudText>
+
+    <MudText Class="mt-5 mb-5">Democracy works better when everyone can validate voting results! </MudText>
+    <MudText Class="mt-5 mb-5">
+        Since your community is a Home Owners Association, each home owner gets a vote.
+        You are able to vote as a resident but only homeowners vote count towards passing 
+        or rejecting this proposal. If someone owns more than one home, they get one vote for each home they own.
+    </MudText>
+    <MudText Class="mt-5 mb-5">Here are statistics about your community so you can validate vote results yourself. If you want more specific information, you may need to visit your community's about page: <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={proposalDTO.Community?.Id}")">About @($"{proposalDTO.Community?.Name}")</MudLink></MudText>
+    <MudText Class="mt-5 mb-5" Color="Color.Warning">Total available votes for community: <b>@proposalDTO.SumOfVotingWeights</b>. Each home counts as 100 votes. For example, if a home is partially owned by 2 individuals each owning 62.5% and 37.5%, their corresponding votes are 62.5 and 37.5, respectively.</MudText>
+    <MudText Typo="Typo.h6" Class="mt-5 mb-5" Align="Align.Center">Vote Weights per Home Owner: </MudText>
+    <MudSimpleTable Class="mt-5 mb-5" Style="overflow-x:auto;">
+        <tbody>
+            @foreach (KeyValuePair<UserDTO, double> kvp in proposalDTO.VotingWeights)
+            {
+                <tr>
+                    <td><UserAvatar User="@kvp.Key" /></td>
+                    <td>@kvp.Value</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudCard>
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    <MudText>Did you find an issue? Does something not add up right? Please, get in touch with us!</MudText>
+    <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="() => Services.NavigateTo(FrontEndPages.ReportABug)">Report an issue</MudButton>
+</MudCard>

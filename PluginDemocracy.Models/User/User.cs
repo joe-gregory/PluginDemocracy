@@ -217,5 +217,16 @@ namespace PluginDemocracy.Models
             if (petitionToRemove != null) _petitionDrafts.Remove(petitionToRemove);
             else throw new ArgumentException("No petition found to remove in User.PetitionDrafts.");
         }
+        public void AddProposalDraft(Proposal proposal)
+        {
+            if (proposal.Status != ProposalStatus.Draft) throw new ArgumentException("Proposal must be in draft status to be added to User.ProposalDrafts.");
+            _proposalDrafts.Add(proposal);
+        }
+        public void RemoveProposalDraft(Proposal proposal)
+        {
+            Proposal? proposalToRemove = _proposalDrafts.FirstOrDefault(p => p.Id == proposal.Id);
+            if (proposalToRemove != null) _proposalDrafts.Remove(proposalToRemove);
+            else throw new ArgumentException("No proposal found to remove in User.ProposalDrafts.");
+        }
     }
 }

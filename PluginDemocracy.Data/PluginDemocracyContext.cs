@@ -20,7 +20,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<User>().Property(u => u.Culture).HasConversion(c => c.Name, s => new(s));
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<User>().Ignore(u => u.Citizenships);
-            modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne(h => h.Owner);
+            modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne(h => h.Owner).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<User>().HasMany(u => u.ResidentOfHomes).WithMany(h => h.Residents);
             modelBuilder.Entity<User>().HasMany(u => u.Roles).WithOne(r => r.Holder);
             modelBuilder.Entity<User>().HasMany(u => u.Notifications).WithOne();
@@ -59,7 +59,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Proposal>().Ignore(p => p.Votes);
             modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Vote>().HasOne(v => v.Voter).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Vote>().HasOne(v => v.Voter).WithMany().OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -79,7 +79,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Petition>().Property(p => p.LinksToSupportingDocuments).HasField("_linksToSupportingDocuments").UsePropertyAccessMode(PropertyAccessMode.Field);
 
             modelBuilder.Entity<Post>().Ignore(post => post.Author);
-            modelBuilder.Entity<Post>().HasOne("_userAuthor");
+            modelBuilder.Entity<Post>().HasOne("_userAuthor").WithMany().HasForeignKey("_userAuthorId").OnDelete(DeleteBehavior.Restrict); ;
             modelBuilder.Entity<Post>().HasOne("_communityAuthor");
             modelBuilder.Entity<Post>().Property(p => p.ImagesLinks).HasField("_imagesLinks").UsePropertyAccessMode(PropertyAccessMode.Field);
 

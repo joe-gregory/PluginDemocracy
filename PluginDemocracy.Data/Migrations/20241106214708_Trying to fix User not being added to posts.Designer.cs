@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PluginDemocracy.Data;
 
@@ -12,9 +13,11 @@ using PluginDemocracy.Data;
 namespace PluginDemocracy.Data.Migrations
 {
     [DbContext(typeof(PluginDemocracyContext))]
-    partial class PluginDemocracyContextModelSnapshot : ModelSnapshot
+    [Migration("20241106214708_Trying to fix User not being added to posts")]
+    partial class TryingtofixUsernotbeingaddedtoposts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -913,7 +916,7 @@ namespace PluginDemocracy.Data.Migrations
                     b.HasOne("PluginDemocracy.Models.User", "Voter")
                         .WithMany()
                         .HasForeignKey("VoterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Proposal");

@@ -12,6 +12,7 @@ namespace PluginDemocracy.Translations
         public const string Cancel = "Cancel";
         public const string Accept = "Accept";
         public const string ReportABug = "ReportABug";
+        public const string Delete = "Delete";
         
         public const string NewPasswordTitle = "NewPasswordTitle";
         public const string PasswordsDoNotMatch = "PasswordsDoNotMatch";
@@ -79,6 +80,8 @@ namespace PluginDemocracy.Translations
         
         public const string CreateProposal = "CreateProposal";
         public const string CreateProposalDescription = "ProposalDescription";
+        public const string VoteInFavor= "VoteInFavor";
+        public const string VoteAgainst = "VoteAgainst";    
 
         
         public const string PendingJoinCommunityRequests = "PendingJoinCommunityRequests";
@@ -132,6 +135,7 @@ namespace PluginDemocracy.Translations
         public const string Publish = "Publish";
         public const string AuthorsReadyToPublish = "AuthorsReadyToPublish";
         public const string PetitionDrafts = "PetitionDrafts";
+        public const string ProposalDrafts = "ProposalDrafts";
         public const string LatestEdit = "LatestEdit";
         public const string DialogDeletePetitionDraftMultipleAuthors = "DialogDeletePetitionDraftMultipleAuthors";
         public const string ESignPetition = "ESignPetition";

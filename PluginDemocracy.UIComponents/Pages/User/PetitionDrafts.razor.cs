@@ -25,8 +25,8 @@ namespace PluginDemocracy.UIComponents.Pages.User
             {
                 List<PetitionDTO>? petitionDrafts = await Services.GetDataGenericAsync<List<PetitionDTO>>(ApiEndPoints.GetUserPetitionDrafts);
                 if (petitionDrafts != null) PetitionDraftsList = [.. petitionDrafts.OrderByDescending(p => p.LastUpdated)];
+                StateHasChanged();
             }
-            StateHasChanged();
         }
         private void NavigateToClickedPetition(DataGridRowClickEventArgs<PetitionDTO> e)
         {

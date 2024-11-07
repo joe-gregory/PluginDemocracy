@@ -17,6 +17,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string ResetPassword = "/resetpassword";
         public const string Notifications = "/notifications";
         public const string PetitionDrafts = "/petitiondrafts";
+        public const string ProposalDrafts = "/proposaldrafts";
         public const string CreateProposal = "/createproposal";
 
         //Community pages
@@ -30,6 +31,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string CurrentJoinCommunityRequests = "/currentjoincommunityrequests";
         public const string AboutCommunity = "/aboutcommunity";
         public const string Petition = "/petition";
+        public const string Proposal = "/proposal";
         /// <summary>
         /// This takes you to the page where individuals with Roles can see pending join community requests. 
         /// </summary>

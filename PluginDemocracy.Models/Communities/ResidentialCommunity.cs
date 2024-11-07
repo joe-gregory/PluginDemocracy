@@ -83,18 +83,23 @@ namespace PluginDemocracy.Models
                 return Homes.SelectMany(home => home.Ownerships).ToList().AsReadOnly();
             }
         }
+        /// <summary>
+        /// If you are either a home owner or a resident, you are a citizen of the community
+        /// </summary>
+        [NotMapped]
         public List<User> Citizens
         {
             get
             {
-                List<User> homeOwners = Homes?.SelectMany(home => home.OwnersOwnerships.Keys).ToList() ?? [];
+                List<User> homeOwners = Homes?.SelectMany(home => home.Owners).ToList() ?? [];
                 List<User> homeResidents = Homes?.SelectMany(home => home.Residents).ToList() ?? [];
-                return homeResidents.Union(homeResidents).Distinct().ToList();
+                return homeOwners.Union(homeResidents).Distinct().ToList();
             }
         }
         /// <summary>
         /// Get only property. It returns a list of the Home Owners in the community.
         /// </summary>
+        [NotMapped]
         public List<User> HomeOwners
         {
             get
@@ -102,7 +107,17 @@ namespace PluginDemocracy.Models
                 return Homes?.SelectMany(home => home.OwnersOwnerships.Keys).Distinct().ToList() ?? [];
             }
         }
-
+        /// <summary>
+        /// Individuals who live in this community but that don't own a home.
+        /// </summary>
+        [NotMapped]
+        public List<User> Residents
+        {
+            get
+            {
+                return Homes?.SelectMany(home => home.Residents).Distinct().ToList() ?? [];
+            }
+        }
         private readonly List<JoinCommunityRequest> _joinCommunityRequests;
         /// <summary>
         /// Get only property. Represents all the requests to join the community.
@@ -167,6 +182,7 @@ namespace PluginDemocracy.Models
         public IReadOnlyList<Proposal> PublishedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Published).ToList().AsReadOnly();
         public IReadOnlyList<Proposal> PassedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Passed).ToList().AsReadOnly();
         public IReadOnlyList<Proposal> RejectedProposals => Proposals.Where(proposal => proposal.Status == ProposalStatus.Rejected).ToList().AsReadOnly();
+        [NotMapped]
         public Dictionary<User, double> VotingWeights
         {
             get
@@ -188,6 +204,20 @@ namespace PluginDemocracy.Models
                     }
                 }
                 return votingWeights;
+            }
+        }
+        /// <summary>
+        /// Gets the total voting weight across all users in the community,
+        /// representing the sum of all individual ownership percentages.
+        /// This value signifies the total number of "weighted votes" in the community
+        /// and can be used to calculate majority thresholds or other vote-based decisions.
+        /// </summary>
+        [NotMapped]
+        public double SumOfVotingWeights
+        {
+            get
+            {
+                return Homes.Count*100;
             }
         }
         #endregion

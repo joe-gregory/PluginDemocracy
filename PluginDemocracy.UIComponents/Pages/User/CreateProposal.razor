@@ -8,7 +8,7 @@
     <MudText>@AppState.Translate(ResourceKeys.CreateProposalDescription)</MudText>
 </MudCard>
 
-<MudTextField Class="mt-5" @bind-Value="title" Text="@title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" />
+<MudTextField Class="mt-5" @bind-Value="title" Text="@title" Label="@AppState.Translate(ResourceKeys.Title)" Variant="Variant.Outlined" Immediate="true"/>
 
 <MudCard Elevation="25" Class="mt-5 pa-5">
     @if (AppState?.User?.Citizenships.Count > 1)
@@ -24,7 +24,7 @@
 
 
 <div class="mt-5">
-    <SfRichTextEditor Enabled="!disableAll" Value="@richTextEditorValue">
+    <SfRichTextEditor Enabled="!disableAll" @bind-Value="@richTextEditorValue">
         <RichTextEditorToolbarSettings Items="Tools" />
     </SfRichTextEditor>
 </div>
@@ -34,4 +34,5 @@
 <MudCard Class="mt-5 mb-5">
     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Color="Color.Info" OnClick="SaveProposalDraft" Disabled="disableAll">@AppState.Translate(ResourceKeys.Save)</MudButton>
     <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Publish" Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishProposal" Disabled="disableAll">@AppState.Translate(ResourceKeys.Publish)</MudButton>
+    <MudButton Class="ml-2 mr-2" StartIcon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteProposal" Disabled="disableAll || proposalDTO.Id == null">@AppState.Translate(ResourceKeys.Delete)</MudButton>
 </MudCard>

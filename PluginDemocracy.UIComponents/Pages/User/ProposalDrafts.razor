@@ -1,0 +1,48 @@
+﻿@inject BaseAppState AppState
+@inject Services Services
+
+<MudText Typo="Typo.h3" Align="Align.Center">@AppState.Translate(ResourceKeys.ProposalDrafts)</MudText>
+
+<MudPaper Elevation="25" Variant="Variant.Outlined" Class="mt-5 mb-5">
+    <MudDataGrid T="ProposalDTO" Items="@ProposalDraftsList" Groupable="false" RowClick="NavigateToClickedProposal">
+        <Columns>
+            <PropertyColumn Property="p => p.Title" Title="@AppState.Translate(ResourceKeys.Title)" />
+            <PropertyColumn Property="p => p.LastUpdated" Title="@AppState.Translate(ResourceKeys.LatestEdit)" />
+            <TemplateColumn Title="@AppState.Translate(ResourceKeys.DeletePetitionDraft)">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteProposalDraft(context.Item.Id))" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>
+
+
+@code {
+    private List<ProposalDTO> ProposalDraftsList { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateProposalDraftsListAsync();
+    }
+    private async Task UpdateProposalDraftsListAsync()
+    {
+        if (AppState.IsLoggedIn)
+        {
+            List<ProposalDTO>? proposalDrafts = await Services.GetDataGenericAsync<List<ProposalDTO>>(ApiEndPoints.GetUserProposalDrafts);
+            if (proposalDrafts != null) ProposalDraftsList = proposalDrafts;
+            StateHasChanged();
+        }
+    }
+    private void NavigateToClickedProposal(DataGridRowClickEventArgs<ProposalDTO> e)
+    {
+        Services.NavigateTo($"{FrontEndPages.CreateProposal}/?proposalId={e.Item.Id}");
+    }
+    private async void DeleteProposalDraft(Guid? proposalId)
+    {
+        PDAPIResponse response = await Services.DeleteDataAsync(ApiEndPoints.DeleteProposalDraft + $"?proposalId={proposalId}");
+        if (response.SuccessfulOperation) await UpdateProposalDraftsListAsync();
+    }
+}

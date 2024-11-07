@@ -11,6 +11,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 namespace PluginDemocracy.API.Controllers
 {
@@ -1190,7 +1191,7 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpPost(ApiEndPoints.SaveProposalDraft)]
-        public async Task<ActionResult<PDAPIResponse>> SaveProposalDraft([FromForm] ProposalDTO? proposalDTO)
+        public async Task<ActionResult<PDAPIResponse>> SaveProposalDraft(ProposalDTO? proposalDTO)
         {
             PDAPIResponse response = new();
 
@@ -1239,7 +1240,6 @@ namespace PluginDemocracy.API.Controllers
                 Proposal? proposal = await _context.Proposals
                     .Include(p => p.Author)
                     .Include(p => p.Community)
-                    .Include(p => p.Status)
                     .FirstOrDefaultAsync(p => p.Id == proposalDTO.Id);
 
                 if (proposal == null)
@@ -1260,25 +1260,153 @@ namespace PluginDemocracy.API.Controllers
         }
         [Authorize]
         [HttpGet(ApiEndPoints.GetProposalDraft)]
-        public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] Guid proposalId)
+        public async Task<ActionResult<ProposalDTO>> GetProposalDraft([FromQuery] string proposalId)
         {
             User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
             if (existingUser == null) return BadRequest();
 
-            Proposal? proposal = await _context.Proposals
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
                 .Include(p => p.Author)
                 .Include(p => p.Community)
-                .Include(p => p.Status)
-                .FirstOrDefaultAsync(p => p.Id == proposalId);
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
 
-            if (proposal == null)
-            {
-                return NotFound("The proposal was not found.");
+                if (proposal == null)
+                {
+                    return NotFound("The proposal was not found.");
+                }
+                //Make sure user is an author of the proposal
+                if (proposal.Author.Id != existingUser.Id) return BadRequest("You are not an author of this proposal");
+                ProposalDTO proposalDTO = new(proposal);
+                return Ok(proposalDTO);
             }
-            //Make sure user is an author of the proposal
-            if (proposal.Author.Id != existingUser.Id) return BadRequest("You are not an author of this proposal");
-            ProposalDTO proposalDTO = new(proposal);
-            return Ok(proposalDTO);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet(ApiEndPoints.GetUserProposalDrafts)]
+        public async Task<ActionResult<List<ProposalDTO>>> GetUserProposalDraftsList()
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest("You are not logged in");
+            List<Proposal> proposals = await _context.Proposals.Include(p => p.Author).Where(p => p.Author.Id == existingUser.Id && p.Status == ProposalStatus.Draft).ToListAsync();
+            List<ProposalDTO> proposalDTOs = [];
+            foreach (Proposal proposal in proposals) proposalDTOs.Add(new ProposalDTO(proposal));
+            return Ok(proposalDTOs);
+        }
+        [Authorize]
+        [HttpDelete(ApiEndPoints.DeleteProposalDraft)]
+        public async Task<ActionResult<PDAPIResponse>> DeleteProposalDraft([FromQuery] string proposalId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            PDAPIResponse response = new();
+
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Community)
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
+
+                if (proposal == null)
+                {
+                    return NotFound("The proposal was not found.");
+                }
+                if(proposal.Author.Id != existingUser.Id)
+                {
+                    response.AddAlert("error", "You are not an author of this proposal");
+                    return BadRequest(response);
+                }
+                if(proposal.Status != ProposalStatus.Draft)
+                {
+                    response.AddAlert("error", "You cannot delete a proposal that is not in draft state.");
+                    return BadRequest(response);
+                }
+                _context.Proposals.Remove(proposal);
+                await _context.SaveChangesAsync();
+                response.AddAlert("success", "Proposal draft deleted successfully");
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Error deleting proposal draft: {ex.Message}");
+                return BadRequest(response);
+            }
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.PublishProposal)]
+        public async Task<ActionResult<PDAPIResponse>> PublishProposal([FromQuery] string proposalId)
+        {
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null) return BadRequest();
+            PDAPIResponse response = new();
+
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Community)
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
+
+                if (proposal == null)
+                {
+                    return NotFound("The proposal was not found.");
+                }
+                if (proposal.Author.Id != existingUser.Id)
+                {
+                    response.AddAlert("error", "You are not an author of this proposal");
+                    return BadRequest(response);
+                }
+                if (proposal.Status != ProposalStatus.Draft)
+                {
+                    response.AddAlert("error", "You cannot publish a proposal that is not in draft state.");
+                    return BadRequest(response);
+                }
+                if (string.IsNullOrEmpty(proposal.Content))
+                {
+                    response.AddAlert("error", "You cannot publish a proposal without content.");
+                    return BadRequest(response);
+                }
+                proposal.Publish();
+
+                //Add post to community: 
+                string body = $"Proposal {proposal.Id} {proposal.Title} has been published and home owners can now vote on it. Click on the following link to navigate to the proposal's page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Proposal}?proposalId={proposal.Id}\">Proposal Page</a>";
+                Post newPublishedProposalPost = new(proposal.Community, body);
+                proposal.Community.AddPost(newPublishedProposalPost);
+                //Send email to all citizens of the community: 
+                string titleForAllUsers = $"A new proposal has been published in {proposal.Community.Name}: {proposal.Title}";
+                string bodyForAllUsers = $"A new proposal has been published in your community {proposal.Community.Name}. Click on the following link to navigate to the proposal page: <a style=\"text-decoration: underline\" href=\"{_utilityClass.WebAppBaseUrl}{FrontEndPages.Proposal}?proposalId={proposal.Id}\">Proposal Page</a>. Homeowners can sign the proposal and it will pass with majority home owners votes.";
+                //Send Email to all citizens of that community and add Notificatin for all citizens
+                List<Task> sendingEmails = [];
+                foreach (User citizen in proposal.Community.Citizens)
+                {
+                    citizen.AddNotification(titleForAllUsers, bodyForAllUsers);
+                    sendingEmails.Add(_utilityClass.SendEmailAsync(citizen.Email, titleForAllUsers, bodyForAllUsers));
+                }
+                foreach (Task task in sendingEmails) await task;
+
+                await _context.SaveChangesAsync();
+                response.RedirectTo = $"{FrontEndPages.Proposal}?proposalId={proposal.Id}";
+                response.AddAlert("success", "Proposal published successfully.");
+                response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.AddAlert("error", $"Error deleting proposal draft: {ex.Message}");
+                return BadRequest(response);
+            }
         }
     }
     #endregion
