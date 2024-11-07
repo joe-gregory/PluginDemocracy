@@ -15,17 +15,22 @@ namespace PluginDemocracy.DTOs
         public string? Content { get; set; } = string.Empty;
         public ResidentialCommunityDTO? Community { get; set; }
         public List<VoteDTO> Votes { get; set; } = [];
-        [JsonIgnore] 
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<VoteDTO> VotesInFavor => Votes.Where(v => v.Decision == VoteDecision.InFavor).ToList();
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<VoteDTO> VotesAgainst => Votes.Where(v => v.Decision == VoteDecision.Against).ToList();
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<UserDTO> UsersThatVotedInFavor => Votes.Where(v => v.Decision == VoteDecision.InFavor).Select(v => v.Voter).ToList();
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<UserDTO> UsersThatVotedAgainst => Votes.Where(v => v.Decision == VoteDecision.Against).Select(v => v.Voter).ToList();
         public Dictionary<int, double> SerializableVotingWeights { get; set; } = [];
         public List<UserDTO> SerializableUsersForVotingWeights { get; set; } = [];
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<UserDTO, double> VotingWeights
         {
             get
@@ -39,10 +44,12 @@ namespace PluginDemocracy.DTOs
                     );
             }
         }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<UserDTO, double> WeightedVotesInFavor => VotesInFavor.Where(vote => VotingWeights.ContainsKey(vote.Voter)) // Guard clause
             .ToDictionary(vote => vote.Voter, vote => VotingWeights[vote.Voter]);
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public Dictionary<UserDTO, double> WeightedVotesAgainst => VotesAgainst
             .Where(vote => VotingWeights.ContainsKey(vote.Voter)) // Guard clause
             .ToDictionary(vote => vote.Voter, vote => VotingWeights[vote.Voter]);
@@ -53,7 +60,7 @@ namespace PluginDemocracy.DTOs
         public ProposalDTO(Proposal proposal)
         {
             Id = proposal.Id;
-            Author = new UserDTO(proposal.Author);
+            Author = UserDTO.ReturnAvatarMinimumUserDTOFromUser(proposal.Author);
             Status = proposal.Status;
             PublishedDateTime = proposal.PublishedDateTime;
             LastUpdated = proposal.LastUpdated;

@@ -1494,11 +1494,10 @@ namespace PluginDemocracy.API.Controllers
                 .Include(p => p.Community)
                     .ThenInclude(c => c.Homes)
                         .ThenInclude(h => h.Ownerships)
+                            .ThenInclude(o => o.Owner)
                 .Include(p => p.Community)
                     .ThenInclude(c => c.Homes)
                         .ThenInclude(h => h.Residents)
-                .Include(p => p.Community)
-                    .ThenInclude(c => c.Citizens)
                 .FirstOrDefaultAsync(p => p.Id == parsedGuid);
 
                 if (proposal == null)

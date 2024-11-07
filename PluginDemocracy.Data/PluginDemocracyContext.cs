@@ -20,7 +20,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<User>().Property(u => u.Culture).HasConversion(c => c.Name, s => new(s));
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<User>().Ignore(u => u.Citizenships);
-            modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne(h => h.Owner);
+            modelBuilder.Entity<User>().HasMany(u => u.HomeOwnerships).WithOne(h => h.Owner).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<User>().HasMany(u => u.ResidentOfHomes).WithMany(h => h.Residents);
             modelBuilder.Entity<User>().HasMany(u => u.Roles).WithOne(r => r.Holder);
             modelBuilder.Entity<User>().HasMany(u => u.Notifications).WithOne();
