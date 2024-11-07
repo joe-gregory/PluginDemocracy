@@ -59,7 +59,7 @@ namespace PluginDemocracy.Data
             modelBuilder.Entity<Proposal>().Ignore(p => p.Votes);
             modelBuilder.Entity<Proposal>().HasMany(p => p.Votes).WithOne(v => v.Proposal).OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Vote>().HasOne(v => v.Voter).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Vote>().HasOne(v => v.Voter).WithMany().OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<JoinCommunityRequest>().Property(jcr => jcr.LinksToFiles).HasField("_linksToFiles").UsePropertyAccessMode(PropertyAccessMode.Field);
 

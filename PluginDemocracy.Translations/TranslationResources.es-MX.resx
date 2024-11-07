@@ -534,6 +534,12 @@
   <data name="User" xml:space="preserve">
     <value>Usuario</value>
   </data>
+  <data name="VoteAgainst" xml:space="preserve">
+    <value>Votar en Contra</value>
+  </data>
+  <data name="VoteInFavor" xml:space="preserve">
+    <value>Votar a Favor</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Advertencia</value>
   </data>

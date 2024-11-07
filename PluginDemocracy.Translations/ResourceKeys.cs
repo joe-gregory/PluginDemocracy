@@ -80,6 +80,8 @@ namespace PluginDemocracy.Translations
         
         public const string CreateProposal = "CreateProposal";
         public const string CreateProposalDescription = "ProposalDescription";
+        public const string VoteInFavor= "VoteInFavor";
+        public const string VoteAgainst = "VoteAgainst";    
 
         
         public const string PendingJoinCommunityRequests = "PendingJoinCommunityRequests";

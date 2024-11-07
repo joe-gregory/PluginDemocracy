@@ -1312,6 +1312,24 @@ namespace PluginDemocracy.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vote Against.
+        /// </summary>
+        internal static string VoteAgainst {
+            get {
+                return ResourceManager.GetString("VoteAgainst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vote In Favor.
+        /// </summary>
+        internal static string VoteInFavor {
+            get {
+                return ResourceManager.GetString("VoteInFavor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string Warning {

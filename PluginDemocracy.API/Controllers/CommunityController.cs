@@ -1491,6 +1491,8 @@ namespace PluginDemocracy.API.Controllers
             {
                 Proposal? proposal = await _context.Proposals
                 .Include(p => p.Author)
+                .Include(p => p.Votes)
+                    .ThenInclude(v => v.Voter)
                 .Include(p => p.Community)
                     .ThenInclude(c => c.Homes)
                         .ThenInclude(h => h.Ownerships)
@@ -1520,6 +1522,71 @@ namespace PluginDemocracy.API.Controllers
                 ProposalDTO proposalDTO = new(proposal);
                 response.ProposalDTO = proposalDTO;
                 response.SuccessfulOperation = true;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpPost(ApiEndPoints.VoteOnProposal)]
+        public async Task<ActionResult<PDAPIResponse>> VoteOnProposal([FromQuery] string proposalId, [FromBody] VoteDecision? vote)
+        {
+            PDAPIResponse response = new();
+
+            User? existingUser = await _utilityClass.ReturnUserFromClaims(User);
+            if (existingUser == null)
+            {
+                response.AddAlert("error", "User from claims was not found.");
+                return BadRequest(response);
+            }
+           
+            Guid parsedGuid = Guid.Parse(proposalId);
+
+            try
+            {
+                Proposal? proposal = await _context.Proposals
+                .Include(p => p.Author)
+                .Include(p => p.Votes)
+                    .ThenInclude(v => v.Voter)
+                .Include(p => p.Community)
+                    .ThenInclude(c => c.Homes)
+                        .ThenInclude(h => h.Ownerships)
+                            .ThenInclude(o => o.Owner)
+                .Include(p => p.Community)
+                    .ThenInclude(c => c.Homes)
+                        .ThenInclude(h => h.Residents)
+                .FirstOrDefaultAsync(p => p.Id == parsedGuid);
+
+                if (proposal == null)
+                {
+                    response.AddAlert("error", "The proposal was not found.");
+                    return BadRequest(response);
+                }
+                if (proposal.Status == ProposalStatus.Draft)
+                {
+                    response.AddAlert("error", "This proposal has not been published.");
+                    return BadRequest(response);
+                }
+                //Is user a citizen of this community?
+                if (!proposal.Community.Citizens.Any(c => c.Id == existingUser.Id))
+                {
+                    response.AddAlert("error", "You are not a citizen of this community");
+                    return BadRequest(response);
+                }
+                //NEW LOGIC
+                if (vote == null)
+                {
+                    response.AddAlert("error", "Vote decision was not provided.");
+                    return BadRequest(response);
+                }
+                proposal.Vote(existingUser, vote.Value);
+                ProposalDTO proposalDTO = new(proposal);
+                response.AddAlert("success", "Your voted has been casted!");
+                response.ProposalDTO = proposalDTO;
+                response.SuccessfulOperation = true;
+                _context.SaveChanges();
                 return Ok(response);
             }
             catch (Exception ex)

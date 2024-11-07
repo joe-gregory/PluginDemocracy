@@ -39,34 +39,38 @@
             {
                 <MudText Typo="Typo.h6" Class="mb-5" Align="Align.Center" Color="Color.Error">Proposal Rejected</MudText>
             }
+            <MudText Class="mt-5">Total available votes for community: @proposalDTO.SumOfVotingWeights </MudText>
+
         </MudPaper>
     </MudItem>
 
     <MudItem>
         <MudPaper Class="ma-3 pa-3">
             <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Primary">Votes in Favor: </MudText>
-            <MudText>Votes in favor %: @(100 * proposalDTO.SumOfWeightedVotesInFavor / proposalDTO.SumOfVotingWeights)%</MudText>
-            <MudText>Sum of weighted votes in favor: @proposalDTO.SumOfWeightedVotesInFavor</MudText>
-            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Success">
+            <MudText>Percentage in favor: @((100 * proposalDTO.SumOfWeightedVotesInFavor / proposalDTO.SumOfVotingWeights).ToString("F2"))%</MudText>
+            <MudText>Weighted votes in favor: @proposalDTO.SumOfWeightedVotesInFavor</MudText>
+            <MudAvatarGroup Max="20" Spacing="2" MaxColor="Color.Success">
                 @foreach (UserDTO user in proposalDTO.UsersThatVotedInFavor)
                 {
                     <UserAvatar User="user" />
                 }
             </MudAvatarGroup>
+            <MudButton Class="mt-2 mb-2" Variant="Variant.Filled" Color="Color.Success" Disabled="(disableVotingInFavorButton || disableBothVotingButtons)" OnClick="() => Vote(VoteDecision.InFavor)">@AppState.Translate(ResourceKeys.VoteInFavor)</MudButton>
         </MudPaper>
     </MudItem>
 
     <MudItem>
         <MudPaper Class="ma-3 pa-3">
             <MudText Typo="Typo.h5" Class="mb-5" Align="Align.Center" Color="Color.Error">Votes Against: </MudText>
-            <MudText>Votes against %: @(100 * proposalDTO.SumOfWeightedVotesAgainst / proposalDTO.SumOfVotingWeights)%</MudText>
-            <MudText>Sum of weighted votes against: @proposalDTO.SumOfWeightedVotesAgainst</MudText>
-            <MudAvatarGroup Max="100" Spacing="3" MaxColor="Color.Error">
+            <MudText Class="mt-5 mb-5">Percentage against: @((100 * proposalDTO.SumOfWeightedVotesAgainst / proposalDTO.SumOfVotingWeights).ToString("F2"))%</MudText>
+            <MudText Class="mt-5 mb-5">Weighted votes against: @proposalDTO.SumOfWeightedVotesAgainst</MudText>
+            <MudAvatarGroup Max="20" Spacing="2" MaxColor="Color.Error">
                 @foreach (UserDTO user in proposalDTO.UsersThatVotedAgainst)
                 {
                     <UserAvatar User="user" />
                 }
             </MudAvatarGroup>
+            <MudButton Class="mt-2 mb-2" Variant="Variant.Filled" Color="Color.Error" Disabled="(disableVotingAgainstButton || disableBothVotingButtons)" OnClick="() => Vote(VoteDecision.Against)">@AppState.Translate(ResourceKeys.VoteAgainst)</MudButton>
         </MudPaper>
     </MudItem>
 
@@ -77,16 +81,18 @@
 </MudCard>
 
 <MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
-    <MudText>Democracy works better when everyone can validate voting results! </MudText>
-    <MudText>
+    <MudText Typo="Typo.h4" Class="mt-5 mb-5" Align="Align.Center" Color="Color.Primary">Voting Data</MudText>
+
+    <MudText Class="mt-5 mb-5">Democracy works better when everyone can validate voting results! </MudText>
+    <MudText Class="mt-5 mb-5">
         Since your community is a Home Owners Association, each home owner gets a vote.
         You are able to vote as a resident but only homeowners vote count towards passing 
         or rejecting this proposal. If someone owns more than one home, they get one vote for each home they own.
     </MudText>
-    <MudText>Here are statistics about your community so you can validate vote results yourself. If you want more specific information, you may need to visit your community's about page: <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={proposalDTO.Community?.Id}")">About @($"{proposalDTO.Community?.Name}")</MudLink></MudText>
-    <MudText>Total available votes for community: @proposalDTO.SumOfVotingWeights </MudText>
-    <MudText Typo="Typo.h5" Class="mt-5 mb-5" Align="Align.Center">Votes Weights per home owner: </MudText>
-    <MudSimpleTable Style="overflow-x:auto;">
+    <MudText Class="mt-5 mb-5">Here are statistics about your community so you can validate vote results yourself. If you want more specific information, you may need to visit your community's about page: <MudLink Href="@($"{FrontEndPages.AboutCommunity}?communityId={proposalDTO.Community?.Id}")">About @($"{proposalDTO.Community?.Name}")</MudLink></MudText>
+    <MudText Class="mt-5 mb-5" Color="Color.Warning">Total available votes for community: <b>@proposalDTO.SumOfVotingWeights</b>. Each home counts as 100 votes. For example, if a home is partially owned by 2 individuals each owning 62.5% and 37.5%, their corresponding votes are 62.5 and 37.5, respectively.</MudText>
+    <MudText Typo="Typo.h6" Class="mt-5 mb-5" Align="Align.Center">Vote Weights per Home Owner: </MudText>
+    <MudSimpleTable Class="mt-5 mb-5" Style="overflow-x:auto;">
         <tbody>
             @foreach (KeyValuePair<UserDTO, double> kvp in proposalDTO.VotingWeights)
             {
@@ -97,4 +103,8 @@
             }
         </tbody>
     </MudSimpleTable>
+</MudCard>
+<MudCard Elevation="25" Class="mt-5 mb-5 pa-5">
+    <MudText>Did you find an issue? Does something not add up right? Please, get in touch with us!</MudText>
+    <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="() => Services.NavigateTo(FrontEndPages.ReportABug)">Report an issue</MudButton>
 </MudCard>

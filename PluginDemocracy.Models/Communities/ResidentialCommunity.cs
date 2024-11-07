@@ -217,7 +217,7 @@ namespace PluginDemocracy.Models
         {
             get
             {
-                return VotingWeights.Values.Sum();
+                return Homes.Count*100;
             }
         }
         #endregion

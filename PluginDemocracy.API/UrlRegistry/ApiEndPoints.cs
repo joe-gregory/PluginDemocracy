@@ -56,6 +56,7 @@ namespace PluginDemocracy.API.UrlRegistry
         public const string GetPetition = CommunityController + "getpetition";
         public const string GeneratePDFOfPetition = CommunityController + "generatepdfofpetition";
         public const string GetProposal = CommunityController + "getproposal";
+        public const string VoteOnProposal = CommunityController + "voteonproposal";
 
         #region Feed
         public const string CreateNewPost = CommunityController + "createnewpost";
