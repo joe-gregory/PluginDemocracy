@@ -666,6 +666,8 @@ namespace PluginDemocracy.API.Controllers
                     .Include(c => c.Posts)
                         .ThenInclude(p => p.Reactions)
                     .Include(c => c.Posts)
+                        .ThenInclude(p => EF.Property<User>(p, "_userAuthor"))
+                    .Include(c => c.Posts)
                         .ThenInclude(p => p.Comments)
                             .ThenInclude(c => c.Author)
                     .FirstOrDefaultAsync(c => c.Id == communityId);
